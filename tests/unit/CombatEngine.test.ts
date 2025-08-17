@@ -55,13 +55,13 @@ describe('CombatEngine', () => {
     it('should create entity from card', () => {
       const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
-      expect(entity.id).toContain('player');
+      expect(entity.id).toBe('test');
       expect(entity.x).toBe(100);
       expect(entity.y).toBe(200);
       expect(entity.isPlayer).toBe(true);
       expect(entity.isAlive).toBe(true);
-      expect(entity.hp).toBe(100);
-      expect(entity.maxHp).toBe(100);
+      expect(entity.hp).toBe(10); // Default HP from card.defense
+      expect(entity.maxHp).toBe(10);
       expect(entity.emojis).toContain('🔥');
     });
 
@@ -78,14 +78,14 @@ describe('CombatEngine', () => {
     it('should handle entity damage and death', () => {
       const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
-      expect(entity.hp).toBe(100);
+      expect(entity.hp).toBe(10); // Default HP
       expect(entity.isAlive).toBe(true);
       
-      entity.takeDamage(50);
-      expect(entity.hp).toBe(50);
+      entity.takeDamage(5);
+      expect(entity.hp).toBe(5);
       expect(entity.isAlive).toBe(true);
       
-      entity.takeDamage(60);
+      entity.takeDamage(6);
       expect(entity.hp).toBe(0);
       expect(entity.isAlive).toBe(false);
     });
@@ -93,15 +93,15 @@ describe('CombatEngine', () => {
     it('should handle entity healing', () => {
       const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
-      entity.takeDamage(50);
-      expect(entity.hp).toBe(50);
+      entity.takeDamage(5);
+      expect(entity.hp).toBe(5);
       
-      entity.heal(30);
-      expect(entity.hp).toBe(80);
+      entity.heal(3);
+      expect(entity.hp).toBe(8);
       
       // Should not heal above max HP
-      entity.heal(50);
-      expect(entity.hp).toBe(100);
+      entity.heal(5);
+      expect(entity.hp).toBe(10); // Max HP is 10
     });
   });
 

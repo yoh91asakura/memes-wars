@@ -167,13 +167,6 @@ export const WaveCombatArena: React.FC<WaveCombatArenaProps> = ({
     setTurnTimer(0);
   };
   
-  // Attaque manuelle du joueur
-  const playerAttack = () => {
-    if (!battleInProgress || currentTurn !== 'player' || playerAvatar.attackCooldown > 0) return;
-    launchEmojiWave(true);
-    setCurrentTurn('opponent');
-    setTurnTimer(0);
-  };
   
   // Animation loop
   useEffect(() => {
@@ -239,11 +232,12 @@ export const WaveCombatArena: React.FC<WaveCombatArenaProps> = ({
             case 'wave':
               newX += Math.sin(newProgress * Math.PI * 3) * 30;
               break;
-            case 'spiral':
+            case 'spiral': {
               const spiral = newProgress * Math.PI * 4;
               newX += Math.cos(spiral) * (1 - newProgress) * 40;
               newY += Math.sin(spiral) * (1 - newProgress) * 40;
               break;
+            }
             case 'random':
               newX += (Math.random() - 0.5) * 20;
               newY += (Math.random() - 0.5) * 20;
@@ -319,7 +313,7 @@ export const WaveCombatArena: React.FC<WaveCombatArenaProps> = ({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            🚀 Commencer l'Autobattle
+            🚀 Commencer l&apos;Autobattle
           </motion.button>
         ) : (
           <div className="autobattle-status">
