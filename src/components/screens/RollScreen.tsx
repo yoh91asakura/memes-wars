@@ -4,7 +4,6 @@ import { useGameStore } from '../../stores/gameStore';
 import { useRollStore } from '../../stores/rollStore';
 import { Card } from '../../types/card';
 import { RollResult, RollStats } from '../../services/RollService';
-import { AutoRollPanel } from '../roll/AutoRollPanel';
 import './RollScreenSolsRNG.css';
 
 // Particle System Component
@@ -273,16 +272,11 @@ const EnhancedCardReveal: React.FC<{
 export const RollScreen: React.FC = () => {
   const [revealedCard, setRevealedCard] = useState<RollResult | null>(null);
   const [rollHistory, setRollHistory] = useState<RollHistoryItem[]>([]);
-  const [showAutoRoll, setShowAutoRoll] = useState(false);
-  const [hideRoll, setHideRoll] = useState(false);
   const [isAutoRolling, setIsAutoRolling] = useState(false);
-  const [autoRollCount, setAutoRollCount] = useState(0);
-  const [autoRollTotal, setAutoRollTotal] = useState(0);
   
-  const { coins, spendCoins, addToCollection } = useGameStore();
+  const { coins, addToCollection } = useGameStore();
   const { 
-    performSingleRoll, 
-    performMultiRoll,
+    performSingleRoll,
     getRollStats,
     isRolling, 
     completeRollAnimation 
@@ -296,13 +290,24 @@ export const RollScreen: React.FC = () => {
   }, []);
 
   const handleSingleRoll = useCallback(async () => {
-    if (isRolling || coins < 100) return;
+    if (isRolling) return;
     
     try {
-      const success = await spendCoins(100);
-      if (!success) return;
-      
       const rollResult = await performSingleRoll();
+      
+      // Calculate gold reward based on rarity
+      const goldRewards = {
+        common: 5,
+        uncommon: 15,
+        rare: 50,
+        epic: 150,
+        legendary: 500,
+        mythic: 1500,
+        cosmic: 5000
+      };
+      
+      const reward = goldRewards[rollResult.card.rarity as keyof typeof goldRewards] || 5;
+      addCoins(reward);
       
       // Add to history
       const historyItem: RollHistoryItem = {
@@ -326,151 +331,26 @@ export const RollScreen: React.FC = () => {
       console.error('Roll failed:', error);
       completeRollAnimation();
     }
-  }, [isRolling, coins, performSingleRoll, spendCoins, addToCollection, completeRollAnimation]);
+  }, [isRolling, performSingleRoll, addToCollection, completeRollAnimation]);
 
-  // Handle 10x roll
-  const handleTenRoll = useCallback(async () => {
-    if (isRolling || coins < 900) return; // 10% discount
-    
-    try {
-      const success = await spendCoins(900);
-      if (!success) return;
-      
-      const results = await performMultiRoll(10);
-      
-      // Add all to history and collection
-      results.cards.forEach(result => {
-        const historyItem: RollHistoryItem = {
-          id: `${Date.now()}-${Math.random()}`,
-          card: result.card,
-          timestamp: new Date(),
-          pityTriggered: result.pityTriggered,
-          isGuaranteed: result.isGuaranteed
-        };
-        setRollHistory(prev => [historyItem, ...prev].slice(0, 50));
-        addToCollection(result.card);
-      });
-      
-      // Show the best card from the multi-roll
-      const bestCard = results.cards.reduce((best, current) => {
-        const rarityOrder = { 'common': 1, 'uncommon': 2, 'rare': 3, 'epic': 4, 'legendary': 5, 'mythic': 6, 'cosmic': 7 };
-        return (rarityOrder[current.card.rarity as keyof typeof rarityOrder] || 0) > (rarityOrder[best.card.rarity as keyof typeof rarityOrder] || 0) ? current : best;
-      }, results.cards[0]);
-      
-      setTimeout(() => {
-        setRevealedCard(bestCard);
-        completeRollAnimation();
-      }, 1500);
-      
-    } catch (error) {
-      console.error('Multi-roll failed:', error);
-      completeRollAnimation();
-    }
-  }, [isRolling, coins, performMultiRoll, spendCoins, addToCollection, completeRollAnimation]);
 
-  // Handle 100x roll  
-  const handleHundredRoll = useCallback(async () => {
-    if (isRolling || coins < 8000) return; // 20% discount
+  // Handle auto-roll toggle
+  const handleAutoRollToggle = useCallback(() => {
+    setIsAutoRolling(!isAutoRolling);
+  }, [isAutoRolling]);
+  
+  // Auto-roll interval effect
+  useEffect(() => {
+    if (!isAutoRolling) return;
     
-    try {
-      const success = await spendCoins(8000);
-      if (!success) return;
-      
-      const results = await performMultiRoll(100);
-      
-      // Add all to history and collection (last 50 only for history)
-      results.cards.forEach(result => {
-        addToCollection(result.card);
-      });
-      
-      results.cards.slice(-50).forEach(result => {
-        const historyItem: RollHistoryItem = {
-          id: `${Date.now()}-${Math.random()}`,
-          card: result.card,
-          timestamp: new Date(),
-          pityTriggered: result.pityTriggered,
-          isGuaranteed: result.isGuaranteed
-        };
-        setRollHistory(prev => [historyItem, ...prev].slice(0, 50));
-      });
-      
-      // Show the best card from the multi-roll
-      const bestCard = results.cards.reduce((best, current) => {
-        const rarityOrder = { 'common': 1, 'uncommon': 2, 'rare': 3, 'epic': 4, 'legendary': 5, 'mythic': 6, 'cosmic': 7 };
-        return (rarityOrder[current.card.rarity as keyof typeof rarityOrder] || 0) > (rarityOrder[best.card.rarity as keyof typeof rarityOrder] || 0) ? current : best;
-      }, results.cards[0]);
-      
-      setTimeout(() => {
-        setRevealedCard(bestCard);
-        completeRollAnimation();
-      }, 1500);
-      
-    } catch (error) {
-      console.error('Mega-roll failed:', error);
-      completeRollAnimation();
-    }
-  }, [isRolling, coins, performMultiRoll, spendCoins, addToCollection, completeRollAnimation]);
-
-  // Handle auto-roll
-  const handleAutoRoll = useCallback(async (count: number) => {
-    if (isAutoRolling || isRolling) return;
-    
-    setIsAutoRolling(true);
-    setAutoRollCount(0);
-    setAutoRollTotal(count);
-    setShowAutoRoll(false);
-    
-    const delay = hideRoll ? 100 : 1000; // Faster if hideRoll is enabled
-    
-    for (let i = 0; i < count; i++) {
-      if (coins < 100) break;
-      
-      try {
-        const success = await spendCoins(100);
-        if (!success) break;
-        
-        const rollResult = await performSingleRoll();
-        
-        // Add to history
-        const historyItem: RollHistoryItem = {
-          id: `${Date.now()}-${Math.random()}`,
-          card: rollResult.card,
-          timestamp: new Date(),
-          pityTriggered: rollResult.pityTriggered,
-          isGuaranteed: rollResult.isGuaranteed
-        };
-        
-        setRollHistory(prev => [historyItem, ...prev].slice(0, 50));
-        addToCollection(rollResult.card);
-        
-        // Show animation only for high rarity or if not hiding
-        const showAnimation = !hideRoll || 
-          ['mythic', 'cosmic'].includes(rollResult.card.rarity);
-        
-        if (showAnimation) {
-          setRevealedCard(rollResult);
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          setRevealedCard(null);
-        }
-        
-        setAutoRollCount(i + 1);
-        
-        // Auto-stop on mythic or cosmic
-        if (['mythic', 'cosmic'].includes(rollResult.card.rarity)) {
-          break;
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, delay));
-        
-      } catch (error) {
-        console.error('Auto-roll failed:', error);
-        break;
+    const interval = setInterval(() => {
+      if (!isRolling) {
+        handleSingleRoll();
       }
-    }
+    }, 3000); // Roll every 3 seconds
     
-    setIsAutoRolling(false);
-    completeRollAnimation();
-  }, [isAutoRolling, isRolling, coins, hideRoll, performSingleRoll, spendCoins, addToCollection, completeRollAnimation]);
+    return () => clearInterval(interval);
+  }, [isAutoRolling, isRolling, handleSingleRoll]);
 
   // Auto-dismiss card after reveal
   useEffect(() => {
@@ -531,7 +411,7 @@ export const RollScreen: React.FC = () => {
         {/* Left sidebar - Recent rolls */}
         <RollHistory history={rollHistory} />
         
-        {/* Center - Roll buttons and animations */}
+        {/* Center - Roll button and animations */}
         <div className="roll-center">
           <AnimatePresence mode="wait">
             {!revealedCard && !isRolling && (
@@ -544,42 +424,37 @@ export const RollScreen: React.FC = () => {
                 <motion.button
                   className="roll-button single"
                   onClick={handleSingleRoll}
-                  disabled={coins < 100}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
                   <div className="button-content">
                     <span className="button-icon">🎰</span>
-                    <span className="button-title">Roll x1</span>
-                    <span className="button-cost">100 🪙</span>
+                    <span className="button-title">ROLL</span>
+                    <span className="button-cost">Free + Gold Reward</span>
                   </div>
                 </motion.button>
-
+                
                 <motion.button
-                  className="roll-button ten"
-                  onClick={handleTenRoll}
-                  disabled={coins < 900}
+                  className={`auto-roll-toggle ${isAutoRolling ? 'active' : ''}`}
+                  onClick={handleAutoRollToggle}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
+                  style={{
+                    marginTop: '20px',
+                    padding: '15px 30px',
+                    background: isAutoRolling ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(100, 100, 100, 0.3)',
+                    border: `2px solid ${isAutoRolling ? '#10b981' : '#666'}`,
+                    borderRadius: '15px',
+                    color: 'white',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer'
+                  }}
                 >
                   <div className="button-content">
-                    <span className="button-icon">🎰</span>
-                    <span className="button-title">Roll x10</span>
-                    <span className="button-cost">900 🪙 -10%</span>
-                  </div>
-                </motion.button>
-
-                <motion.button
-                  className="roll-button hundred"
-                  onClick={handleHundredRoll}
-                  disabled={coins < 8000}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="button-content">
-                    <span className="button-icon">🎰</span>
-                    <span className="button-title">Roll x100</span>
-                    <span className="button-cost">8000 🪙 -20%</span>
+                    <span className="button-icon">{isAutoRolling ? '⏸️' : '▶️'}</span>
+                    <span className="button-title">{isAutoRolling ? 'Stop Auto Roll' : 'Start Auto Roll'}</span>
+                    <span className="button-cost">Every 3 seconds</span>
                   </div>
                 </motion.button>
               </motion.div>
@@ -626,7 +501,6 @@ export const RollScreen: React.FC = () => {
         <motion.button
           className="floating-roll-button"
           onClick={handleSingleRoll}
-          disabled={coins < 100}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
@@ -640,15 +514,13 @@ export const RollScreen: React.FC = () => {
             transform: 'translateX(-50%)',
             width: '200px',
             height: '80px',
-            background: coins >= 100 
-              ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-              : 'rgba(100, 100, 100, 0.5)',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             border: 'none',
             borderRadius: '40px',
             color: 'white',
             fontSize: '24px',
             fontWeight: 'bold',
-            cursor: coins >= 100 ? 'pointer' : 'not-allowed',
+            cursor: 'pointer',
             boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
             display: 'flex',
             flexDirection: 'column',
@@ -663,90 +535,37 @@ export const RollScreen: React.FC = () => {
         </motion.button>
       )}
       
-      {/* Auto Roll Button */}
-      {!isAutoRolling && !isRolling && !showAutoRoll && (
-        <motion.button
-          className="auto-roll-trigger"
-          onClick={() => setShowAutoRoll(true)}
-          initial={{ x: -100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          whileHover={{ x: 5 }}
-          style={{
-            position: 'fixed',
-            bottom: '120px',
-            left: '20px',
-            padding: '15px 25px',
-            background: 'rgba(99, 102, 241, 0.2)',
-            border: '2px solid #6366f1',
-            borderRadius: '15px',
-            color: '#818cf8',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px'
-          }}
-        >
-          ⚡ Auto Roll
-        </motion.button>
-      )}
       
-      {/* Auto Roll Panel */}
-      <AnimatePresence>
-        {showAutoRoll && (
-          <AutoRollPanel
-            onAutoRoll={handleAutoRoll}
-            onClose={() => setShowAutoRoll(false)}
-            hideRoll={hideRoll}
-            onHideRollToggle={() => setHideRoll(!hideRoll)}
-            coins={coins}
-          />
-        )}
-      </AnimatePresence>
-      
-      {/* Auto Roll Progress */}
+      {/* Auto Roll Status */}
       {isAutoRolling && (
         <motion.div
-          className="auto-roll-progress"
+          className="auto-roll-status"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           style={{
             position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            background: 'rgba(0, 0, 0, 0.9)',
-            padding: '30px',
-            borderRadius: '20px',
+            top: '120px',
+            right: '20px',
+            background: 'rgba(16, 185, 129, 0.9)',
+            padding: '15px 25px',
+            borderRadius: '15px',
             color: 'white',
-            textAlign: 'center',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
             zIndex: 1000
           }}
         >
-          <h3>Auto Rolling...</h3>
-          <p style={{ fontSize: '24px', margin: '20px 0' }}>
-            {autoRollCount} / {autoRollTotal}
-          </p>
-          <div style={{
-            width: '200px',
-            height: '10px',
-            background: 'rgba(255, 255, 255, 0.2)',
-            borderRadius: '5px',
-            overflow: 'hidden'
-          }}>
-            <motion.div
-              style={{
-                width: `${(autoRollCount / autoRollTotal) * 100}%`,
-                height: '100%',
-                background: 'linear-gradient(90deg, #667eea, #764ba2)',
-                borderRadius: '5px'
-              }}
-              animate={{ width: `${(autoRollCount / autoRollTotal) * 100}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </div>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          >
+            ⚙️
+          </motion.div>
+          Auto Rolling Active
         </motion.div>
       )}
     </div>
