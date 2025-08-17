@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Card } from '../../types/card';
+import { UnifiedCard as Card } from '../../models/unified/Card';
 import WaveCombatArena from '../combat/WaveCombatArena';
 import { commonCards } from '../../data/cards/common';
 import './CombatScreen.css';

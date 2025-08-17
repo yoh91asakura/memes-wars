@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { RollService, RollResult, RollStats, MultiRollResult } from '../services/RollService';
-import { UnifiedCard as Card } from '../models/unified/Card';
+import { Card } from '../types/card';
 import rollConfig from '../../config/game/roll.config.json';
 
 interface RollHistory {

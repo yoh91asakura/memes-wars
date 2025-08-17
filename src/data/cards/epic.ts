@@ -1,56 +1,36 @@
-import { Card } from '../../types/card';
+import { UnifiedCard } from '../../models/unified/Card';
 
-export const epicCards: Card[] = [
+// TODO: Migrate existing epic cards to unified model
+// This is a placeholder file created during card system migration
+
+export const epicCards: UnifiedCard[] = [
+  // TODO: Add migrated epic cards here
+  // Template for new cards:
+  /*
   {
-    id: 'epic_1',
-    name: 'Phoenix',
-    rarity: 'epic',
-    type: 'creature',
-    cost: 7,
-    attack: 6,
-    defense: 4,
-    emoji: '🔥🦅',
-    description: 'When dies, resurrect with full health next turn',
-    color: '#9775FA',
-    ability: 'Rebirth',
-    tags: ['legendary', 'fire', 'resurrection']
-  },
-  {
-    id: 'epic_2',
-    name: 'Black Hole',
-    rarity: 'epic',
-    type: 'spell',
-    cost: 8,
-    emoji: '⚫',
-    description: 'Destroy all creatures on the board',
-    color: '#9775FA',
-    effects: ['board wipe'],
-    tags: ['cosmic', 'destruction']
-  },
-  {
-    id: 'epic_3',
-    name: 'Time Lord',
-    rarity: 'epic',
-    type: 'creature',
-    cost: 6,
-    attack: 4,
-    defense: 6,
-    emoji: '⏰',
-    description: 'Battlecry: Take an extra turn after this one',
-    color: '#9775FA',
-    ability: 'Extra Turn',
-    tags: ['time', 'control']
-  },
-  {
-    id: 'epic_4',
-    name: 'Infinity Stone',
-    rarity: 'epic',
-    type: 'support',
-    cost: 5,
-    emoji: '♾️',
-    description: 'Your hand size is unlimited',
-    color: '#9775FA',
-    effects: ['unlimited hand'],
-    tags: ['artifact', 'power']
+    id: 'epic_example',
+    name: 'Example Epic Card',
+    description: 'Example card for epic rarity',
+    rarity: UnifiedRarity.EPIC,
+    type: CardType.CREATURE,
+    cost: 3,
+    attack: 3,
+    defense: 3,
+    hp: 30,
+    attackSpeed: 1.0,
+    emojis: createDefaultEmojis('🎴', UnifiedRarity.EPIC),
+    passive: createDefaultPassive(),
+    stackLevel: 0,
+    experience: 0,
+    luck: 10,
+    emoji: '🎴',
+    color: '#808080',
+    tags: ['epic', 'placeholder'],
+    stats: {
+      attack: 3,
+      defense: 3,
+      health: 30,
+    },
   }
+  */
 ];

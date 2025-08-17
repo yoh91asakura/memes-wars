@@ -1,10 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Card as SimpleCard } from '../types/card';
 import { CardService } from '../services/CardService';
 import gameConfig from '../../config/game/game.config.json';
-
-// Legacy card type for compatibility with existing stores
-type LegacyCard = any;
 
 interface GameStore {
   // Player state
@@ -14,15 +12,15 @@ interface GameStore {
   level: number;
   
   // Collection
-  collection: LegacyCard[];
-  currentDeck: LegacyCard[];
+  collection: SimpleCard[];
+  currentDeck: SimpleCard[];
   
   // Actions
-  rollCard: () => Promise<LegacyCard>;
+  rollCard: () => Promise<SimpleCard>;
   spendCoins: (amount: number) => Promise<boolean>;
   spendGems: (amount: number) => Promise<boolean>;
-  addToCollection: (card: LegacyCard) => void;
-  addToDeck: (card: LegacyCard) => boolean;
+  addToCollection: (card: SimpleCard) => void;
+  addToDeck: (card: SimpleCard) => boolean;
   removeFromDeck: (cardId: string) => void;
   gainExperience: (amount: number) => void;
   
@@ -90,14 +88,14 @@ export const useGameStore = create<GameStore>()(
       },
       
       // Add card to collection
-      addToCollection: (card: LegacyCard) => {
+      addToCollection: (card: SimpleCard) => {
         set(state => ({
           collection: [...state.collection, card]
         }));
       },
       
       // Add card to deck
-      addToDeck: (card: LegacyCard) => {
+      addToDeck: (card: SimpleCard) => {
         const state = get();
         if (state.currentDeck.length >= gameConfig.game.maxDeckSize) {
           return false;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '../../types/card';
+import { UnifiedCard as Card } from '../../models/unified/Card';
 import { EmojiSynergyCalculator } from '../../services/EmojiSynergyCalculator';
 
 interface CardDisplayProps {
@@ -13,16 +13,12 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
   showSynergies = true, 
   compact = false 
 }) => {
-  // Get emojis (new system or legacy)
-  const emojis = card.emojis || (card.emoji ? [card.emoji] : []);
-  const emojiData = card.emojiData;
+  // Get emojis (new unified system)
+  const emojisStrings = card.emojis.map(emoji => emoji.character);
   
-  // Calculate synergies if not available
-  const synergies = emojiData?.activeSynergies || 
-                   (emojis.length > 1 ? EmojiSynergyCalculator.calculateSynergies(emojis) : []);
-  
-  const synergyScore = emojiData?.synergyBonus || 
-                      EmojiSynergyCalculator.getSynergyScore(emojis);
+  // Calculate synergies
+  const synergies = emojisStrings.length > 1 ? EmojiSynergyCalculator.calculateSynergies(emojisStrings) : [];
+  const synergyScore = EmojiSynergyCalculator.getSynergyScore(emojisStrings);
 
   return (
     <div className={`card-display ${card.rarity} ${compact ? 'compact' : ''}`}>
@@ -35,20 +31,20 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
       {/* Multi-Emoji Display */}
       <div className="emoji-section">
         <div className="emoji-list">
-          {emojis.map((emoji, index) => (
+          {emojisStrings.map((emoji, index) => (
             <span 
               key={index} 
               className="emoji-display"
-              title={emojiData?.emojiPowers[index]?.name || `Emoji ${index + 1}`}
+              title={card.emojis[index]?.effect?.type || `Emoji ${index + 1}`}
             >
               {emoji}
             </span>
           ))}
         </div>
         
-        {emojis.length > 1 && (
+        {emojisStrings.length > 1 && (
           <div className="emoji-count">
-            <span className="count-badge">{emojis.length}</span>
+            <span className="count-badge">{emojisStrings.length}</span>
           </div>
         )}
       </div>
@@ -91,7 +87,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
           </div>
           
           <div className="synergy-list">
-            {synergies.slice(0, compact ? 2 : 4).map((synergy, index) => (
+            {synergies.slice(0, compact ? 2 : 4).map((synergy: any, index: number) => (
               <div key={index} className="synergy-item">
                 <span className="synergy-name">{synergy.name}</span>
                 <span className="synergy-bonus">+{synergy.bonusValue}%</span>
@@ -108,7 +104,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
       )}
 
       {/* Perfect Synergy Indicator */}
-      {EmojiSynergyCalculator.isPerfectSynergy(emojis) && (
+      {EmojiSynergyCalculator.isPerfectSynergy(emojisStrings) && (
         <div className="perfect-synergy">
           <span className="perfect-icon">✨</span>
           Perfect Synergy!

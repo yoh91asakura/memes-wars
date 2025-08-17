@@ -3,7 +3,7 @@ import { EmojiAssignmentService } from '../services/EmojiAssignmentService';
 import { EmojiSynergyCalculator } from '../services/EmojiSynergyCalculator';
 import { getEmojiPower, getEmojisByCategory, EMOJI_POWERS_DATABASE } from '../systems/emoji-database';
 import { EmojiCategory } from '../types/emoji';
-import { Card } from '../types/card';
+import { UnifiedCard as Card, UnifiedRarity, CardType } from '../models/unified/Card';
 
 describe('Emoji System', () => {
   describe('Emoji Database', () => {
@@ -42,15 +42,15 @@ describe('Emoji System', () => {
 
   describe('Emoji Assignment Service', () => {
     it('should assign correct number of emojis by rarity', () => {
-      const testCards: Card[] = [
-        { id: 'test-common', name: 'Test Common', rarity: 'common', type: 'spell', cost: 2 },
-        { id: 'test-rare', name: 'Test Rare', rarity: 'rare', type: 'creature', cost: 4 },
-        { id: 'test-legendary', name: 'Test Legendary', rarity: 'legendary', type: 'spell', cost: 8 }
+      const testCards: Partial<Card>[] = [
+        { id: 'test-common', name: 'Test Common', rarity: UnifiedRarity.COMMON, type: CardType.SPELL, cost: 2 },
+        { id: 'test-rare', name: 'Test Rare', rarity: UnifiedRarity.RARE, type: CardType.CREATURE, cost: 4 },
+        { id: 'test-legendary', name: 'Test Legendary', rarity: UnifiedRarity.LEGENDARY, type: CardType.SPELL, cost: 8 }
       ];
 
       testCards.forEach(card => {
-        const assignment = EmojiAssignmentService.assignEmojisToCard(card, 12345);
-        const rules = EmojiAssignmentService.getRulesForRarity(card.rarity);
+        const assignment = EmojiAssignmentService.assignEmojisToCard(card as Card, 12345);
+        const rules = EmojiAssignmentService.getRulesForRarity(card.rarity!);
         
         expect(assignment.emojis.length).toBeGreaterThanOrEqual(rules!.minEmojis);
         expect(assignment.emojis.length).toBeLessThanOrEqual(rules!.maxEmojis);
@@ -58,15 +58,15 @@ describe('Emoji System', () => {
     });
 
     it('should respect category restrictions for common cards', () => {
-      const commonCard: Card = {
+      const commonCard: Partial<Card> = {
         id: 'test-common',
         name: 'Test Common',
-        rarity: 'common',
-        type: 'spell',
+        rarity: UnifiedRarity.COMMON,
+        type: CardType.SPELL,
         cost: 2
       };
 
-      const assignment = EmojiAssignmentService.assignEmojisToCard(commonCard, 12345);
+      const assignment = EmojiAssignmentService.assignEmojisToCard(commonCard as Card, 12345);
       
       // Common cards should only have damage and support emojis
       assignment.emojiPowers.forEach(power => {
@@ -75,15 +75,15 @@ describe('Emoji System', () => {
     });
 
     it('should ensure energy requirement for legendary cards', () => {
-      const legendaryCard: Card = {
+      const legendaryCard: Partial<Card> = {
         id: 'test-legendary',
         name: 'Test Legendary',
-        rarity: 'legendary',
-        type: 'spell',
+        rarity: UnifiedRarity.LEGENDARY,
+        type: CardType.SPELL,
         cost: 8
       };
 
-      const assignment = EmojiAssignmentService.assignEmojisToCard(legendaryCard, 12345);
+      const assignment = EmojiAssignmentService.assignEmojisToCard(legendaryCard as Card, 12345);
       const energyEmojis = assignment.emojiPowers.filter(p => p.category === EmojiCategory.ENERGY);
       
       expect(energyEmojis.length).toBeGreaterThanOrEqual(2);
@@ -98,16 +98,16 @@ describe('Emoji System', () => {
     });
 
     it('should produce deterministic results with same seed', () => {
-      const card: Card = {
+      const card: Partial<Card> = {
         id: 'test-deterministic',
         name: 'Test Deterministic',
-        rarity: 'rare',
-        type: 'creature',
+        rarity: UnifiedRarity.RARE,
+        type: CardType.CREATURE,
         cost: 4
       };
 
-      const assignment1 = EmojiAssignmentService.assignEmojisToCard(card, 12345);
-      const assignment2 = EmojiAssignmentService.assignEmojisToCard(card, 12345);
+      const assignment1 = EmojiAssignmentService.assignEmojisToCard(card as Card, 12345);
+      const assignment2 = EmojiAssignmentService.assignEmojisToCard(card as Card, 12345);
       
       expect(assignment1.emojis).toEqual(assignment2.emojis);
     });
@@ -176,21 +176,21 @@ describe('Emoji System', () => {
 
   describe('Integration Tests', () => {
     it('should create valid card with emoji assignment', () => {
-      const testCard: Card = {
+      const testCard: Partial<Card> = {
         id: 'integration-test',
         name: 'Integration Test Card',
-        rarity: 'epic',
-        type: 'creature',
+        rarity: UnifiedRarity.EPIC,
+        type: CardType.CREATURE,
         cost: 6,
         attack: 5,
         defense: 4
       };
 
-      const emojiData = EmojiAssignmentService.assignEmojisToCard(testCard, 54321);
+      const emojiData = EmojiAssignmentService.assignEmojisToCard(testCard as Card, 54321);
       const synergies = EmojiSynergyCalculator.calculateSynergies(emojiData.emojis);
       
       // Validate assignment
-      expect(EmojiAssignmentService.validateEmojiAssignment(emojiData.emojis, testCard.rarity)).toBe(true);
+      expect(EmojiAssignmentService.validateEmojiAssignment(emojiData.emojis, testCard.rarity!)).toBe(true);
       
       // Check emoji data structure
       expect(emojiData.emojis.length).toBeGreaterThan(0);
@@ -198,31 +198,33 @@ describe('Emoji System', () => {
       expect(emojiData.totalBaseDamage).toBeGreaterThan(0);
       
       // Update card with emoji data
-      testCard.emojis = emojiData.emojis;
-      testCard.emojiData = {
+      // Note: emojis property uses EmojiProjectile[] type
+      const extendedTestCard = testCard as any;
+      extendedTestCard.emojis = emojiData.emojis.map(emoji => ({ character: emoji }));
+      extendedTestCard.emojiData = {
         ...emojiData,
         activeSynergies: synergies,
         synergyBonus: EmojiSynergyCalculator.getSynergyScore(emojiData.emojis)
       };
       
-      expect(testCard.emojis).toBeDefined();
-      expect(testCard.emojiData).toBeDefined();
-      expect(testCard.emojiData!.activeSynergies.length).toBeGreaterThanOrEqual(0);
+      expect(extendedTestCard.emojis).toBeDefined();
+      expect(extendedTestCard.emojiData).toBeDefined();
+      expect(extendedTestCard.emojiData!.activeSynergies.length).toBeGreaterThanOrEqual(0);
     });
 
     it('should handle all rarities correctly', () => {
       const rarities = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic', 'cosmic'];
       
       rarities.forEach(rarity => {
-        const card: Card = {
+        const card: Partial<Card> = {
           id: `test-${rarity}`,
           name: `Test ${rarity}`,
           rarity: rarity as any,
-          type: 'creature',
+          type: CardType.CREATURE,
           cost: 4
         };
         
-        const assignment = EmojiAssignmentService.assignEmojisToCard(card, 98765);
+        const assignment = EmojiAssignmentService.assignEmojisToCard(card as Card, 98765);
         expect(assignment.emojis.length).toBeGreaterThan(0);
         
         const isValid = EmojiAssignmentService.validateEmojiAssignment(assignment.emojis, rarity);
@@ -231,11 +233,11 @@ describe('Emoji System', () => {
     });
 
     it('should maintain backward compatibility', () => {
-      const legacyCard: Card = {
+      const legacyCard: Partial<Card> = {
         id: 'legacy-test',
         name: 'Legacy Card',
-        rarity: 'common',
-        type: 'spell',
+        rarity: UnifiedRarity.COMMON,
+        type: CardType.SPELL,
         cost: 2,
         emoji: '🔥' // Legacy single emoji
       };
@@ -244,11 +246,12 @@ describe('Emoji System', () => {
       expect(legacyCard.emoji).toBe('🔥');
       
       // Can be upgraded to new system
-      const emojiData = EmojiAssignmentService.assignEmojisToCard(legacyCard, 11111);
-      legacyCard.emojis = emojiData.emojis;
-      legacyCard.emojiData = emojiData;
+      const emojiData = EmojiAssignmentService.assignEmojisToCard(legacyCard as Card, 11111);
+      const extendedLegacyCard = legacyCard as any;
+      extendedLegacyCard.emojis = emojiData.emojis.map(emoji => ({ character: emoji }));
+      extendedLegacyCard.emojiData = emojiData;
       
-      expect(legacyCard.emojis).toBeDefined();
+      expect(extendedLegacyCard.emojis).toBeDefined();
       expect(legacyCard.emoji).toBeDefined(); // Legacy field preserved
     });
   });

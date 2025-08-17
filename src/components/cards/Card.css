@@ -1,11 +1,11 @@
-/* CardTCG - Design de carte TCG avec illustration plein format */
+/* Card - Design de carte moderne avec illustration plein format */
 
-.card-tcg {
+.card {
   position: relative;
   width: 350px;
   height: 490px; /* Optimized TCG ratio - plus grande */
   border-radius: 12px;
-  border: 6px solid;
+  border: 2px solid;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -15,12 +15,69 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.card-tcg:hover {
+/* Modes de carte */
+.card.mode-combat {
+  border-width: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.card.mode-collection {
+  border-width: 3px;
+}
+
+.card.mode-preview {
+  border-width: 8px;
+  transform: scale(1.1);
+}
+
+/* Tailles de carte */
+.card.size-small {
+  width: 200px;
+  height: 280px;
+}
+
+.card.size-medium {
+  width: 300px;
+  height: 420px;
+}
+
+.card.size-large {
+  width: 350px;
+  height: 490px;
+}
+
+/* État sélectionné */
+.card.selected {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 20px 45px rgba(255, 215, 0, 0.6), 0 8px 16px rgba(255, 215, 0, 0.4);
+  border-color: #ffd700 !important;
+}
+
+/* Indicateur de synergies */
+.card.has-synergies::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+  border-radius: 15px;
+  z-index: -1;
+  animation: synergy-glow 3s ease-in-out infinite;
+}
+
+@keyframes synergy-glow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.7; }
+}
+
+.card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-/* Overlay pour améliorer la lisibilité du texte - Plus subtil */
+/* Overlay très subtil pour préserver l'illustration */
 .card-overlay {
   position: absolute;
   top: 0;
@@ -29,10 +86,10 @@
   bottom: 0;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.6) 0%,
-    rgba(0, 0, 0, 0.05) 15%,
-    rgba(0, 0, 0, 0.05) 85%,
-    rgba(0, 0, 0, 0.75) 100%
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.0) 20%,
+    rgba(0, 0, 0, 0.0) 70%,
+    rgba(0, 0, 0, 0.5) 100%
   );
   pointer-events: none;
 }
@@ -77,6 +134,120 @@
   backdrop-filter: blur(5px);
 }
 
+/* Coût de la carte */
+.card-cost {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ffd700;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+}
+
+.cost-value {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Stats de combat overlay */
+.combat-stats-overlay {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.stat-item.attack {
+  border-color: rgba(255, 100, 100, 0.6);
+}
+
+.stat-item.defense {
+  border-color: rgba(100, 150, 255, 0.6);
+}
+
+.stat-item.health {
+  border-color: rgba(100, 255, 100, 0.6);
+}
+
+.stat-icon {
+  font-size: 1.1em;
+}
+
+.stat-value {
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.85em;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Synergies display */
+.synergies-display {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.synergy-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 215, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+.synergy-icon {
+  font-size: 0.8em;
+}
+
+.synergy-score {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.75em;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.synergy-item {
+  background: rgba(255, 215, 0, 0.1);
+  padding: 1px 4px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.synergy-name {
+  color: #ffd700;
+  font-size: 0.65em;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
+}
+
 /* Rareté en haut à droite - Ultra minimal */
 .rarity-badge-top {
   position: absolute;
@@ -91,7 +262,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 8px;
+  margin-top: 2px;
   z-index: 15;
 }
 
@@ -251,20 +422,100 @@
   }
 }
 
+/* Nom minimal en haut - Style simple */
+.card-name-minimal {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  color: #fff;
+  font-size: 0.9em;
+  font-weight: bold;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.95), 1px 1px 3px rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 4px 8px;
+  border-radius: 6px;
+  backdrop-filter: blur(5px);
+  z-index: 10;
+}
+
+/* Emojis au milieu de la moitié basse */
+.emojis-zone {
+  position: absolute;
+  bottom: 25%; /* Milieu de la moitié basse */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.emoji-display {
+  font-size: 2.2em;
+  filter: drop-shadow(3px 3px 8px rgba(0, 0, 0, 0.95)) drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.9));
+  animation: emoji-glow 4s ease-in-out infinite;
+  cursor: help;
+  transition: transform 0.3s ease;
+}
+
+.emoji-display:hover {
+  transform: scale(1.15);
+}
+
+@keyframes emoji-glow {
+  0%, 100% { 
+    filter: drop-shadow(3px 3px 8px rgba(0, 0, 0, 0.95)) drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.9));
+  }
+  50% { 
+    filter: drop-shadow(3px 3px 8px rgba(0, 0, 0, 0.95)) drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+  }
+}
+
+/* Texte du passif tout en bas */
+.passive-zone {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  text-align: center;
+  z-index: 10;
+}
+
+.passive-text {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.95), 1px 1px 3px rgba(0, 0, 0, 0.9), 0 0 5px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+.passive-flavor {
+  color: #fff;
+  font-size: 0.7em;
+  font-style: italic;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.95), 1px 1px 3px rgba(0, 0, 0, 0.9);
+  line-height: 1.3;
+  margin-top: 2px;
+  display: block;
+}
+
 /* Styles nettoyés - anciennes sections supprimées */
 
 /* Effets par rareté - Progressifs */
-.card-tcg.rarity-common {
+.card.rarity-common {
   border-color: #9e9e9e;
   /* Pas d'animation pour common */
 }
 
-.card-tcg.rarity-uncommon {
+.card.rarity-uncommon {
   border-color: #4caf50;
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
 }
 
-.card-tcg.rarity-rare {
+.card.rarity-rare {
   border-color: #2196f3;
   box-shadow: 0 0 15px rgba(33, 150, 243, 0.4);
   animation: rare-pulse 3s ease-in-out infinite;
@@ -279,7 +530,7 @@
   }
 }
 
-.card-tcg.rarity-epic {
+.card.rarity-epic {
   border-color: #9c27b0;
   box-shadow: 0 0 20px rgba(156, 39, 176, 0.5);
   animation: epic-glow 2.5s ease-in-out infinite;
@@ -298,7 +549,7 @@
   }
 }
 
-.card-tcg.rarity-legendary {
+.card.rarity-legendary {
   border-color: #ff9800;
   box-shadow: 0 0 25px rgba(255, 152, 0, 0.6);
   animation: legendary-shine 2s ease-in-out infinite;
@@ -325,7 +576,7 @@
   }
 }
 
-.card-tcg.rarity-mythic {
+.card.rarity-mythic {
   border-color: #f44336;
   box-shadow: 0 0 30px rgba(244, 67, 54, 0.7);
   animation: mythic-chaos 1.5s ease-in-out infinite;
@@ -364,7 +615,7 @@
   }
 }
 
-.card-tcg.rarity-cosmic {
+.card.rarity-cosmic {
   border-color: #fff;
   box-shadow: 0 0 40px rgba(255, 255, 255, 0.9);
   animation: cosmic-reality 1s ease-in-out infinite;
@@ -485,7 +736,7 @@
 
 /* Responsive design */
 @media (max-width: 768px) {
-  .card-tcg {
+  .card {
     width: 300px;
     height: 420px;
   }
@@ -516,7 +767,7 @@
 }
 
 @media (max-width: 480px) {
-  .card-tcg {
+  .card {
     width: 250px;
     height: 350px;
   }

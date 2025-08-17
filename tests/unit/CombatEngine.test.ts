@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CombatEngine, AABBCollisionBox } from '../../src/services/CombatEngine';
-import { Card } from '../../src/types/card';
+import { UnifiedCard as Card, UnifiedRarity, CardType, createDefaultEmojis, createDefaultPassive } from '../../src/models/unified/Card';
 
 // Mock canvas and context
 const mockCanvas = {
@@ -30,10 +30,27 @@ describe('CombatEngine', () => {
     mockCard = {
       id: 'test-card',
       name: 'Test Card',
-      rarity: 'common',
-      type: 'creature',
+      description: 'Test Card Description',
+      rarity: UnifiedRarity.COMMON,
+      type: CardType.CREATURE,
       cost: 1,
-      emoji: '🔥'
+      attack: 2,
+      defense: 1,
+      hp: 10,
+      attackSpeed: 1.0,
+      emojis: createDefaultEmojis('🔥', UnifiedRarity.COMMON),
+      passive: createDefaultPassive(),
+      stackLevel: 0,
+      experience: 0,
+      luck: 0,
+      emoji: '🔥',
+      color: '#ff0000',
+      tags: ['test'],
+      stats: {
+        attack: 2,
+        defense: 1,
+        health: 10
+      }
     };
   });
 

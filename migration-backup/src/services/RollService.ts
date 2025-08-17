@@ -1,4 +1,4 @@
-import { UnifiedCard as Card } from '../models/unified/Card';
+import { Card } from '../types/card';
 import { commonCards } from '../data/cards/common';
 import { uncommonCards } from '../data/cards/uncommon';
 import { rareCards } from '../data/cards/rare';

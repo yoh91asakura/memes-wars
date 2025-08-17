@@ -2,9 +2,10 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
 import { useRollStore } from '../../stores/rollStore';
-import { Card } from '../../types/card';
+import { UnifiedCard as CardType } from '../../models/unified/Card';
 import { RollResult, RollStats } from '../../services/RollService';
-import { CardTCG } from '../cards/CardTCG';
+// import { AutoRollPanel } from '../roll/AutoRollPanel'; // TODO: Implement auto-roll feature
+import { Card as CardComponent } from '../cards/Card';
 import './RollScreenSolsRNG.css';
 
 // Particle System Component
@@ -105,7 +106,7 @@ const PityTracker: React.FC<{ stats: RollStats }> = ({ stats }) => {
 // Roll History Component
 interface RollHistoryItem {
   id: string;
-  card: Card;
+  card: CardType;
   timestamp: Date;
   pityTriggered: boolean;
   isGuaranteed: boolean;
@@ -151,7 +152,7 @@ const RollHistory: React.FC<{ history: RollHistoryItem[] }> = ({ history }) => {
 
 // Enhanced Card Reveal with Rarity Animations
 const EnhancedCardReveal: React.FC<{ 
-  card: Card; 
+  card: CardType; 
   onClose: () => void;
   pityTriggered?: boolean;
   isGuaranteed?: boolean;
@@ -235,11 +236,13 @@ const EnhancedCardReveal: React.FC<{
         onClick={onClose}
       >
         <div className={`card-container ${card.rarity}-glow`}>
-          {/* Use our CardTCG component */}
-          <CardTCG 
+          {/* Use our Card component */}
+          <CardComponent 
             card={card}
             showAnimations={false}
             onClick={onClose}
+            size="medium"
+            mode="display"
           />
         </div>
       </motion.div>
@@ -371,6 +374,30 @@ export const RollScreen: React.FC<RollScreenProps> = ({ onNavigateToCombat }) =>
         }}
       >
         +10,000 🪙 (DEV)
+      </motion.button>
+
+      {/* DEV MODE: Test Cards Showcase */}
+      <motion.button
+        className="dev-test-cards"
+        onClick={() => window.open('/test-cards', '_blank')}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        style={{
+          position: 'fixed',
+          top: '10px',
+          right: '200px',
+          padding: '10px 20px',
+          background: 'rgba(156, 39, 176, 0.2)',
+          border: '2px solid #9c27b0',
+          borderRadius: '10px',
+          color: '#9c27b0',
+          cursor: 'pointer',
+          zIndex: 1000,
+          fontSize: '14px',
+          fontWeight: 'bold'
+        }}
+      >
+        🃏 Test Cards (DEV)
       </motion.button>
       
       {/* Header with coin counter and pity tracker */}
