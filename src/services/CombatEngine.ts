@@ -1,5 +1,8 @@
 import { EmojiProjectile, EmojiFactory } from '../systems/emoji-system';
+import { getEmojiPower } from '../systems/emoji-database';
+import { EmojiSynergyCalculator } from './EmojiSynergyCalculator';
 import { Card } from '../types/card';
+import { EmojiPower } from '../types/emoji';
 
 export interface CombatEntity {
   id: string;
@@ -10,7 +13,19 @@ export interface CombatEntity {
   hp: number;
   maxHp: number;
   attackSpeed: number;
+  // Legacy emoji support
   emojis: string[];
+  
+  // New multi-emoji system
+  card?: Card;
+  emojiPowers: EmojiPower[];
+  synergyBonuses: {
+    damageBonus: number;
+    healingBonus: number;
+    controlBonus: number;
+    energyBonus: number;
+  };
+  
   isPlayer: boolean;
   isAlive: boolean;
   
@@ -182,25 +197,70 @@ export class CombatEngine {
   }
 
   /**
-   * Fire all emojis from an entity
+   * Fire all emojis from an entity (updated for new emoji system)
    */
   private fireEntityEmojis(entity: CombatEntity): void {
     const targets = this.getTargetsForEntity(entity);
     if (targets.length === 0) return;
 
-    entity.emojis.forEach((emojiChar, index) => {
-      const emoji = EmojiFactory.createEmoji(emojiChar);
-      const target = targets[Math.floor(Math.random() * targets.length)];
-      
-      // Calculate spawn position (spread emojis around entity)
-      const angleOffset = (index / entity.emojis.length) * Math.PI * 2;
-      const spawnRadius = 30;
-      const spawnX = entity.x + Math.cos(angleOffset) * spawnRadius;
-      const spawnY = entity.y + Math.sin(angleOffset) * spawnRadius;
-      
-      const projectile = new EmojiProjectile(emoji, spawnX, spawnY, target, entity);
-      this.projectiles.push(projectile);
-    });
+    // Use new emoji powers if available
+    if (entity.emojiPowers && entity.emojiPowers.length > 0) {
+      entity.emojiPowers.forEach((emojiPower, index) => {
+        const target = targets[Math.floor(Math.random() * targets.length)];
+        
+        // Create emoji-like object from power data
+        const emoji = {
+          character: emojiPower.character,
+          name: emojiPower.name,
+          baseDamage: emojiPower.baseDamage,
+          effectType: emojiPower.effectType,
+          effectValue: emojiPower.effectValue || 0,
+          effectDuration: emojiPower.effectDuration || 0,
+          projectileSpeed: emojiPower.projectileSpeed || 1,
+          trajectory: emojiPower.trajectory || 'straight',
+          applyEffect: function(target: any) {
+            // Apply base damage with synergy bonuses
+            const baseDamage = this.baseDamage;
+            const damageBonus = entity.synergyBonuses.damageBonus;
+            const totalDamage = baseDamage + (baseDamage * damageBonus / 100);
+            
+            target.takeDamage(totalDamage);
+            
+            // Apply special effects (basic implementation)
+            // This would be expanded to include all emoji effects
+          }
+        };
+        
+        // Calculate spawn position (spread emojis around entity)
+        const angleOffset = (index / entity.emojiPowers.length) * Math.PI * 2;
+        const spawnRadius = 30;
+        const spawnX = entity.x + Math.cos(angleOffset) * spawnRadius;
+        const spawnY = entity.y + Math.sin(angleOffset) * spawnRadius;
+        
+        const projectile = new EmojiProjectile(emoji as any, spawnX, spawnY, target, entity);
+        this.projectiles.push(projectile);
+      });
+    } 
+    // Fallback to legacy emoji system
+    else {
+      entity.emojis.forEach((emojiChar, index) => {
+        try {
+          const emoji = EmojiFactory.createEmoji(emojiChar);
+          const target = targets[Math.floor(Math.random() * targets.length)];
+          
+          // Calculate spawn position
+          const angleOffset = (index / entity.emojis.length) * Math.PI * 2;
+          const spawnRadius = 30;
+          const spawnX = entity.x + Math.cos(angleOffset) * spawnRadius;
+          const spawnY = entity.y + Math.sin(angleOffset) * spawnRadius;
+          
+          const projectile = new EmojiProjectile(emoji, spawnX, spawnY, target, entity);
+          this.projectiles.push(projectile);
+        } catch (error) {
+          console.warn(`Unknown emoji: ${emojiChar}`);
+        }
+      });
+    }
   }
 
   /**
@@ -341,39 +401,63 @@ export class CombatEngine {
   }
 
   /**
-   * Remove entity from combat
+   * Create combat entity from card with new emoji system
    */
-  removeEntity(entityId: string): void {
-    this.entities.delete(entityId);
-    this.autoFireTimers.delete(entityId);
-  }
-
-  /**
-   * Create entity from card
-   */
-  createEntityFromCard(card: Card, x: number, y: number, isPlayer: boolean): CombatEntity {
-    // Get emojis from card or use card emoji
-    const emojis = card.emoji ? [card.emoji] : [];
+  createEntityFromCard(
+    card: Card, 
+    id: string, 
+    x: number, 
+    y: number, 
+    isPlayer: boolean = false
+  ): CombatEntity {
+    // Get emoji powers from card
+    const emojiPowers: EmojiPower[] = [];
+    const emojis = card.emojis || (card.emoji ? [card.emoji] : []);
+    
+    for (const emojiChar of emojis) {
+      const power = getEmojiPower(emojiChar);
+      if (power) {
+        emojiPowers.push(power);
+      }
+    }
+    
+    // Calculate synergy bonuses
+    const synergies = card.emojiData?.activeSynergies || EmojiSynergyCalculator.calculateSynergies(emojis);
+    const synergyBonuses = {
+      damageBonus: EmojiSynergyCalculator.calculateSynergyDamageBonus(emojis, synergies),
+      healingBonus: EmojiSynergyCalculator.calculateSynergyHealingBonus(synergies),
+      controlBonus: EmojiSynergyCalculator.calculateControlDurationBonus(synergies),
+      energyBonus: EmojiSynergyCalculator.calculateEnergyBonus(synergies)
+    };
+    
+    // Calculate base stats
+    const baseHp = card.stats?.health || card.defense || 10;
     
     const entity: CombatEntity = {
-      id: `${isPlayer ? 'player' : 'enemy'}_${Date.now()}_${Math.random()}`,
+      id,
       x,
       y,
-      width: 60,
-      height: 60,
-      hp: 100, // Base HP, could be from card
-      maxHp: 100,
-      attackSpeed: 1.0, // Base attack speed
+      width: 64,
+      height: 64,
+      hp: baseHp,
+      maxHp: baseHp,
+      attackSpeed: 1.0,
+      
+      // Legacy support
       emojis,
+      
+      // New emoji system
+      emojiPowers,
+      synergyBonuses,
+      
       isPlayer,
       isAlive: true,
       effects: new Map(),
       
+      // Methods
       takeDamage: function(damage: number) {
         this.hp = Math.max(0, this.hp - damage);
-        if (this.hp <= 0) {
-          this.isAlive = false;
-        }
+        this.isAlive = this.hp > 0;
       },
       
       heal: function(amount: number) {
@@ -388,9 +472,18 @@ export class CombatEngine {
         this.effects.delete(effectId);
       }
     };
-
+    
     return entity;
   }
+
+  /**
+   * Remove entity from combat
+   */
+  removeEntity(entityId: string): void {
+    this.entities.delete(entityId);
+    this.autoFireTimers.delete(entityId);
+  }
+
 
   /**
    * Clean up dead entities
@@ -424,11 +517,11 @@ export class CombatEngine {
     this.autoFireTimers.clear();
 
     // Create player entity
-    const playerEntity = this.createEntityFromCard(playerCard, 200, 400, true);
+    const playerEntity = this.createEntityFromCard(playerCard, 'player', 200, 400, true);
     this.addEntity(playerEntity);
 
     // Create enemy entity
-    const enemyEntity = this.createEntityFromCard(enemyCard, 1000, 400, false);
+    const enemyEntity = this.createEntityFromCard(enemyCard, 'enemy', 1000, 400, false);
     this.addEntity(enemyEntity);
 
     // Start the engine

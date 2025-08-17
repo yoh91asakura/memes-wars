@@ -53,7 +53,7 @@ describe('CombatEngine', () => {
 
   describe('Entity Management', () => {
     it('should create entity from card', () => {
-      const entity = engine.createEntityFromCard(mockCard, 100, 200, true);
+      const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
       expect(entity.id).toContain('player');
       expect(entity.x).toBe(100);
@@ -66,7 +66,7 @@ describe('CombatEngine', () => {
     });
 
     it('should add and remove entities', () => {
-      const entity = engine.createEntityFromCard(mockCard, 100, 200, true);
+      const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
       engine.addEntity(entity);
       expect(engine.getPerformanceStats().entities).toBe(1);
@@ -76,7 +76,7 @@ describe('CombatEngine', () => {
     });
 
     it('should handle entity damage and death', () => {
-      const entity = engine.createEntityFromCard(mockCard, 100, 200, true);
+      const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
       expect(entity.hp).toBe(100);
       expect(entity.isAlive).toBe(true);
@@ -91,7 +91,7 @@ describe('CombatEngine', () => {
     });
 
     it('should handle entity healing', () => {
-      const entity = engine.createEntityFromCard(mockCard, 100, 200, true);
+      const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
       entity.takeDamage(50);
       expect(entity.hp).toBe(50);
@@ -149,8 +149,8 @@ describe('CombatEngine', () => {
       expect(result.isOver).toBe(true); // No entities = over
       
       // Add entities
-      const playerEntity = engine.createEntityFromCard(mockCard, 100, 200, true);
-      const enemyEntity = engine.createEntityFromCard(mockCard, 300, 200, false);
+      const playerEntity = engine.createEntityFromCard(mockCard, 'player', 100, 200, true);
+      const enemyEntity = engine.createEntityFromCard(mockCard, 'enemy', 300, 200, false);
       
       engine.addEntity(playerEntity);
       engine.addEntity(enemyEntity);
@@ -193,7 +193,7 @@ describe('CombatEngine', () => {
 
   describe('Status Effects', () => {
     it('should apply and remove status effects', () => {
-      const entity = engine.createEntityFromCard(mockCard, 100, 200, true);
+      const entity = engine.createEntityFromCard(mockCard, 'test', 100, 200, true);
       
       const burnEffect = {
         id: 'burn_1',
@@ -219,7 +219,7 @@ describe('CombatEngine', () => {
         emoji: '🔥'
       };
       
-      const entity = engine.createEntityFromCard(fireCard, 100, 200, true);
+      const entity = engine.createEntityFromCard(fireCard, 'fire', 100, 200, true);
       expect(entity.emojis).toContain('🔥');
     });
 
@@ -229,7 +229,7 @@ describe('CombatEngine', () => {
       };
       delete (emptyCard as any).emoji;
       
-      const entity = engine.createEntityFromCard(emptyCard, 100, 200, true);
+      const entity = engine.createEntityFromCard(emptyCard, 'empty', 100, 200, true);
       expect(entity.emojis).toEqual([]);
     });
   });
