@@ -807,6 +807,15 @@
   pointer-events: none;
 }
 
+/* Main Roll Button - Centered at bottom */
+.main-roll-button {
+  position: fixed !important;
+  bottom: 40px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 100 !important;
+}
+
 /* Floating Roll Button - Sol's RNG Style */
 .floating-roll-button {
   display: none; /* Hidden - using bottom bar instead */
