@@ -1,0 +1,121 @@
+# 📋 Project Tasks - The Meme Wars
+
+## Current Sprint: Core Systems Implementation
+
+### 🎯 Priority 1: Emoji System
+- [ ] **TASK-001**: Implement Emoji Effect System
+  - Define all 50 emoji behaviors
+  - Create effect triggers and durations
+  - Implement damage calculations
+  - Status: **IN PROGRESS**
+
+- [ ] **TASK-002**: Create Emoji Projectile Physics
+  - Trajectory patterns
+  - Collision detection
+  - Visual effects on impact
+  - Status: **TODO**
+
+### 🃏 Priority 2: Card System
+- [ ] **TASK-003**: Implement Card Data Structure
+  - Load card definitions from card-database.md
+  - Create card class with all properties
+  - Implement stacking system
+  - Status: **TODO**
+
+- [ ] **TASK-004**: Design Card Visuals
+  - Card frame by rarity (color coding)
+  - Emoji display layout
+  - Stats display (HP, AS, Passive)
+  - Stack level indicator
+  - Status: **TODO**
+
+- [ ] **TASK-005**: Create 10 Common Cards
+  - Cards 1-10 from database
+  - HP: 10-20, AS: 0.5-1.0
+  - 1-2 emojis each
+  - Status: **READY**
+
+- [ ] **TASK-006**: Create 8 Uncommon Cards
+  - Cards 11-18 from database
+  - HP: 20-40, AS: 1.0-1.5
+  - 2-3 emojis each
+  - Status: **READY**
+
+### ⚔️ Priority 3: Combat System
+- [ ] **TASK-007**: Build Battle Engine
+  - Auto-fire mechanism
+  - Damage calculation
+  - HP tracking
+  - Victory conditions
+  - Status: **TODO**
+
+- [ ] **TASK-008**: Implement Visual Chaos Scaling
+  - Particle system for emojis
+  - Performance optimization
+  - Damage number display
+  - Screen shake effects
+  - Status: **TODO**
+
+### 💰 Priority 4: Collection System
+- [ ] **TASK-009**: Pack Opening System
+  - Rarity rolls (weighted random)
+  - Animation sequences
+  - Duplicate handling
+  - Currency deduction
+  - Status: **TODO**
+
+- [ ] **TASK-010**: Inventory Management
+  - Card collection display
+  - Sorting and filtering
+  - Stack level display
+  - Status: **TODO**
+
+### 🎨 Priority 5: UI/UX
+- [ ] **TASK-011**: Main Menu Design
+  - Play button
+  - Collection button
+  - Shop button
+  - Profile section
+  - Status: **TODO**
+
+- [ ] **TASK-012**: Battle UI
+  - HP bars
+  - Timer
+  - Emoji counter
+  - Effects indicator
+  - Status: **TODO**
+
+## Completed Tasks
+- [x] **TASK-000**: Define Emoji Powers Database
+  - Created emoji-powers.md with 50 emojis
+  - Defined categories and effects
+  - Established assignment rules
+
+- [x] **TASK-000B**: Create Card Database
+  - Designed 38 unique cards
+  - Distributed across 7 rarity tiers
+  - Assigned emojis with synergies
+
+## Technical Dependencies
+1. **Emoji System** must be complete before Combat System
+2. **Card System** must be complete before Collection System
+3. **Combat System** required for testing balance
+4. **UI/UX** can be developed in parallel
+
+## Resource Files
+- `/docs/specifications/emoji-powers.md` - Complete emoji definitions
+- `/docs/specifications/card-database.md` - All card definitions
+- `/docs/specifications/game-specification.md` - Core game design
+
+## Notes
+- Each emoji has been assigned a unique power
+- Cards have been designed with thematic synergies
+- Rarity scaling follows exponential power curve
+- Visual chaos is core to the experience
+
+## Next Actions
+1. Start with TASK-001: Implement Emoji Effect System
+2. Create base classes for Cards and Emojis
+3. Build simple combat prototype
+4. Test emoji interactions
+5. Iterate on balance

@@ -1,0 +1,58 @@
+{
+  "name": "emoji-mayhem-tcg",
+  "version": "0.1.0",
+  "description": "A trading card game with emoji bullet hell combat",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx hooks/run-dev.ts",
+    "dev:raw": "vite",
+    "build": "tsc && vite build && tsx hooks/after-build.ts",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "hooks:status": "echo '🪝 Hooks système actifs et configurés'",
+    "hooks:pre-commit": "tsx hooks/pre-commit.ts",
+    "hooks:check-task": "tsx hooks/check-task.ts",
+    "hooks:clean": "rm -rf node_modules/.cache dist .parcel-cache",
+    "sparc:spec": "npx claude-flow sparc run spec-pseudocode",
+    "sparc:architect": "npx claude-flow sparc run architect",
+    "sparc:tdd": "npx claude-flow sparc tdd"
+  },
+  "keywords": [
+    "tcg",
+    "game",
+    "emoji",
+    "meme",
+    "bullet-hell"
+  ],
+  "author": "Emoji Mayhem Team",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "framer-motion": "^11.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "socket.io-client": "^4.7.0",
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.3.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/uuid": "^9.0.8",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "@vitest/coverage-v8": "^1.3.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.3.0",
+    "vite": "^5.1.0",
+    "vitest": "^1.3.0"
+  }
+}

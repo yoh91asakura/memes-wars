@@ -1,0 +1,157 @@
+.roll-screen {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Background gradient that changes based on rarity */
+.background-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: all 1s ease;
+  z-index: -1;
+}
+
+.background-gradient.common {
+  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+}
+
+.background-gradient.uncommon {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+.background-gradient.rare {
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+}
+
+.background-gradient.epic {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+}
+
+.background-gradient.legendary {
+  background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%);
+}
+
+.background-gradient.mythic {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+}
+
+.background-gradient.cosmic {
+  background: linear-gradient(135deg, 
+    #ff0080 0%, 
+    #ff8c00 20%, 
+    #ffd700 40%, 
+    #00ff00 60%, 
+    #00ffff 80%, 
+    #ff00ff 100%);
+  animation: rainbow 5s linear infinite;
+}
+
+@keyframes rainbow {
+  0%, 100% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(180deg); }
+}
+
+/* Coin counter - subtle, top-right */
+.coin-counter {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.coin-emoji {
+  font-size: 24px;
+}
+
+.coin-amount {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Roll container - center of screen */
+.roll-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Rolling animation */
+.rolling-animation {
+  position: relative;
+}
+
+.card-back {
+  width: 200px;
+  height: 280px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.card-mystery {
+  font-size: 64px;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Auto-roll toggle button */
+.auto-roll-toggle {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.auto-roll-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.auto-icon {
+  font-size: 20px;
+}

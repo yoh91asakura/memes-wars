@@ -1,0 +1,121 @@
+{
+  "game": {
+    "name": "Emoji Mayhem TCG",
+    "version": "0.1.0",
+    "maxDeckSize": 8,
+    "minDeckSize": 6,
+    "rollCost": 100,
+    "startingCoins": 1000,
+    "startingGems": 10
+  },
+  "combat": {
+    "maxDuration": 60,
+    "countdownDuration": 3,
+    "projectilePoolSize": 1000,
+    "effectCheckRate": 4,
+    "damageNumberDuration": 1.5,
+    "victoryRewardCoins": 200,
+    "victoryRewardExp": 50,
+    "defeatRewardCoins": 50,
+    "defeatRewardExp": 10
+  },
+  "visuals": {
+    "targetFPS": 60,
+    "maxEmojisOnScreen": 500,
+    "particleEffects": true,
+    "screenShake": true,
+    "damageNumbers": true,
+    "glowEffects": true,
+    "trailEffects": true
+  },
+  "progression": {
+    "levels": {
+      "5": {
+        "unlock": "auto-roll",
+        "description": "Automatically roll cards every 10 seconds"
+      },
+      "10": {
+        "unlock": "deck-presets",
+        "description": "Save and load deck configurations"
+      },
+      "15": {
+        "unlock": "tournament-mode",
+        "description": "Participate in competitive tournaments"
+      },
+      "20": {
+        "unlock": "trading-system",
+        "description": "Trade cards with other players"
+      }
+    },
+    "experienceFormula": {
+      "base": 100,
+      "multiplier": 1.5,
+      "description": "XP needed = base * (level ^ multiplier)"
+    }
+  },
+  "rarityEffects": {
+    "COMMON": {
+      "animationDuration": 0.5,
+      "soundEffect": "click.mp3",
+      "particleCount": 0
+    },
+    "UNCOMMON": {
+      "animationDuration": 1.0,
+      "soundEffect": "ding.mp3",
+      "particleCount": 10
+    },
+    "RARE": {
+      "animationDuration": 1.5,
+      "soundEffect": "chime.mp3",
+      "particleCount": 20
+    },
+    "EPIC": {
+      "animationDuration": 2.0,
+      "soundEffect": "bell.mp3",
+      "particleCount": 30,
+      "screenShake": true
+    },
+    "LEGENDARY": {
+      "animationDuration": 3.0,
+      "soundEffect": "fanfare.mp3",
+      "particleCount": 50,
+      "screenShake": true
+    },
+    "MYTHIC": {
+      "animationDuration": 5.0,
+      "soundEffect": "epic-fanfare.mp3",
+      "particleCount": 100,
+      "screenShake": true,
+      "sparkles": true
+    },
+    "COSMIC": {
+      "animationDuration": 10.0,
+      "soundEffect": "cosmic-reveal.mp3",
+      "particleCount": 200,
+      "screenShake": true,
+      "sparkles": true,
+      "rainbow": true
+    }
+  },
+  "emojis": {
+    "collections": {
+      "fire": ["🔥", "🌋", "☄️", "💥", "🎆"],
+      "water": ["💧", "💦", "🌊", "🏄", "🐟"],
+      "nature": ["🌱", "🌿", "🍃", "🌳", "🌺"],
+      "electric": ["⚡", "🔌", "💡", "🔋", "⛈️"],
+      "ice": ["❄️", "☃️", "🧊", "🏔️", "🌨️"],
+      "dark": ["🌑", "🕷️", "🦇", "💀", "⚰️"],
+      "light": ["✨", "🌟", "💫", "☀️", "🌞"],
+      "meme": ["🐸", "🗿", "💎", "🚀", "🌙"]
+    },
+    "effectMappings": {
+      "❄️": "FREEZE",
+      "🔥": "BURN",
+      "💚": "HEAL",
+      "⚡": "BOOST",
+      "🛡️": "SHIELD",
+      "🧪": "POISON",
+      "🍀": "LUCKY"
+    }
+  }
+}

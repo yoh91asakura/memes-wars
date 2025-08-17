@@ -1,0 +1,161 @@
+.auto-roll-panel {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 500px;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  color: white;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.panel-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  opacity: 1;
+}
+
+/* Roll options */
+.roll-options {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.roll-option {
+  flex: 1;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.roll-option:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.roll-option.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.option-label {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.option-cost {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Settings */
+.panel-settings {
+  margin-bottom: 20px;
+}
+
+.hide-roll-toggle {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  padding-left: 60px;
+  min-height: 30px;
+}
+
+.hide-roll-toggle input {
+  display: none;
+}
+
+.toggle-slider {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 13px;
+  transition: background 0.3s;
+}
+
+.toggle-slider::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.hide-roll-toggle input:checked + .toggle-slider {
+  background: #667eea;
+}
+
+.hide-roll-toggle input:checked + .toggle-slider::after {
+  transform: translateX(24px);
+}
+
+.toggle-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toggle-desc {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* Panel info */
+.panel-info {
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.panel-info p {
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
