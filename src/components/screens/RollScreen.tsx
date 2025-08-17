@@ -426,7 +426,7 @@ export const RollScreen: React.FC = () => {
         </div>
       </div>
       
-      {/* Center Roll Button */}
+      {/* Bottom Center Roll Button */}
       <motion.button
         className="main-roll-button"
         onClick={handleSingleRoll}
@@ -448,9 +448,9 @@ export const RollScreen: React.FC = () => {
         whileTap={{ scale: 0.95 }}
         style={{
           position: 'fixed',
-          top: '50%',
+          bottom: '40px',
           left: '50%',
-          transform: 'translate(-50%, -50%)',
+          transform: 'translateX(-50%)',
           width: '120px',
           height: '120px',
           background: isRolling 
