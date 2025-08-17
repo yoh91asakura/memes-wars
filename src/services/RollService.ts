@@ -175,7 +175,7 @@ export class RollService {
   /**
    * Get random card of specific rarity
    */
-  private getRandomCardOfRarity(rarity: string): Card {
+  public getRandomCardOfRarity(rarity: string): Card {
     const cardsOfRarity = this.allCards.get(rarity) || [];
     
     if (cardsOfRarity.length === 0) {

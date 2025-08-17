@@ -141,12 +141,25 @@ temp/
 coverage/
 
 
-# Archon
-archon/data/
-archon/*.db
-archon/*.sqlite
-archon/docker-compose.yml
-archon/config/
+# ============================================
+# LOCAL DEVELOPMENT TOOLS - NOT VERSIONED
+# Each developer must set up their own
+# ============================================
+
+# Entire Archon directory (task management)
+archon/
+
+# Claude Flow and AI tools
+.claude/
+.claude-flow/
+.swarm/
+.hive-mind/
+claude-flow/
+memory/
+coordination/
+.mcp.json
+claude-flow.config.json
+hive-mind-prompt-*.txt
 
 # Local configuration files
 .env.local
@@ -157,13 +170,13 @@ archon/config/
 config.local.*
 settings.local.*
 
-# MCP and Claude Flow
-.roo/mcp-archon.json
-.roo/*.local.json
-.claude/settings.local.json
-.claude-flow/sessions/
-.claude-flow/memory/
-.claude-flow/cache/
+# MCP and development configs
+.roo/
+*.local.json
+*.local.yml
+*.local.yaml
+config.local.*
+settings.local.*
 
 # Platform-specific scripts backups
 *.backup
@@ -255,27 +268,22 @@ hiberfil.sys
 pagefile.sys
 swapfile.sys
 
-# Claude Flow generated files
-.claude/settings.local.json
-.mcp.json
-claude-flow.config.json
-.swarm/
-.hive-mind/
-memory/claude-flow-data.json
-memory/sessions/*
-!memory/sessions/README.md
-memory/agents/*
-!memory/agents/README.md
-coordination/memory_bank/*
-coordination/subtasks/*
-coordination/orchestration/*
+# Development workflow files (not versioned)
+tasks/
+!docs/CLAUDE.md  # Only CLAUDE.md is versioned for workflow reference
+docs/workflow-*.md
+docs/pseudocode/
+docs/architecture/
+!docs/README.md
+
+# Python scripts for development
+*.py
+archon-mcp-bridge.py
+
+# Database files
 *.db
 *.db-journal
 *.db-wal
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal
-claude-flow
-claude-flow.bat
-claude-flow.ps1
-hive-mind-prompt-*.txt
