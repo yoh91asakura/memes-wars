@@ -1,0 +1,216 @@
+[
+  {
+    "id": "COMMON_001",
+    "name": "Basic Smile",
+    "emoji": "😊",
+    "rarity": "common",
+    "type": "creature",
+    "cost": 1,
+    "attack": 2,
+    "defense": 1,
+    "health": 2,
+    "description": "A friendly face that packs a surprising punch!",
+    "ability": {
+      "name": "Happy Strike",
+      "type": "passive",
+      "description": "When played, deal 1 damage to a random enemy",
+      "effect": "random_damage",
+      "value": 1
+    },
+    "flavorText": "Don't let that smile fool you - those teeth are sharp!",
+    "tags": ["creature", "damage", "starter"]
+  },
+  {
+    "id": "COMMON_002",
+    "name": "Healing Heart",
+    "emoji": "❤️",
+    "rarity": "common",
+    "type": "spell",
+    "cost": 1,
+    "attack": 0,
+    "defense": 0,
+    "health": 0,
+    "description": "Restores health to your most damaged creature",
+    "ability": {
+      "name": "Love Heals",
+      "type": "targeted",
+      "description": "Heal target creature for 2 health points",
+      "effect": "heal",
+      "value": 2
+    },
+    "flavorText": "Love conquers all... including battle damage!",
+    "tags": ["spell", "heal", "support"]
+  },
+  {
+    "id": "COMMON_003",
+    "name": "Muscle Flex",
+    "emoji": "💪",
+    "rarity": "common",
+    "type": "creature",
+    "cost": 2,
+    "attack": 3,
+    "defense": 2,
+    "health": 3,
+    "description": "A strong fighter who never skips emoji day!",
+    "ability": {
+      "name": "Power Strike",
+      "type": "active",
+      "description": "Deal double damage when attacking creatures with lower health",
+      "effect": "conditional_double_damage",
+      "condition": "target_health_lower"
+    },
+    "flavorText": "Gains +2 attack when listening to motivational speeches.",
+    "tags": ["creature", "fighter", "physical"]
+  },
+  {
+    "id": "COMMON_004",
+    "name": "Protective Shield",
+    "emoji": "🛡️",
+    "rarity": "common",
+    "type": "creature",
+    "cost": 2,
+    "attack": 1,
+    "defense": 4,
+    "health": 4,
+    "description": "Stands strong to protect your other creatures",
+    "ability": {
+      "name": "Shield Wall",
+      "type": "passive",
+      "description": "Adjacent creatures gain +1 defense",
+      "effect": "aura_defense",
+      "value": 1,
+      "range": "adjacent"
+    },
+    "flavorText": "The best offense is a good defense, apparently.",
+    "tags": ["creature", "defender", "tank"]
+  },
+  {
+    "id": "COMMON_005",
+    "name": "Lightning Bolt",
+    "emoji": "⚡",
+    "rarity": "common",
+    "type": "spell",
+    "cost": 1,
+    "attack": 0,
+    "defense": 0,
+    "health": 0,
+    "description": "A quick jolt of electricity that strikes fast",
+    "ability": {
+      "name": "Electric Strike",
+      "type": "targeted",
+      "description": "Deal 2 damage to target creature. Cannot be blocked",
+      "effect": "direct_damage",
+      "value": 2,
+      "unblockable": true
+    },
+    "flavorText": "⚡ ZAP! ⚡ Your enemies won't know what hit them!",
+    "tags": ["spell", "electric", "direct_damage"]
+  },
+  {
+    "id": "COMMON_006",
+    "name": "Flame Burst",
+    "emoji": "🔥",
+    "rarity": "common",
+    "type": "creature",
+    "cost": 2,
+    "attack": 3,
+    "defense": 1,
+    "health": 2,
+    "description": "A fiery spirit that burns everything in its path",
+    "ability": {
+      "name": "Burn",
+      "type": "passive",
+      "description": "When this creature deals damage, also deal 1 burn damage",
+      "effect": "burn",
+      "value": 1
+    },
+    "flavorText": "Is it getting hot in here or is it just me?",
+    "tags": ["creature", "fire", "burn"]
+  },
+  {
+    "id": "COMMON_007",
+    "name": "Water Drop",
+    "emoji": "💧",
+    "rarity": "common",
+    "type": "creature",
+    "cost": 1,
+    "attack": 1,
+    "defense": 2,
+    "health": 3,
+    "description": "A flowing water spirit that adapts to any situation",
+    "ability": {
+      "name": "Flow",
+      "type": "active",
+      "description": "Can move to any position on your side of the field",
+      "effect": "reposition",
+      "cooldown": 2
+    },
+    "flavorText": "Be like water, my friend. Flow around your problems!",
+    "tags": ["creature", "water", "mobile"]
+  },
+  {
+    "id": "COMMON_008",
+    "name": "Leaf Shield",
+    "emoji": "🌱",
+    "rarity": "common",
+    "type": "creature",
+    "cost": 1,
+    "attack": 1,
+    "defense": 3,
+    "health": 2,
+    "description": "A gentle plant that grows stronger over time",
+    "ability": {
+      "name": "Growth",
+      "type": "passive",
+      "description": "Gains +1 attack and +1 health at the start of your turn",
+      "effect": "stat_growth",
+      "value": 1
+    },
+    "flavorText": "Started from the bottom now we here! 🌱➡️🌳",
+    "tags": ["creature", "nature", "growth"]
+  },
+  {
+    "id": "COMMON_009",
+    "name": "Lucky Star",
+    "emoji": "⭐",
+    "rarity": "common",
+    "type": "spell",
+    "cost": 1,
+    "attack": 0,
+    "defense": 0,
+    "health": 0,
+    "description": "Wishing upon a star makes your creatures stronger",
+    "ability": {
+      "name": "Wish Power",
+      "type": "targeted",
+      "description": "Target creature gains +1 attack and +1 defense",
+      "effect": "stat_buff",
+      "attack_buff": 1,
+      "defense_buff": 1
+    },
+    "flavorText": "When you wish upon a star... your creatures become OP!",
+    "tags": ["spell", "buff", "utility"]
+  },
+  {
+    "id": "COMMON_010",
+    "name": "Target Lock",
+    "emoji": "🎯",
+    "rarity": "common",
+    "type": "creature",
+    "cost": 1,
+    "attack": 2,
+    "defense": 1,
+    "health": 1,
+    "description": "Never misses its mark, no matter the target",
+    "ability": {
+      "name": "Precision Strike",
+      "type": "passive",
+      "description": "This creature cannot miss and ignores taunt effects",
+      "effect": "precision",
+      "ignore_taunt": true,
+      "cannot_miss": true
+    },
+    "flavorText": "Bullseye! 🎯 Even blindfolded I'd hit the target!",
+    "tags": ["creature", "precision", "anti_taunt"]
+  }
+]
