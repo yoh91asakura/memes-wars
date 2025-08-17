@@ -12,7 +12,7 @@ import {
   TaskStatus,
   UserStory,
   TaskContext
-} from './advanced-task-system';
+} from './advanced-task-system.js';
 
 const manager = new AdvancedTaskManager(process.cwd());
 

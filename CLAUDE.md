@@ -25,13 +25,19 @@
 3. **SYNCHRONISER** → GitHub pour collaboration et versioning
 4. **TodoWrite** → Pour tracking personnel complémentaire
 
-### ⚠️ WORKFLOW CHECK
+### ⚠️ WORKFLOW CHECK - SYNCHRONISATION CRITIQUE
 ```bash
-# Initialiser si nécessaire
-npm run tasks:init
+# 1. LIRE L'ÉTAT ACTUEL (obligatoire avant toute action)
+cat tasks/PROJECT_STATUS.md | head -30
 
-# Toujours commencer par lister les tâches
-npm run tasks:list
+# 2. VÉRIFIER LES TÂCHES ACTIVES
+npm run tasks:list --status in-progress
+
+# 3. IDENTIFIER SA TÂCHE
+npm run tasks:list --assignee "[agent-name]"
+
+# 4. SI NOUVELLE SESSION, RESTAURER CONTEXTE
+cat tasks/tasks.json | grep -A 20 "in-progress"
 ```
 
 ## 🆕 PROTOCOLE DEMANDE UTILISATEUR
@@ -126,7 +132,15 @@ git push -u origin task/[task-id]-[short-description]
 # 6. Maintenant seulement, commencer le travail sur la branche
 ```
 
-## if swarm MCP is available, reade CLAUDE-SWARM.md
+## 🐝 Agents avec MCP (GitHub, Playwright, Swarm)
+**Si MCP disponible** → Lire `CLAUDE-SWARM.md` pour capacités étendues
+**Si MCP non disponible** → Utiliser patterns de cette section
+
+### Détection MCP :
+```bash
+# Vérifier disponibilité
+mcp status || echo "MCP non disponible - utiliser patterns locaux"
+```
 
 ## 🚨 CONCURRENT EXECUTION - RÈGLE D'OR
 
@@ -151,22 +165,77 @@ git push -u origin task/[task-id]-[short-description]
 
 # 2. ⚙️ CONFIGURATION PROJET
 
-## 📊 Task Management System
-- **Tasks Directory** : `tasks/`
-- **Tasks File** : `tasks/tasks.json`
-- **Scripts** : `scripts/tasks/`
+## 📊 Task Management System V2 - MODERNE
 
-## 🚀 Démarrage Système de Tâches
+### 📁 Structure des fichiers critiques
+```
+tasks/
+├── tasks.json              # ⚠️ SOURCE DE VÉRITÉ - Toutes les tâches
+├── PROJECT_STATUS.md       # 📊 Dashboard temps réel du sprint
+└── modules/                # 📝 Tâches modulaires détaillées
+    ├── cards/
+    ├── services/
+    └── ui/
+
+docs/
+├── ROADMAP.md             # 🎯 Vision et phases du projet
+├── CLAUDE.md              # 📖 Ce fichier - Guide agents
+└── CLAUDE-SWARM.md        # 🐝 Pour agents avec MCP
+```
+
+### 🔄 WORKFLOW OBLIGATOIRE - Synchronisation État
+
+#### AVANT TOUTE ACTION - Lire l'état actuel:
 ```bash
-# Initialiser le système de tâches
-npm run tasks:init
+# 1. TOUJOURS commencer par vérifier le PROJECT STATUS
+cat tasks/PROJECT_STATUS.md | head -50
 
-# Vérifier statut des tâches
-npm run tasks:list
-npm run tasks:list --stats
+# 2. Vérifier les tâches en cours
+npm run tasks:list --status in-progress
 
-# Exporter pour rapports
-npm run tasks:list --export markdown > tasks-report.md
+# 3. Identifier les tâches bloquées
+npm run tasks:list --status blocked
+```
+
+#### PENDANT LE TRAVAIL - Mise à jour temps réel:
+```bash
+# Mettre à jour le statut immédiatement
+node scripts/tasks/update.js [task-id] --status in-progress --assignee "[agent-name]"
+
+# Ajouter des commentaires de progression
+node scripts/tasks/update.js [task-id] --comment "Completed 40% - unified Card interface created"
+
+# Marquer les critères d'acceptation complétés
+node scripts/tasks/update.js [task-id] --complete-criteria "[criteria-id]"
+```
+
+#### APRÈS CHAQUE MILESTONE - Synchroniser:
+```bash
+# Mettre à jour PROJECT_STATUS.md automatiquement
+node scripts/tasks/generate-status.js > tasks/PROJECT_STATUS.md
+
+# Commit des changements d'état
+git add tasks/PROJECT_STATUS.md tasks/tasks.json
+git commit -m "chore: update project status - [task-id] progress"
+git push origin task/[task-id]
+```
+
+## 🚀 Système de Tâches - Commandes Essentielles
+```bash
+# Vision globale
+npm run tasks:list --stats          # Statistiques du sprint
+npm run tasks:list --critical       # Tâches CRITIQUES uniquement
+npm run tasks:list --blocked        # Tâches bloquées
+
+# Gestion des tâches
+npm run tasks:new                   # Créer nouvelle tâche (interactif)
+npm run tasks:update [id]           # Mettre à jour tâche
+npm run tasks:done [id]             # Marquer comme terminée
+
+# Reporting et monitoring
+npm run tasks:report                # Générer rapport complet
+npm run tasks:burndown              # Voir burndown chart
+npm run tasks:dependencies          # Analyser dépendances
 ```
 
 ## 🎯 Claude Code vs MCP Tools
@@ -256,28 +325,32 @@ mcp status
 
 **OBLIGATOIRE : Workflow complet avant tout coding :**
 
-### Phase 1: 🔍 INITIALISATION
+### Phase 1: 🔍 INITIALISATION AVEC ÉTAT SYNCHRONISÉ
 ```bash
-# 1. Synchroniser avec main
+# 1. CRITICAL - Lire l'état global du projet
+echo "=== PROJECT STATUS ==="
+cat tasks/PROJECT_STATUS.md | head -50
+echo "=== ACTIVE TASKS ==="
+npm run tasks:list --status in-progress
+
+# 2. Synchroniser avec main
 git checkout main
 git pull origin main
 
-# 2. Vérifier tâche actuelle
-npm run tasks:list --status in-progress
+# 3. Identifier la tâche à prendre
+npm run tasks:list --status todo --priority critical
+npm run tasks:list --status todo --priority high
 
-# 3. Lister tâches disponibles
-npm run tasks:list --status todo
-npm run tasks:list --priority high
-
-# 4. Créer branche pour la tâche (CRITIQUE pour multi-agents)
+# 4. VERROUILLER IMMÉDIATEMENT (anti-conflit)
 git checkout -b task/[task-id]-[short-description]
-# Exemple: git checkout -b task/1-implement-card-system
-
-# 5. Verrouiller la tâche
 node scripts/tasks/update.js [id] --status in-progress --assignee "[agent-name]"
 
-# 6. Push branche initiale
-git add . && git commit -m "chore: starting task [id] - [title]"
+# 5. Documenter le début dans PROJECT_STATUS
+echo "### $(date '+%Y-%m-%d %H:%M') - Agent [name] started task [id]" >> tasks/PROJECT_STATUS.md
+
+# 6. Push état verrouillé
+git add tasks/tasks.json tasks/PROJECT_STATUS.md
+git commit -m "chore: [agent-name] starting task [id] - [title]"
 git push -u origin task/[task-id]-[short-description]
 ```
 
@@ -338,18 +411,44 @@ node scripts/tasks/update.js [id] --status done
 git push origin --delete task/[task-id]-[description]
 ```
 
-## 📋 Status Progression OBLIGATOIRE
+## 📋 Status Progression OBLIGATOIRE avec Tracking
 ```
 todo → in-progress → review → done
+     ↓
+   blocked (si dépendance)
 ```
 
-- **`todo`** : Pas encore commencé
+### États et Actions Requises:
+- **`todo`** : Disponible pour assignation
+  - Action: `npm run tasks:list --status todo`
+  
 - **`in-progress`** : Agent travaille activement
-- **`review`** : Implémentation complète, attend validation utilisateur
-- **`done`** : SEULEMENT après confirmation utilisateur explicite
-- **`blocked`** : Bloqué par dépendance externe
+  - Action: Update PROJECT_STATUS.md toutes les 2h
+  - Command: `node scripts/tasks/update.js [id] --progress [%]`
+  
+- **`review`** : Code complet, PR créée
+  - Action: Créer PR + update status
+  - Command: `node scripts/tasks/update.js [id] --status review --pr [number]`
+  
+- **`done`** : APRÈS merge ET validation user
+  - Action: Update + cleanup branch
+  - Command: `npm run tasks:done [id]`
+  
+- **`blocked`** : Dépendance non résolue
+  - Action: Documenter le blocage
+  - Command: `node scripts/tasks/update.js [id] --status blocked --reason "[why]"`
 
-**⚠️ JAMAIS marquer `done` sans validation utilisateur !**
+### 📊 Tracking Obligatoire:
+```bash
+# Toutes les 2 heures si in-progress
+node scripts/tasks/update.js [id] --progress [%] --comment "[what was done]"
+
+# Mettre à jour PROJECT_STATUS.md
+node scripts/tasks/generate-status.js > tasks/PROJECT_STATUS.md
+git add tasks/PROJECT_STATUS.md && git commit -m "chore: progress update [id]"
+```
+
+**⚠️ RÈGLE D'OR: Un agent silencieux = tâche abandonnée après 4h**
 
 ---
 
@@ -395,13 +494,76 @@ Message 3: Create Card.ts
 // VIOLATION CRITIQUE !
 ```
 
+## 🌐 WEB DEVELOPMENT - PATTERN FULL-STACK PARALLÈLE
+```javascript
+// TOUJOURS développer Frontend + Backend simultanément
+[BatchTool]:
+  // Frontend Components (React/Vue/Angular)
+  Write "src/components/Header.tsx" [headerContent]
+  Write "src/components/Dashboard.tsx" [dashboardContent]
+  Write "src/components/UserProfile.tsx" [profileContent]
+  Write "src/hooks/useAuth.ts" [authHookContent]
+  
+  // Backend API (Node/Express)
+  Write "server/routes/auth.js" [authRoutes]
+  Write "server/routes/users.js" [userRoutes]
+  Write "server/controllers/authController.js" [authController]
+  Write "server/models/User.js" [userModel]
+  
+  // Database & Config
+  Write "server/config/database.js" [dbConfig]
+  Write "migrations/001_create_users.sql" [migration]
+  
+  // Tests (Frontend + Backend)
+  Write "tests/frontend/components.test.tsx" [frontendTests]
+  Write "tests/backend/api.test.js" [backendTests]
+  Write "tests/e2e/userflow.test.js" [e2eTests]
+  
+  // Configuration Files
+  Write "package.json" [packageConfig]
+  Write "docker-compose.yml" [dockerConfig]
+  Write ".env.example" [envExample]
+  
+  // Execute ALL commands
+  Bash "npm install && npm run dev"
+  Bash "docker-compose up -d"
+  Bash "npm run test:all"
+```
+
 ## 📁 Organisation Fichiers
 **JAMAIS sauver dans root folder :**
-- `/src` → Code source
+
+### Structure Standard :
+- `/src` → Code source frontend
+- `/server` → Code backend/API
 - `/tests` → Fichiers test
 - `/docs` → Documentation
 - `/config` → Configuration
 - `/scripts` → Scripts utilitaires
+- `/public` → Assets statiques
+
+### Structure Web Full-Stack :
+```
+project/
+├── src/                    # Frontend
+│   ├── components/         # UI Components
+│   ├── pages/             # Page components
+│   ├── hooks/             # Custom React hooks
+│   ├── services/          # API services
+│   ├── store/             # State management
+│   └── utils/             # Utilities
+├── server/                 # Backend
+│   ├── routes/            # API routes
+│   ├── controllers/       # Business logic
+│   ├── models/            # Database models
+│   ├── middleware/        # Custom middleware
+│   └── services/          # External services
+├── tests/                  # Tests
+│   ├── unit/              # Unit tests
+│   ├── integration/       # Integration tests
+│   └── e2e/               # End-to-end tests
+└── migrations/            # Database migrations
+```
 
 ## ✅ Checklist Validation Workflow
 - [ ] TOUTES opérations dans UN message ?
@@ -412,7 +574,48 @@ Message 3: Create Card.ts
 
 ---
 
-# 5. 📋 GESTION TASKS & FEATURES
+# 5. 📋 GESTION TASKS & FEATURES - SYSTÈME V2
+
+## 🎯 HIÉRARCHIE DES TÂCHES ACTUELLES
+
+### Tâches CRITIQUES (Sprint 1)
+```yaml
+Priorité CRITIQUE - À faire EN PREMIER:
+  1. Unify Card Data Models (#e923a6ec313da21c) - EN COURS
+     → Bloque tout le reste
+     → Claude assigné
+     
+  2. Consolidate Store Architecture (#199e14eb6453d09e) - BLOQUÉE
+     → Attend #1
+     → Prochaine priorité
+```
+
+### Roadmap Actuelle (voir docs/ROADMAP.md)
+```
+Phase 1: Foundation (Semaines 1-4) ← NOUS SOMMES ICI
+  ├── Unification modèles ← EN COURS
+  ├── Migration données
+  ├── Consolidation stores
+  └── Tests de base
+
+Phase 2: Combat Core (Semaines 5-8)
+  ├── Combat Arena
+  ├── Projectile System  
+  ├── Collision Detection
+  └── HP/Damage System
+```
+
+## 📊 METRICS SPRINT ACTUEL
+```bash
+# Voir métriques temps réel
+cat tasks/PROJECT_STATUS.md | grep -A 10 "Sprint Metrics"
+
+# Velocity tracking
+npm run tasks:velocity
+
+# Burndown
+npm run tasks:burndown
+```
 
 ## 🔴 RÈGLE ABSOLUE : Feature-Task Linking
 
@@ -467,18 +670,38 @@ npm run tasks:list --status todo
 
 # 6. 🛠️ OUTILS & COMMANDES
 
-## 🔧 Task Management Tools
+## 🔧 Task Management Tools V2 - MODERN SYSTEM
 ```bash
-# Task Management Local
-npm run tasks:list                    # Lister toutes les tâches
-npm run tasks:list --status todo      # Tâches à faire
-npm run tasks:list --priority high    # Tâches prioritaires
-npm run tasks:new                     # Créer nouvelle tâche
-npm run tasks:update <id> --status <status>
-npm run tasks:done <id>               # Marquer terminée
+# 📊 ÉTAT DU PROJET (à vérifier toutes les heures)
+npm run tasks:status                  # Vue d'ensemble complète
+cat tasks/PROJECT_STATUS.md           # Dashboard du sprint
+npm run tasks:list --critical         # Tâches CRITIQUES uniquement
 
-# Knowledge & Research Local
+# 🎯 GESTION DES TÂCHES
+npm run tasks:list                    # Toutes les tâches
+npm run tasks:list --assignee me      # Mes tâches
+npm run tasks:list --blocked          # Tâches bloquées
+npm run tasks:new                     # Créer tâche (interactif)
+
+# 📝 MISE À JOUR (obligatoire toutes les 2h)
+npm run tasks:update <id> --progress <percent>
+npm run tasks:update <id> --comment "progress note"
+npm run tasks:update <id> --complete-criteria <criteria-id>
+
+# ✅ COMPLÉTION
+npm run tasks:done <id>               # Marquer terminée
+npm run tasks:validate <id>           # Vérifier critères acceptation
+
+# 📈 REPORTING
+npm run tasks:report                  # Rapport complet
+npm run tasks:burndown                # Graphique burndown
+npm run tasks:velocity                # Vélocité de l'équipe
+npm run tasks:dependencies            # Arbre des dépendances
+
+# 🔍 RECHERCHE & ANALYSE
 grep -r "pattern" src/ docs/          # Recherche dans le code
+npm run tasks:search "keyword"        # Recherche dans les tâches
+npm run tasks:analyze <id>            # Analyse impact tâche
 ```
 
 ## ⚡ Claude-Flow/SPARC Commands
@@ -650,7 +873,248 @@ npx claude-flow@alpha hooks session-end --export-metrics true
 
 # 9. 🎮 PROJECT-SPECIFIC
 
-## 🎯 LOCAL TASK WORKFLOW (Mode Plan/Exécution)
+## 🌐 WEB DEVELOPMENT ARCHITECTURE
+
+### Frontend Architecture Patterns
+```javascript
+// Component-based architecture
+components/
+├── atoms/          // Basic UI elements (Button, Input)
+├── molecules/      // Composite components (FormField, Card)
+├── organisms/      // Complex components (Header, Dashboard)
+├── templates/      // Page templates
+└── pages/          // Page components
+
+// State Management
+store/
+├── slices/         // Redux slices / Zustand stores
+├── actions/        // Action creators
+├── selectors/      // Memoized selectors
+└── middleware/     // Custom middleware
+```
+
+### Backend Architecture (MVC Pattern)
+```javascript
+// Model-View-Controller structure
+server/
+├── models/         // Data models (User, Product)
+├── views/          // Response formatting
+├── controllers/    // Business logic
+├── routes/         // API endpoints
+├── middleware/     // Auth, validation, logging
+└── services/       // External integrations
+```
+
+### API Design Standards
+```javascript
+// RESTful endpoints
+GET    /api/users           // List users
+GET    /api/users/:id       // Get user
+POST   /api/users           // Create user
+PUT    /api/users/:id       // Update user
+DELETE /api/users/:id       // Delete user
+
+// Response format
+{
+  "success": true,
+  "data": { ... },
+  "message": "Operation successful",
+  "timestamp": "2024-01-15T10:00:00Z"
+}
+```
+
+## 🔒 WEB SECURITY CHECKLIST
+
+### Authentication & Authorization
+```javascript
+// JWT avec httpOnly cookies
+const authConfig = {
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: '1h',
+    refreshExpiresIn: '7d'
+  },
+  cookies: {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict'
+  }
+};
+
+// RBAC (Role-Based Access Control)
+const roles = {
+  admin: ['read', 'write', 'delete'],
+  user: ['read', 'write'],
+  guest: ['read']
+};
+```
+
+### Protection Patterns
+```javascript
+// XSS Protection
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'"],
+    styleSrc: ["'self'", "'unsafe-inline'"]
+  }
+}));
+
+// CSRF Protection
+app.use(csrf({ cookie: true }));
+
+// SQL Injection Prevention (avec ORM)
+const user = await User.findOne({
+  where: { email: sanitize(email) }
+});
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests
+});
+```
+
+## 🧪 WEB TESTING STRATEGY
+
+### Testing Pyramid (Exécution Parallèle)
+```bash
+# TOUT exécuter en parallèle
+[BatchTool - Testing]:
+  # Unit Tests
+  Bash "npm run test:unit:frontend"
+  Bash "npm run test:unit:backend"
+  
+  # Integration Tests
+  Bash "npm run test:integration:api"
+  Bash "npm run test:integration:db"
+  
+  # E2E Tests
+  Bash "npm run test:e2e:chrome"
+  Bash "npm run test:e2e:firefox"
+  
+  # Performance Tests
+  Bash "npm run test:lighthouse"
+  Bash "npm run test:load"
+```
+
+### Test Organization
+```javascript
+// Frontend Component Test
+describe('Dashboard Component', () => {
+  it('should render user data', async () => {
+    render(<Dashboard user={mockUser} />);
+    expect(screen.getByText(mockUser.name)).toBeInTheDocument();
+  });
+});
+
+// Backend API Test
+describe('POST /api/users', () => {
+  it('should create user with valid data', async () => {
+    const res = await request(app)
+      .post('/api/users')
+      .send(validUserData)
+      .expect(201);
+    
+    expect(res.body.success).toBe(true);
+  });
+});
+```
+
+## ⚡ WEB PERFORMANCE OPTIMIZATION
+
+### Frontend Optimization
+```javascript
+// Code Splitting
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+
+// Image Optimization
+<img 
+  src="image.webp" 
+  loading="lazy"
+  srcSet="image-320w.jpg 320w, image-640w.jpg 640w"
+/>
+
+// Bundle Optimization
+webpack: {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: 10
+        }
+      }
+    }
+  }
+}
+```
+
+### Backend Optimization
+```javascript
+// Database Connection Pooling
+const pool = new Pool({
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000
+});
+
+// Redis Caching
+const cachedData = await redis.get(key);
+if (cachedData) return JSON.parse(cachedData);
+
+// Response Compression
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) return false;
+    return compression.filter(req, res);
+  }
+}));
+```
+
+## 🎯 MODERN TASK WORKFLOW - SYSTÈME V2
+
+### 📊 Sources de Vérité (CRITICAL - À JOUR)
+```yaml
+Fichiers à consulter AVANT TOUTE ACTION:
+  1. tasks/PROJECT_STATUS.md     # État temps réel du sprint
+  2. tasks/tasks.json            # Toutes les tâches détaillées  
+  3. docs/ROADMAP.md            # Vision et phases
+  4. git branch --remote         # Qui travaille sur quoi
+```
+
+### 🔄 Workflow Synchronisé Multi-Agents
+```bash
+# DÉBUT DE SESSION (obligatoire)
+"Agent [name] - Session Start $(date)"
+
+# 1. Synchronisation état global
+cat tasks/PROJECT_STATUS.md | head -50
+git fetch --all
+git branch -r | grep task/
+
+# 2. Identification travail
+npm run tasks:list --assignee "[agent-name]"
+npm run tasks:list --status todo --priority critical
+
+# 3. Verrouillage tâche
+git checkout -b task/[id]-[desc]
+node scripts/tasks/update.js [id] --status in-progress --assignee "[name]"
+
+# 4. Travail avec updates régulières (toutes les 2h)
+while working:
+  # Code...
+  node scripts/tasks/update.js [id] --progress [%]
+  git add . && git commit -m "wip: [id] - [progress description]"
+  git push origin task/[id]-[desc]
+  
+# 5. Fin de session
+node scripts/tasks/generate-status.js > tasks/PROJECT_STATUS.md
+git add tasks/PROJECT_STATUS.md
+git commit -m "chore: session end - [agent] - task [id] at [%]%"
+git push
+```
 
 ### Workflow Principal
 ```bash
@@ -772,6 +1236,26 @@ http://localhost:3000    # Game
 - **Documentation** : https://github.com/ruvnet/claude-flow
 - **Issues** : https://github.com/ruvnet/claude-flow/issues
 - **Local Tasks** : `tasks/tasks.json`
+- **MCP Guide** : `CLAUDE-SWARM.md` (si MCP disponible)
+
+## 🌐 Web Development Commands
+```bash
+# Frontend Development
+npm run dev           # Start dev server
+npm run build        # Production build
+npm run lint         # Lint code
+npm run test         # Run tests
+
+# Backend Development
+npm run server       # Start API server
+npm run migrate      # Run migrations
+npm run seed         # Seed database
+
+# Full-Stack
+npm run dev:all      # Frontend + Backend
+npm run test:all     # All tests parallel
+npm run docker:up    # Docker environment
+```
 
 ## 📋 Violation Tracking
 Si exécution séquentielle :
@@ -797,16 +1281,23 @@ Si exécution séquentielle :
 
 ---
 
-## 🔴 RÈGLES ABSOLUES - RAPPEL FINAL
+## 🔴 RÈGLES ABSOLUES V2 - SYSTÈME MODERNE
 
-1. **TASKS-FIRST** → Toujours commencer par lister les tâches
-2. **CONCURRENT EXECUTION** → 1 message = toutes opérations liées
-3. **BRANCH PER TASK** → Une branche Git par tâche
-4. **STATUS PROGRESSION** → todo → in-progress → review → done
-5. **GIT WORKFLOW** → main → task/branch → PR → merge → cleanup
-6. **NO ROOT FILES** → Organiser dans sous-répertoires
-7. **VALIDATION GATES** → done SEULEMENT après PR approuvée et merge
-8. **CREATE IF NOT EXISTS** → Si demande hors tâches existantes, créer après validation utilisateur
+### 🚨 RÈGLES CRITIQUES SYNCHRONISATION
+
+1. **PROJECT STATUS FIRST** → TOUJOURS lire `tasks/PROJECT_STATUS.md` avant toute action
+2. **TASK SYNCHRONIZATION** → Mettre à jour statut tâche IMMÉDIATEMENT après changement
+3. **PROGRESS TRACKING** → Update obligatoire toutes les 2h si `in-progress`
+4. **CONCURRENT EXECUTION** → 1 message = toutes opérations liées
+5. **BRANCH PER TASK** → Une branche Git = Une tâche = Un agent
+6. **STATUS PROGRESSION** → todo → in-progress → review → done (avec tracking)
+7. **GIT WORKFLOW** → main → task/[id] → PR → merge → cleanup
+8. **NO ROOT FILES** → Organiser dans sous-répertoires appropriés
+9. **VALIDATION GATES** → done SEULEMENT après PR merge + user validation
+10. **CREATE IF NOT EXISTS** → Nouvelle tâche seulement si absente de tasks.json
+11. **WEB FULL-STACK** → Frontend + Backend développés en parallèle
+12. **SECURITY FIRST** → Checklist sécurité dès le début
+13. **SILENT = ABANDONED** → Agent sans update 4h = tâche libérée
 
 **REMEMBER** : Local tasks track work, GitHub manages collaboration, Claude executes with CONCURRENT pattern!
 
