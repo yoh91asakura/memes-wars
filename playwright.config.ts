@@ -24,6 +24,14 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [['html'], ['list']],
+  
+  /* Global timeout for each test */
+  timeout: 30 * 1000, // 30 seconds instead of default 30 seconds
+  
+  /* Global timeout for expect assertions */
+  expect: {
+    timeout: 5 * 1000, // 5 seconds for assertions
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -37,6 +45,12 @@ export default defineConfig({
     
     /* Video on failure */
     video: 'retain-on-failure',
+    
+    /* Action timeout - for click, fill, etc. */
+    actionTimeout: 10 * 1000, // 10 seconds
+    
+    /* Navigation timeout - for page.goto, page.reload, etc. */
+    navigationTimeout: 30 * 1000, // 30 seconds
   },
 
   /* Configure projects for major browsers */
@@ -82,6 +96,8 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
+    timeout: 30 * 1000, // Reduced from 120s to 30s
+    stdout: 'pipe', // Show server output
+    stderr: 'pipe', // Show server errors
   },
 });
