@@ -354,10 +354,10 @@ export const RollScreen: React.FC = () => {
 
   // Auto-dismiss card after reveal
   useEffect(() => {
-    if (revealedCard && !isAutoRolling) {
+    if (revealedCard) {
       const timer = setTimeout(() => {
         setRevealedCard(null);
-      }, 5000);
+      }, isAutoRolling ? 2000 : 5000); // Shorter time in auto-roll mode
       return () => clearTimeout(timer);
     }
   }, [revealedCard, isAutoRolling]);
@@ -411,80 +411,10 @@ export const RollScreen: React.FC = () => {
         {/* Left sidebar - Recent rolls */}
         <RollHistory history={rollHistory} />
         
-        {/* Center - Roll button and animations */}
+        {/* Center - Card reveals over the interface */}
         <div className="roll-center">
-          <AnimatePresence mode="wait">
-            {!revealedCard && !isRolling && (
-              <motion.div
-                className="roll-buttons"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <motion.button
-                  className="roll-button single"
-                  onClick={handleSingleRoll}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <div className="button-content">
-                    <span className="button-icon">🎰</span>
-                    <span className="button-title">ROLL</span>
-                    <span className="button-cost">Free + Gold Reward</span>
-                  </div>
-                </motion.button>
-                
-                <motion.button
-                  className={`auto-roll-toggle ${isAutoRolling ? 'active' : ''}`}
-                  onClick={handleAutoRollToggle}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    marginTop: '20px',
-                    padding: '15px 30px',
-                    background: isAutoRolling ? 'linear-gradient(135deg, #10b981, #059669)' : 'rgba(100, 100, 100, 0.3)',
-                    border: `2px solid ${isAutoRolling ? '#10b981' : '#666'}`,
-                    borderRadius: '15px',
-                    color: 'white',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <div className="button-content">
-                    <span className="button-icon">{isAutoRolling ? '⏸️' : '▶️'}</span>
-                    <span className="button-title">{isAutoRolling ? 'Stop Auto Roll' : 'Start Auto Roll'}</span>
-                    <span className="button-cost">Every 3 seconds</span>
-                  </div>
-                </motion.button>
-              </motion.div>
-            )}
-
-            {isRolling && (
-              <motion.div
-                className="rolling-animation"
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-              >
-                <motion.div
-                  className="rolling-orb"
-                  animate={{ 
-                    rotate: 360,
-                    scale: [1, 1.2, 1]
-                  }}
-                  transition={{ 
-                    rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-                    scale: { duration: 1, repeat: Infinity }
-                  }}
-                >
-                  ✨
-                </motion.div>
-                <p className="rolling-text">Rolling...</p>
-              </motion.div>
-            )}
-
-            {revealedCard && !isRolling && (
+          <AnimatePresence>
+            {revealedCard && (
               <EnhancedCardReveal 
                 card={revealedCard.card}
                 onClose={() => setRevealedCard(null)}
@@ -496,40 +426,115 @@ export const RollScreen: React.FC = () => {
         </div>
       </div>
       
-      
-      
-      {/* Auto Roll Status */}
-      {isAutoRolling && (
+      {/* Bottom Roll Button */}
+      <motion.button
+        className="main-roll-button"
+        onClick={handleSingleRoll}
+        disabled={isRolling}
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        whileHover={{ scale: 1.1, y: -5 }}
+        whileTap={{ scale: 0.95 }}
+        style={{
+          position: 'fixed',
+          bottom: '30px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '120px',
+          height: '120px',
+          background: isRolling 
+            ? 'linear-gradient(135deg, #6b7280, #4b5563)'
+            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          border: 'none',
+          borderRadius: '50%',
+          color: 'white',
+          fontSize: '48px',
+          fontWeight: 'bold',
+          cursor: isRolling ? 'not-allowed' : 'pointer',
+          boxShadow: '0 15px 35px rgba(102, 126, 234, 0.4)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 100,
+          transition: 'all 0.3s ease'
+        }}
+      >
         <motion.div
-          className="auto-roll-status"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          style={{
-            position: 'fixed',
-            top: '120px',
-            right: '20px',
-            background: 'rgba(16, 185, 129, 0.9)',
-            padding: '15px 25px',
-            borderRadius: '15px',
-            color: 'white',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            zIndex: 1000
-          }}
+          animate={isRolling ? { rotate: 360 } : { rotate: 0 }}
+          transition={isRolling ? { duration: 1, repeat: Infinity, ease: "linear" } : {}}
         >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          >
-            ⚙️
-          </motion.div>
-          Auto Rolling Active
+          {isRolling ? '⏳' : '🎰'}
         </motion.div>
-      )}
+      </motion.button>
+
+      {/* Discrete Auto Roll Toggle */}
+      <motion.button
+        className="auto-roll-toggle-discrete"
+        onClick={handleAutoRollToggle}
+        initial={{ x: -100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        whileHover={{ scale: 1.05, x: 5 }}
+        whileTap={{ scale: 0.95 }}
+        style={{
+          position: 'fixed',
+          bottom: '30px',
+          left: '30px',
+          width: '60px',
+          height: '60px',
+          background: isAutoRolling 
+            ? 'linear-gradient(135deg, #10b981, #059669)'
+            : 'rgba(100, 100, 100, 0.3)',
+          border: `2px solid ${isAutoRolling ? '#10b981' : '#666'}`,
+          borderRadius: '50%',
+          color: 'white',
+          fontSize: '24px',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 100,
+          transition: 'all 0.3s ease'
+        }}
+        title={isAutoRolling ? 'Stop Auto Roll (3s interval)' : 'Start Auto Roll (3s interval)'}
+      >
+        <motion.div
+          animate={isAutoRolling ? { rotate: [0, 10, -10, 0] } : {}}
+          transition={isAutoRolling ? { duration: 2, repeat: Infinity } : {}}
+        >
+          {isAutoRolling ? '⏸️' : '▶️'}
+        </motion.div>
+      </motion.button>
+
+      {/* Auto Roll Status Indicator */}
+      <AnimatePresence>
+        {isAutoRolling && (
+          <motion.div
+            className="auto-roll-indicator"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            style={{
+              position: 'fixed',
+              bottom: '100px',
+              left: '30px',
+              background: 'rgba(16, 185, 129, 0.9)',
+              padding: '8px 12px',
+              borderRadius: '20px',
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              zIndex: 99
+            }}
+          >
+            <motion.span
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            >
+              AUTO
+            </motion.span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
