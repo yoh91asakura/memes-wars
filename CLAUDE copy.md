@@ -2,7 +2,7 @@
 
 ## 📋 Table des Matières
 1. [🔴 RÈGLES CRITIQUES](#1-règles-critiques)
-2. [⚙️ CONFIGURATION PROJET](#2-configuration-projet) 
+2. [⚙️ CONFIGURATION PROJET](#2-configuration-projet)
 3. [🔄 WORKFLOW PRINCIPAL](#3-workflow-principal)
 4. [⚡ PATTERNS D'EXÉCUTION](#4-patterns-dexécution)
 5. [📋 GESTION TASKS & FEATURES](#5-gestion-tasks--features)
@@ -97,7 +97,7 @@ node scripts/tasks/update.js [id] --status review
 
 ### RÈGLES CRITIQUES :
 1. **TOUJOURS** vérifier statut avant de prendre une tâche
-2. **JAMAIS** travailler sur tâche "in-progress" d'un autre agent  
+2. **JAMAIS** travailler sur tâche "in-progress" d'un autre agent
 3. **IMMÉDIATEMENT** verrouiller tâche (status "in-progress" + créer branche)
 4. **SI CONFLIT** → choisir autre tâche
 5. **UNE BRANCHE PAR TÂCHE** → isolation complète du travail
@@ -230,7 +230,7 @@ git push -u origin task/[task-id]-[short-description]
   // ... TOUS les fichiers
   Bash "npm install && npm run dev"
   TodoComplete ["1", "2", "3"]
-  
+
   // Commit fréquents sur branche de tâche
   Bash "git add -A && git commit -m 'feat: implement [feature-part]'"
   Bash "git push origin task/[task-id]-[description]"
@@ -304,20 +304,20 @@ todo → in-progress → review → done
     {id: "4", content: "Setup state", status: "pending"},
     // ... 5-10+ tasks
   ]}
-  
+
   // 2. Create ALL directories
   Bash "mkdir -p src/{components,models,services,stores}"
   Bash "mkdir -p tests/{unit,integration} docs config"
-  
+
   // 3. Create ALL files (même 50+ files)
   Write "package.json" [content]
   Write "src/App.tsx" [content]
   Write "src/models/Card.ts" [content]
   // ... TOUS les fichiers en UN message
-  
+
   // 4. Run ALL commands
   Bash "npm install && npm run dev"
-  
+
   // 5. Complete todos
   TodoComplete ["1", "2", "3"]
 ```
@@ -326,7 +326,7 @@ todo → in-progress → review → done
 ```javascript
 // CE QUI S'EST PASSÉ AVEC EMOJI MAYHEM - NE PAS FAIRE !
 Message 1: Create package.json
-Message 2: Create tsconfig.json  
+Message 2: Create tsconfig.json
 Message 3: Create Card.ts
 // ... 30+ messages séparés
 // VIOLATION CRITIQUE !
@@ -366,7 +366,7 @@ npm run tasks:list
 
 # Features définies pour le projet :
 # - Card System
-# - Deck Management  
+# - Deck Management
 # - Combat Engine
 # - User Interface
 # - Game Services
@@ -425,7 +425,7 @@ npx claude-flow sparc modes
 npx claude-flow sparc run <mode> "<task>"
 npx claude-flow sparc tdd "<feature>"
 
-# Batch Tools  
+# Batch Tools
 npx claude-flow sparc batch <modes> "<task>"
 npx claude-flow sparc pipeline "<task>"
 npx claude-flow sparc concurrent <mode> "<tasks-file>"
@@ -448,7 +448,7 @@ npm run dev        # Development server
 ### Swarm Coordination
 `hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`
 
-### GitHub & Repository  
+### GitHub & Repository
 `github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`
 
 ### SPARC Methodology
@@ -563,7 +563,7 @@ npx claude-flow@alpha hooks session-end --export-metrics true
 - Prepare resources automatically
 - Optimize topology by complexity
 
-### Post-Operation  
+### Post-Operation
 - Auto-format code
 - Train neural patterns
 - Update memory
@@ -579,7 +579,7 @@ npx claude-flow@alpha hooks session-end --export-metrics true
 
 ## 📊 Performance Benefits
 - **84.8%** SWE-Bench solve rate
-- **32.3%** token reduction  
+- **32.3%** token reduction
 - **2.8-4.4x** speed improvement
 - **27+** neural models
 
@@ -664,7 +664,7 @@ npm run tasks:done [id]
 
 ## Overview
 **Module:** [CARDS|SERVICES|UI]
-**Priority:** [HIGH|MEDIUM|LOW] 
+**Priority:** [HIGH|MEDIUM|LOW]
 **Status:** [Planning|In Progress|Complete]
 **Assignee:** [Name/Unassigned]
 
@@ -720,7 +720,7 @@ Si exécution séquentielle :
 
 ## ⚡ SPARC Workflow Phases
 1. **Specification** → Requirements analysis (`sparc run spec-pseudocode`)
-2. **Pseudocode** → Algorithm design (`sparc run spec-pseudocode`) 
+2. **Pseudocode** → Algorithm design (`sparc run spec-pseudocode`)
 3. **Architecture** → System design (`sparc run architect`)
 4. **Refinement** → TDD implementation (`sparc tdd`)
 5. **Completion** → Integration (`sparc run integration`)

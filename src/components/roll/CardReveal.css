@@ -1,3 +1,59 @@
+/* Card Reveal Container - Updated for CardTCG integration */
+.card-reveal-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  z-index: 1000;
+}
+
+.reveal-background-glow {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+/* Cosmic reveal effects */
+.cosmic-reveal-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.cosmic-particles {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.cosmic-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, #fff 0%, transparent 70%);
+  border-radius: 50%;
+  animation: cosmic-float 4s ease-in-out infinite;
+}
+
+@keyframes cosmic-float {
+  0%, 100% { 
+    transform: translateY(0px) scale(0.5);
+    opacity: 0.3;
+  }
+  50% { 
+    transform: translateY(-50px) scale(1.5);
+    opacity: 1;
+  }
+}
+
+/* Legacy card reveal styles */
 .card-reveal {
   position: relative;
   width: 300px;

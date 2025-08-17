@@ -70,6 +70,10 @@ export interface Card {
   // Passive ability
   passive: PassiveAbility;
   
+  // TCG Stats
+  luck: number;          // Luck bonus percentage (0-100)
+  dropChance?: string;   // Drop rate display (e.g., "1/5000")
+  
   // Progression
   stackLevel: number;
   experience: number;

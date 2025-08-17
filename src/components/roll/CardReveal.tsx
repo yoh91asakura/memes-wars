@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, RARITY_CONFIGS } from '../../models/Card';
+import { Card } from '../../types/card';
+import { CardTCG } from '../cards/CardTCG';
 import './CardReveal.css';
 
 interface CardRevealProps {
@@ -10,32 +11,38 @@ interface CardRevealProps {
 }
 
 export const CardReveal: React.FC<CardRevealProps> = ({ card, onClose, hideRoll }) => {
-  const [showDetails, setShowDetails] = useState(false);
-  const rarityConfig = RARITY_CONFIGS[card.rarity];
+  // Configuration simple pour les raretés
+  const rarityColors = {
+    common: '#808080',
+    uncommon: '#40C057',
+    rare: '#339AF0',
+    epic: '#9775FA',
+    legendary: '#FD7E14',
+    mythic: '#FA5252',
+    cosmic: '#FF00FF'
+  };
+  
+  const rarityConfig = {
+    color: rarityColors[card.rarity as keyof typeof rarityColors] || '#808080',
+    glowColor: rarityColors[card.rarity as keyof typeof rarityColors],
+  };
   
   // Skip animation for common-legendary if hideRoll is on
   const shouldSkipAnimation = hideRoll && 
-    card.rarity !== 'MYTHIC' && 
-    card.rarity !== 'COSMIC';
+    card.rarity !== 'mythic' && 
+    card.rarity !== 'cosmic';
   
   const animationDuration = shouldSkipAnimation ? 0.25 : 
-    card.rarity === 'COSMIC' ? 6 :
-    card.rarity === 'MYTHIC' ? 4.5 :
-    card.rarity === 'LEGENDARY' ? 3.5 :
-    card.rarity === 'EPIC' ? 2.5 :
-    card.rarity === 'RARE' ? 2.5 : 1.5;
+    card.rarity === 'cosmic' ? 6 :
+    card.rarity === 'mythic' ? 4.5 :
+    card.rarity === 'legendary' ? 3.5 :
+    card.rarity === 'epic' ? 2.5 :
+    card.rarity === 'rare' ? 2.5 : 1.5;
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowDetails(true);
-    }, animationDuration * 500);
-    
-    return () => clearTimeout(timer);
-  }, [animationDuration]);
 
   return (
     <motion.div 
-      className={`card-reveal rarity-${card.rarity.toLowerCase()}`}
+      className="card-reveal-container"
       initial={{ scale: 0, rotate: -180 }}
       animate={{ 
         scale: 1, 
@@ -49,102 +56,52 @@ export const CardReveal: React.FC<CardRevealProps> = ({ card, onClose, hideRoll 
       }}
       onClick={onClose}
     >
-      {/* Rarity glow effect */}
+      {/* Background glow effect */}
       <motion.div 
-        className="card-glow"
+        className="reveal-background-glow"
         style={{ 
           backgroundColor: rarityConfig.glowColor || rarityConfig.color,
-          boxShadow: `0 0 ${50 + (card.rarity === 'COSMIC' ? 150 : 0)}px ${rarityConfig.glowColor || rarityConfig.color}`
+          boxShadow: `0 0 ${100 + (card.rarity === 'cosmic' ? 200 : 0)}px ${rarityConfig.glowColor || rarityConfig.color}`
         }}
         animate={{
-          opacity: [0.3, 0.7, 0.3],
-          scale: [1, 1.2, 1]
+          opacity: [0.2, 0.6, 0.2],
+          scale: [1, 1.3, 1]
         }}
         transition={{
-          duration: 2,
+          duration: 3,
           repeat: Infinity
         }}
       />
       
-      {/* Card Content */}
-      <div className="card-content">
-        <div className="card-header">
-          <h2 className="card-name">{card.name}</h2>
-          <div className="card-rarity" style={{ color: rarityConfig.color }}>
-            {card.rarity}
+      {/* Use the new CardTCG component */}
+      <CardTCG 
+        card={card as any} 
+        showAnimations={true}
+        onClick={onClose}
+      />
+      
+      {/* Additional reveal effects for ultra-rare cards */}
+      {card.rarity === 'cosmic' && (
+        <motion.div
+          className="cosmic-reveal-effect"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <div className="cosmic-particles">
+            {[...Array(30)].map((_, i) => (
+              <div
+                key={i}
+                className="cosmic-particle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`
+                }}
+              />
+            ))}
           </div>
-        </div>
-        
-        {showDetails && (
-          <motion.div 
-            className="card-details"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="card-stats">
-              <div className="stat">
-                <span className="stat-label">HP</span>
-                <span className="stat-value">{card.hp}</span>
-              </div>
-              <div className="stat">
-                <span className="stat-label">ATK SPD</span>
-                <span className="stat-value">{card.attackSpeed.toFixed(1)}/s</span>
-              </div>
-            </div>
-            
-            <div className="card-emojis">
-              {card.emojis.map((emoji, index) => (
-                <motion.span 
-                  key={index}
-                  className="emoji-display"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  {emoji.character}
-                </motion.span>
-              ))}
-            </div>
-            
-            {card.passive && (
-              <div className="card-passive">
-                <div className="passive-name">{card.passive.name}</div>
-                <div className="passive-desc">{card.passive.description}</div>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </div>
-      
-      {/* Special effects for high rarity */}
-      {rarityConfig.sparkles && (
-        <div className="sparkles-effect">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="sparkle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-              animate={{
-                scale: [0, 1, 0],
-                opacity: [0, 1, 0],
-              }}
-              transition={{
-                duration: 2,
-                delay: Math.random() * 2,
-                repeat: Infinity,
-              }}
-            >
-              ✨
-            </motion.div>
-          ))}
-        </div>
-      )}
-      
-      {rarityConfig.rainbow && (
-        <div className="rainbow-effect" />
+        </motion.div>
       )}
     </motion.div>
   );

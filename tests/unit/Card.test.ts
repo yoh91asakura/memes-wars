@@ -53,6 +53,7 @@ describe('Card System', () => {
         rarity: Rarity.COMMON,
         hp: 100,
         attackSpeed: 1.0,
+        luck: 5,
         stackLevel: 0,
         experience: 0,
         emojis: [
@@ -196,6 +197,7 @@ describe('Card System', () => {
         description: 'A classic meme card',
         rarity: Rarity.RARE,
         hp: 60,
+        luck: 15,
         attackSpeed: 1.75,
         stackLevel: 0,
         experience: 0,

@@ -4,6 +4,8 @@ import { useGameStore } from '../../stores/gameStore';
 import { useRollStore } from '../../stores/rollStore';
 import { Card } from '../../types/card';
 import { RollResult, RollStats } from '../../services/RollService';
+import { AutoRollPanel } from '../roll/AutoRollPanel';
+import { CardTCG } from '../cards/CardTCG';
 import './RollScreenSolsRNG.css';
 
 // Particle System Component
@@ -234,35 +236,12 @@ const EnhancedCardReveal: React.FC<{
         onClick={onClose}
       >
         <div className={`card-container ${card.rarity}-glow`}>
-          {pityTriggered && (
-            <motion.div 
-              className="pity-indicator"
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 1 }}
-            >
-              PITY TRIGGERED!
-            </motion.div>
-          )}
-          {isGuaranteed && (
-            <motion.div 
-              className="guaranteed-indicator"
-              animate={{ rotate: [0, 360] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-            >
-              GUARANTEED!
-            </motion.div>
-          )}
-          <div className="card-emoji-large">{card.emoji}</div>
-          <h2 className="card-name">{card.name}</h2>
-          <div className={`rarity-badge ${card.rarity}`}>
-            {card.rarity.toUpperCase()}
-          </div>
-          <p className="card-description">{card.description || card.flavor}</p>
-          <div className="card-stats">
-            {card.attack && <span>⚔️ {card.attack}</span>}
-            {card.defense && <span>🛡️ {card.defense}</span>}
-            <span>💰 {card.cost || 100}</span>
-          </div>
+          {/* Use our CardTCG component */}
+          <CardTCG 
+            card={card}
+            showAnimations={false}
+            onClick={onClose}
+          />
         </div>
       </motion.div>
     </>
