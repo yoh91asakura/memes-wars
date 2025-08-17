@@ -1,219 +1,698 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RollButton } from '../roll/RollButton';
-import { CardReveal } from '../roll/CardReveal';
-import { AutoRollPanel } from '../roll/AutoRollPanel';
 import { useGameStore } from '../../stores/gameStore';
 import { useRollStore } from '../../stores/rollStore';
 import { Card } from '../../types/card';
-import { Card as ComplexCard, Rarity, TrajectoryPattern } from '../../models/Card';
-import './RollScreen.css';
+import { RollResult, RollStats } from '../../services/RollService';
+import { AutoRollPanel } from '../roll/AutoRollPanel';
+import './RollScreenSolsRNG.css';
 
-// Helper function to convert simple Card to complex Card for reveal
-const convertToComplexCard = (simpleCard: Card): ComplexCard => {
-  return {
-    id: simpleCard.id,
-    name: simpleCard.name,
-    description: simpleCard.description || simpleCard.flavor || '',
-    rarity: simpleCard.rarity.toUpperCase() as Rarity,
-    emojis: [{
-      character: simpleCard.emoji,
-      damage: simpleCard.attack || 1,
-      speed: 300,
-      trajectory: TrajectoryPattern.STRAIGHT
-    }],
-    hp: simpleCard.defense || 10,
-    attackSpeed: 1.0,
-    passive: {
-      id: 'basic',
-      name: 'Basic',
-      description: simpleCard.ability || 'No special effect',
-      triggerChance: 0.1,
-      effect: () => {}
-    },
-    stackLevel: 1,
-    experience: 0,
-    borderColor: getRarityColor(simpleCard.rarity),
-    glowIntensity: 1
+// Particle System Component
+const ParticleEffect: React.FC<{ rarity: string; count?: number }> = ({ rarity, count = 50 }) => {
+  const particles = Array.from({ length: count }, (_, i) => i);
+  
+  const getParticleColor = () => {
+    const colors = {
+      'common': '#cccccc',
+      'uncommon': '#1eff00',
+      'rare': '#0070f3',
+      'epic': '#8b5cf6',
+      'legendary': '#f97316',
+      'mythic': '#ffd700',
+      'cosmic': '#ff00ff'
+    };
+    return colors[rarity as keyof typeof colors] || '#ffffff';
   };
+
+  return (
+    <div className="particle-container">
+      {particles.map((i) => (
+        <motion.div
+          key={i}
+          className="particle"
+          style={{
+            background: getParticleColor(),
+            boxShadow: `0 0 10px ${getParticleColor()}`
+          }}
+          initial={{ 
+            x: 0, 
+            y: 0, 
+            scale: Math.random() * 0.5 + 0.5,
+            opacity: 1 
+          }}
+          animate={{ 
+            x: (Math.random() - 0.5) * 400,
+            y: (Math.random() - 0.5) * 400,
+            scale: 0,
+            opacity: 0
+          }}
+          transition={{ 
+            duration: Math.random() * 2 + 1,
+            ease: "easeOut"
+          }}
+        />
+      ))}
+    </div>
+  );
 };
 
-const getRarityColor = (rarity: string): string => {
-  const colors = {
-    'common': '#ffffff',
-    'uncommon': '#1eff00',
-    'rare': '#0070f3',
-    'epic': '#8b5cf6',
-    'legendary': '#f97316',
-    'mythic': '#ffd700',
-    'cosmic': '#ff00ff'
+// Pity Tracker Component
+const PityTracker: React.FC<{ stats: RollStats }> = ({ stats }) => {
+  const pityData = [
+    { rarity: 'Rare', current: stats.rollsSinceRare, max: 10, color: '#0070f3' },
+    { rarity: 'Epic', current: stats.rollsSinceEpic, max: 30, color: '#8b5cf6' },
+    { rarity: 'Legendary', current: stats.rollsSinceLegendary, max: 90, color: '#f97316' },
+    { rarity: 'Mythic', current: stats.rollsSinceMythic, max: 200, color: '#ffd700' },
+    { rarity: 'Cosmic', current: stats.rollsSinceCosmic, max: 1000, color: '#ff00ff' }
+  ];
+
+  return (
+    <motion.div 
+      className="pity-tracker"
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.3 }}
+    >
+      <h3>Pity System</h3>
+      {pityData.map((pity) => (
+        <div key={pity.rarity} className="pity-item">
+          <div className="pity-label">
+            <span className="rarity-name">{pity.rarity}</span>
+            <span className="pity-count">{pity.current}/{pity.max}</span>
+          </div>
+          <div className="pity-bar">
+            <motion.div 
+              className="pity-fill"
+              style={{ backgroundColor: pity.color }}
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min((pity.current / pity.max) * 100, 100)}%` }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            />
+            {pity.current >= pity.max * 0.8 && (
+              <motion.div 
+                className="pity-glow"
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ repeat: Infinity, duration: 1 }}
+              />
+            )}
+          </div>
+        </div>
+      ))}
+    </motion.div>
+  );
+};
+
+// Roll History Component
+interface RollHistoryItem {
+  id: string;
+  card: Card;
+  timestamp: Date;
+  pityTriggered: boolean;
+  isGuaranteed: boolean;
+}
+
+const RollHistory: React.FC<{ history: RollHistoryItem[] }> = ({ history }) => {
+  return (
+    <motion.div 
+      className="roll-history"
+      initial={{ opacity: 0, x: 50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.3 }}
+    >
+      <h3>Recent Rolls</h3>
+      <div className="history-list">
+        <AnimatePresence>
+          {history.slice(0, 10).map((item, index) => (
+            <motion.div
+              key={item.id}
+              className={`history-item rarity-${item.card.rarity}`}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <span className="card-emoji">{item.card.emoji}</span>
+              <div className="card-info">
+                <span className="card-name">{item.card.name}</span>
+                <span className="card-rarity">{item.card.rarity}</span>
+              </div>
+              {item.pityTriggered && <span className="pity-badge">PITY</span>}
+              {item.isGuaranteed && <span className="guaranteed-badge">G</span>}
+              <span className="timestamp">
+                {new Date(item.timestamp).toLocaleTimeString()}
+              </span>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+};
+
+// Enhanced Card Reveal with Rarity Animations
+const EnhancedCardReveal: React.FC<{ 
+  card: Card; 
+  onClose: () => void;
+  pityTriggered?: boolean;
+  isGuaranteed?: boolean;
+}> = ({ card, onClose, pityTriggered, isGuaranteed }) => {
+  const getRarityAnimation = () => {
+    switch(card.rarity) {
+      case 'cosmic':
+        return {
+          initial: { scale: 0, rotate: -180 },
+          animate: { 
+            scale: [0, 1.5, 1],
+            rotate: [0, 360, 720],
+            filter: ['hue-rotate(0deg)', 'hue-rotate(360deg)']
+          },
+          transition: { duration: 2, ease: "easeInOut" }
+        };
+      case 'mythic':
+        return {
+          initial: { scale: 0, opacity: 0 },
+          animate: { 
+            scale: [0, 1.3, 1],
+            opacity: [0, 1],
+            boxShadow: ['0 0 0px gold', '0 0 100px gold', '0 0 50px gold']
+          },
+          transition: { duration: 1.5 }
+        };
+      case 'legendary':
+        return {
+          initial: { y: -500, opacity: 0 },
+          animate: { 
+            y: [500, -50, 0],
+            opacity: [0, 1],
+            rotate: [0, 10, -10, 0]
+          },
+          transition: { duration: 1.2, type: "spring" }
+        };
+      case 'epic':
+        return {
+          initial: { scale: 0.5, opacity: 0 },
+          animate: { 
+            scale: [0.5, 1.1, 1],
+            opacity: [0, 1]
+          },
+          transition: { duration: 0.8 }
+        };
+      case 'rare':
+        return {
+          initial: { x: -300, opacity: 0 },
+          animate: { 
+            x: [300, -20, 0],
+            opacity: [0, 1]
+          },
+          transition: { duration: 0.6 }
+        };
+      case 'uncommon':
+        return {
+          initial: { scale: 0.8, opacity: 0 },
+          animate: { 
+            scale: 1,
+            opacity: 1
+          },
+          transition: { duration: 0.4 }
+        };
+      default:
+        return {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.3 }
+        };
+    }
   };
-  return colors[rarity as keyof typeof colors] || '#ffffff';
+
+  const animation = getRarityAnimation();
+
+  return (
+    <>
+      <ParticleEffect rarity={card.rarity} count={card.rarity === 'cosmic' ? 100 : 50} />
+      <motion.div 
+        className={`enhanced-card-reveal rarity-${card.rarity}`}
+        {...animation}
+        onClick={onClose}
+      >
+        <div className={`card-container ${card.rarity}-glow`}>
+          {pityTriggered && (
+            <motion.div 
+              className="pity-indicator"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ repeat: Infinity, duration: 1 }}
+            >
+              PITY TRIGGERED!
+            </motion.div>
+          )}
+          {isGuaranteed && (
+            <motion.div 
+              className="guaranteed-indicator"
+              animate={{ rotate: [0, 360] }}
+              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            >
+              GUARANTEED!
+            </motion.div>
+          )}
+          <div className="card-emoji-large">{card.emoji}</div>
+          <h2 className="card-name">{card.name}</h2>
+          <div className={`rarity-badge ${card.rarity}`}>
+            {card.rarity.toUpperCase()}
+          </div>
+          <p className="card-description">{card.description || card.flavor}</p>
+          <div className="card-stats">
+            {card.attack && <span>⚔️ {card.attack}</span>}
+            {card.defense && <span>🛡️ {card.defense}</span>}
+            <span>💰 {card.cost || 100}</span>
+          </div>
+        </div>
+      </motion.div>
+    </>
+  );
 };
 
 export const RollScreen: React.FC = () => {
-  const [revealedCard, setRevealedCard] = useState<Card | null>(null);
+  const [revealedCard, setRevealedCard] = useState<RollResult | null>(null);
+  const [rollHistory, setRollHistory] = useState<RollHistoryItem[]>([]);
   const [showAutoRoll, setShowAutoRoll] = useState(false);
-  const [autoRollActive, setAutoRollActive] = useState(false);
   const [hideRoll, setHideRoll] = useState(false);
+  const [isAutoRolling, setIsAutoRolling] = useState(false);
+  const [autoRollCount, setAutoRollCount] = useState(0);
+  const [autoRollTotal, setAutoRollTotal] = useState(0);
   
   const { coins, spendCoins, addToCollection } = useGameStore();
-  const { performSingleRoll, isRolling, completeRollAnimation } = useRollStore();
+  const { 
+    performSingleRoll, 
+    performMultiRoll,
+    getRollStats,
+    isRolling, 
+    completeRollAnimation 
+  } = useRollStore();
+
+  const stats = getRollStats();
+  
+  // DEV MODE: Add coins function (for testing)
+  const addCoins = useCallback((amount: number) => {
+    useGameStore.setState(state => ({ coins: state.coins + amount }));
+  }, []);
 
   const handleSingleRoll = useCallback(async () => {
     if (isRolling || coins < 100) return;
     
-    setRevealedCard(null);
-    
     try {
-      // Spend coins first
       const success = await spendCoins(100);
-      if (!success) {
-        return;
-      }
+      if (!success) return;
       
-      // Perform roll using RollService
       const rollResult = await performSingleRoll();
       
-      // Get animation duration based on hideRoll setting
-      const animationDuration = hideRoll ? 250 : 2000;
+      // Add to history
+      const historyItem: RollHistoryItem = {
+        id: `${Date.now()}-${Math.random()}`,
+        card: rollResult.card,
+        timestamp: new Date(),
+        pityTriggered: rollResult.pityTriggered,
+        isGuaranteed: rollResult.isGuaranteed
+      };
       
-      // Wait for suspense animation
+      setRollHistory(prev => [historyItem, ...prev].slice(0, 50));
+      
+      // Show reveal animation
       setTimeout(() => {
-        setRevealedCard(rollResult.card);
-        
-        // Add to collection
+        setRevealedCard(rollResult);
         addToCollection(rollResult.card);
-        
-        // Complete roll animation
         completeRollAnimation();
-        
-        // Auto-hide card after reveal
-        setTimeout(() => {
-          if (!autoRollActive) {
-            setRevealedCard(null);
-          }
-        }, 3000);
-      }, animationDuration);
+      }, 1500);
       
     } catch (error) {
       console.error('Roll failed:', error);
       completeRollAnimation();
     }
-  }, [isRolling, coins, performSingleRoll, spendCoins, addToCollection, completeRollAnimation, hideRoll, autoRollActive]);
+  }, [isRolling, coins, performSingleRoll, spendCoins, addToCollection, completeRollAnimation]);
 
-  const handleAutoRoll = useCallback(async (count: number) => {
-    const totalCost = count * 100;
-    if (coins < totalCost) return;
+  // Handle 10x roll
+  const handleTenRoll = useCallback(async () => {
+    if (isRolling || coins < 900) return; // 10% discount
     
-    setAutoRollActive(true);
+    try {
+      const success = await spendCoins(900);
+      if (!success) return;
+      
+      const results = await performMultiRoll(10);
+      
+      // Add all to history and collection
+      results.cards.forEach(result => {
+        const historyItem: RollHistoryItem = {
+          id: `${Date.now()}-${Math.random()}`,
+          card: result.card,
+          timestamp: new Date(),
+          pityTriggered: result.pityTriggered,
+          isGuaranteed: result.isGuaranteed
+        };
+        setRollHistory(prev => [historyItem, ...prev].slice(0, 50));
+        addToCollection(result.card);
+      });
+      
+      // Show the best card from the multi-roll
+      const bestCard = results.cards.reduce((best, current) => {
+        const rarityOrder = { 'common': 1, 'uncommon': 2, 'rare': 3, 'epic': 4, 'legendary': 5, 'mythic': 6, 'cosmic': 7 };
+        return (rarityOrder[current.card.rarity as keyof typeof rarityOrder] || 0) > (rarityOrder[best.card.rarity as keyof typeof rarityOrder] || 0) ? current : best;
+      }, results.cards[0]);
+      
+      setTimeout(() => {
+        setRevealedCard(bestCard);
+        completeRollAnimation();
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Multi-roll failed:', error);
+      completeRollAnimation();
+    }
+  }, [isRolling, coins, performMultiRoll, spendCoins, addToCollection, completeRollAnimation]);
+
+  // Handle 100x roll  
+  const handleHundredRoll = useCallback(async () => {
+    if (isRolling || coins < 8000) return; // 20% discount
+    
+    try {
+      const success = await spendCoins(8000);
+      if (!success) return;
+      
+      const results = await performMultiRoll(100);
+      
+      // Add all to history and collection (last 50 only for history)
+      results.cards.forEach(result => {
+        addToCollection(result.card);
+      });
+      
+      results.cards.slice(-50).forEach(result => {
+        const historyItem: RollHistoryItem = {
+          id: `${Date.now()}-${Math.random()}`,
+          card: result.card,
+          timestamp: new Date(),
+          pityTriggered: result.pityTriggered,
+          isGuaranteed: result.isGuaranteed
+        };
+        setRollHistory(prev => [historyItem, ...prev].slice(0, 50));
+      });
+      
+      // Show the best card from the multi-roll
+      const bestCard = results.cards.reduce((best, current) => {
+        const rarityOrder = { 'common': 1, 'uncommon': 2, 'rare': 3, 'epic': 4, 'legendary': 5, 'mythic': 6, 'cosmic': 7 };
+        return (rarityOrder[current.card.rarity as keyof typeof rarityOrder] || 0) > (rarityOrder[best.card.rarity as keyof typeof rarityOrder] || 0) ? current : best;
+      }, results.cards[0]);
+      
+      setTimeout(() => {
+        setRevealedCard(bestCard);
+        completeRollAnimation();
+      }, 1500);
+      
+    } catch (error) {
+      console.error('Mega-roll failed:', error);
+      completeRollAnimation();
+    }
+  }, [isRolling, coins, performMultiRoll, spendCoins, addToCollection, completeRollAnimation]);
+
+  // Handle auto-roll
+  const handleAutoRoll = useCallback(async (count: number) => {
+    if (isAutoRolling || isRolling) return;
+    
+    setIsAutoRolling(true);
+    setAutoRollCount(0);
+    setAutoRollTotal(count);
     setShowAutoRoll(false);
     
-    // For now, just do single rolls in sequence
-    // TODO: Implement proper 10x and 100x roll logic
+    const delay = hideRoll ? 100 : 1000; // Faster if hideRoll is enabled
+    
     for (let i = 0; i < count; i++) {
-      await handleSingleRoll();
-      // Small delay between rolls
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (coins < 100) break;
+      
+      try {
+        const success = await spendCoins(100);
+        if (!success) break;
+        
+        const rollResult = await performSingleRoll();
+        
+        // Add to history
+        const historyItem: RollHistoryItem = {
+          id: `${Date.now()}-${Math.random()}`,
+          card: rollResult.card,
+          timestamp: new Date(),
+          pityTriggered: rollResult.pityTriggered,
+          isGuaranteed: rollResult.isGuaranteed
+        };
+        
+        setRollHistory(prev => [historyItem, ...prev].slice(0, 50));
+        addToCollection(rollResult.card);
+        
+        // Show animation only for high rarity or if not hiding
+        const showAnimation = !hideRoll || 
+          ['mythic', 'cosmic'].includes(rollResult.card.rarity);
+        
+        if (showAnimation) {
+          setRevealedCard(rollResult);
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          setRevealedCard(null);
+        }
+        
+        setAutoRollCount(i + 1);
+        
+        // Auto-stop on mythic or cosmic
+        if (['mythic', 'cosmic'].includes(rollResult.card.rarity)) {
+          break;
+        }
+        
+        await new Promise(resolve => setTimeout(resolve, delay));
+        
+      } catch (error) {
+        console.error('Auto-roll failed:', error);
+        break;
+      }
     }
     
-    setAutoRollActive(false);
-  }, [coins, handleSingleRoll]);
+    setIsAutoRolling(false);
+    completeRollAnimation();
+  }, [isAutoRolling, isRolling, coins, hideRoll, performSingleRoll, spendCoins, addToCollection, completeRollAnimation]);
 
-  const toggleAutoRollPanel = () => {
-    setShowAutoRoll(!showAutoRoll);
-  };
+  // Auto-dismiss card after reveal
+  useEffect(() => {
+    if (revealedCard && !isAutoRolling) {
+      const timer = setTimeout(() => {
+        setRevealedCard(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [revealedCard, isAutoRolling]);
 
   return (
-    <div className="roll-screen">
-      {/* Background gradient based on last card rarity */}
-      <div className={`background-gradient ${revealedCard?.rarity.toLowerCase() || ''}`} />
+    <div className="enhanced-roll-screen">
+      {/* Background gradient */}
+      <div className={`background-gradient ${revealedCard?.card.rarity.toLowerCase() || ''}`} />
       
-      {/* Coin counter (subtle, top-right) */}
-      <motion.div 
-        className="coin-counter"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-      >
-        <span className="coin-emoji">🪙</span>
-        <span className="coin-amount">{coins.toLocaleString()}</span>
-      </motion.div>
-      
-      {/* Main Roll Button - Center of screen */}
-      <div className="roll-container">
-        <AnimatePresence>
-          {!revealedCard && !isRolling && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            >
-              <RollButton 
-                onClick={handleSingleRoll}
-                disabled={coins < 100 || isRolling}
-                cost={100}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Rolling animation */}
-        <AnimatePresence>
-          {isRolling && (
-            <motion.div 
-              className="rolling-animation"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-            >
-              <motion.div 
-                className="card-back"
-                animate={{ 
-                  rotateY: [0, 360],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{ 
-                  duration: hideRoll ? 0.25 : 2,
-                  repeat: Infinity,
-                  ease: "linear"
-                }}
-              >
-                <div className="card-mystery">
-                  <span className="mystery-emoji">❓</span>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Card Reveal */}
-        <AnimatePresence>
-          {revealedCard && !isRolling && (
-            <CardReveal 
-              card={convertToComplexCard(revealedCard)}
-              onClose={() => setRevealedCard(null)}
-              hideRoll={hideRoll}
-            />
-          )}
-        </AnimatePresence>
-      </div>
-      
-      {/* Auto-Roll Toggle (bottom) */}
+      {/* DEV MODE: Add coins button */}
       <motion.button
-        className="auto-roll-toggle"
-        onClick={toggleAutoRollPanel}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7 }}
+        className="dev-add-coins"
+        onClick={() => addCoins(10000)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        style={{
+          position: 'fixed',
+          top: '10px',
+          right: '10px',
+          padding: '10px 20px',
+          background: 'rgba(255, 215, 0, 0.2)',
+          border: '2px solid gold',
+          borderRadius: '10px',
+          color: 'gold',
+          cursor: 'pointer',
+          zIndex: 1000,
+          fontSize: '14px',
+          fontWeight: 'bold'
+        }}
       >
-        <span className="auto-icon">🎰</span> Auto Roll
+        +10,000 🪙 (DEV)
       </motion.button>
       
-      {/* Auto-Roll Panel */}
+      {/* Header with coin counter and pity tracker */}
+      <div className="roll-header">
+        <motion.div 
+          className="coin-counter"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <span className="coin-emoji">🪙</span>
+          <span className="coin-amount">{coins.toLocaleString()}</span>
+        </motion.div>
+        
+        <PityTracker stats={stats} />
+      </div>
+      
+      {/* Main content area */}
+      <div className="roll-main">
+        {/* Left sidebar - Recent rolls */}
+        <RollHistory history={rollHistory} />
+        
+        {/* Center - Roll buttons and animations */}
+        <div className="roll-center">
+          <AnimatePresence mode="wait">
+            {!revealedCard && !isRolling && (
+              <motion.div
+                className="roll-buttons"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <motion.button
+                  className="roll-button single"
+                  onClick={handleSingleRoll}
+                  disabled={coins < 100}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="button-content">
+                    <span className="button-icon">🎰</span>
+                    <span className="button-title">Roll x1</span>
+                    <span className="button-cost">100 🪙</span>
+                  </div>
+                </motion.button>
+
+                <motion.button
+                  className="roll-button ten"
+                  onClick={handleTenRoll}
+                  disabled={coins < 900}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="button-content">
+                    <span className="button-icon">🎰</span>
+                    <span className="button-title">Roll x10</span>
+                    <span className="button-cost">900 🪙 -10%</span>
+                  </div>
+                </motion.button>
+
+                <motion.button
+                  className="roll-button hundred"
+                  onClick={handleHundredRoll}
+                  disabled={coins < 8000}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <div className="button-content">
+                    <span className="button-icon">🎰</span>
+                    <span className="button-title">Roll x100</span>
+                    <span className="button-cost">8000 🪙 -20%</span>
+                  </div>
+                </motion.button>
+              </motion.div>
+            )}
+
+            {isRolling && (
+              <motion.div
+                className="rolling-animation"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+              >
+                <motion.div
+                  className="rolling-orb"
+                  animate={{ 
+                    rotate: 360,
+                    scale: [1, 1.2, 1]
+                  }}
+                  transition={{ 
+                    rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                    scale: { duration: 1, repeat: Infinity }
+                  }}
+                >
+                  ✨
+                </motion.div>
+                <p className="rolling-text">Rolling...</p>
+              </motion.div>
+            )}
+
+            {revealedCard && !isRolling && (
+              <EnhancedCardReveal 
+                card={revealedCard.card}
+                onClose={() => setRevealedCard(null)}
+                pityTriggered={revealedCard.pityTriggered}
+                isGuaranteed={revealedCard.isGuaranteed}
+              />
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+      
+      {/* Floating Roll Button */}
+      {!isRolling && !revealedCard && (
+        <motion.button
+          className="floating-roll-button"
+          onClick={handleSingleRoll}
+          disabled={coins < 100}
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 100, opacity: 0 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '200px',
+            height: '80px',
+            background: coins >= 100 
+              ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+              : 'rgba(100, 100, 100, 0.5)',
+            border: 'none',
+            borderRadius: '40px',
+            color: 'white',
+            fontSize: '24px',
+            fontWeight: 'bold',
+            cursor: coins >= 100 ? 'pointer' : 'not-allowed',
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '5px',
+            zIndex: 100
+          }}
+        >
+          <span style={{ fontSize: '28px' }}>🎰</span>
+          <span>ROLL</span>
+        </motion.button>
+      )}
+      
+      {/* Auto Roll Button */}
+      {!isAutoRolling && !isRolling && !showAutoRoll && (
+        <motion.button
+          className="auto-roll-trigger"
+          onClick={() => setShowAutoRoll(true)}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          whileHover={{ x: 5 }}
+          style={{
+            position: 'fixed',
+            bottom: '120px',
+            left: '20px',
+            padding: '15px 25px',
+            background: 'rgba(99, 102, 241, 0.2)',
+            border: '2px solid #6366f1',
+            borderRadius: '15px',
+            color: '#818cf8',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}
+        >
+          ⚡ Auto Roll
+        </motion.button>
+      )}
+      
+      {/* Auto Roll Panel */}
       <AnimatePresence>
         {showAutoRoll && (
           <AutoRollPanel
@@ -225,6 +704,51 @@ export const RollScreen: React.FC = () => {
           />
         )}
       </AnimatePresence>
+      
+      {/* Auto Roll Progress */}
+      {isAutoRolling && (
+        <motion.div
+          className="auto-roll-progress"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: 'rgba(0, 0, 0, 0.9)',
+            padding: '30px',
+            borderRadius: '20px',
+            color: 'white',
+            textAlign: 'center',
+            zIndex: 1000
+          }}
+        >
+          <h3>Auto Rolling...</h3>
+          <p style={{ fontSize: '24px', margin: '20px 0' }}>
+            {autoRollCount} / {autoRollTotal}
+          </p>
+          <div style={{
+            width: '200px',
+            height: '10px',
+            background: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: '5px',
+            overflow: 'hidden'
+          }}>
+            <motion.div
+              style={{
+                width: `${(autoRollCount / autoRollTotal) * 100}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #667eea, #764ba2)',
+                borderRadius: '5px'
+              }}
+              animate={{ width: `${(autoRollCount / autoRollTotal) * 100}%` }}
+              transition={{ duration: 0.3 }}
+            />
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

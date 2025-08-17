@@ -1,4 +1,4 @@
-import { EnhancedRollScreen } from './components/screens/EnhancedRollScreen';
+import { RollScreen } from './components/screens/RollScreen';
 import { GameProvider } from './providers/GameProvider';
 import './App.css';
 
@@ -6,7 +6,7 @@ function App() {
   return (
     <GameProvider>
       <div className="app">
-        <EnhancedRollScreen />
+        <RollScreen />
       </div>
     </GameProvider>
   );
