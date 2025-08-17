@@ -1,3 +1,5 @@
+import { CardEmojiData } from './emoji';
+
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic' | 'cosmic';
 export type CardType = 'creature' | 'spell' | 'attack' | 'defense' | 'healing' | 'support';
 
@@ -9,7 +11,14 @@ export interface Card {
   cost: number;
   damage?: number;
   description?: string;
-  emoji: string;
+  
+  // Legacy emoji field (for backward compatibility)
+  emoji?: string;
+  
+  // New multi-emoji system
+  emojis?: string[];
+  emojiData?: CardEmojiData;
+  
   color?: string;
   attack?: number;
   defense?: number;
