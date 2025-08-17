@@ -5,7 +5,6 @@ import {
   CardEmojiData 
 } from '../types/emoji';
 import { 
-  COMPLETE_EMOJI_DATABASE, 
   getEmojisByCategory, 
   getEmojiPower,
   calculateTotalBaseDamage 

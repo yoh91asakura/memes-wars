@@ -447,7 +447,6 @@ export class CombatEngine {
       emojis,
       
       // New emoji system
-      card,
       emojiPowers,
       synergyBonuses,
       
@@ -485,49 +484,6 @@ export class CombatEngine {
     this.autoFireTimers.delete(entityId);
   }
 
-  /**
-   * Create entity from card
-   */
-  createEntityFromCard(card: Card, x: number, y: number, isPlayer: boolean): CombatEntity {
-    // Get emojis from card or use card emoji
-    const emojis = card.emoji ? [card.emoji] : [];
-    
-    const entity: CombatEntity = {
-      id: `${isPlayer ? 'player' : 'enemy'}_${Date.now()}_${Math.random()}`,
-      x,
-      y,
-      width: 60,
-      height: 60,
-      hp: 100, // Base HP, could be from card
-      maxHp: 100,
-      attackSpeed: 1.0, // Base attack speed
-      emojis,
-      isPlayer,
-      isAlive: true,
-      effects: new Map(),
-      
-      takeDamage: function(damage: number) {
-        this.hp = Math.max(0, this.hp - damage);
-        if (this.hp <= 0) {
-          this.isAlive = false;
-        }
-      },
-      
-      heal: function(amount: number) {
-        this.hp = Math.min(this.maxHp, this.hp + amount);
-      },
-      
-      applyEffect: function(effect: StatusEffect) {
-        this.effects.set(effect.id, effect);
-      },
-      
-      removeEffect: function(effectId: string) {
-        this.effects.delete(effectId);
-      }
-    };
-
-    return entity;
-  }
 
   /**
    * Clean up dead entities
@@ -561,11 +517,11 @@ export class CombatEngine {
     this.autoFireTimers.clear();
 
     // Create player entity
-    const playerEntity = this.createEntityFromCard(playerCard, 200, 400, true);
+    const playerEntity = this.createEntityFromCard(playerCard, 'player', 200, 400, true);
     this.addEntity(playerEntity);
 
     // Create enemy entity
-    const enemyEntity = this.createEntityFromCard(enemyCard, 1000, 400, false);
+    const enemyEntity = this.createEntityFromCard(enemyCard, 'enemy', 1000, 400, false);
     this.addEntity(enemyEntity);
 
     // Start the engine

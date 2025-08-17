@@ -30,7 +30,7 @@ export class UncommonCardService {
     return this.cards.filter(card => 
       card.name.toLowerCase().includes(lowercaseQuery) ||
       card.description?.toLowerCase().includes(lowercaseQuery) ||
-      card.emoji.includes(query)
+      card.emoji?.includes(query)
     );
   }
 

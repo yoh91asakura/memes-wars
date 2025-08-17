@@ -1,5 +1,4 @@
-import { EmojiSynergy, EmojiPower } from '../types/emoji';
-import { getEmojiPower } from '../systems/emoji-database';
+import { EmojiSynergy } from '../types/emoji';
 
 /**
  * Predefined synergy combinations with bonuses
@@ -199,7 +198,7 @@ export class EmojiSynergyCalculator {
    * Calculate total synergy bonus damage
    */
   static calculateSynergyDamageBonus(
-    emojiCharacters: string[], 
+    _emojiCharacters: string[], 
     activeSynergies: EmojiSynergy[]
   ): number {
     let totalBonus = 0;
