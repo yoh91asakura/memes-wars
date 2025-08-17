@@ -42,6 +42,7 @@ export enum EmojiEffectType {
   BUFF_STRENGTH = 'buff_strength',
   LUCKY = 'lucky',
   HARMONY = 'harmony',
+  CHARM = 'charm',
   
   // Debuff effects
   POISON = 'poison',
@@ -54,6 +55,7 @@ export enum EmojiEffectType {
   THORNS = 'thorns',
   SPORE_CLOUD = 'spore_cloud',
   PETRIFY = 'petrify',
+  WEB = 'web',
   
   // Energy effects
   CHARGE = 'charge',
@@ -77,10 +79,12 @@ export interface EmojiPower {
   effectValue?: number;
   effectDuration?: number;
   projectileSpeed?: number;
-  trajectory?: 'straight' | 'arc' | 'homing' | 'wave' | 'spiral';
+  trajectory?: 'straight' | 'arc' | 'homing' | 'wave' | 'spiral' | 'random';
   description: string;
   cooldown?: number;
 }
+
+export type TrajectoryPattern = 'straight' | 'arc' | 'homing' | 'wave' | 'spiral' | 'random';
 
 export interface EmojiSynergy {
   name: string;
