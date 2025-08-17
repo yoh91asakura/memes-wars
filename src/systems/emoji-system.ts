@@ -104,12 +104,13 @@ export class EmojiProjectile {
         this.vy += Math.sin(this.age * 8) * 100 * deltaTime;
         break;
         
-      case 'spiral':
+      case 'spiral': {
         const spiralRadius = 50;
         const spiralSpeed = this.age * 4;
         this.vx += Math.cos(spiralSpeed) * spiralRadius * deltaTime;
         this.vy += Math.sin(spiralSpeed) * spiralRadius * deltaTime;
         break;
+      }
         
       case 'homing':
         if (this.target && this.target.isAlive) {

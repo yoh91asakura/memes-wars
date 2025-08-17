@@ -269,7 +269,11 @@ const EnhancedCardReveal: React.FC<{
   );
 };
 
-export const RollScreen: React.FC = () => {
+interface RollScreenProps {
+  onNavigateToCombat?: () => void;
+}
+
+export const RollScreen: React.FC<RollScreenProps> = ({ onNavigateToCombat }) => {
   const [revealedCard, setRevealedCard] = useState<RollResult | null>(null);
   const [rollHistory, setRollHistory] = useState<RollHistoryItem[]>([]);
   const [isAutoRolling, setIsAutoRolling] = useState(false);
@@ -522,6 +526,39 @@ export const RollScreen: React.FC = () => {
           {isAutoRolling ? '⏸️' : '▶️'}
         </motion.div>
       </motion.button>
+
+      {/* Battle Navigation Button */}
+      {onNavigateToCombat && (
+        <motion.button
+          className="battle-nav-button"
+          onClick={onNavigateToCombat}
+          initial={{ x: 100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          whileHover={{ scale: 1.05, x: -5 }}
+          whileTap={{ scale: 0.95 }}
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            right: '30px',
+            width: '60px',
+            height: '60px',
+            background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+            border: '2px solid #ef4444',
+            borderRadius: '50%',
+            color: 'white',
+            fontSize: '24px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            transition: 'all 0.3s ease'
+          }}
+          title="Go to Battle Arena"
+        >
+          ⚔️
+        </motion.button>
+      )}
 
       {/* Auto Roll Status Indicator */}
       <AnimatePresence>

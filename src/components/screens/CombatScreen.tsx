@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../../types/card';
-import CombatArena from '../combat/CombatArena';
+import WaveCombatArena from '../combat/WaveCombatArena';
 import { commonCards } from '../../data/cards/common';
 import './CombatScreen.css';
 
@@ -9,12 +9,14 @@ interface CombatScreenProps {
   playerCards?: Card[];
   onBattleComplete?: (winner: 'player' | 'opponent', rewards?: any) => void;
   onExit?: () => void;
+  onNavigateBack?: () => void;
 }
 
 export const CombatScreen: React.FC<CombatScreenProps> = ({
   playerCards = [],
   onBattleComplete,
-  onExit
+  onExit,
+  onNavigateBack
 }) => {
   const [gamePhase, setGamePhase] = useState<'setup' | 'battle' | 'result'>('setup');
   const [battleResult, setBattleResult] = useState<'player' | 'opponent' | null>(null);
@@ -52,7 +54,9 @@ export const CombatScreen: React.FC<CombatScreenProps> = ({
   };
   
   const handleExit = () => {
-    if (onExit) {
+    if (onNavigateBack) {
+      onNavigateBack();
+    } else if (onExit) {
       onExit();
     }
   };
@@ -145,8 +149,8 @@ export const CombatScreen: React.FC<CombatScreenProps> = ({
         </div>
       </div>
       
-      {/* Main Combat Arena */}
-      <CombatArena 
+      {/* Main Wave Combat Arena */}
+      <WaveCombatArena 
         playerCards={defaultPlayerCards}
         opponentCards={opponentCards}
         onBattleComplete={handleBattleComplete}
