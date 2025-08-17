@@ -171,7 +171,7 @@ describe('RollService', () => {
       let stats = initialStats;
       
       for (let i = 0; i < 1000; i++) {
-        const result = rollService.rollSingle(stats);
+        rollService.rollSingle(stats);
         // Simulate stats update (simplified)
         stats = {
           ...stats,

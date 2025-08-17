@@ -56,8 +56,14 @@ test.describe('Game Store Functionality', () => {
       // Click roll button
       await rollButton.click();
       
-      // Wait for any animation or state update
-      await page.waitForTimeout(1000);
+      // Wait for animation or state update with smart waiting
+      await page.waitForFunction(() => {
+        // Wait for DOM changes or animation to complete
+        return document.querySelector('.card, [data-testid="card"], [class*="card"]') !== null ||
+               document.querySelector('.coins')?.textContent !== null;
+      }, { timeout: 5000 }).catch(() => {
+        // If waiting fails, continue anyway
+      });
       
       // Check if a card was generated or if coins were deducted
       const cardElements = page.locator('.card, [data-testid="card"], [class*="card"]');
@@ -94,7 +100,13 @@ test.describe('Game Store Functionality', () => {
     const addToDeckButton = page.locator('button:has-text("Add to Deck"), [data-testid="add-to-deck"]').first();
     if (await addToDeckButton.isVisible()) {
       await addToDeckButton.click();
-      await page.waitForTimeout(500);
+      // Wait for response or UI update instead of fixed timeout
+      await page.waitForResponse(response => response.status() === 200, { timeout: 5000 }).catch(() => {});
+      // Or wait for a specific element to appear/change
+      await page.waitForSelector('.toast, .message, [role="alert"]', { 
+        state: 'visible', 
+        timeout: 3000 
+      }).catch(() => {});
       
       // Check for success or error message
       const message = page.locator('.toast, .message, [role="alert"]').first();
@@ -131,7 +143,11 @@ test.describe('Game Store Functionality', () => {
     
     if (await collectionButton.isVisible()) {
       await collectionButton.click();
-      await page.waitForTimeout(500);
+      // Wait for collection view to be visible instead of fixed timeout
+      await page.waitForSelector('.collection, [data-testid="collection-view"], [class*="collection"]', {
+        state: 'visible',
+        timeout: 5000
+      }).catch(() => {});
       
       // Check if collection view opened
       const collectionView = page.locator('.collection, [data-testid="collection-view"], [class*="collection"]').first();
