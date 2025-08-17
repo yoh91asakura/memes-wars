@@ -91,30 +91,36 @@ archon:manage_task(
 ### RÈGLES CRITIQUES :
 1. **TOUJOURS** vérifier statut avant de prendre une tâche
 2. **JAMAIS** travailler sur tâche "in progress" d'un autre agent  
-3. **IMMÉDIATEMENT** verrouiller tâche (status "in progress" + git push)
+3. **IMMÉDIATEMENT** verrouiller tâche (status "in progress" + créer branche)
 4. **SI CONFLIT** → choisir autre tâche
+5. **UNE BRANCHE PAR TÂCHE** → isolation complète du travail
 
 ### 🔐 Séquence Verrouillage Obligatoire
 ```bash
-# 1. TOUJOURS synchroniser avec GitHub d'abord
-git pull origin master
+# 1. TOUJOURS synchroniser avec main d'abord
+git checkout main
+git pull origin main
 
 # 2. Vérifier que tâche est disponible
 archon:manage_task(action="get", task_id="...")
 # Si status != "todo" → STOP, choisir autre tâche
 
-# 3. Verrouiller dans Archon
+# 3. Créer branche pour la tâche
+git checkout -b task/[task-id]-[short-description]
+# Exemple: git checkout -b task/abc123-roll-service
+
+# 4. Verrouiller dans Archon
 archon:manage_task(
   action="update",
   task_id="...",
   update_fields={"status": "in progress", "assignee": "[agent-name]"}
 )
 
-# 4. Pousser immédiatement changement de statut
+# 5. Pousser branche et changement de statut
 git add . && git commit -m "chore: starting task [task-id] - [task-title]"
-git push origin master
+git push -u origin task/[task-id]-[short-description]
 
-# 5. Maintenant seulement, commencer le travail
+# 6. Maintenant seulement, commencer le travail sur la branche
 ```
 
 ## 🚨 CONCURRENT EXECUTION - RÈGLE D'OR
@@ -143,8 +149,6 @@ git push origin master
 ## 📊 Archon MCP Integration
 - **Project ID** : `196233ba-fbac-4ada-b0f9-37658c0e73ea`
 - **Archon UI** : http://localhost:3737
-- **API Endpoint** : http://localhost:8181
-- **API Docs** : http://localhost:8181/docs
 - **MCP Server** : http://localhost:8051
 
 ## 🚀 Démarrage Services
@@ -187,20 +191,29 @@ http://localhost:3737/projects/196233ba-fbac-4ada-b0f9-37658c0e73ea
 
 ### Phase 1: 🔍 INITIALISATION
 ```bash
-# 1. Check current task
+# 1. Synchroniser avec main
+git checkout main
+git pull origin main
+
+# 2. Check current task
 archon:manage_task(action="get", task_id="...")
 
-# 2. List available tasks
+# 3. List available tasks
 archon:manage_task(action="list", filter_by="status", filter_value="todo")
 
-# 3. Lock task (CRITIQUE pour multi-agents)
-git pull origin master
+# 4. Créer branche pour la tâche (CRITIQUE pour multi-agents)
+git checkout -b task/[task-id]-[short-description]
+
+# 5. Lock task dans Archon
 archon:manage_task(
   action="update",
   task_id="...",
   update_fields={"status": "in progress", "assignee": "[agent-name]"}
 )
-git add . && git commit -m "chore: starting task [id]" && git push origin master
+
+# 6. Push branche initiale
+git add . && git commit -m "chore: starting task [id] - [title]"
+git push -u origin task/[task-id]-[short-description]
 ```
 
 ### Phase 2: 🧠 RESEARCH
@@ -226,32 +239,53 @@ archon:perform_rag_query(query="[API] best practices", match_count=3)
   // ... TOUS les fichiers
   Bash "npm install && npm run dev"
   TodoComplete ["1", "2", "3"]
+  
+  // Commit fréquents sur branche de tâche
+  Bash "git add -A && git commit -m 'feat: implement [feature-part]'"
+  Bash "git push origin task/[task-id]-[description]"
 ```
 
 ### Phase 4: ✅ VALIDATION
 ```bash
-# Submit for review
-git pull origin master
-git add . && git commit -m "feat: [task-id] - [description]"
-git push origin master
+# Finaliser sur branche de tâche
+git add . && git commit -m "feat: [task-id] - [description] complete"
+git push origin task/[task-id]-[description]
+
+# Vérifier tests
+npm run test && npm run typecheck
+
+# Créer Pull Request (via GitHub/GitLab UI ou CLI)
+# Title: "Task [task-id]: [description]"
+# Base: main ← Compare: task/[task-id]-[description]
 
 archon:manage_task(
   action="update",
   task_id="...",
   update_fields={"status": "in review"}
 )
-# NOTIFY: "Task [title] ready for review"
+# NOTIFY: "Task [title] ready for review - PR #[number] created"
 ```
 
 ### Phase 5: 🔄 SYNCHRONISATION
 ```bash
-# Après validation utilisateur
+# Après validation utilisateur et merge de la PR
+
+# 1. Retourner sur main
+git checkout main
+git pull origin main
+
+# 2. Supprimer branche locale
+git branch -d task/[task-id]-[description]
+
+# 3. Marquer tâche comme terminée
 archon:manage_task(
   action="update",
   task_id="...",
   update_fields={"status": "done"}
 )
-git add . && git commit -m "chore: completed task [id]" && git push origin master
+
+# 4. Optionnel: supprimer branche distante si pas fait automatiquement
+git push origin --delete task/[task-id]-[description]
 ```
 
 ## 📋 Status Progression OBLIGATOIRE
@@ -512,18 +546,34 @@ archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match
 
 **1️⃣ AVANT Travail :**
 ```bash
+# Setup Git branch
+git checkout main && git pull origin main
+git checkout -b task/[task-id]-[description]
+
+# Hooks Claude Flow
 npx claude-flow@alpha hooks pre-task --description "[task]"
 npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]"
 ```
 
 **2️⃣ PENDANT Travail :**
 ```bash
+# Commits réguliers sur branche
+git add -A && git commit -m "wip: [current progress]"
+git push origin task/[task-id]-[description]
+
+# Hooks Claude Flow
 npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "swarm/[agent]/[step]"
 npx claude-flow@alpha hooks notify --message "[what was done]"
 ```
 
 **3️⃣ APRÈS Travail :**
 ```bash
+# Finaliser branche et créer PR
+git add -A && git commit -m "feat: complete [task-id] - [description]"
+git push origin task/[task-id]-[description]
+# Créer Pull Request via UI ou CLI
+
+# Hooks Claude Flow
 npx claude-flow@alpha hooks post-task --task-id "[task]"
 npx claude-flow@alpha hooks session-end --export-metrics true
 ```
@@ -595,26 +645,36 @@ archon/tasks/
 | **SERVICES** | 1/4 | ✅CardService, ⏳DeckService, CombatEngine, ProgressionService | HIGH |
 | **UI** | 1/4 | ✅RollScreen, ⏳DeckBuilder, CombatScreen, CollectionView | MEDIUM |
 
-## 🔄 Git Workflow (SIMPLE - MASTER ONLY)
+## 🔄 Git Workflow (BRANCHES PAR TÂCHE)
 ```bash
-# WORKFLOW SIMPLIFIÉ - PAS DE BRANCHES
-# Tout le monde travaille sur master
+# WORKFLOW AVEC BRANCHES - UNE PAR TÂCHE
+# Protection de main + travail isolé
 
-# 1. Début de tâche
-git pull origin master
+# 1. Début de tâche - Créer branche
+git checkout main && git pull origin main
+git checkout -b task/[task-id]-[description]
 # Update Archon status → in progress
-git add . && git commit -m "chore: starting task [id]" && git push origin master
+git add . && git commit -m "chore: starting task [id]"
+git push -u origin task/[task-id]-[description]
 
-# 2. Pendant développement
-git pull origin master  # Avant chaque commit
-git add . && git commit -m "feat: [description]" && git push origin master
+# 2. Pendant développement - Commits sur branche
+git add . && git commit -m "feat: [what was done]"
+git push origin task/[task-id]-[description]
+# Synchroniser régulièrement avec main
+git fetch origin && git rebase origin/main
 
-# 3. Fin de tâche
-git pull origin master
+# 3. Fin de tâche - Pull Request
+git add . && git commit -m "feat: completed [task-id]"
+git push origin task/[task-id]-[description]
+# Créer PR via GitHub/GitLab
 # Update Archon status → in review
-git add . && git commit -m "feat: completed [task-id]" && git push origin master
 
-# RÈGLE D'OR: git pull → changements → git push
+# 4. Après merge - Nettoyage
+git checkout main && git pull origin main
+git branch -d task/[task-id]-[description]
+# Update Archon status → done
+
+# RÈGLE D'OR: Une branche = Une tâche = Un agent
 ```
 
 ## 📋 Task Template
@@ -647,6 +707,12 @@ npm run dev              # http://localhost:3000
 npm run build            # Build production
 npm run test             # Run tests
 npm run typecheck        # TypeScript check
+
+# Git Branch Management
+git checkout main && git pull    # Update main
+git checkout -b task/[id]-[desc] # New task branch
+git push -u origin task/[id]     # Push branch
+git branch -d task/[id]          # Delete after merge
 
 # Archon Services
 cd archon && docker-compose up -d
@@ -692,11 +758,11 @@ Si exécution séquentielle :
 
 1. **ARCHON-FIRST** → Toujours commencer par Archon MCP
 2. **CONCURRENT EXECUTION** → 1 message = toutes opérations liées
-3. **FEATURE-TASK LINKING** → Chaque task liée à une feature
+3. **BRANCH PER TASK** → Une branche Git par tâche Archon
 4. **STATUS PROGRESSION** → todo → in progress → in review → done
-5. **GIT WORKFLOW** → git pull → changes → git push
+5. **GIT WORKFLOW** → main → task/branch → PR → merge → cleanup
 6. **NO ROOT FILES** → Organiser dans sous-répertoires
-7. **VALIDATION GATES** → done SEULEMENT après confirmation utilisateur
+7. **VALIDATION GATES** → done SEULEMENT après PR approuvée et merge
 8. **CREATE IF NOT EXISTS** → Si demande hors tâches existantes, créer après validation utilisateur
 
 **REMEMBER** : Archon tracks tasks, Hive manages workflow, Claude executes with CONCURRENT pattern!
