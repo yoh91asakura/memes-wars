@@ -28,6 +28,64 @@
 ### ⚠️ VIOLATION CHECK
 Si vous avez utilisé TodoWrite en premier : **VIOLATION**. Arrêtez et redémarrez avec Archon.
 
+## 🆕 PROTOCOLE DEMANDE UTILISATEUR NON-EXISTANTE
+
+### Quand l'utilisateur demande quelque chose qui n'est PAS dans les tâches Archon :
+
+**1. VÉRIFIER D'ABORD** → Lister les tâches existantes
+```bash
+archon:manage_task(action="list", filter_by="project", filter_value="196233ba-fbac-4ada-b0f9-37658c0e73ea")
+```
+
+**2. SI TÂCHE N'EXISTE PAS** → Préparer création
+- Analyser la demande utilisateur
+- Identifier la feature appropriée (Card System, UI, Services, Combat Engine, etc.)
+- Créer description précise et actionnable de la tâche
+- Définir critères d'acceptation clairs
+
+**3. VALIDATION OBLIGATOIRE** → Faire valider AVANT création
+```
+"Je vais créer les tâches suivantes dans Archon :
+
+1. [Titre tâche 1] - Feature: [X] - Description: [Description détaillée...]
+2. [Titre tâche 2] - Feature: [Y] - Description: [Description détaillée...]
+
+Voulez-vous que je procède à la création de ces tâches ?"
+```
+
+**4. CRÉATION APRÈS VALIDATION** → Utiliser MCP exclusivement
+```bash
+archon:manage_task(
+  action="create",
+  project_id="196233ba-fbac-4ada-b0f9-37658c0e73ea",
+  title="[Titre précis et actionnable]",
+  feature="[Feature appropriée]",
+  description="[Description détaillée avec critères d'acceptation]",
+  task_order="[Ordre de priorité]",
+  status="todo"
+)
+```
+
+**5. TOUJOURS utiliser MCP pour les mises à jour** → JAMAIS de modifications locales
+```bash
+# ✅ CORRECT - Utiliser MCP pour TOUS les changements de statut
+archon:manage_task(
+  action="update", 
+  task_id="...", 
+  update_fields={"status": "in progress", "assignee": "Claude Code Agent"}
+)
+
+# ❌ INCORRECT - Modification locale sans MCP
+# Ne jamais modifier directement les fichiers JSON locaux ou tasks/
+```
+
+### 🔄 Features Disponibles pour Assignment
+- **Card System** - Tout ce qui concerne les cartes (données, modèles, types)
+- **UI** - Interfaces utilisateur, composants visuels, écrans
+- **Services** - Logic métier, services backend, APIs
+- **Combat Engine** - Système de combat, animations, effets
+- **Game Management** - Progression, sauvegarde, paramètres
+
 ## 🔒 PROTOCOLE ANTI-CONFLIT MULTI-AGENTS
 
 ### RÈGLES CRITIQUES :
@@ -639,6 +697,7 @@ Si exécution séquentielle :
 5. **GIT WORKFLOW** → git pull → changes → git push
 6. **NO ROOT FILES** → Organiser dans sous-répertoires
 7. **VALIDATION GATES** → done SEULEMENT après confirmation utilisateur
+8. **CREATE IF NOT EXISTS** → Si demande hors tâches existantes, créer après validation utilisateur
 
 **REMEMBER** : Archon tracks tasks, Hive manages workflow, Claude executes with CONCURRENT pattern!
 
