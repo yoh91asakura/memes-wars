@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '../../types/card';
-import { COMPLETE_EMOJI_DATABASE } from '../../systems/emoji-database';
+import { EMOJI_POWERS_DATABASE } from '../../systems/emoji-database';
 import './CardTCG.css';
 
 interface CardTCGProps {
@@ -133,7 +133,7 @@ export const CardTCG: React.FC<CardTCGProps> = ({
       <div className="emojis-rewards-section">
         <div className="emojis-rewards-grid">
           {allEmojis.map((emojiChar, index) => {
-            const emojiData = COMPLETE_EMOJI_DATABASE[emojiChar];
+            const emojiData = EMOJI_POWERS_DATABASE[emojiChar];
             return (
               <div 
                 key={`${emojiChar}-${index}`}

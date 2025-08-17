@@ -4,7 +4,6 @@ import { useGameStore } from '../../stores/gameStore';
 import { useRollStore } from '../../stores/rollStore';
 import { Card } from '../../types/card';
 import { RollResult, RollStats } from '../../services/RollService';
-import { AutoRollPanel } from '../roll/AutoRollPanel';
 import { CardTCG } from '../cards/CardTCG';
 import './RollScreenSolsRNG.css';
 
@@ -156,7 +155,7 @@ const EnhancedCardReveal: React.FC<{
   onClose: () => void;
   pityTriggered?: boolean;
   isGuaranteed?: boolean;
-}> = ({ card, onClose, pityTriggered, isGuaranteed }) => {
+}> = ({ card, onClose }) => {
   const getRarityAnimation = () => {
     switch(card.rarity) {
       case 'cosmic':

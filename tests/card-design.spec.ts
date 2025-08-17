@@ -30,7 +30,6 @@ test.describe('Card Design Visual Testing', () => {
   });
 
   test('should test different rarity cards', async ({ page }) => {
-    const rarities = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic', 'cosmic'];
     
     for (let i = 0; i < 10; i++) {
       // Roll for cards
