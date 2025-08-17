@@ -419,5 +419,3 @@ export function adaptToSimpleCard(unifiedCard: UnifiedCard): any {
 export type Card = UnifiedCard;
 export type Rarity = UnifiedRarity;
 export type LegacyCard = any;
-
-// All exports are already declared above - no need to re-export

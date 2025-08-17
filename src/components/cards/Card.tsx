@@ -1,19 +1,32 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UnifiedCard as Card } from '../../models/unified/Card';
+import { UnifiedCard as CardType } from '../../models/unified/Card';
 import { COMPLETE_EMOJI_DATABASE } from '../../systems/emoji-database';
-import './CardTCG.css';
+import { EmojiSynergyCalculator } from '../../services/EmojiSynergyCalculator';
+import './Card.css';
 
-interface CardTCGProps {
-  card: Card;
+interface CardProps {
+  card: CardType;
+  mode?: 'display' | 'combat' | 'collection' | 'preview';
+  size?: 'small' | 'medium' | 'large';
   showAnimations?: boolean;
+  showStats?: boolean;
+  showSynergies?: boolean;
   onClick?: () => void;
+  selected?: boolean;
+  static?: boolean;
 }
 
-export const CardTCG: React.FC<CardTCGProps> = ({ 
+export const Card: React.FC<CardProps> = ({ 
   card, 
+  mode = 'display',
+  size = 'medium',
   showAnimations = true,
-  onClick 
+  showStats = true,
+  showSynergies = true,
+  onClick,
+  selected = false,
+  static: isStatic = false 
 }) => {
   // Configuration de rareté pour le type simple Card
   const rarityColors = {
@@ -87,16 +100,21 @@ export const CardTCG: React.FC<CardTCGProps> = ({
 
   const allEmojis = getAllEmojis();
 
+  // Get emojis for synergy calculation (pour l'aura seulement)
+  const emojisStrings = card.emojis?.map(emoji => emoji.character) || [];
+  const synergies = EmojiSynergyCalculator.calculateSynergies(emojisStrings);
+  const hasSynergies = synergies.length > 0;
+
   const CardContent = (
     <div 
-      className={`card-tcg rarity-${card.rarity.toLowerCase()}`}
+      className={`card rarity-${card.rarity.toLowerCase()} ${selected ? 'selected' : ''} ${hasSynergies ? 'has-synergies' : ''}`}
       onClick={onClick}
       style={{
         backgroundImage: `url(${backgroundImage})`,
         borderColor: rarityConfig.color
       }}
     >
-      {/* Overlay pour lisibilité */}
+      {/* Overlay subtil pour lisibilité */}
       <div className="card-overlay" />
       
       {/* Glow effect pour raretés élevées */}
@@ -109,7 +127,7 @@ export const CardTCG: React.FC<CardTCGProps> = ({
         />
       )}
 
-      {/* Header avec nom du meme */}
+      {/* Header avec nom du meme - LAYOUT TCG ORIGINAL */}
       <div className="card-header-tcg">
         <h3 className="card-name-tcg">{card.name}</h3>
       </div>
@@ -124,44 +142,36 @@ export const CardTCG: React.FC<CardTCGProps> = ({
         </div>
       )}
 
-      {/* Zone principale pour l'illustration du meme */}
-      <div className="meme-illustration-area">
-        {/* L'illustration de fond fait déjà office de meme */}
-      </div>
-
-      {/* Section des emojis gagnés - En bas */}
+      {/* Section des emojis rewards - LAYOUT TCG ORIGINAL */}
       <div className="emojis-rewards-section">
         <div className="emojis-rewards-grid">
-          {allEmojis.map((emojiChar, index) => {
-            const emojiData = COMPLETE_EMOJI_DATABASE[emojiChar];
-            return (
-              <div 
-                key={`${emojiChar}-${index}`}
-                className="emoji-reward-large"
-                title={emojiData ? `${emojiData.name}: ${emojiData.description}` : emojiChar}
-              >
-                <div className="emoji-icon-large">{emojiChar}</div>
-              </div>
-            );
-          })}
+          {allEmojis.map((emojiChar, index) => (
+            <div 
+              key={`${emojiChar}-${index}`}
+              className="emoji-reward-large"
+              title={COMPLETE_EMOJI_DATABASE[emojiChar]?.name || emojiChar}
+            >
+              <span className="emoji-icon-large">{emojiChar}</span>
+            </div>
+          ))}
         </div>
         
-        {/* Passive de la carte - seulement si elle en a un */}
+        {/* Section passive de la carte - LAYOUT TCG ORIGINAL */}
         {card.ability && (
           <div className="card-passive-text">
-            <span className="passive-ability">{card.ability}</span>
-            {card.flavor && <span className="passive-flavor">: {card.flavor}</span>}
+            <div className="passive-ability">{card.ability}</div>
+            {card.flavor && <div className="passive-flavor">{card.flavor}</div>}
           </div>
         )}
       </div>
 
-      {/* Sparkles pour Mythic et Cosmic */}
-      {rarityConfig.sparkles && (
+      {/* Effets spéciaux pour raretés élevées */}
+      {!isStatic && showAnimations && rarityConfig.sparkles && (
         <div className="sparkles-overlay">
-          {[...Array(15)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <div
               key={i}
-              className="sparkle-tcg"
+              className="sparkle"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
@@ -209,4 +219,7 @@ export const CardTCG: React.FC<CardTCGProps> = ({
   return CardContent;
 };
 
-export default CardTCG;
+export default Card;
+
+// Export aussi sous le nom CardTCG pour compatibilité
+export { Card as CardTCG };

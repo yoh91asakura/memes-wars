@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { UnifiedCard as Card } from '../../models/unified/Card';
-import { CardTCG } from '../cards/CardTCG';
+import { Card } from '../cards/Card';
 import './CardReveal.css';
 
 interface CardRevealProps {
@@ -73,10 +73,12 @@ export const CardReveal: React.FC<CardRevealProps> = ({ card, onClose, hideRoll 
         }}
       />
       
-      {/* Use the new CardTCG component */}
-      <CardTCG 
+      {/* Use the new Card component */}
+      <Card 
         card={card as any} 
         showAnimations={true}
+        size="large"
+        mode="preview"
         onClick={onClose}
       />
       
