@@ -1,0 +1,88 @@
+{
+  "id": "a677e76104d451d9",
+  "title": "Implement Card Collection View",
+  "description": "",
+  "status": "backlog",
+  "priority": "medium",
+  "size": "L",
+  "dependencies": [],
+  "acceptanceCriteria": [
+    {
+      "id": "a677e76104d451d9-ac-0",
+      "description": "Grid view of all owned cards",
+      "completed": false
+    },
+    {
+      "id": "a677e76104d451d9-ac-1",
+      "description": "Filter by rarity, type, cost",
+      "completed": false
+    },
+    {
+      "id": "a677e76104d451d9-ac-2",
+      "description": "Sort by various attributes",
+      "completed": false
+    },
+    {
+      "id": "a677e76104d451d9-ac-3",
+      "description": "Search functionality",
+      "completed": false
+    },
+    {
+      "id": "a677e76104d451d9-ac-4",
+      "description": "Card details on click/hover",
+      "completed": false
+    },
+    {
+      "id": "a677e76104d451d9-ac-5",
+      "description": "Collection statistics displayed",
+      "completed": false
+    },
+    {
+      "id": "a677e76104d451d9-ac-6",
+      "description": "Smooth scrolling with many cards",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "src/components/collection/CollectionView.tsx"
+    ],
+    "components": [
+      "CollectionView",
+      "CardGrid",
+      "FilterPanel"
+    ],
+    "services": [
+      "CollectionService"
+    ]
+  },
+  "tags": [
+    "ui",
+    "feature",
+    "collection"
+  ],
+  "labels": [],
+  "epic": "ui-completion",
+  "createdAt": "2025-08-17T22:10:20.419Z",
+  "updatedAt": "2025-08-17T22:10:20.419Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "a677e76104d451d9-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.419Z"
+    }
+  ]
+}

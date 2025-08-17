@@ -1,0 +1,108 @@
+{
+  "id": "9e4e9a89b054420c",
+  "title": "Implement Combat Arena Component",
+  "description": "Create the main combat arena where cards battle using emoji projectiles",
+  "userStory": {
+    "persona": "player",
+    "want": "to see my cards battle in an arena",
+    "reason": "I can enjoy strategic combat gameplay"
+  },
+  "status": "backlog",
+  "priority": "high",
+  "size": "XL",
+  "dependencies": [],
+  "acceptanceCriteria": [
+    {
+      "id": "9e4e9a89b054420c-ac-0",
+      "description": "Combat arena renders at 60 FPS",
+      "completed": false
+    },
+    {
+      "id": "9e4e9a89b054420c-ac-1",
+      "description": "Player and opponent zones clearly defined",
+      "completed": false
+    },
+    {
+      "id": "9e4e9a89b054420c-ac-2",
+      "description": "Card placement system working",
+      "completed": false
+    },
+    {
+      "id": "9e4e9a89b054420c-ac-3",
+      "description": "Visual feedback for actions",
+      "completed": false
+    },
+    {
+      "id": "9e4e9a89b054420c-ac-4",
+      "description": "Responsive design for different screen sizes",
+      "completed": false
+    },
+    {
+      "id": "9e4e9a89b054420c-ac-5",
+      "description": "Smooth animations for card movements",
+      "completed": false
+    },
+    {
+      "id": "9e4e9a89b054420c-ac-6",
+      "description": "Arena boundaries properly defined",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "src/components/combat/CombatArena.tsx",
+      "src/components/combat/PlayerZone.tsx",
+      "src/components/combat/OpponentZone.tsx"
+    ],
+    "components": [
+      "CombatScreen",
+      "CombatArena"
+    ],
+    "services": [
+      "CombatService"
+    ],
+    "userImpact": "Core gameplay feature becomes available",
+    "businessValue": "Main game loop completed, ready for players",
+    "risks": [
+      "Performance issues with many cards",
+      "Browser compatibility"
+    ],
+    "testScenarios": [
+      "Arena renders on all screen sizes",
+      "Can place cards in valid zones",
+      "Cannot place cards in invalid zones",
+      "Visual feedback is clear and immediate"
+    ],
+    "suggestedApproach": "Use Canvas or WebGL for performance, React for UI overlay"
+  },
+  "tags": [
+    "feature",
+    "combat",
+    "ui",
+    "gameplay"
+  ],
+  "labels": [],
+  "epic": "combat-system",
+  "createdAt": "2025-08-17T22:10:20.395Z",
+  "updatedAt": "2025-08-17T22:10:20.395Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "9e4e9a89b054420c-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.395Z"
+    }
+  ]
+}

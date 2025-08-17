@@ -1,0 +1,112 @@
+{
+  "id": "e923a6ec313da21c",
+  "title": "Unify Card Data Models",
+  "description": "Consolidate the two parallel card systems (Card.ts and card.ts) into a single, unified model",
+  "userStory": {
+    "persona": "developer",
+    "want": "a single, consistent card model",
+    "reason": "I can maintain and extend the code without confusion"
+  },
+  "status": "backlog",
+  "priority": "critical",
+  "size": "L",
+  "dependencies": [],
+  "acceptanceCriteria": [
+    {
+      "id": "e923a6ec313da21c-ac-0",
+      "description": "Single Card interface defined in src/models/unified/Card.ts",
+      "completed": false
+    },
+    {
+      "id": "e923a6ec313da21c-ac-1",
+      "description": "All card properties consolidated from both existing models",
+      "completed": false
+    },
+    {
+      "id": "e923a6ec313da21c-ac-2",
+      "description": "TypeScript strict mode passing with no errors",
+      "completed": false
+    },
+    {
+      "id": "e923a6ec313da21c-ac-3",
+      "description": "All existing code migrated to use new model",
+      "completed": false
+    },
+    {
+      "id": "e923a6ec313da21c-ac-4",
+      "description": "No duplicate card type definitions remain",
+      "completed": false
+    },
+    {
+      "id": "e923a6ec313da21c-ac-5",
+      "description": "Card model supports both simple and complex card types",
+      "completed": false
+    },
+    {
+      "id": "e923a6ec313da21c-ac-6",
+      "description": "Backward compatibility maintained for existing data",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "src/models/Card.ts",
+      "src/types/card.ts",
+      "src/services/RollService.ts",
+      "src/services/CardService.ts",
+      "src/stores/gameStore.ts",
+      "src/stores/rollStore.ts"
+    ],
+    "components": [
+      "CardDisplay",
+      "CardReveal",
+      "RollScreen"
+    ],
+    "services": [
+      "RollService",
+      "CardService"
+    ],
+    "userImpact": "No visible changes, but more stable application",
+    "businessValue": "Reduced bugs and faster feature development",
+    "risks": [
+      "Breaking existing card data",
+      "Type conflicts during migration"
+    ],
+    "testScenarios": [
+      "All existing cards load correctly",
+      "New cards can be created with all properties",
+      "Roll system works with unified model",
+      "Collection management works correctly"
+    ],
+    "suggestedApproach": "Create new unified model first, then migrate incrementally with adapter pattern"
+  },
+  "tags": [
+    "refactoring",
+    "architecture",
+    "technical-debt"
+  ],
+  "labels": [],
+  "epic": "refactoring-core",
+  "createdAt": "2025-08-17T22:10:20.382Z",
+  "updatedAt": "2025-08-17T22:10:20.384Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "e923a6ec313da21c-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.384Z"
+    }
+  ]
+}

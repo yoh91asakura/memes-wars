@@ -1,0 +1,14 @@
+{
+  "id": 4,
+  "title": "Improve roll system",
+  "description": "",
+  "status": "review",
+  "priority": "medium",
+  "assignee": "Claude",
+  "tags": [],
+  "createdAt": "2025-08-17T21:12:32.122Z",
+  "updatedAt": "2025-08-17T21:26:49.139Z",
+  "completedAt": null,
+  "blockedReason": null,
+  "subtasks": []
+}
