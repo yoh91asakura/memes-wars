@@ -426,24 +426,37 @@ export const RollScreen: React.FC = () => {
         </div>
       </div>
       
-      {/* Bottom Roll Button */}
+      {/* Center Roll Button */}
       <motion.button
         className="main-roll-button"
         onClick={handleSingleRoll}
         disabled={isRolling}
-        initial={{ y: 100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ 
+          scale: 1, 
+          opacity: 1,
+          boxShadow: isAutoRolling 
+            ? ['0 15px 35px rgba(102, 126, 234, 0.4)', '0 15px 45px rgba(16, 185, 129, 0.6)', '0 15px 35px rgba(102, 126, 234, 0.4)']
+            : '0 15px 35px rgba(102, 126, 234, 0.4)'
+        }}
+        transition={{
+          scale: { duration: 0.5, ease: "easeOut" },
+          opacity: { duration: 0.5 },
+          boxShadow: isAutoRolling ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }
+        }}
         whileHover={{ scale: 1.1, y: -5 }}
         whileTap={{ scale: 0.95 }}
         style={{
           position: 'fixed',
-          bottom: '30px',
+          top: '50%',
           left: '50%',
-          transform: 'translateX(-50%)',
+          transform: 'translate(-50%, -50%)',
           width: '120px',
           height: '120px',
           background: isRolling 
             ? 'linear-gradient(135deg, #6b7280, #4b5563)'
+            : isAutoRolling
+            ? 'linear-gradient(135deg, #10b981, #059669)'
             : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           border: 'none',
           borderRadius: '50%',
@@ -451,7 +464,6 @@ export const RollScreen: React.FC = () => {
           fontSize: '48px',
           fontWeight: 'bold',
           cursor: isRolling ? 'not-allowed' : 'pointer',
-          boxShadow: '0 15px 35px rgba(102, 126, 234, 0.4)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -460,10 +472,16 @@ export const RollScreen: React.FC = () => {
         }}
       >
         <motion.div
-          animate={isRolling ? { rotate: 360 } : { rotate: 0 }}
-          transition={isRolling ? { duration: 1, repeat: Infinity, ease: "linear" } : {}}
+          animate={{
+            rotate: isRolling || isAutoRolling ? 360 : 0,
+            scale: isAutoRolling ? [1, 1.1, 1] : 1
+          }}
+          transition={{
+            rotate: (isRolling || isAutoRolling) ? { duration: 2, repeat: Infinity, ease: "linear" } : { duration: 0.3 },
+            scale: isAutoRolling ? { duration: 1.5, repeat: Infinity, ease: "easeInOut" } : { duration: 0.3 }
+          }}
         >
-          {isRolling ? '⏳' : '🎰'}
+          {isRolling ? '⏳' : isAutoRolling ? '⚡' : '🎰'}
         </motion.div>
       </motion.button>
 
