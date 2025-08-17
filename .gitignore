@@ -142,24 +142,47 @@ coverage/
 
 
 # ============================================
-# LOCAL DEVELOPMENT TOOLS - NOT VERSIONED
-# Each developer must set up their own
+# ARCHON + SPARC WORKFLOW - LOCAL ONLY
+# Each developer must set up their own environment
+# See LOCAL_SETUP.md for configuration instructions
 # ============================================
 
-# Entire Archon directory (task management)
+# === ARCHON TASK MANAGEMENT ===
+# Complete Archon directory (Docker services, tasks, MCP server)
 archon/
 
-# Claude Flow and AI tools
+# === CLAUDE FLOW + SPARC METHODOLOGY ===
+# All Claude Flow generated files and directories
 .claude/
 .claude-flow/
 .swarm/
 .hive-mind/
 claude-flow/
+.roo/
+.roomodes
+claude-flow
+claude-flow.bat
+claude-flow.ps1
+
+# Memory and coordination systems
 memory/
 coordination/
+
+# MCP configuration files
 .mcp.json
 claude-flow.config.json
+mcp-config.json
+
+# SPARC workflow files
 hive-mind-prompt-*.txt
+sparc-*.md
+workflow-*.md
+
+# Claude Flow generated files in root
+coordination.md
+memory-bank.md
+coordination/
+memory/
 
 # Local configuration files
 .env.local
@@ -268,13 +291,27 @@ hiberfil.sys
 pagefile.sys
 swapfile.sys
 
-# Development workflow files (not versioned)
+# === LOCAL DEVELOPMENT TRACKING ===
+# Task tracking files (use Archon instead)
 tasks/
-!docs/CLAUDE.md  # Only CLAUDE.md is versioned for workflow reference
+task-*.json
+sync-status.json
+
+# === DOCUMENTATION EXCEPTIONS ===
+# Only CLAUDE.md is versioned for workflow reference
+!CLAUDE.md
+!LOCAL_SETUP.md
+
+# Generated workflow documentation (local only)
 docs/workflow-*.md
 docs/pseudocode/
 docs/architecture/
+docs/gitignore-workflow-guide.md
 !docs/README.md
+!docs/specifications/
+
+# Scripts de validation (locaux uniquement)
+scripts/validate-gitignore.sh
 
 # Python scripts for development
 *.py
@@ -287,3 +324,62 @@ archon-mcp-bridge.py
 *.sqlite
 *.sqlite-journal
 *.sqlite-wal
+
+# === ADDITIONAL CLAUDE FLOW FILES ===
+# These may be generated during runtime
+memory/claude-flow-data.json
+memory/sessions/*
+!memory/sessions/README.md
+memory/agents/*
+!memory/agents/README.md
+coordination/memory_bank/*
+coordination/subtasks/*
+coordination/orchestration/*
+
+# === CLAUDE CODE INTEGRATION ===
+# Personal Claude Code settings (keep individual preferences)
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-workspace
+
+# === PERFORMANCE AND MONITORING ===
+# Generated performance reports
+performance-*.json
+metrics-*.json
+bottleneck-*.md
+token-usage-*.json
+
+# === SESSION AND CACHE ===
+# Session data and cache files
+.sessions/
+.cache-*
+session-*.json
+swarm-session-*.json
+
+# ============================================
+# WORKFLOW RULES SUMMARY
+# ============================================
+# 
+# ✅ COMMIT TO GIT:
+# - Application source code (src/, tests/, config/)
+# - Package configuration (package.json, tsconfig.json)
+# - Build configuration (vite.config.ts, etc.)
+# - Documentation (CLAUDE.md, LOCAL_SETUP.md, docs/specifications/)
+# - This .gitignore file
+#
+# ❌ NEVER COMMIT:
+# - Any local development tools (archon/, .claude/, memory/)
+# - Personal IDE settings (.vscode/settings.json)
+# - Environment files (.env.local)
+# - Task tracking files (use Archon MCP instead)
+# - Generated workflow files
+# - MCP server configurations
+# - Database files and logs
+#
+# 🔄 WORKFLOW:
+# 1. Each developer sets up their own environment using LOCAL_SETUP.md
+# 2. Use Archon MCP for task management across team
+# 3. Use SPARC methodology for development
+# 4. Keep only application code in Git
+# ============================================
