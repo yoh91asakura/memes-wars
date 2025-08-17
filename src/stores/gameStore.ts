@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Card, rollRarity, randomInRange, RARITY_CONFIGS } from '../models/Card';
+import { Card as SimpleCard } from '../types/card';
 import { CardService } from '../services/CardService';
 import gameConfig from '../../config/game/game.config.json';
 
@@ -12,15 +12,15 @@ interface GameStore {
   level: number;
   
   // Collection
-  collection: Card[];
-  currentDeck: Card[];
+  collection: SimpleCard[];
+  currentDeck: SimpleCard[];
   
   // Actions
-  rollCard: () => Promise<Card>;
+  rollCard: () => Promise<SimpleCard>;
   spendCoins: (amount: number) => Promise<boolean>;
   spendGems: (amount: number) => Promise<boolean>;
-  addToCollection: (card: Card) => void;
-  addToDeck: (card: Card) => boolean;
+  addToCollection: (card: SimpleCard) => void;
+  addToDeck: (card: SimpleCard) => boolean;
   removeFromDeck: (cardId: string) => void;
   gainExperience: (amount: number) => void;
   
@@ -51,30 +51,12 @@ export const useGameStore = create<GameStore>()(
         // Generate a new card
         const newCard = await cardService.generateCard();
         
-        // Check for duplicates and apply stacking
-        const existingCard = state.collection.find(c => c.id === newCard.id);
-        if (existingCard && existingCard.stackLevel < 10) {
-          // Increase stack level
-          const updatedCard = {
-            ...existingCard,
-            stackLevel: existingCard.stackLevel + 1
-          };
-          
-          set(state => ({
-            collection: state.collection.map(c => 
-              c.id === updatedCard.id ? updatedCard : c
-            )
-          }));
-          
-          return updatedCard;
-        } else {
-          // Add to collection
-          set(state => ({
-            collection: [...state.collection, newCard]
-          }));
-          
-          return newCard;
-        }
+        // Add to collection (simplified - no stacking for simple cards)
+        set(state => ({
+          collection: [...state.collection, newCard]
+        }));
+        
+        return newCard;
       },
       
       // Spend coins
@@ -106,14 +88,14 @@ export const useGameStore = create<GameStore>()(
       },
       
       // Add card to collection
-      addToCollection: (card: Card) => {
+      addToCollection: (card: SimpleCard) => {
         set(state => ({
           collection: [...state.collection, card]
         }));
       },
       
       // Add card to deck
-      addToDeck: (card: Card) => {
+      addToDeck: (card: SimpleCard) => {
         const state = get();
         if (state.currentDeck.length >= gameConfig.game.maxDeckSize) {
           return false;

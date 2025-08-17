@@ -30,7 +30,7 @@ export default defineConfig({
       all: true,
       clean: true
     },
-    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}', 'tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    include: ['src/**/*.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}', 'tests/**/*.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: ['node_modules', 'dist', '.idea', '.git', '.cache', 'build', 'coverage']
   },
   resolve: {

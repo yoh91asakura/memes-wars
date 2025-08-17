@@ -209,14 +209,14 @@ export const EMOJI_DATABASE = {
  */
 export class EmojiFactory {
   static createEmoji(character: string): Emoji {
-    const emojiData = EMOJI_DATABASE[character];
+    const emojiData = EMOJI_DATABASE[character as keyof typeof EMOJI_DATABASE];
     if (!emojiData) {
       throw new Error(`Unknown emoji: ${character}`);
     }
     return new Emoji(emojiData);
   }
 
-  static getEmojisByCategory(category: string): Emoji[] {
+  static getEmojisByCategory(_category: string): Emoji[] {
     // Return emojis filtered by category
     return [];
   }
@@ -229,8 +229,8 @@ export class EmojiProjectile {
   emoji: Emoji;
   x: number;
   y: number;
-  velocityX: number;
-  velocityY: number;
+  velocityX: number = 0;
+  velocityY: number = 0;
   target: any;
   owner: any;
   lifetime: number;

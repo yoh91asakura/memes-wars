@@ -1,87 +1,46 @@
-import { Card } from '../types/Card';
-import uncommonCardsData from '../data/cards/uncommon/uncommon-cards.json';
+import { Card } from '../types/card';
+import { uncommonCards } from '../data/cards/uncommon/uncommon-cards';
 
 export class UncommonCardService {
-  private uncommonCards: Card[];
+  private static readonly cards: Card[] = uncommonCards;
 
-  constructor() {
-    this.uncommonCards = uncommonCardsData as Card[];
+  static getAllCards(): Card[] {
+    return [...this.cards];
   }
 
-  getAllUncommonCards(): Card[] {
-    return this.uncommonCards;
+  static getCardById(id: string): Card | undefined {
+    return this.cards.find(card => card.id === id);
   }
 
-  getUncommonCardById(id: string): Card | undefined {
-    return this.uncommonCards.find(card => card.id === id);
+  static getCardsByRarity(rarity: string): Card[] {
+    return this.cards.filter(card => card.rarity === rarity);
   }
 
-  getUncommonCardsByType(type: Card['type']): Card[] {
-    return this.uncommonCards.filter(card => card.type === type);
+  static getRandomCard(): Card {
+    const randomIndex = Math.floor(Math.random() * this.cards.length);
+    return this.cards[randomIndex];
   }
 
-  getUncommonCardsByCost(cost: number): Card[] {
-    return this.uncommonCards.filter(card => card.cost === cost);
+  static getCardsByType(type: string): Card[] {
+    return this.cards.filter(card => card.type === type);
   }
 
-  getUncommonCardsByTag(tag: string): Card[] {
-    return this.uncommonCards.filter(card => card.tags.includes(tag));
-  }
-
-  searchUncommonCards(query: string): Card[] {
-    const lowerQuery = query.toLowerCase();
-    return this.uncommonCards.filter(card => 
-      card.name.toLowerCase().includes(lowerQuery) ||
-      card.description.toLowerCase().includes(lowerQuery) ||
-      card.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+  static searchCards(query: string): Card[] {
+    const lowercaseQuery = query.toLowerCase();
+    return this.cards.filter(card => 
+      card.name.toLowerCase().includes(lowercaseQuery) ||
+      card.description?.toLowerCase().includes(lowercaseQuery) ||
+      card.emoji.includes(query)
     );
   }
 
-  validateUncommonCard(card: any): card is Card {
-    return (
-      card &&
-      typeof card.id === 'string' &&
-      typeof card.name === 'string' &&
-      card.rarity === 'uncommon' &&
-      ['spell', 'attack', 'defense', 'healing', 'support', 'creature'].includes(card.type) &&
-      typeof card.cost === 'number' &&
-      typeof card.damage === 'number' &&
-      typeof card.description === 'string' &&
-      typeof card.emoji === 'string' &&
-      typeof card.color === 'string' &&
-      card.stats &&
-      typeof card.stats.attack === 'number' &&
-      typeof card.stats.defense === 'number' &&
-      typeof card.stats.health === 'number' &&
-      Array.isArray(card.effects) &&
-      Array.isArray(card.tags) &&
-      typeof card.lore === 'string'
-    );
+  static getCardsByCost(cost: number): Card[] {
+    return this.cards.filter(card => card.cost === cost);
   }
 
-  getRandomUncommonCard(): Card {
-    const randomIndex = Math.floor(Math.random() * this.uncommonCards.length);
-    return this.uncommonCards[randomIndex];
-  }
-
-  getRandomUncommonCards(count: number): Card[] {
-    const shuffled = [...this.uncommonCards].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(count, this.uncommonCards.length));
-  }
-
-  getUncommonCardsByRarity(): Card[] {
-    return this.uncommonCards.filter(card => card.rarity === 'uncommon');
-  }
-
-  getUncommonCardsByEffect(effect: string): Card[] {
-    return this.uncommonCards.filter(card => card.effects.includes(effect));
-  }
-
-  getTotalUncommonCards(): number {
-    return this.uncommonCards.length;
-  }
-
-  getUncommonCardsByCostRange(min: number, max: number): Card[] {
-    return this.uncommonCards.filter(card => card.cost >= min && card.cost <= max);
+  static getTotalCount(): number {
+    return this.cards.length;
   }
 }
+
+export default UncommonCardService;

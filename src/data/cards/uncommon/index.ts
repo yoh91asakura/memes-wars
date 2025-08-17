@@ -1,2 +1,1 @@
 export { uncommonCards, getUncommonCards, getUncommonCardById, getUncommonCardsByCost, getRandomUncommonCard, getUncommonCardsByType } from './uncommon-cards';
-export { UncommonCardService } from '../../services/UncommonCardService';

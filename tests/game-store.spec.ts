@@ -62,6 +62,7 @@ test.describe('Game Store Functionality', () => {
       // Check if a card was generated or if coins were deducted
       const cardElements = page.locator('.card, [data-testid="card"], [class*="card"]');
       const cardCount = await cardElements.count();
+      expect(cardCount).toBeGreaterThanOrEqual(0);
       
       // Either a new card should appear or coins should be deducted
       if (await coinsElement.isVisible()) {

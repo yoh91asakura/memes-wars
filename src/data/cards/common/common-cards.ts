@@ -1,4 +1,4 @@
-import { Card } from '@/types/card';
+import { Card, CardType } from '@/types/card';
 
 export const commonCards: Card[] = [
   {
@@ -11,7 +11,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'draw_1',
     flavor: 'A friendly face that brings good fortune',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-002',
@@ -23,7 +23,7 @@ export const commonCards: Card[] = [
     cost: 2,
     ability: 'haste',
     flavor: 'Fast and furious, straight to the target',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-003',
@@ -35,7 +35,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'inspire',
     flavor: 'Shines bright and inspires allies',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-004',
@@ -47,7 +47,7 @@ export const commonCards: Card[] = [
     cost: 2,
     ability: 'power',
     flavor: 'Pure muscle power in emoji form',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-005',
@@ -59,7 +59,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'protect',
     flavor: 'Stands strong to protect what matters',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-006',
@@ -71,7 +71,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'quick',
     flavor: 'Strikes fast and disappears',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-007',
@@ -83,7 +83,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'focus',
     flavor: 'Never misses its mark',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-008',
@@ -95,7 +95,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'heal_1',
     flavor: 'Heals with the power of love',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-009',
@@ -107,7 +107,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'burn',
     flavor: 'Burns bright but fragile',
-    type: 'creature'
+    type: 'creature' as CardType
   },
   {
     id: 'common-010',
@@ -119,7 +119,7 @@ export const commonCards: Card[] = [
     cost: 1,
     ability: 'freeze',
     flavor: 'Freezes enemies in their tracks',
-    type: 'creature'
+    type: 'creature' as CardType
   }
 ];
 

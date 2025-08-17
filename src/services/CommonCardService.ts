@@ -28,6 +28,10 @@ export class CommonCardService {
     return Array.from(this.cards.values());
   }
 
+  public getAllCards(): CommonCardData[] {
+    return this.getAllCommonCards();
+  }
+
   public getCardById(id: string): CommonCardData | undefined {
     return this.cards.get(id);
   }
@@ -56,10 +60,27 @@ export class CommonCardService {
     return cards[randomIndex];
   }
 
+  public getRandomCard(): CommonCardData {
+    return this.getRandomCommonCard();
+  }
+
   public getRandomCommonCards(count: number): CommonCardData[] {
     const cards = this.getAllCommonCards();
     const shuffled = [...cards].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, Math.min(count, cards.length));
+  }
+
+  public getRandomCards(count: number): CommonCardData[] {
+    return this.getRandomCommonCards(count);
+  }
+
+  public searchCards(query: string): CommonCardData[] {
+    const lowerQuery = query.toLowerCase();
+    return this.getAllCommonCards().filter(card =>
+      card.name.toLowerCase().includes(lowerQuery) ||
+      card.description.toLowerCase().includes(lowerQuery) ||
+      card.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+    );
   }
 
   public validateCard(card: any): card is CommonCardData {

@@ -1,247 +1,65 @@
 import { v4 as uuidv4 } from 'uuid';
 import { commonCards } from '@/data/cards/common';
-import {
-  Card,
-  Rarity,
-  EmojiProjectile,
-  PassiveAbility,
-  EffectType,
-  TrajectoryPattern,
-  rollRarity,
-  randomInRange,
-  RARITY_CONFIGS,
-} from '../models/Card';
-import gameConfig from '../../config/game/game.config.json';
+import { Card as SimpleCard } from '@/types/card';
+// import gameConfig from '../../config/game/game.config.json';
 
-// Meme-inspired card names (without direct references)
-const CARD_NAMES: Record<Rarity, string[]> = {
-  COMMON: ['Basic Fighter', 'Rookie Roller', 'Simple Soldier', 'Starter Scout'],
-  UNCOMMON: ['Green Guardian', 'Lucky Looter', 'Swift Striker', 'Bold Battler'],
-  RARE: ['Blue Blaster', 'Rare Ranger', 'Mystic Memer', 'Crystal Crusher'],
-  EPIC: ['Epic Explorer', 'Purple Power', 'Void Voyager', 'Storm Seeker'],
-  LEGENDARY: ['Golden Guardian', 'Legendary Lord', 'Orange Oracle', 'Flame Phoenix'],
-  MYTHIC: ['Mythic Master', 'Pink Paradox', 'Reality Ripper', 'Time Twister'],
-  COSMIC: ['Cosmic Creator', 'Universe Uniter', 'Galaxy Guardian', 'Infinity Icon'],
-};
-
-// Passive abilities by rarity
-const PASSIVE_ABILITIES: Record<Rarity, PassiveAbility[]> = {
-  COMMON: [
-    {
-      id: 'steady-aim',
-      name: 'Steady Aim',
-      description: '+10% accuracy',
-      triggerChance: 1,
-      effect: () => {},
-    },
-  ],
-  UNCOMMON: [
-    {
-      id: 'lucky-shot',
-      name: 'Lucky Shot',
-      description: '20% chance for double damage',
-      triggerChance: 0.2,
-      effect: () => {},
-    },
-  ],
-  RARE: [
-    {
-      id: 'rapid-fire',
-      name: 'Rapid Fire',
-      description: 'Burst of 3 quick shots',
-      triggerChance: 0.15,
-      cooldown: 5,
-      effect: () => {},
-    },
-  ],
-  EPIC: [
-    {
-      id: 'lifesteal',
-      name: 'Lifesteal',
-      description: 'Heal 10% of damage dealt',
-      triggerChance: 0.3,
-      effect: () => {},
-    },
-  ],
-  LEGENDARY: [
-    {
-      id: 'phoenix-rising',
-      name: 'Phoenix Rising',
-      description: 'Revive once with 25% HP',
-      triggerChance: 1,
-      cooldown: 999,
-      effect: () => {},
-    },
-  ],
-  MYTHIC: [
-    {
-      id: 'reality-break',
-      name: 'Reality Break',
-      description: 'Stop time for 2 seconds',
-      triggerChance: 0.1,
-      cooldown: 10,
-      effect: () => {},
-    },
-  ],
-  COSMIC: [
-    {
-      id: 'universe-shift',
-      name: 'Universe Shift',
-      description: 'Swap HP with opponent if lower',
-      triggerChance: 0.05,
-      cooldown: 30,
-      effect: () => {},
-    },
-  ],
-};
-
+// Simple card service that works with the simple card model
 export class CardService {
-  static getAllCards(): Card[] {
-    return [...commonCards];
+  
+  // Get all simple cards
+  getAllCards(): SimpleCard[] {
+    return commonCards;
   }
 
-  static getCardsByRarity(rarity: Card['rarity']): Card[] {
-    switch (rarity) {
-      case 'common':
-        return commonCards;
-      default:
-        return [];
-    }
-  }
-
-  static getCardById(id: string): Card | undefined {
+  // Get card by ID
+  getCardById(id: string): SimpleCard | undefined {
     return commonCards.find(card => card.id === id);
   }
 
-  static getCardsByCost(cost: number): Card[] {
-    return commonCards.filter(card => card.cost === cost);
+  // Get cards by rarity
+  getCardsByRarity(rarity: string): SimpleCard[] {
+    return commonCards.filter(card => card.rarity === rarity);
   }
 
-  static validateCard(card: Partial<Card>): boolean {
-    if (!card.id || !card.name || !card.rarity || !card.emoji) {
-      return false;
-    }
-    if (card.attack! < 0 || card.defense! < 0 || card.cost! < 1) {
-      return false;
-    }
-    return true;
+  // Generate a random card
+  async generateCard(): Promise<SimpleCard> {
+    const randomIndex = Math.floor(Math.random() * commonCards.length);
+    return commonCards[randomIndex];
   }
 
-  static getRandomCard(): Card {
-    return commonCards[Math.floor(Math.random() * commonCards.length)];
-  }
-
-  static getCardsByAbility(ability: string): Card[] {
-    return commonCards.filter(card => card.ability === ability);
-  }
-
-  generateCard(luckBonus: number = 0): Card {
-    const rarity = rollRarity(luckBonus);
-    const config = RARITY_CONFIGS[rarity];
-    
-    // Generate card properties
-    const hp = Math.floor(randomInRange(config.hpRange[0], config.hpRange[1]));
-    const attackSpeed = randomInRange(config.attackSpeedRange[0], config.attackSpeedRange[1]);
-    const emojiCount = Math.floor(randomInRange(config.emojiCountRange[0], config.emojiCountRange[1]));
-    
-    // Select random emojis
-    const emojis = this.generateEmojis(emojiCount, rarity);
-    
-    // Select random name
-    const names = CARD_NAMES[rarity];
-    const name = names[Math.floor(Math.random() * names.length)];
-    
-    // Select random passive
-    const passives = PASSIVE_ABILITIES[rarity];
-    const passive = passives[Math.floor(Math.random() * passives.length)];
-    
-    // Create card
-    const card: Card = {
-      id: uuidv4(),
-      name,
-      description: `A ${rarity.toLowerCase()} card with ${emojiCount} powerful emojis`,
-      rarity,
-      hp,
-      attackSpeed,
-      emojis,
-      passive,
-      stackLevel: 0,
-      experience: 0,
-      borderColor: config.color,
-      glowIntensity: rarity === 'COSMIC' ? 1.0 : rarity === 'MYTHIC' ? 0.8 : 0.5,
+  // Roll a card with cost consideration
+  async rollCard(): Promise<SimpleCard> {
+    const card = await this.generateCard();
+    return {
+      ...card,
+      id: uuidv4(), // Generate unique ID for new instance
     };
-    
-    return card;
   }
-  
-  private generateEmojis(count: number, rarity: Rarity): EmojiProjectile[] {
-    const emojis: EmojiProjectile[] = [];
-    const collections = gameConfig.emojis.collections;
-    const effectMappings = gameConfig.emojis.effectMappings as Record<string, EffectType>;
-    
-    // Select emoji collection based on rarity
-    const collectionKeys = Object.keys(collections);
-    const selectedCollection = rarity === 'COSMIC' || rarity === 'MYTHIC' 
-      ? collections.meme 
-      : collections[collectionKeys[Math.floor(Math.random() * collectionKeys.length)]];
-    
-    for (let i = 0; i < count; i++) {
-      const emoji = selectedCollection[Math.floor(Math.random() * selectedCollection.length)];
-      const damage = this.calculateDamage(rarity);
-      const speed = randomInRange(100, 300);
-      const trajectory = this.selectTrajectory(rarity);
-      
-      const projectile: EmojiProjectile = {
-        character: emoji,
-        damage,
-        speed,
-        trajectory,
-      };
-      
-      // Add effect if emoji has one
-      if (effectMappings[emoji]) {
-        projectile.effect = {
-          type: effectMappings[emoji],
-          duration: randomInRange(1, 3),
-          power: randomInRange(5, 20),
-          chance: randomInRange(0.1, 0.3),
-        };
-      }
-      
-      emojis.push(projectile);
-    }
-    
-    return emojis;
+
+  // Filter cards by criteria
+  filterCards(criteria: Partial<SimpleCard>): SimpleCard[] {
+    return commonCards.filter(card => {
+      return (!criteria.emoji || card.emoji === criteria.emoji) &&
+             (!criteria.rarity || card.rarity === criteria.rarity) &&
+             (!criteria.attack || card.attack === criteria.attack) &&
+             (!criteria.defense || card.defense === criteria.defense) &&
+             (!criteria.cost || card.cost === criteria.cost);
+    });
   }
-  
-  private calculateDamage(rarity: Rarity): number {
-    const baseDamage: Record<Rarity, [number, number]> = {
-      COMMON: [5, 10],
-      UNCOMMON: [10, 15],
-      RARE: [15, 25],
-      EPIC: [25, 35],
-      LEGENDARY: [35, 50],
-      MYTHIC: [50, 75],
-      COSMIC: [75, 100],
-    };
-    
-    const range = baseDamage[rarity];
-    return Math.floor(randomInRange(range[0], range[1]));
+
+  // Get random cards
+  getRandomCards(count: number): SimpleCard[] {
+    const shuffled = [...commonCards].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, count);
   }
-  
-  private selectTrajectory(rarity: Rarity): TrajectoryPattern {
-    const patterns = Object.values(TrajectoryPattern);
-    
-    // Higher rarities get more interesting patterns
-    if (rarity === 'COSMIC' || rarity === 'MYTHIC') {
-      return patterns[Math.floor(Math.random() * patterns.length)];
-    } else if (rarity === 'LEGENDARY' || rarity === 'EPIC') {
-      // Exclude RANDOM for mid-tier
-      const filtered = patterns.filter(p => p !== TrajectoryPattern.RANDOM);
-      return filtered[Math.floor(Math.random() * filtered.length)];
-    } else {
-      // Common and uncommon mostly get STRAIGHT
-      return Math.random() > 0.8 ? TrajectoryPattern.WAVE : TrajectoryPattern.STRAIGHT;
-    }
+
+  // Search cards by name or description
+  searchCards(query: string): SimpleCard[] {
+    const lowercaseQuery = query.toLowerCase();
+    return commonCards.filter(card => 
+      card.name.toLowerCase().includes(lowercaseQuery) ||
+      card.description?.toLowerCase().includes(lowercaseQuery) ||
+      card.emoji.includes(query)
+    );
   }
 }

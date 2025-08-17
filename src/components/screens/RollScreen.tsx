@@ -4,7 +4,7 @@ import { RollButton } from '../roll/RollButton';
 import { CardReveal } from '../roll/CardReveal';
 import { AutoRollPanel } from '../roll/AutoRollPanel';
 import { useGameStore } from '../../stores/gameStore';
-import { Card } from '../../models/Card';
+import { Card } from '../../types/card';
 import './RollScreen.css';
 
 export const RollScreen: React.FC = () => {
@@ -133,7 +133,7 @@ export const RollScreen: React.FC = () => {
         <AnimatePresence>
           {revealedCard && !isRolling && (
             <CardReveal 
-              card={revealedCard}
+              card={revealedCard as any}
               onClose={() => setRevealedCard(null)}
               hideRoll={hideRoll}
             />
