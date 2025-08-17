@@ -496,44 +496,6 @@ export const RollScreen: React.FC = () => {
         </div>
       </div>
       
-      {/* Floating Roll Button */}
-      {!isRolling && !revealedCard && (
-        <motion.button
-          className="floating-roll-button"
-          onClick={handleSingleRoll}
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          style={{
-            position: 'fixed',
-            bottom: '30px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '200px',
-            height: '80px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            border: 'none',
-            borderRadius: '40px',
-            color: 'white',
-            fontSize: '24px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '5px',
-            zIndex: 100
-          }}
-        >
-          <span style={{ fontSize: '28px' }}>🎰</span>
-          <span>ROLL</span>
-        </motion.button>
-      )}
       
       
       {/* Auto Roll Status */}
