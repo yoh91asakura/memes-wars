@@ -1,0 +1,222 @@
+[
+  {
+    "id": "rare-001",
+    "name": "Cosmic Meteor ☄️💫",
+    "rarity": "rare",
+    "type": "creature",
+    "cost": 4,
+    "damage": 6,
+    "description": "A blazing meteor that crashes down with devastating force",
+    "emoji": "☄️💫",
+    "color": "#1E88E5",
+    "attack": 6,
+    "defense": 2,
+    "stats": {
+      "attack": 6,
+      "defense": 2,
+      "health": 4
+    },
+    "effects": ["meteor_impact", "area_damage", "burn"],
+    "tags": ["creature", "meteor", "cosmic", "fire"],
+    "ability": "Meteor Impact",
+    "flavor": "When stars fall, worlds tremble"
+  },
+  {
+    "id": "rare-002", 
+    "name": "Ancient Dragon 🐲⚔️",
+    "rarity": "rare",
+    "type": "creature",
+    "cost": 5,
+    "damage": 7,
+    "description": "An ancient wyrm with centuries of battle experience",
+    "emoji": "🐲⚔️",
+    "color": "#D32F2F",
+    "attack": 7,
+    "defense": 4,
+    "stats": {
+      "attack": 7,
+      "defense": 4,
+      "health": 5
+    },
+    "effects": ["dragon_breath", "intimidate", "veteran"],
+    "tags": ["creature", "dragon", "ancient", "fire"],
+    "ability": "Dragon's Fury",
+    "flavor": "Age brings wisdom, and wisdom brings power"
+  },
+  {
+    "id": "rare-003",
+    "name": "Crystal Phoenix 💎🐦",
+    "rarity": "rare", 
+    "type": "creature",
+    "cost": 4,
+    "damage": 5,
+    "description": "A majestic phoenix made of pure crystal that refracts light into deadly beams",
+    "emoji": "💎🐦",
+    "color": "#8E24AA",
+    "attack": 5,
+    "defense": 3,
+    "stats": {
+      "attack": 5,
+      "defense": 3,
+      "health": 4
+    },
+    "effects": ["light_refraction", "crystal_rebirth", "dazzle"],
+    "tags": ["creature", "phoenix", "crystal", "light"],
+    "ability": "Prismatic Wings",
+    "flavor": "Beauty and death dance together in crystal form"
+  },
+  {
+    "id": "rare-004",
+    "name": "Shadow Wraith 👻🌑",
+    "rarity": "rare",
+    "type": "creature", 
+    "cost": 3,
+    "damage": 4,
+    "description": "A vengeful spirit that phases through reality to strike",
+    "emoji": "👻🌑",
+    "color": "#424242",
+    "attack": 4,
+    "defense": 1,
+    "stats": {
+      "attack": 4,
+      "defense": 1,
+      "health": 3
+    },
+    "effects": ["phase_strike", "life_drain", "terror"],
+    "tags": ["creature", "wraith", "shadow", "spirit"],
+    "ability": "Ethereal Form",
+    "flavor": "Death is but a doorway to greater power"
+  },
+  {
+    "id": "rare-005",
+    "name": "Elemental Storm ⛈️🌀",
+    "rarity": "rare",
+    "type": "spell",
+    "cost": 5,
+    "damage": 8,
+    "description": "A devastating storm that combines all elemental forces",
+    "emoji": "⛈️🌀",
+    "color": "#00ACC1",
+    "attack": 8,
+    "defense": 0,
+    "stats": {
+      "attack": 8,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["elemental_chaos", "chain_lightning", "flood"],
+    "tags": ["spell", "storm", "elemental", "chaos"],
+    "ability": "Primordial Fury",
+    "flavor": "When the elements unite, the world reshapes itself"
+  },
+  {
+    "id": "rare-006",
+    "name": "Quantum Cat 🐱⚛️",
+    "rarity": "rare",
+    "type": "creature",
+    "cost": 3,
+    "damage": 3,
+    "description": "A mysterious feline that exists in multiple realities simultaneously",
+    "emoji": "🐱⚛️", 
+    "color": "#7B1FA2",
+    "attack": 3,
+    "defense": 6,
+    "stats": {
+      "attack": 3,
+      "defense": 6,
+      "health": 4
+    },
+    "effects": ["quantum_superposition", "probability_manipulation", "nine_lives"],
+    "tags": ["creature", "cat", "quantum", "probability"],
+    "ability": "Schrödinger's Strike",
+    "flavor": "Simultaneously attacking and not attacking until observed"
+  },
+  {
+    "id": "rare-007",
+    "name": "Void Leviathan 🐋🕳️",
+    "rarity": "rare",
+    "type": "creature",
+    "cost": 6,
+    "damage": 9,
+    "description": "A massive creature from the depths of space that devours light itself",
+    "emoji": "🐋🕳️",
+    "color": "#1A1A2E",
+    "attack": 9,
+    "defense": 5,
+    "stats": {
+      "attack": 9,
+      "defense": 5,
+      "health": 6
+    },
+    "effects": ["void_swallow", "gravity_well", "cosmic_hunger"],
+    "tags": ["creature", "leviathan", "void", "cosmic"],
+    "ability": "Event Horizon",
+    "flavor": "Where light dies, the Leviathan feeds"
+  },
+  {
+    "id": "rare-008",
+    "name": "Time Keeper ⏰🔮",
+    "rarity": "rare",
+    "type": "support",
+    "cost": 4,
+    "damage": 2,
+    "description": "A guardian of time who can manipulate the flow of battle",
+    "emoji": "⏰🔮",
+    "color": "#FF6F00",
+    "attack": 2,
+    "defense": 8,
+    "stats": {
+      "attack": 2,
+      "defense": 8,
+      "health": 5
+    },
+    "effects": ["time_manipulation", "temporal_shield", "chronos_blessing"],
+    "tags": ["support", "time", "guardian", "temporal"],
+    "ability": "Temporal Mastery",
+    "flavor": "Past, present, and future bend to their will"
+  },
+  {
+    "id": "rare-009",
+    "name": "Plasma Cannon 🔫⚡",
+    "rarity": "rare",
+    "type": "attack",
+    "cost": 5,
+    "damage": 10,
+    "description": "A high-tech weapon that fires superheated plasma bolts",
+    "emoji": "🔫⚡",
+    "color": "#00E676",
+    "attack": 10,
+    "defense": 2,
+    "stats": {
+      "attack": 10,
+      "defense": 2,
+      "health": 3
+    },
+    "effects": ["plasma_burst", "armor_piercing", "overcharge"],
+    "tags": ["attack", "cannon", "plasma", "technology"],
+    "ability": "Superheated Blast",
+    "flavor": "When magic meets technology, devastation follows"
+  },
+  {
+    "id": "rare-010",
+    "name": "Celestial Guardian 👼⭐",
+    "rarity": "rare",
+    "type": "defense",
+    "cost": 4,
+    "damage": 1,
+    "description": "A divine protector who shields allies with celestial power",
+    "emoji": "👼⭐",
+    "color": "#FFD54F",
+    "attack": 1,
+    "defense": 10,
+    "stats": {
+      "attack": 1,
+      "defense": 10,
+      "health": 6
+    },
+    "effects": ["divine_protection", "healing_aura", "sanctuary"],
+    "tags": ["defense", "guardian", "celestial", "divine"],
+    "ability": "Heaven's Shield",
+    "flavor": "Under divine protection, no harm shall pass"
+  }
+]

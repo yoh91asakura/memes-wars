@@ -1,0 +1,178 @@
+[
+  {
+    "id": "epic-001",
+    "name": "Dimensional Rift 🌌🕳️",
+    "rarity": "epic",
+    "type": "spell",
+    "cost": 7,
+    "damage": 12,
+    "description": "Tears a hole in reality itself, dealing massive damage to all enemies",
+    "emoji": "🌌🕳️",
+    "color": "#6A1B9A",
+    "attack": 12,
+    "defense": 0,
+    "stats": {
+      "attack": 12,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["reality_tear", "dimensional_damage", "space_distortion"],
+    "tags": ["spell", "dimensional", "cosmic", "reality"],
+    "ability": "Void Rupture",
+    "flavor": "When reality breaks, even gods flee"
+  },
+  {
+    "id": "epic-002",
+    "name": "Primordial Beast 🦴🔥",
+    "rarity": "epic", 
+    "type": "creature",
+    "cost": 8,
+    "damage": 15,
+    "description": "An ancient creature from the dawn of time, wielding primal fury",
+    "emoji": "🦴🔥",
+    "color": "#BF360C",
+    "attack": 15,
+    "defense": 8,
+    "stats": {
+      "attack": 15,
+      "defense": 8,
+      "health": 10
+    },
+    "effects": ["primal_rage", "prehistoric_strength", "evolution"],
+    "tags": ["creature", "beast", "ancient", "primal"],
+    "ability": "Extinction Event",
+    "flavor": "Before civilization, before gods, there was only the Beast"
+  },
+  {
+    "id": "epic-003",
+    "name": "Stellar Forge ⭐🔨",
+    "rarity": "epic",
+    "type": "support",
+    "cost": 6,
+    "damage": 5,
+    "description": "A cosmic workshop that creates weapons from stardust",
+    "emoji": "⭐🔨",
+    "color": "#FF6F00",
+    "attack": 5,
+    "defense": 12,
+    "stats": {
+      "attack": 5,
+      "defense": 12,
+      "health": 8
+    },
+    "effects": ["stellar_creation", "cosmic_enhancement", "star_forge"],
+    "tags": ["support", "stellar", "creation", "cosmic"],
+    "ability": "Stellar Genesis",
+    "flavor": "From the hearts of dying stars, new power is born"
+  },
+  {
+    "id": "epic-004",
+    "name": "Chaos Incarnate 😈🌪️",
+    "rarity": "epic",
+    "type": "creature",
+    "cost": 7,
+    "damage": 13,
+    "description": "Pure chaos given form, unpredictable and devastating",
+    "emoji": "😈🌪️",
+    "color": "#AD1457",
+    "attack": 13,
+    "defense": 6,
+    "stats": {
+      "attack": 13,
+      "defense": 6,
+      "health": 9
+    },
+    "effects": ["chaos_storm", "random_effects", "mayhem"],
+    "tags": ["creature", "chaos", "demon", "unpredictable"],
+    "ability": "Entropy Unleashed",
+    "flavor": "Order is an illusion; chaos is eternal"
+  },
+  {
+    "id": "epic-005", 
+    "name": "Divine Lightning ⚡👑",
+    "rarity": "epic",
+    "type": "attack",
+    "cost": 6,
+    "damage": 16,
+    "description": "The wrath of the heavens channeled into pure destruction",
+    "emoji": "⚡👑",
+    "color": "#FFD700",
+    "attack": 16,
+    "defense": 4,
+    "stats": {
+      "attack": 16,
+      "defense": 4,
+      "health": 6
+    },
+    "effects": ["divine_wrath", "chain_heaven", "judgment"],
+    "tags": ["attack", "divine", "lightning", "judgment"],
+    "ability": "Heaven's Judgment",
+    "flavor": "When the gods are angered, the sky weeps lightning"
+  },
+  {
+    "id": "epic-006",
+    "name": "Abyssal Kraken 🐙🌊",
+    "rarity": "epic",
+    "type": "creature",
+    "cost": 8,
+    "damage": 14,
+    "description": "A titanic sea monster from the deepest trenches of reality",
+    "emoji": "🐙🌊",
+    "color": "#0D47A1",
+    "attack": 14,
+    "defense": 10,
+    "stats": {
+      "attack": 14,
+      "defense": 10,
+      "health": 12
+    },
+    "effects": ["tentacle_crush", "tsunami", "deep_terror"],
+    "tags": ["creature", "kraken", "abyssal", "sea"],
+    "ability": "Tidal Devastation",
+    "flavor": "From the abyss it rises, bringing the ocean's fury"
+  },
+  {
+    "id": "epic-007",
+    "name": "Temporal Paradox ⏳🔄",
+    "rarity": "epic",
+    "type": "spell",
+    "cost": 7,
+    "damage": 11,
+    "description": "Breaks the laws of time, causing reality to loop and fracture",
+    "emoji": "⏳🔄",
+    "color": "#7C4DFF",
+    "attack": 11,
+    "defense": 0,
+    "stats": {
+      "attack": 11,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["time_loop", "paradox_damage", "temporal_fracture"],
+    "tags": ["spell", "temporal", "paradox", "time"],
+    "ability": "Causality Break",
+    "flavor": "Effect becomes cause; future becomes past"
+  },
+  {
+    "id": "epic-008",
+    "name": "Cosmic Phoenix 🔥🌌",
+    "rarity": "epic",
+    "type": "creature",
+    "cost": 9,
+    "damage": 17,
+    "description": "A phoenix reborn from cosmic fires, wielding the power of supernovas",
+    "emoji": "🔥🌌",
+    "color": "#E65100",
+    "attack": 17,
+    "defense": 7,
+    "stats": {
+      "attack": 17,
+      "defense": 7,
+      "health": 11
+    },
+    "effects": ["cosmic_rebirth", "supernova", "stellar_flame"],
+    "tags": ["creature", "phoenix", "cosmic", "stellar"],
+    "ability": "Supernova Rebirth",
+    "flavor": "Death is but a spark before the cosmic inferno"
+  }
+]

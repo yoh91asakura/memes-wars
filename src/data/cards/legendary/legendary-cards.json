@@ -1,0 +1,134 @@
+[
+  {
+    "id": "legendary-001",
+    "name": "World Eater 🌍💀",
+    "rarity": "legendary",
+    "type": "creature",
+    "cost": 12,
+    "damage": 25,
+    "description": "An ancient entity that devours entire worlds to sustain its existence",
+    "emoji": "🌍💀",
+    "color": "#FF6D00",
+    "attack": 25,
+    "defense": 15,
+    "stats": {
+      "attack": 25,
+      "defense": 15,
+      "health": 20
+    },
+    "effects": ["world_devour", "planetary_destruction", "cosmic_hunger"],
+    "tags": ["creature", "elder", "cosmic", "destroyer"],
+    "ability": "Planetary Consumption",
+    "flavor": "Worlds are but morsels to the eternal hunger"
+  },
+  {
+    "id": "legendary-002",
+    "name": "Genesis Code 🧬✨",
+    "rarity": "legendary",
+    "type": "spell",
+    "cost": 10,
+    "damage": 20,
+    "description": "The fundamental code of creation, capable of rewriting reality itself",
+    "emoji": "🧬✨",
+    "color": "#00E5FF",
+    "attack": 20,
+    "defense": 0,
+    "stats": {
+      "attack": 20,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["reality_rewrite", "creation_force", "universal_law"],
+    "tags": ["spell", "genesis", "creation", "fundamental"],
+    "ability": "Reality Recompilation",
+    "flavor": "In the beginning was the Code, and the Code was with creation"
+  },
+  {
+    "id": "legendary-003",
+    "name": "Eternal Sovereign 👑⚡",
+    "rarity": "legendary",
+    "type": "creature",
+    "cost": 11,
+    "damage": 22,
+    "description": "The immortal ruler of a thousand conquered realms",
+    "emoji": "👑⚡",
+    "color": "#FFD700",
+    "attack": 22,
+    "defense": 18,
+    "stats": {
+      "attack": 22,
+      "defense": 18,
+      "health": 25
+    },
+    "effects": ["divine_authority", "royal_command", "eternal_reign"],
+    "tags": ["creature", "sovereign", "immortal", "royal"],
+    "ability": "Imperial Dominion",
+    "flavor": "Empires rise and fall, but the Sovereign endures"
+  },
+  {
+    "id": "legendary-004",
+    "name": "Void Singularity 🕳️⚫",
+    "rarity": "legendary",
+    "type": "spell",
+    "cost": 13,
+    "damage": 30,
+    "description": "A collapsing star that creates a devastating black hole",
+    "emoji": "🕳️⚫",
+    "color": "#1A1A2E",
+    "attack": 30,
+    "defense": 0,
+    "stats": {
+      "attack": 30,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["gravitational_collapse", "event_horizon", "space_time_tear"],
+    "tags": ["spell", "void", "singularity", "cosmic"],
+    "ability": "Gravitational Apocalypse",
+    "flavor": "Where light cannot escape, hope dies"
+  },
+  {
+    "id": "legendary-005",
+    "name": "Omega Guardian 🤖🛡️",
+    "rarity": "legendary",
+    "type": "defense",
+    "cost": 9,
+    "damage": 8,
+    "description": "The last defender of a dead civilization, powered by eternal duty",
+    "emoji": "🤖🛡️",
+    "color": "#37474F",
+    "attack": 8,
+    "defense": 30,
+    "stats": {
+      "attack": 8,
+      "defense": 30,
+      "health": 25
+    },
+    "effects": ["eternal_vigil", "defensive_matrix", "last_stand"],
+    "tags": ["defense", "guardian", "mechanical", "eternal"],
+    "ability": "Unbreakable Protocol",
+    "flavor": "Though all else falls, the Guardian stands eternal"
+  },
+  {
+    "id": "legendary-006",
+    "name": "Dream Weaver 🌙💭",
+    "rarity": "legendary",
+    "type": "support",
+    "cost": 10,
+    "damage": 12,
+    "description": "A mystical entity that shapes reality through the power of dreams",
+    "emoji": "🌙💭",
+    "color": "#673AB7",
+    "attack": 12,
+    "defense": 20,
+    "stats": {
+      "attack": 12,
+      "defense": 20,
+      "health": 18
+    },
+    "effects": ["dream_reality", "nightmare_fuel", "lucid_control"],
+    "tags": ["support", "dream", "mystical", "reality"],
+    "ability": "Oneiric Manifestation",
+    "flavor": "In dreams, all possibilities become real"
+  }
+]

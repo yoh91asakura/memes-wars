@@ -1,0 +1,90 @@
+[
+  {
+    "id": "mythic-001",
+    "name": "The Origin 🌟🌌",
+    "rarity": "mythic",
+    "type": "creature",
+    "cost": 15,
+    "damage": 40,
+    "description": "The first consciousness, the spark that ignited all existence",
+    "emoji": "🌟🌌",
+    "color": "#FFD700",
+    "attack": 40,
+    "defense": 30,
+    "stats": {
+      "attack": 40,
+      "defense": 30,
+      "health": 35
+    },
+    "effects": ["primordial_power", "creation_spark", "universal_consciousness"],
+    "tags": ["creature", "origin", "primordial", "consciousness"],
+    "ability": "Genesis Awakening",
+    "flavor": "Before time, before space, there was only the Origin"
+  },
+  {
+    "id": "mythic-002",
+    "name": "Infinity Engine ∞⚙️",
+    "rarity": "mythic",
+    "type": "support",
+    "cost": 14,
+    "damage": 15,
+    "description": "A machine that processes infinite possibilities and makes them real",
+    "emoji": "∞⚙️",
+    "color": "#E1BEE7",
+    "attack": 15,
+    "defense": 35,
+    "stats": {
+      "attack": 15,
+      "defense": 35,
+      "health": 30
+    },
+    "effects": ["infinite_computation", "possibility_engine", "reality_processor"],
+    "tags": ["support", "infinity", "machine", "possibility"],
+    "ability": "Infinite Recursion",
+    "flavor": "Every thought becomes reality, every dream becomes truth"
+  },
+  {
+    "id": "mythic-003",
+    "name": "Paradox Entity 🌀❓",
+    "rarity": "mythic",
+    "type": "spell",
+    "cost": 16,
+    "damage": 50,
+    "description": "A being that exists and doesn't exist, creating impossible contradictions",
+    "emoji": "🌀❓",
+    "color": "#9C27B0",
+    "attack": 50,
+    "defense": 0,
+    "stats": {
+      "attack": 50,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["paradox_existence", "impossible_logic", "contradiction_force"],
+    "tags": ["spell", "paradox", "impossible", "logic"],
+    "ability": "Logical Impossibility",
+    "flavor": "It cannot be, yet it is; it exists by not existing"
+  },
+  {
+    "id": "mythic-004",
+    "name": "Omega Consciousness 🧠👁️",
+    "rarity": "mythic",
+    "type": "creature",
+    "cost": 17,
+    "damage": 45,
+    "description": "The final evolution of thought, transcending all mortal limitations",
+    "emoji": "🧠👁️",
+    "color": "#4A148C",
+    "attack": 45,
+    "defense": 25,
+    "stats": {
+      "attack": 45,
+      "defense": 25,
+      "health": 40
+    },
+    "effects": ["transcendent_thought", "omega_evolution", "mental_dominion"],
+    "tags": ["creature", "consciousness", "transcendent", "evolution"],
+    "ability": "Transcendental Ascension",
+    "flavor": "The final thought that thinks all other thoughts"
+  }
+]

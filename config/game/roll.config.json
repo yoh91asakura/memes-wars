@@ -1,0 +1,65 @@
+{
+  "dropRates": {
+    "common": 0.65,
+    "uncommon": 0.25,
+    "rare": 0.07,
+    "epic": 0.025,
+    "legendary": 0.004,
+    "mythic": 0.0009,
+    "cosmic": 0.0001
+  },
+  "pitySystem": {
+    "guaranteedRareAt": 10,
+    "guaranteedEpicAt": 30,
+    "guaranteedLegendaryAt": 90,
+    "guaranteedMythicAt": 200,
+    "guaranteedCosmicAt": 500
+  },
+  "rollCosts": {
+    "single": 100,
+    "ten": 900,
+    "hundred": 8000
+  },
+  "bonuses": {
+    "tenRoll": {
+      "guaranteedRareOrBetter": true,
+      "description": "Guaranteed 1+ Rare or better in 10x roll"
+    },
+    "hundredRoll": {
+      "guaranteedEpicOrBetter": true,
+      "guaranteedLegendaryCount": 1,
+      "description": "Guaranteed 1 Legendary and 1+ Epic in 100x roll"
+    }
+  },
+  "animations": {
+    "rollDuration": {
+      "common": 1000,
+      "uncommon": 1500,
+      "rare": 2000,
+      "epic": 3000,
+      "legendary": 4000,
+      "mythic": 6000,
+      "cosmic": 10000
+    },
+    "effects": {
+      "common": ["fade_in"],
+      "uncommon": ["glow_green", "particles_10"],
+      "rare": ["glow_blue", "particles_20", "sparkle"],
+      "epic": ["glow_purple", "particles_30", "sparkle", "screen_flash"],
+      "legendary": ["glow_orange", "particles_50", "sparkle", "screen_flash", "screen_shake"],
+      "mythic": ["glow_gold", "particles_100", "sparkle", "screen_flash", "screen_shake", "rainbow_border"],
+      "cosmic": ["glow_rainbow", "particles_200", "sparkle", "screen_flash", "screen_shake", "rainbow_border", "cosmic_explosion"]
+    }
+  },
+  "achievementTriggers": {
+    "rollCounts": [1, 10, 50, 100, 500, 1000, 5000],
+    "collectionMilestones": [10, 25, 50, 100, 200, 300, 400],
+    "rarityCollected": {
+      "firstRare": 1000,
+      "firstEpic": 5000,
+      "firstLegendary": 15000,
+      "firstMythic": 50000,
+      "firstCosmic": 100000
+    }
+  }
+}
