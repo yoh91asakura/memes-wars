@@ -146,17 +146,20 @@ if (-not (Test-Path ".env.local")) {
     }
 }
 
-# Setup Archon services (if available)
-if (Test-Path "archon/docker-compose.yml") {
-    Write-Info "Checking Docker for Archon services..."
-    try {
-        docker --version | Out-Null
-        Write-Status "Docker is available"
-        Write-Info "To start Archon services, run: cd archon && docker-compose up -d"
-    } catch {
-        Write-Warning "Docker is not available - Archon services won't work"
-        Write-Info "Install Docker Desktop from https://docker.com"
-    }
+# Setup task management system
+Write-Info "Setting up task management system..."
+if (-not (Test-Path "tasks")) {
+    New-Item -Path "tasks" -ItemType Directory
+    Write-Status "Created tasks directory"
+    
+    # Create initial tasks.json file
+    $initialTasks = @{
+        tasks = @()
+        nextId = 1
+    } | ConvertTo-Json
+    
+    Set-Content -Path "tasks/tasks.json" -Value $initialTasks
+    Write-Status "Initialized task tracking system"
 }
 
 Write-Host ""
@@ -169,7 +172,6 @@ Write-Host "3. npm run build        # Build for production" -ForegroundColor $Ye
 Write-Host ""
 Write-Host "Development URLs:" -ForegroundColor $Cyan
 Write-Host "- Game: http://localhost:3000" -ForegroundColor $Yellow
-Write-Host "- Archon UI: http://localhost:3737 (if Docker is running)" -ForegroundColor $Yellow
 Write-Host ""
 Write-Host "For help, see:" -ForegroundColor $Cyan
 Write-Host "- README.md" -ForegroundColor $Yellow

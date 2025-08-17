@@ -155,17 +155,20 @@ EOF
     fi
 fi
 
-# Setup Archon services (if available)
-if [ -f "archon/docker-compose.yml" ]; then
-    print_info "Checking Docker for Archon services..."
-    if command -v docker >/dev/null 2>&1; then
-        print_status "Docker is available"
-        print_info "To start Archon services, run: cd archon && docker-compose up -d"
-    else
-        print_warning "Docker is not available - Archon services won't work"
-        print_info "Install Docker Desktop from https://docker.com"
-        print_info "Or install via Homebrew: brew install --cask docker"
-    fi
+# Setup task management system
+print_info "Setting up task management system..."
+if [ ! -d "tasks" ]; then
+    mkdir tasks
+    print_status "Created tasks directory"
+    
+    # Create initial tasks.json file
+    cat > tasks/tasks.json << EOF
+{
+  "tasks": [],
+  "nextId": 1
+}
+EOF
+    print_status "Initialized task tracking system"
 fi
 
 echo ""
@@ -178,7 +181,6 @@ echo -e "${YELLOW}3. npm run build        # Build for production${NC}"
 echo ""
 echo -e "${CYAN}Development URLs:${NC}"
 echo -e "${YELLOW}- Game: http://localhost:3000${NC}"
-echo -e "${YELLOW}- Archon UI: http://localhost:3737 (if Docker is running)${NC}"
 echo ""
 echo -e "${CYAN}For help, see:${NC}"
 echo -e "${YELLOW}- README.md${NC}"

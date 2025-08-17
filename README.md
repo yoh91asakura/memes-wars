@@ -34,11 +34,10 @@ This repository contains **ONLY the application code**. All development tools an
 - `docs/CLAUDE.md` - Development workflow reference
 
 ### ❌ NOT Versioned (Local Setup)
-- `archon/` - Task management system
+- `tasks/` - Task management system
 - `.claude/` - Claude configuration
 - `.claude-flow/` - Claude Flow files
 - `memory/` - AI memory files
-- `tasks/` - Task tracking
 - `.vscode/` - VS Code settings
 - `*.local.*` - Any local config files
 - Development databases
@@ -90,14 +89,16 @@ npm run typecheck
 
 Each developer needs to set up their own local development environment. These tools are NOT included in the repository.
 
-### Optional: Archon (Task Management)
+### Task Management System
 ```bash
-# Create archon directory
-mkdir archon
-cd archon
+# Initialize the task system
+npm run tasks:init
 
-# Set up your own Archon instance
-# See: https://github.com/your-archon-setup
+# View all tasks
+npm run tasks:list
+
+# Create a new task
+npm run tasks:new
 ```
 
 ### Optional: Claude Flow (AI Workflow)
