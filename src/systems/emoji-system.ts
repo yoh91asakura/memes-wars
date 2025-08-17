@@ -1,351 +1,234 @@
-// Emoji System Implementation
-// This file defines the core emoji mechanics and effects
+import { TrajectoryPattern } from '../types/emoji';
+import { CombatEntity } from '../services/CombatEngine';
 
 /**
- * Emoji Effect Types
- */
-export enum EmojiEffectType {
-  DAMAGE = 'damage',
-  BURN = 'burn',
-  FREEZE = 'freeze',
-  HEAL = 'heal',
-  SHIELD = 'shield',
-  POISON = 'poison',
-  BOOST = 'boost',
-  SLOW = 'slow',
-  CHAIN = 'chain',
-  AREA = 'area',
-  PIERCE = 'pierce',
-  EXECUTE = 'execute',
-  LIFESTEAL = 'lifesteal',
-  STUN = 'stun',
-  KNOCKBACK = 'knockback'
-}
-
-/**
- * Base Emoji Class
- */
-export class Emoji {
-  character: string;
-  name: string;
-  baseDamage: number;
-  effectType: EmojiEffectType;
-  effectValue: number;
-  effectDuration: number;
-  projectileSpeed: number;
-  trajectory: 'straight' | 'arc' | 'homing' | 'wave' | 'spiral';
-
-  constructor(data: EmojiData) {
-    this.character = data.character;
-    this.name = data.name;
-    this.baseDamage = data.baseDamage;
-    this.effectType = data.effectType;
-    this.effectValue = data.effectValue || 0;
-    this.effectDuration = data.effectDuration || 0;
-    this.projectileSpeed = data.projectileSpeed || 1;
-    this.trajectory = data.trajectory || 'straight';
-  }
-
-  /**
-   * Apply effect when emoji hits target
-   */
-  applyEffect(target: any): void {
-    // Apply base damage
-    target.takeDamage(this.baseDamage);
-
-    // Apply special effect
-    switch (this.effectType) {
-      case EmojiEffectType.BURN:
-        target.applyBurn(this.effectValue, this.effectDuration);
-        break;
-      case EmojiEffectType.FREEZE:
-        target.applyFreeze(this.effectDuration);
-        break;
-      case EmojiEffectType.HEAL:
-        target.heal(this.effectValue);
-        break;
-      case EmojiEffectType.POISON:
-        target.applyPoison(this.effectValue, this.effectDuration);
-        break;
-      case EmojiEffectType.SHIELD:
-        target.applyShield(this.effectValue);
-        break;
-      case EmojiEffectType.BOOST:
-        target.applyBoost(this.effectValue, this.effectDuration);
-        break;
-      // Add more effect implementations
-    }
-  }
-}
-
-/**
- * Emoji Database - All 50 emojis defined
- */
-export const EMOJI_DATABASE = {
-  // Damage Emojis
-  '🔥': {
-    character: '🔥',
-    name: 'Fire',
-    baseDamage: 3,
-    effectType: EmojiEffectType.BURN,
-    effectValue: 1,
-    effectDuration: 3,
-    projectileSpeed: 1,
-    trajectory: 'straight' as const
-  },
-  '⚡': {
-    character: '⚡',
-    name: 'Lightning',
-    baseDamage: 5,
-    effectType: EmojiEffectType.CHAIN,
-    effectValue: 2,
-    effectDuration: 0,
-    projectileSpeed: 2,
-    trajectory: 'straight' as const
-  },
-  '💥': {
-    character: '💥',
-    name: 'Explosion',
-    baseDamage: 8,
-    effectType: EmojiEffectType.AREA,
-    effectValue: 50, // radius in pixels
-    effectDuration: 0,
-    projectileSpeed: 0.8,
-    trajectory: 'arc' as const
-  },
-  '🗡️': {
-    character: '🗡️',
-    name: 'Sword',
-    baseDamage: 4,
-    effectType: EmojiEffectType.PIERCE,
-    effectValue: 25, // 25% armor pierce
-    effectDuration: 0,
-    projectileSpeed: 1.5,
-    trajectory: 'straight' as const
-  },
-  '🏹': {
-    character: '🏹',
-    name: 'Arrow',
-    baseDamage: 2,
-    effectType: EmojiEffectType.DAMAGE,
-    effectValue: 0,
-    effectDuration: 0,
-    projectileSpeed: 2,
-    trajectory: 'straight' as const
-  },
-
-  // Control Emojis
-  '❄️': {
-    character: '❄️',
-    name: 'Ice',
-    baseDamage: 2,
-    effectType: EmojiEffectType.FREEZE,
-    effectValue: 0,
-    effectDuration: 2,
-    projectileSpeed: 1,
-    trajectory: 'straight' as const
-  },
-  '🌊': {
-    character: '🌊',
-    name: 'Wave',
-    baseDamage: 3,
-    effectType: EmojiEffectType.SLOW,
-    effectValue: 50, // 50% slow
-    effectDuration: 3,
-    projectileSpeed: 0.8,
-    trajectory: 'wave' as const
-  },
-
-  // Support Emojis
-  '💚': {
-    character: '💚',
-    name: 'Green Heart',
-    baseDamage: 0,
-    effectType: EmojiEffectType.HEAL,
-    effectValue: 5,
-    effectDuration: 0,
-    projectileSpeed: 1.2,
-    trajectory: 'homing' as const
-  },
-  '🛡️': {
-    character: '🛡️',
-    name: 'Shield',
-    baseDamage: 0,
-    effectType: EmojiEffectType.SHIELD,
-    effectValue: 3, // blocks 3 hits
-    effectDuration: 0,
-    projectileSpeed: 1,
-    trajectory: 'straight' as const
-  },
-
-  // Debuff Emojis
-  '🧪': {
-    character: '🧪',
-    name: 'Poison',
-    baseDamage: 2,
-    effectType: EmojiEffectType.POISON,
-    effectValue: 1,
-    effectDuration: 5,
-    projectileSpeed: 1.1,
-    trajectory: 'arc' as const
-  },
-  '💀': {
-    character: '💀',
-    name: 'Skull',
-    baseDamage: 6,
-    effectType: EmojiEffectType.EXECUTE,
-    effectValue: 20, // execute at 20% HP
-    effectDuration: 0,
-    projectileSpeed: 0.9,
-    trajectory: 'straight' as const
-  },
-
-  // Add all remaining emojis...
-  // This is a partial implementation for demonstration
-};
-
-/**
- * Emoji Factory - Creates emoji instances
- */
-export class EmojiFactory {
-  static createEmoji(character: string): Emoji {
-    const emojiData = EMOJI_DATABASE[character as keyof typeof EMOJI_DATABASE];
-    if (!emojiData) {
-      throw new Error(`Unknown emoji: ${character}`);
-    }
-    return new Emoji(emojiData);
-  }
-
-  static getEmojisByCategory(_category: string): Emoji[] {
-    // Return emojis filtered by category
-    return [];
-  }
-}
-
-/**
- * Emoji Projectile - Represents an emoji in flight
+ * EmojiProjectile class for bullet-hell combat system
  */
 export class EmojiProjectile {
-  emoji: Emoji;
-  x: number;
-  y: number;
-  velocityX: number = 0;
-  velocityY: number = 0;
-  target: any;
-  owner: any;
-  lifetime: number;
-  active: boolean;
-
-  constructor(emoji: Emoji, startX: number, startY: number, target: any, owner: any) {
+  public x: number;
+  public y: number;
+  public vx: number = 0;
+  public vy: number = 0;
+  public active: boolean = true;
+  public age: number = 0;
+  public maxAge: number = 10; // 10 seconds max lifetime
+  
+  private trajectory: TrajectoryPattern;
+  private speed: number;
+  private target?: CombatEntity;
+  private owner: CombatEntity;
+  private emoji: any; // Emoji data
+  private size: number = 20;
+  
+  // Animation properties
+  private rotation: number = 0;
+  private scale: number = 1;
+  private opacity: number = 1;
+  private trail: { x: number; y: number; opacity: number }[] = [];
+  
+  constructor(
+    emoji: any,
+    x: number,
+    y: number,
+    target?: CombatEntity,
+    owner?: CombatEntity
+  ) {
+    this.x = x;
+    this.y = y;
     this.emoji = emoji;
-    this.x = startX;
-    this.y = startY;
     this.target = target;
-    this.owner = owner;
-    this.lifetime = 0;
-    this.active = true;
+    this.owner = owner!;
+    this.trajectory = emoji.trajectory || 'straight';
+    this.speed = (emoji.projectileSpeed || 1) * 200; // pixels per second
     
-    // Calculate velocity based on trajectory
-    this.calculateVelocity();
+    this.initializeMovement();
   }
-
-  calculateVelocity(): void {
-    const speed = this.emoji.projectileSpeed;
-    const angle = Math.atan2(this.target.y - this.y, this.target.x - this.x);
-    
-    switch (this.emoji.trajectory) {
-      case 'straight':
-        this.velocityX = Math.cos(angle) * speed;
-        this.velocityY = Math.sin(angle) * speed;
-        break;
-      case 'arc':
-        // Add arc trajectory logic
-        break;
-      case 'homing':
-        // Will recalculate each frame
-        break;
-      case 'wave':
-        // Add wave pattern
-        break;
-      case 'spiral':
-        // Add spiral pattern
-        break;
+  
+  private initializeMovement(): void {
+    if (this.target) {
+      const dx = this.target.x - this.x;
+      const dy = this.target.y - this.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance > 0) {
+        this.vx = (dx / distance) * this.speed;
+        this.vy = (dy / distance) * this.speed;
+      }
+    } else {
+      // Default movement (right for player, left for enemy)
+      this.vx = this.owner.isPlayer ? this.speed : -this.speed;
+      this.vy = 0;
     }
   }
-
+  
   update(deltaTime: number): void {
     if (!this.active) return;
-
-    this.lifetime += deltaTime;
-
-    // Update position based on trajectory
-    if (this.emoji.trajectory === 'homing') {
-      this.calculateVelocity(); // Recalculate for homing
+    
+    this.age += deltaTime;
+    if (this.age > this.maxAge) {
+      this.active = false;
+      return;
     }
-
-    this.x += this.velocityX * deltaTime;
-    this.y += this.velocityY * deltaTime;
-
-    // Check collision
-    if (this.checkCollision()) {
-      this.onHit();
+    
+    // Store previous position for trail
+    this.trail.push({ x: this.x, y: this.y, opacity: 0.5 });
+    if (this.trail.length > 5) {
+      this.trail.shift();
     }
-
-    // Check if out of bounds
-    if (this.isOutOfBounds()) {
+    
+    // Update trail opacity
+    this.trail.forEach((point, index) => {
+      point.opacity = (index + 1) / this.trail.length * 0.3;
+    });
+    
+    // Apply trajectory-specific movement
+    this.applyTrajectoryMovement(deltaTime);
+    
+    // Update position
+    this.x += this.vx * deltaTime;
+    this.y += this.vy * deltaTime;
+    
+    // Update visual effects
+    this.rotation += deltaTime * 2; // 2 radians per second
+    this.scale = 1 + Math.sin(this.age * 5) * 0.1; // Pulsing effect
+    
+    // Boundary check
+    if (this.x < -50 || this.x > 1250 || this.y < -50 || this.y > 850) {
       this.active = false;
     }
   }
-
-  checkCollision(): boolean {
-    // Simple distance check
-    const dx = this.x - this.target.x;
-    const dy = this.y - this.target.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    return distance < 20; // Hit radius
+  
+  private applyTrajectoryMovement(deltaTime: number): void {
+    switch (this.trajectory) {
+      case 'wave':
+        this.vy += Math.sin(this.age * 8) * 100 * deltaTime;
+        break;
+        
+      case 'spiral':
+        const spiralRadius = 50;
+        const spiralSpeed = this.age * 4;
+        this.vx += Math.cos(spiralSpeed) * spiralRadius * deltaTime;
+        this.vy += Math.sin(spiralSpeed) * spiralRadius * deltaTime;
+        break;
+        
+      case 'homing':
+        if (this.target && this.target.isAlive) {
+          const dx = this.target.x - this.x;
+          const dy = this.target.y - this.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance > 0) {
+            const homingStrength = 300; // pixels/sec^2
+            this.vx += (dx / distance) * homingStrength * deltaTime;
+            this.vy += (dy / distance) * homingStrength * deltaTime;
+            
+            // Limit speed
+            const currentSpeed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+            if (currentSpeed > this.speed * 2) {
+              this.vx = (this.vx / currentSpeed) * this.speed * 2;
+              this.vy = (this.vy / currentSpeed) * this.speed * 2;
+            }
+          }
+        }
+        break;
+        
+      case 'random':
+        if (Math.random() < 0.1) { // 10% chance per frame to change direction
+          this.vx += (Math.random() - 0.5) * 100;
+          this.vy += (Math.random() - 0.5) * 100;
+        }
+        break;
+        
+      default: // 'straight'
+        // No additional movement
+        break;
+    }
   }
-
-  onHit(): void {
-    this.emoji.applyEffect(this.target);
-    this.active = false;
-    
-    // Trigger visual effects
-    this.createImpactEffect();
-  }
-
-  createImpactEffect(): void {
-    // Create visual impact effect at position
-    // This would trigger particle effects, damage numbers, etc.
-  }
-
-  isOutOfBounds(): boolean {
-    // Check if projectile is outside game bounds
-    return this.x < 0 || this.x > 1920 || this.y < 0 || this.y > 1080;
-  }
-
+  
   render(ctx: CanvasRenderingContext2D): void {
     if (!this.active) return;
     
-    ctx.font = '24px Arial';
-    ctx.fillText(this.emoji.character, this.x - 12, this.y + 12);
+    ctx.save();
     
-    // Add trail effects based on emoji type
-    if (this.emoji.effectType === EmojiEffectType.BURN) {
-      // Draw fire trail
-    } else if (this.emoji.effectType === EmojiEffectType.FREEZE) {
-      // Draw ice particles
+    // Render trail
+    this.trail.forEach(point => {
+      ctx.globalAlpha = point.opacity;
+      ctx.font = `${this.size * 0.6}px Arial`;
+      ctx.fillText(this.emoji.character, point.x - 10, point.y + 10);
+    });
+    
+    // Render main projectile
+    ctx.globalAlpha = this.opacity;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+    ctx.scale(this.scale, this.scale);
+    
+    // Add glow effect for special trajectories
+    if (this.trajectory === 'homing') {
+      ctx.shadowColor = '#ff6b6b';
+      ctx.shadowBlur = 10;
+    } else if (this.trajectory === 'spiral') {
+      ctx.shadowColor = '#4ecdc4';
+      ctx.shadowBlur = 8;
     }
+    
+    ctx.font = `${this.size}px Arial`;
+    ctx.fillText(this.emoji.character, -10, 10);
+    
+    ctx.restore();
+  }
+  
+  getCollisionBounds(): { x: number; y: number; width: number; height: number } {
+    return {
+      x: this.x - this.size / 2,
+      y: this.y - this.size / 2,
+      width: this.size,
+      height: this.size
+    };
+  }
+  
+  onHit(target: CombatEntity): void {
+    if (this.emoji.applyEffect) {
+      this.emoji.applyEffect(target);
+    }
+    
+    // Apply base damage
+    const damage = this.emoji.baseDamage || 1;
+    target.takeDamage(damage);
+    
+    this.active = false;
   }
 }
 
-// Type definitions
-interface EmojiData {
-  character: string;
-  name: string;
-  baseDamage: number;
-  effectType: EmojiEffectType;
-  effectValue?: number;
-  effectDuration?: number;
-  projectileSpeed?: number;
-  trajectory?: 'straight' | 'arc' | 'homing' | 'wave' | 'spiral';
+/**
+ * Factory for creating emoji objects
+ */
+export class EmojiFactory {
+  static createEmoji(character: string): any {
+    // Basic emoji database - expanded version
+    const emojiDatabase: Record<string, any> = {
+      '🔥': { character: '🔥', name: 'Fire', baseDamage: 3, trajectory: 'straight', effectType: 'burn', projectileSpeed: 1.2 },
+      '❄️': { character: '❄️', name: 'Ice', baseDamage: 2, trajectory: 'straight', effectType: 'freeze', projectileSpeed: 0.8 },
+      '⚡': { character: '⚡', name: 'Lightning', baseDamage: 4, trajectory: 'homing', effectType: 'chain', projectileSpeed: 2.0 },
+      '🌪️': { character: '🌪️', name: 'Tornado', baseDamage: 2, trajectory: 'spiral', effectType: 'knockback', projectileSpeed: 1.0 },
+      '🎯': { character: '🎯', name: 'Target', baseDamage: 5, trajectory: 'homing', effectType: 'pierce', projectileSpeed: 1.5 },
+      '💫': { character: '💫', name: 'Star', baseDamage: 3, trajectory: 'wave', effectType: 'multi_hit', projectileSpeed: 1.3 },
+      '🌊': { character: '🌊', name: 'Wave', baseDamage: 2, trajectory: 'wave', effectType: 'slow', projectileSpeed: 0.9 },
+      '🗲': { character: '🗲', name: 'Bolt', baseDamage: 6, trajectory: 'straight', effectType: 'damage', projectileSpeed: 2.5 },
+      '💥': { character: '💥', name: 'Explosion', baseDamage: 4, trajectory: 'straight', effectType: 'area', projectileSpeed: 1.0 },
+      '🎪': { character: '🎪', name: 'Chaos', baseDamage: 3, trajectory: 'random', effectType: 'confuse', projectileSpeed: 1.4 },
+      // Default fallback
+      '❓': { character: character, name: 'Unknown', baseDamage: 1, trajectory: 'straight', effectType: 'damage', projectileSpeed: 1.0 }
+    };
+    
+    return emojiDatabase[character] || { ...emojiDatabase['❓'], character };
+  }
 }
+
+// Utility function to get random trajectory
+export function getRandomTrajectory(): TrajectoryPattern {
+  const trajectories: TrajectoryPattern[] = ['straight', 'wave', 'spiral', 'homing', 'random'];
+  return trajectories[Math.floor(Math.random() * trajectories.length)];
+}
+
+// Clean emoji system with no duplicate classes

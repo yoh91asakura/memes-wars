@@ -1,110 +1,156 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { CombatEngine } from '../../services/CombatEngine';
+import React, { useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { Card } from '../../types/card';
+import CombatArena from '../combat/CombatArena';
+import { commonCards } from '../../data/cards/common';
 import './CombatScreen.css';
 
 interface CombatScreenProps {
-  playerCard: Card;
-  enemyCard: Card;
-  onCombatEnd: (winner: 'player' | 'enemy') => void;
+  playerCards?: Card[];
+  onBattleComplete?: (winner: 'player' | 'opponent', rewards?: any) => void;
+  onExit?: () => void;
 }
 
 export const CombatScreen: React.FC<CombatScreenProps> = ({
-  playerCard,
-  enemyCard,
-  onCombatEnd
+  playerCards = [],
+  onBattleComplete,
+  onExit
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const engineRef = useRef<CombatEngine | null>(null);
-  const [combatStats, setCombatStats] = useState({
-    fps: 0,
-    projectiles: 0,
-    entities: 0
-  });
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  useEffect(() => {
-    if (!canvasRef.current || isInitialized) return;
-
-    // Initialize combat engine
-    const engine = new CombatEngine(canvasRef.current);
-    engineRef.current = engine;
-
-    // Start combat
-    engine.startCombat(playerCard, enemyCard);
-    setIsInitialized(true);
-
-    // Stats update interval
-    const statsInterval = setInterval(() => {
-      const stats = engine.getPerformanceStats();
-      setCombatStats(stats);
-
-      // Check if combat is over
-      const combatResult = engine.isCombatOver();
-      if (combatResult.isOver && combatResult.winner) {
-        engine.stop();
-        clearInterval(statsInterval);
-        onCombatEnd(combatResult.winner);
-      }
-    }, 100); // Update stats every 100ms
-
-    return () => {
-      if (engineRef.current) {
-        engineRef.current.stop();
-      }
-      clearInterval(statsInterval);
-    };
-  }, [playerCard, enemyCard, onCombatEnd, isInitialized]);
-
+  const [gamePhase, setGamePhase] = useState<'setup' | 'battle' | 'result'>('setup');
+  const [battleResult, setBattleResult] = useState<'player' | 'opponent' | null>(null);
+  const [rewards, setRewards] = useState<any>(null);
+  
+  // Default cards for testing if no playerCards provided
+  const defaultPlayerCards: Card[] = playerCards.length > 0 ? playerCards : commonCards.slice(0, 5);
+  
+  // Generate random opponent cards
+  const opponentCards: Card[] = commonCards.slice(5, 10);
+  
+  const handleBattleComplete = useCallback((winner: 'player' | 'opponent') => {
+    setBattleResult(winner);
+    setGamePhase('result');
+    
+    // Calculate rewards if player wins
+    if (winner === 'player') {
+      const battleRewards = {
+        coins: Math.floor(Math.random() * 100) + 50,
+        experience: Math.floor(Math.random() * 50) + 25,
+        items: ['Health Potion', 'Mana Crystal']
+      };
+      setRewards(battleRewards);
+    }
+    
+    if (onBattleComplete) {
+      onBattleComplete(winner, rewards);
+    }
+  }, [onBattleComplete, rewards]);
+  
+  const handlePlayAgain = () => {
+    setGamePhase('setup');
+    setBattleResult(null);
+    setRewards(null);
+  };
+  
+  const handleExit = () => {
+    if (onExit) {
+      onExit();
+    }
+  };
+  
+  if (gamePhase === 'result') {
+    return (
+      <motion.div 
+        className="combat-result-screen"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <div className="result-content">
+          <motion.h1 
+            className={`result-title ${battleResult}`}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
+          >
+            {battleResult === 'player' ? 'VICTORY!' : 'DEFEAT!'}
+          </motion.h1>
+          
+          {battleResult === 'player' && rewards && (
+            <motion.div 
+              className="rewards-section"
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              <h2>Battle Rewards</h2>
+              <div className="rewards-list">
+                <div className="reward-item">
+                  <span className="reward-icon">💰</span>
+                  <span>{rewards.coins} Coins</span>
+                </div>
+                <div className="reward-item">
+                  <span className="reward-icon">⭐</span>
+                  <span>{rewards.experience} XP</span>
+                </div>
+                {rewards.items && rewards.items.map((item: string, index: number) => (
+                  <div key={index} className="reward-item">
+                    <span className="reward-icon">🎁</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+          
+          <motion.div 
+            className="result-actions"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            <button className="play-again-btn" onClick={handlePlayAgain}>
+              Battle Again
+            </button>
+            <button className="exit-btn" onClick={handleExit}>
+              Exit Combat
+            </button>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
+  }
+  
   return (
-    <div className="combat-screen">
+    <motion.div 
+      className="combat-screen"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {/* Combat Header */}
       <div className="combat-header">
-        <div className="card-info player-card">
-          <h3>{playerCard.name}</h3>
-          <div className="card-emoji">{playerCard.emoji}</div>
-          <div className="card-stats">
-            <span>Cost: {playerCard.cost}</span>
-            <span>Rarity: {playerCard.rarity}</span>
-          </div>
-        </div>
+        <motion.button 
+          className="exit-combat-btn"
+          onClick={handleExit}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          ← Exit Combat
+        </motion.button>
         
-        <div className="vs-indicator">
-          <span>VS</span>
-        </div>
+        <h1 className="combat-title">EMOJI BATTLE ARENA</h1>
         
-        <div className="card-info enemy-card">
-          <h3>{enemyCard.name}</h3>
-          <div className="card-emoji">{enemyCard.emoji}</div>
-          <div className="card-stats">
-            <span>Cost: {enemyCard.cost}</span>
-            <span>Rarity: {enemyCard.rarity}</span>
-          </div>
+        <div className="phase-indicator">
+          Phase: {gamePhase.toUpperCase()}
         </div>
       </div>
-
-      <div className="combat-arena">
-        <canvas
-          ref={canvasRef}
-          width={1200}
-          height={800}
-          className="combat-canvas"
-        />
-      </div>
-
-      <div className="combat-stats">
-        <div className="stat-item">
-          <span className="stat-label">FPS:</span>
-          <span className="stat-value">{combatStats.fps}</span>
-        </div>
-        <div className="stat-item">
-          <span className="stat-label">Projectiles:</span>
-          <span className="stat-value">{combatStats.projectiles}</span>
-        </div>
-        <div className="stat-item">
-          <span className="stat-label">Entities:</span>
-          <span className="stat-value">{combatStats.entities}</span>
-        </div>
-      </div>
-    </div>
+      
+      {/* Main Combat Arena */}
+      <CombatArena 
+        playerCards={defaultPlayerCards}
+        opponentCards={opponentCards}
+        onBattleComplete={handleBattleComplete}
+      />
+    </motion.div>
   );
 };
