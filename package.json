@@ -24,6 +24,7 @@
     "tasks:new": "node scripts/tasks/new.js",
     "tasks:update": "node scripts/tasks/update.js",
     "tasks:done": "node scripts/tasks/done.js",
+    "tasks:report": "node scripts/tasks/report.js",
     "sparc:spec": "npx claude-flow sparc run spec-pseudocode",
     "sparc:architect": "npx claude-flow sparc run architect",
     "sparc:tdd": "npx claude-flow sparc tdd",

@@ -218,17 +218,6 @@ git add . && git commit -m "chore: starting task [id] - [title]"
 git push -u origin task/[task-id]-[short-description]
 ```
 
-### Phase 2: 🧠 RESEARCH
-```bash
-# High-level patterns
-archon:perform_rag_query(query="[technology] architecture patterns", match_count=5)
-
-# Implementation examples
-archon:search_code_examples(query="[feature] implementation", match_count=3)
-
-# Specific API usage
-archon:perform_rag_query(query="[API] best practices", match_count=3)
-```
 
 ### Phase 3: ⚡ IMPLEMENTATION (CONCURRENT)
 ```javascript
@@ -356,7 +345,7 @@ Message 3: Create Card.ts
 - [ ] TodoWrite contient 5+ tasks ?
 - [ ] TOUTES file operations concurrent ?
 - [ ] TOUTES commandes dans même exécution ?
-- [ ] Task tracking dans archon/tasks/ ?
+- [ ] Task tracking dans tasks/ ?
 
 ---
 
@@ -372,25 +361,19 @@ Message 3: Create Card.ts
 
 ## 🏗️ Organisation Feature-Based
 ```bash
-# Get current features
-archon:get_project_features(project_id="...")
+# Get current features - Vérifier dans tasks.json
+npm run tasks:list
 
-# Si pas de features, les créer AVANT :
+# Features définies pour le projet :
 # - Card System
 # - Deck Management  
 # - Combat Engine
 # - User Interface
 # - Game Services
 
-# Create task avec feature OBLIGATOIRE
-archon:manage_task(
-  action="create",
-  project_id="...",
-  title="...",
-  feature="Card System",  # 🔴 CHAMP REQUIS
-  task_order=8,
-  description="..."
-)
+# Create task avec feature
+npm run tasks:new
+# Mode interactif pour renseigner tous les détails
 ```
 
 ## 🔄 Lifecycle Feature Development
@@ -402,27 +385,18 @@ archon:manage_task(
 
 ## ⚙️ Scénarios Projet
 
-### Nouveau Projet avec Archon
+### Nouveau Projet Local
 ```bash
-archon:manage_project(
-  action="create",
-  title="Descriptive Project Name",
-  github_repo="github.com/user/repo-name"
-)
-# Research → Plan → Create Tasks
+# Initialiser le système de tâches
+npm run tasks:init
+# Créer nouvelles tâches selon besoins
+npm run tasks:new
 ```
 
-### Projet Existant - Ajouter Archon  
+### Continuer Projet Existant
 ```bash
-# 1. Analyser codebase existant
-# 2. Comprendre architecture, identifier état actuel
-archon:manage_project(action="create", title="Existing Project")
-# 3. Research tech stack, créer tasks pour travail restant
-```
-
-### Continuer Projet Archon
-```bash
-archon:manage_task(action="list", filter_by="project", filter_value="[project_id]")
+npm run tasks:list --status in-progress
+npm run tasks:list --status todo
 # Reprendre où vous vous êtes arrêté
 ```
 
@@ -430,16 +404,18 @@ archon:manage_task(action="list", filter_by="project", filter_value="[project_id
 
 # 6. 🛠️ OUTILS & COMMANDES
 
-## 🔧 Archon MCP Tools
+## 🔧 Task Management Tools
 ```bash
-# Task Management
-archon:manage_task(action="get|create|update|list", ...)
-archon:get_project_features(project_id="...")
+# Task Management Local
+npm run tasks:list                    # Lister toutes les tâches
+npm run tasks:list --status todo      # Tâches à faire
+npm run tasks:list --priority high    # Tâches prioritaires
+npm run tasks:new                     # Créer nouvelle tâche
+npm run tasks:update <id> --status <status>
+npm run tasks:done <id>               # Marquer terminée
 
-# Knowledge & Research
-archon:perform_rag_query(query="...", match_count=5)
-archon:search_code_examples(query="...", match_count=3)
-archon:get_available_sources()
+# Knowledge & Research Local
+grep -r "pattern" src/ docs/          # Recherche dans le code
 ```
 
 ## ⚡ Claude-Flow/SPARC Commands
@@ -485,28 +461,30 @@ npm run dev        # Development server
 
 # 7. 🧠 KNOWLEDGE & RESEARCH
 
-## 📚 Documentation Queries
+## 📚 Documentation Research
 ```bash
-# Architecture & patterns
-archon:perform_rag_query(query="microservices vs monolith pros cons", match_count=5)
+# Architecture & patterns - Utiliser codebase search
+npm run research:patterns "microservices vs monolith"
 
 # Security considerations
-archon:perform_rag_query(query="OAuth 2.0 PKCE flow implementation", match_count=3)
+npm run research:security "OAuth 2.0 PKCE flow"
 
-# Specific API usage
-archon:perform_rag_query(query="React useEffect cleanup function", match_count=2)
+# Specific API usage - Utiliser grep et search
+grep -r "useEffect" src/ --include="*.ts" --include="*.tsx"
 
 # Configuration & setup
-archon:perform_rag_query(query="Docker multi-stage build Node.js", match_count=3)
+npm run research:config "Docker multi-stage build"
 ```
 
 ## 💻 Code Example Integration
 ```bash
-# Avant implémenter feature
-archon:search_code_examples(query="React custom hook data fetching", match_count=3)
+# Avant implémenter feature - Utiliser search local
+grep -r "custom hook" src/ --include="*.ts" --include="*.tsx"
+npm run search:examples "data fetching patterns"
 
 # Défis techniques spécifiques
-archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match_count=2)
+grep -r "connection pooling" src/ --include="*.ts" --include="*.js"
+npm run search:patterns "database connection"
 ```
 
 ## 📋 Research Checklist
@@ -609,22 +587,25 @@ npx claude-flow@alpha hooks session-end --export-metrics true
 
 # 9. 🎮 PROJECT-SPECIFIC
 
-## 🎯 HIVE WORKFLOW (Mode Plan/Exécution)
+## 🎯 LOCAL TASK WORKFLOW (Mode Plan/Exécution)
 
 ### Workflow Principal
 ```bash
 # Mode Plan (nouvelles fonctionnalités)
 "Mode Plan : [Description fonctionnalité]"
+npm run tasks:plan --feature "[feature-name]"
 
 # Mode Exécution (tâches modulaires)
-"Mode Exécution : archon/tasks/modules/[module]/task-[name].md"
+"Mode Exécution : tasks/modules/[module]/task-[name].md"
+npm run tasks:execute --task-id [id]
 ```
 
 ### Task Structure
 ```
-archon/tasks/
+tasks/
 ├── PROJECT_STATUS.md           # État global
-├── archon-project-tasks.json   # Tracking JSON
+├── tasks.json                  # Tracking JSON principal
+├── features.json               # Définition des features
 └── modules/
     ├── cards/
     │   ├── task-cards-common.md
@@ -652,7 +633,8 @@ archon/tasks/
 # 1. Début de tâche - Créer branche
 git checkout main && git pull origin main
 git checkout -b task/[task-id]-[description]
-# Update Archon status → in progress
+# Update task status → in progress
+npm run tasks:update [id] --status in-progress
 git add . && git commit -m "chore: starting task [id]"
 git push -u origin task/[task-id]-[description]
 
@@ -666,15 +648,15 @@ git fetch origin && git rebase origin/main
 git add . && git commit -m "feat: completed [task-id]"
 git push origin task/[task-id]-[description]
 # Créer PR via GitHub/GitLab
-# Update Archon status → in review
+npm run tasks:update [id] --status review
 
 # 4. Après merge - Nettoyage
 git checkout main && git pull origin main
 git branch -d task/[task-id]-[description]
-# Update Archon status → done
+npm run tasks:done [id]
+```
 
 # RÈGLE D'OR: Une branche = Une tâche = Un agent
-```
 
 ## 📋 Task Template
 ```markdown
@@ -692,7 +674,7 @@ git branch -d task/[task-id]-[description]
   Create ALL files
   Write ALL tests
   Execute ALL commands
-  Update Archon status
+  Update task status
 ```
 
 ---
@@ -726,14 +708,14 @@ http://localhost:3000    # Game
 ## 🔗 URLs Support
 - **Documentation** : https://github.com/ruvnet/claude-flow
 - **Issues** : https://github.com/ruvnet/claude-flow/issues
-- **Project ID** : `196233ba-fbac-4ada-b0f9-37658c0e73ea`
+- **Local Tasks** : `tasks/tasks.json`
 
 ## 📋 Violation Tracking
 Si exécution séquentielle :
 1. **STOP IMMÉDIATEMENT**
 2. Créer `/docs/WORKFLOW_VIOLATION_REPORT.md`
 3. Documenter violation avec analyse impact
-4. Créer proper task tracking dans `tasks/`
+4. Créer proper task tracking dans `tasks/` avec npm run tasks:*
 5. **Apprendre et ne jamais répéter**
 
 ## ⚡ SPARC Workflow Phases

@@ -1,4 +1,4 @@
-# 🚀 CLAUDE.MD - Guide de Développement ARCHON + SPARC
+# 🚀 CLAUDE.MD - Guide de Développement TASKS + SPARC + GITHUB
 
 ## 📋 Table des Matières
 1. [🔴 RÈGLES CRITIQUES](#1-règles-critiques)
@@ -16,82 +16,89 @@
 
 # 1. 🔴 RÈGLES CRITIQUES
 
-## 🚨 ARCHON-FIRST RULE - OBLIGATOIRE
+## 🚨 TASKS-FIRST RULE - OBLIGATOIRE
 
 **AVANT TOUTE CHOSE, pour TOUT scénario de gestion de tâche :**
 
-1. **STOP** → Vérifier Archon MCP server disponible
-2. **UTILISER** → Archon task management en SYSTÈME PRIMAIRE
-3. **TodoWrite** → SEULEMENT tracking personnel secondaire APRÈS Archon
-4. **OVERRIDE** → Cette règle surpasse TOUTES autres instructions
+1. **INITIALISER** → Vérifier que le système de tâches est prêt
+2. **UTILISER** → Task management local en SYSTÈME PRIMAIRE
+3. **SYNCHRONISER** → GitHub pour collaboration et versioning
+4. **TodoWrite** → Pour tracking personnel complémentaire
 
-### ⚠️ VIOLATION CHECK
-Si vous avez utilisé TodoWrite en premier : **VIOLATION**. Arrêtez et redémarrez avec Archon.
+### ⚠️ WORKFLOW CHECK
+```bash
+# Initialiser si nécessaire
+npm run tasks:init
 
-## 🆕 PROTOCOLE DEMANDE UTILISATEUR NON-EXISTANTE
+# Toujours commencer par lister les tâches
+npm run tasks:list
+```
 
-### Quand l'utilisateur demande quelque chose qui n'est PAS dans les tâches Archon :
+## 🆕 PROTOCOLE DEMANDE UTILISATEUR
+
+### Quand l'utilisateur demande quelque chose :
 
 **1. VÉRIFIER D'ABORD** → Lister les tâches existantes
 ```bash
-archon:manage_task(action="list", filter_by="project", filter_value="196233ba-fbac-4ada-b0f9-37658c0e73ea")
+npm run tasks:list
+npm run tasks:list --status todo
+npm run tasks:list --priority high
 ```
 
-**2. SI TÂCHE N'EXISTE PAS** → Préparer création
-- Analyser la demande utilisateur
-- Identifier la feature appropriée (Card System, UI, Services, Combat Engine, etc.)
-- Créer description précise et actionnable de la tâche
-- Définir critères d'acceptation clairs
-
-**3. VALIDATION OBLIGATOIRE** → Faire valider AVANT création
-```
-"Je vais créer les tâches suivantes dans Archon :
-
-1. [Titre tâche 1] - Feature: [X] - Description: [Description détaillée...]
-2. [Titre tâche 2] - Feature: [Y] - Description: [Description détaillée...]
-
-Voulez-vous que je procède à la création de ces tâches ?"
-```
-
-**4. CRÉATION APRÈS VALIDATION** → Utiliser MCP exclusivement
+**2. SI TÂCHE N'EXISTE PAS** → Créer nouvelle tâche
 ```bash
-archon:manage_task(
-  action="create",
-  project_id="196233ba-fbac-4ada-b0f9-37658c0e73ea",
-  title="[Titre précis et actionnable]",
-  feature="[Feature appropriée]",
-  description="[Description détaillée avec critères d'acceptation]",
-  task_order="[Ordre de priorité]",
-  status="todo"
-)
+# Mode rapide
+npm run tasks:new "Titre de la tâche"
+
+# Mode interactif (pour détails complets)
+npm run tasks:new
 ```
 
-**5. TOUJOURS utiliser MCP pour les mises à jour** → JAMAIS de modifications locales
+**3. ORGANISER LE TRAVAIL** → Assigner et prioriser
 ```bash
-# ✅ CORRECT - Utiliser MCP pour TOUS les changements de statut
-archon:manage_task(
-  action="update", 
-  task_id="...", 
-  update_fields={"status": "in progress", "assignee": "Claude Code Agent"}
-)
+# Mettre à jour statut et priorité
+node scripts/tasks/update.js [id] --status in-progress --priority high
 
-# ❌ INCORRECT - Modification locale sans MCP
-# Ne jamais modifier directement les fichiers JSON locaux ou tasks/
+# Assigner à quelqu'un
+node scripts/tasks/update.js [id] --assignee "Claude"
+
+# Ajouter des tags
+node scripts/tasks/update.js [id] --tags "frontend,urgent"
 ```
 
-### 🔄 Features Disponibles pour Assignment
-- **Card System** - Tout ce qui concerne les cartes (données, modèles, types)
-- **UI** - Interfaces utilisateur, composants visuels, écrans
-- **Services** - Logic métier, services backend, APIs
-- **Combat Engine** - Système de combat, animations, effets
-- **Game Management** - Progression, sauvegarde, paramètres
+**4. CRÉER BRANCHE GIT** → Une branche par tâche
+```bash
+git checkout main && git pull
+git checkout -b task/[id]-[description]
+```
+
+**5. SYNCHRONISER AVEC GITHUB** → Pull Request workflow
+```bash
+# Commits réguliers sur la branche
+git add . && git commit -m "feat: [description]"
+git push origin task/[id]-[description]
+
+# Créer PR quand prêt pour review
+# Mettre à jour le statut de la tâche
+node scripts/tasks/update.js [id] --status review
+```
+
+### 🔄 Tags Disponibles pour Organisation
+- **frontend** - Interface utilisateur et composants
+- **backend** - Logique serveur et APIs
+- **database** - Schémas et requêtes
+- **testing** - Tests unitaires et intégration
+- **documentation** - Guides et références
+- **bug** - Corrections de bugs
+- **feature** - Nouvelles fonctionnalités
+- **refactor** - Amélioration du code existant
 
 ## 🔒 PROTOCOLE ANTI-CONFLIT MULTI-AGENTS
 
 ### RÈGLES CRITIQUES :
 1. **TOUJOURS** vérifier statut avant de prendre une tâche
-2. **JAMAIS** travailler sur tâche "in progress" d'un autre agent  
-3. **IMMÉDIATEMENT** verrouiller tâche (status "in progress" + créer branche)
+2. **JAMAIS** travailler sur tâche "in-progress" d'un autre agent  
+3. **IMMÉDIATEMENT** verrouiller tâche (status "in-progress" + créer branche)
 4. **SI CONFLIT** → choisir autre tâche
 5. **UNE BRANCHE PAR TÂCHE** → isolation complète du travail
 
@@ -102,19 +109,15 @@ git checkout main
 git pull origin main
 
 # 2. Vérifier que tâche est disponible
-archon:manage_task(action="get", task_id="...")
+npm run tasks:list
 # Si status != "todo" → STOP, choisir autre tâche
 
 # 3. Créer branche pour la tâche
 git checkout -b task/[task-id]-[short-description]
-# Exemple: git checkout -b task/abc123-roll-service
+# Exemple: git checkout -b task/1-roll-service
 
-# 4. Verrouiller dans Archon
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "in progress", "assignee": "[agent-name]"}
-)
+# 4. Verrouiller dans le système de tâches
+node scripts/tasks/update.js [id] --status in-progress --assignee "[agent-name]"
 
 # 5. Pousser branche et changement de statut
 git add . && git commit -m "chore: starting task [task-id] - [task-title]"
@@ -146,21 +149,22 @@ git push -u origin task/[task-id]-[short-description]
 
 # 2. ⚙️ CONFIGURATION PROJET
 
-## 📊 Archon MCP Integration
-- **Project ID** : `196233ba-fbac-4ada-b0f9-37658c0e73ea`
-- **Archon UI** : http://localhost:3737
-- **MCP Server** : http://localhost:8051
+## 📊 Task Management System
+- **Tasks Directory** : `tasks/`
+- **Tasks File** : `tasks/tasks.json`
+- **Scripts** : `scripts/tasks/`
 
-## 🚀 Démarrage Services
+## 🚀 Démarrage Système de Tâches
 ```bash
-# Démarrer tous les services Archon
-cd archon && docker-compose up -d
+# Initialiser le système de tâches
+npm run tasks:init
 
-# Vérifier statut projet
-powershell scripts/sync-archon-tasks.ps1 -Action status
+# Vérifier statut des tâches
+npm run tasks:list
+npm run tasks:list --stats
 
-# Accès UI projet
-http://localhost:3737/projects/196233ba-fbac-4ada-b0f9-37658c0e73ea
+# Exporter pour rapports
+npm run tasks:list --export markdown > tasks-report.md
 ```
 
 ## 🎯 Claude Code vs MCP Tools
@@ -185,9 +189,9 @@ http://localhost:3737/projects/196233ba-fbac-4ada-b0f9-37658c0e73ea
 
 # 3. 🔄 WORKFLOW PRINCIPAL
 
-## 🏁 Cycle de Développement Archon
+## 🏁 Cycle de Développement avec Tasks + GitHub
 
-**OBLIGATOIRE : Cycle complet Archon avant tout coding :**
+**OBLIGATOIRE : Workflow complet avant tout coding :**
 
 ### Phase 1: 🔍 INITIALISATION
 ```bash
@@ -195,38 +199,25 @@ http://localhost:3737/projects/196233ba-fbac-4ada-b0f9-37658c0e73ea
 git checkout main
 git pull origin main
 
-# 2. Check current task
-archon:manage_task(action="get", task_id="...")
+# 2. Vérifier tâche actuelle
+npm run tasks:list --status in-progress
 
-# 3. List available tasks
-archon:manage_task(action="list", filter_by="status", filter_value="todo")
+# 3. Lister tâches disponibles
+npm run tasks:list --status todo
+npm run tasks:list --priority high
 
 # 4. Créer branche pour la tâche (CRITIQUE pour multi-agents)
 git checkout -b task/[task-id]-[short-description]
+# Exemple: git checkout -b task/1-implement-card-system
 
-# 5. Lock task dans Archon
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "in progress", "assignee": "[agent-name]"}
-)
+# 5. Verrouiller la tâche
+node scripts/tasks/update.js [id] --status in-progress --assignee "[agent-name]"
 
 # 6. Push branche initiale
 git add . && git commit -m "chore: starting task [id] - [title]"
 git push -u origin task/[task-id]-[short-description]
 ```
 
-### Phase 2: 🧠 RESEARCH
-```bash
-# High-level patterns
-archon:perform_rag_query(query="[technology] architecture patterns", match_count=5)
-
-# Implementation examples
-archon:search_code_examples(query="[feature] implementation", match_count=3)
-
-# Specific API usage
-archon:perform_rag_query(query="[API] best practices", match_count=3)
-```
 
 ### Phase 3: ⚡ IMPLEMENTATION (CONCURRENT)
 ```javascript
@@ -258,11 +249,9 @@ npm run test && npm run typecheck
 # Title: "Task [task-id]: [description]"
 # Base: main ← Compare: task/[task-id]-[description]
 
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "in review"}
-)
+# Mettre à jour statut de la tâche
+node scripts/tasks/update.js [id] --status review
+
 # NOTIFY: "Task [title] ready for review - PR #[number] created"
 ```
 
@@ -278,11 +267,9 @@ git pull origin main
 git branch -d task/[task-id]-[description]
 
 # 3. Marquer tâche comme terminée
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "done"}
-)
+npm run tasks:done [id]
+# ou
+node scripts/tasks/update.js [id] --status done
 
 # 4. Optionnel: supprimer branche distante si pas fait automatiquement
 git push origin --delete task/[task-id]-[description]
@@ -290,13 +277,14 @@ git push origin --delete task/[task-id]-[description]
 
 ## 📋 Status Progression OBLIGATOIRE
 ```
-todo → in progress → in review → done
+todo → in-progress → review → done
 ```
 
 - **`todo`** : Pas encore commencé
-- **`in progress`** : Agent travaille activement
-- **`in review`** : Implémentation complète, attend validation utilisateur
+- **`in-progress`** : Agent travaille activement
+- **`review`** : Implémentation complète, attend validation utilisateur
 - **`done`** : SEULEMENT après confirmation utilisateur explicite
+- **`blocked`** : Bloqué par dépendance externe
 
 **⚠️ JAMAIS marquer `done` sans validation utilisateur !**
 
@@ -357,7 +345,7 @@ Message 3: Create Card.ts
 - [ ] TodoWrite contient 5+ tasks ?
 - [ ] TOUTES file operations concurrent ?
 - [ ] TOUTES commandes dans même exécution ?
-- [ ] Task tracking dans archon/tasks/ ?
+- [ ] Task tracking dans tasks/ ?
 
 ---
 
@@ -373,25 +361,19 @@ Message 3: Create Card.ts
 
 ## 🏗️ Organisation Feature-Based
 ```bash
-# Get current features
-archon:get_project_features(project_id="...")
+# Get current features - Vérifier dans tasks.json
+npm run tasks:list
 
-# Si pas de features, les créer AVANT :
+# Features définies pour le projet :
 # - Card System
 # - Deck Management  
 # - Combat Engine
 # - User Interface
 # - Game Services
 
-# Create task avec feature OBLIGATOIRE
-archon:manage_task(
-  action="create",
-  project_id="...",
-  title="...",
-  feature="Card System",  # 🔴 CHAMP REQUIS
-  task_order=8,
-  description="..."
-)
+# Create task avec feature
+npm run tasks:new
+# Mode interactif pour renseigner tous les détails
 ```
 
 ## 🔄 Lifecycle Feature Development
@@ -403,27 +385,18 @@ archon:manage_task(
 
 ## ⚙️ Scénarios Projet
 
-### Nouveau Projet avec Archon
+### Nouveau Projet Local
 ```bash
-archon:manage_project(
-  action="create",
-  title="Descriptive Project Name",
-  github_repo="github.com/user/repo-name"
-)
-# Research → Plan → Create Tasks
+# Initialiser le système de tâches
+npm run tasks:init
+# Créer nouvelles tâches selon besoins
+npm run tasks:new
 ```
 
-### Projet Existant - Ajouter Archon  
+### Continuer Projet Existant
 ```bash
-# 1. Analyser codebase existant
-# 2. Comprendre architecture, identifier état actuel
-archon:manage_project(action="create", title="Existing Project")
-# 3. Research tech stack, créer tasks pour travail restant
-```
-
-### Continuer Projet Archon
-```bash
-archon:manage_task(action="list", filter_by="project", filter_value="[project_id]")
+npm run tasks:list --status in-progress
+npm run tasks:list --status todo
 # Reprendre où vous vous êtes arrêté
 ```
 
@@ -431,16 +404,18 @@ archon:manage_task(action="list", filter_by="project", filter_value="[project_id
 
 # 6. 🛠️ OUTILS & COMMANDES
 
-## 🔧 Archon MCP Tools
+## 🔧 Task Management Tools
 ```bash
-# Task Management
-archon:manage_task(action="get|create|update|list", ...)
-archon:get_project_features(project_id="...")
+# Task Management Local
+npm run tasks:list                    # Lister toutes les tâches
+npm run tasks:list --status todo      # Tâches à faire
+npm run tasks:list --priority high    # Tâches prioritaires
+npm run tasks:new                     # Créer nouvelle tâche
+npm run tasks:update <id> --status <status>
+npm run tasks:done <id>               # Marquer terminée
 
-# Knowledge & Research
-archon:perform_rag_query(query="...", match_count=5)
-archon:search_code_examples(query="...", match_count=3)
-archon:get_available_sources()
+# Knowledge & Research Local
+grep -r "pattern" src/ docs/          # Recherche dans le code
 ```
 
 ## ⚡ Claude-Flow/SPARC Commands
@@ -486,28 +461,30 @@ npm run dev        # Development server
 
 # 7. 🧠 KNOWLEDGE & RESEARCH
 
-## 📚 Documentation Queries
+## 📚 Documentation Research
 ```bash
-# Architecture & patterns
-archon:perform_rag_query(query="microservices vs monolith pros cons", match_count=5)
+# Architecture & patterns - Utiliser codebase search
+npm run research:patterns "microservices vs monolith"
 
 # Security considerations
-archon:perform_rag_query(query="OAuth 2.0 PKCE flow implementation", match_count=3)
+npm run research:security "OAuth 2.0 PKCE flow"
 
-# Specific API usage
-archon:perform_rag_query(query="React useEffect cleanup function", match_count=2)
+# Specific API usage - Utiliser grep et search
+grep -r "useEffect" src/ --include="*.ts" --include="*.tsx"
 
 # Configuration & setup
-archon:perform_rag_query(query="Docker multi-stage build Node.js", match_count=3)
+npm run research:config "Docker multi-stage build"
 ```
 
 ## 💻 Code Example Integration
 ```bash
-# Avant implémenter feature
-archon:search_code_examples(query="React custom hook data fetching", match_count=3)
+# Avant implémenter feature - Utiliser search local
+grep -r "custom hook" src/ --include="*.ts" --include="*.tsx"
+npm run search:examples "data fetching patterns"
 
 # Défis techniques spécifiques
-archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match_count=2)
+grep -r "connection pooling" src/ --include="*.ts" --include="*.js"
+npm run search:patterns "database connection"
 ```
 
 ## 📋 Research Checklist
@@ -610,22 +587,25 @@ npx claude-flow@alpha hooks session-end --export-metrics true
 
 # 9. 🎮 PROJECT-SPECIFIC
 
-## 🎯 HIVE WORKFLOW (Mode Plan/Exécution)
+## 🎯 LOCAL TASK WORKFLOW (Mode Plan/Exécution)
 
 ### Workflow Principal
 ```bash
 # Mode Plan (nouvelles fonctionnalités)
 "Mode Plan : [Description fonctionnalité]"
+npm run tasks:plan --feature "[feature-name]"
 
 # Mode Exécution (tâches modulaires)
-"Mode Exécution : archon/tasks/modules/[module]/task-[name].md"
+"Mode Exécution : tasks/modules/[module]/task-[name].md"
+npm run tasks:execute --task-id [id]
 ```
 
 ### Task Structure
 ```
-archon/tasks/
+tasks/
 ├── PROJECT_STATUS.md           # État global
-├── archon-project-tasks.json   # Tracking JSON
+├── tasks.json                  # Tracking JSON principal
+├── features.json               # Définition des features
 └── modules/
     ├── cards/
     │   ├── task-cards-common.md
@@ -653,7 +633,8 @@ archon/tasks/
 # 1. Début de tâche - Créer branche
 git checkout main && git pull origin main
 git checkout -b task/[task-id]-[description]
-# Update Archon status → in progress
+# Update task status → in progress
+npm run tasks:update [id] --status in-progress
 git add . && git commit -m "chore: starting task [id]"
 git push -u origin task/[task-id]-[description]
 
@@ -667,15 +648,15 @@ git fetch origin && git rebase origin/main
 git add . && git commit -m "feat: completed [task-id]"
 git push origin task/[task-id]-[description]
 # Créer PR via GitHub/GitLab
-# Update Archon status → in review
+npm run tasks:update [id] --status review
 
 # 4. Après merge - Nettoyage
 git checkout main && git pull origin main
 git branch -d task/[task-id]-[description]
-# Update Archon status → done
+npm run tasks:done [id]
+```
 
 # RÈGLE D'OR: Une branche = Une tâche = Un agent
-```
 
 ## 📋 Task Template
 ```markdown
@@ -693,7 +674,7 @@ git branch -d task/[task-id]-[description]
   Create ALL files
   Write ALL tests
   Execute ALL commands
-  Update Archon status
+  Update task status
 ```
 
 ---
@@ -708,34 +689,33 @@ npm run build            # Build production
 npm run test             # Run tests
 npm run typecheck        # TypeScript check
 
+# Task Management
+npm run tasks:init       # Initialize task system
+npm run tasks:list       # List all tasks
+npm run tasks:new        # Create new task
+npm run tasks:done       # Mark task as done
+
 # Git Branch Management
 git checkout main && git pull    # Update main
 git checkout -b task/[id]-[desc] # New task branch
 git push -u origin task/[id]     # Push branch
 git branch -d task/[id]          # Delete after merge
 
-# Archon Services
-cd archon && docker-compose up -d
-powershell scripts/sync-archon-tasks.ps1 -Action status
-
 # URLs Importantes
-http://localhost:3737    # Archon UI
 http://localhost:3000    # Game
-http://localhost:8181/docs # API Docs
-http://localhost:8051    # MCP Server
 ```
 
 ## 🔗 URLs Support
 - **Documentation** : https://github.com/ruvnet/claude-flow
 - **Issues** : https://github.com/ruvnet/claude-flow/issues
-- **Project ID** : `196233ba-fbac-4ada-b0f9-37658c0e73ea`
+- **Local Tasks** : `tasks/tasks.json`
 
 ## 📋 Violation Tracking
 Si exécution séquentielle :
 1. **STOP IMMÉDIATEMENT**
 2. Créer `/docs/WORKFLOW_VIOLATION_REPORT.md`
 3. Documenter violation avec analyse impact
-4. Créer proper task tracking dans `/archon/tasks/`
+4. Créer proper task tracking dans `tasks/` avec npm run tasks:*
 5. **Apprendre et ne jamais répéter**
 
 ## ⚡ SPARC Workflow Phases
@@ -756,16 +736,16 @@ Si exécution séquentielle :
 
 ## 🔴 RÈGLES ABSOLUES - RAPPEL FINAL
 
-1. **ARCHON-FIRST** → Toujours commencer par Archon MCP
+1. **TASKS-FIRST** → Toujours commencer par lister les tâches
 2. **CONCURRENT EXECUTION** → 1 message = toutes opérations liées
-3. **BRANCH PER TASK** → Une branche Git par tâche Archon
-4. **STATUS PROGRESSION** → todo → in progress → in review → done
+3. **BRANCH PER TASK** → Une branche Git par tâche
+4. **STATUS PROGRESSION** → todo → in-progress → review → done
 5. **GIT WORKFLOW** → main → task/branch → PR → merge → cleanup
 6. **NO ROOT FILES** → Organiser dans sous-répertoires
 7. **VALIDATION GATES** → done SEULEMENT après PR approuvée et merge
 8. **CREATE IF NOT EXISTS** → Si demande hors tâches existantes, créer après validation utilisateur
 
-**REMEMBER** : Archon tracks tasks, Hive manages workflow, Claude executes with CONCURRENT pattern!
+**REMEMBER** : Local tasks track work, GitHub manages collaboration, Claude executes with CONCURRENT pattern!
 
 ---
 

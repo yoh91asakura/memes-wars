@@ -147,8 +147,8 @@ coverage/
 # ============================================
 
 # === TASK MANAGEMENT SYSTEM ===
-# Local task tracking files
-tasks/
+# Task tracking is NOW versioned for project clarity
+# (removed from gitignore)
 
 # === CLAUDE FLOW + SPARC METHODOLOGY ===
 # All Claude Flow generated files and directories
@@ -233,6 +233,8 @@ windows-*.config
 scripts/setup-windows.ps1
 scripts/*.bat
 scripts/*.ps1
+# But we DO track task management scripts
+!scripts/tasks/*.js
 
 # Windows npm/node specific
 node.exe
@@ -257,7 +259,7 @@ package-lock.json.windows
 yarn.lock.windows
 pnpm-lock.yaml.windows
 
-# Task tracking temporary files
+# Task tracking temporary files (only temp files ignored)
 tasks/*.tmp
 tasks/*.lock
 sync-status.json
@@ -291,9 +293,10 @@ pagefile.sys
 swapfile.sys
 
 # === LOCAL DEVELOPMENT TRACKING ===
-# Task tracking files (managed locally)
-tasks/
-task-*.json
+# Task tracking NOW in version control for team collaboration
+# Only ignore temporary files
+tasks/*.tmp
+tasks/*.lock
 sync-status.json
 
 # === DOCUMENTATION EXCEPTIONS ===
@@ -365,13 +368,15 @@ swarm-session-*.json
 # - Package configuration (package.json, tsconfig.json)
 # - Build configuration (vite.config.ts, etc.)
 # - Documentation (CLAUDE.md, LOCAL_SETUP.md, docs/specifications/)
+# - Task management system (tasks/, scripts/tasks/)
+# - Project status files (PROJECT_STATUS.md, ROADMAP.md, ONBOARDING.md)
 # - This .gitignore file
 #
 # ❌ NEVER COMMIT:
-# - Any local development tools (tasks/, .claude/, memory/)
+# - Local development tools (.claude/, memory/, coordination/)
 # - Personal IDE settings (.vscode/settings.json)
 # - Environment files (.env.local)
-# - Task tracking files (managed locally)
+# - Temporary task files (*.tmp, *.lock)
 # - Generated workflow files
 # - MCP server configurations
 # - Database files and logs
