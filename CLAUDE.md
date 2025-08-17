@@ -33,7 +33,7 @@ Si vous avez utilisé TodoWrite en premier : **VIOLATION**. Arrêtez et redémar
 ### RÈGLES CRITIQUES :
 1. **TOUJOURS** vérifier statut avant de prendre une tâche
 2. **JAMAIS** travailler sur tâche "in progress" d'un autre agent  
-3. **IMMÉDIATEMENT** verrouiller tâche (status + git push)
+3. **IMMÉDIATEMENT** verrouiller tâche (status "in progress" + git push)
 4. **SI CONFLIT** → choisir autre tâche
 
 ### 🔐 Séquence Verrouillage Obligatoire

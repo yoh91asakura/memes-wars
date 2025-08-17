@@ -142,23 +142,20 @@ npm run test:coverage
 
 ## 🤖 For AI Agents
 
-**⚠️ IMPORTANT**: All AI agents must read [AGENT_WORKFLOW_GUIDE.md](./AGENT_WORKFLOW_GUIDE.md) before contributing.
+**⚠️ IMPORTANT**: All AI agents must read [CLAUDE.md](./CLAUDE.md) for the complete development workflow and project coordination.
 
-**Current Workflow Score: 90/100 (Grade A)**
+**Current Project Management**: Uses Archon system with priority task tracking.
 
 Quick commands for agents:
 ```bash
-# Check workflow compliance
-npm run workflow:score
+# Check current Archon project status
+cd archon && docker-compose ps
 
-# Create task branch (REQUIRED)
-git checkout -b task/your-task-name
+# Start development server
+npm run dev
 
-# Validate before commit
-npm run validate
-
-# If stuck on main with changes
-npm run workflow:migrate
+# Run tests and validation
+npm test && npm run typecheck
 ```
 
 ## 🤝 Contributing
