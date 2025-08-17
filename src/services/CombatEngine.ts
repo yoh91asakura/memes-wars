@@ -256,7 +256,7 @@ export class CombatEngine {
           
           const projectile = new EmojiProjectile(emoji, spawnX, spawnY, target, entity);
           this.projectiles.push(projectile);
-        } catch (error) {
+        } catch {
           console.warn(`Unknown emoji: ${emojiChar}`);
         }
       });

@@ -176,14 +176,75 @@ npm run tasks:list --export markdown > tasks-report.md
 - TodoWrite et task management
 - Git operations
 
-### MCP Tools SEULEMENT :
-- Coordination et planning
-- Memory management
-- Neural features
-- Performance tracking
-- Swarm orchestration
+### MCP Tools - UTILISER QUAND DISPONIBLE :
 
-**CLEF** : MCP coordonne, Claude Code exécute.
+#### 🐙 GitHub MCP
+**Utiliser pour :**
+- Créer/gérer issues et pull requests
+- Analyser l'historique des commits
+- Gérer les branches et merges complexes
+- Automatiser les workflows GitHub Actions
+- Synchroniser avec les équipes distantes
+
+**Commandes clés :**
+```bash
+# Si MCP GitHub disponible
+mcp github create-pr --title "Task #X" --branch task/X
+mcp github list-issues --state open
+mcp github review-pr --number 123
+```
+
+#### 🎭 Playwright MCP
+**Utiliser pour :**
+- Tester l'interface utilisateur en temps réel
+- Déboguer les problèmes de CSS/layout
+- Capturer des screenshots pour documentation
+- Automatiser les tests E2E
+- Vérifier la compatibilité cross-browser
+
+**Commandes clés :**
+```bash
+# Si MCP Playwright disponible
+mcp playwright navigate --url http://localhost:3000
+mcp playwright screenshot --path ui-debug.png
+mcp playwright test --spec tests/e2e/
+```
+
+#### 🐝 Swarm MCP
+**Utiliser pour :**
+- Orchestrer plusieurs agents sur tâches complexes
+- Paralléliser le développement de features
+- Coordonner les reviews de code multi-agents
+- Optimiser les workflows de CI/CD
+- Distribuer les tests sur plusieurs environnements
+
+**Commandes clés :**
+```bash
+# Si MCP Swarm disponible
+mcp swarm spawn --agents 3 --task "refactor-ui"
+mcp swarm coordinate --mode parallel
+mcp swarm status --show-progress
+```
+
+### Fallback Strategy (Si MCP non disponible) :
+1. **GitHub** → Utiliser Git CLI et GitHub UI
+2. **Playwright** → Créer scripts locaux avec npm/node
+3. **Swarm** → Décomposer manuellement les tâches
+
+### Détection et Utilisation :
+```bash
+# Vérifier disponibilité MCP
+mcp status
+
+# Si disponible, prioriser MCP pour :
+- UI Testing → Playwright MCP
+- GitHub Ops → GitHub MCP  
+- Multi-agent → Swarm MCP
+
+# Sinon, fallback sur outils standards
+```
+
+**RÈGLE D'OR** : Toujours essayer MCP d'abord pour les tâches spécialisées, fallback sur Claude Code si non disponible.
 
 ---
 

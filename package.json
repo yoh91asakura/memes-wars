@@ -1,7 +1,7 @@
 {
-  "name": "emoji-mayhem-tcg",
+  "name": "card-game-app",
   "version": "0.1.0",
-  "description": "A trading card game with emoji bullet hell combat",
+  "description": "A modern card collection and battle game",
   "main": "dist/index.js",
   "scripts": {
     "dev": "vite",
@@ -44,13 +44,12 @@
     "prebuild": "npm run validate"
   },
   "keywords": [
-    "tcg",
+    "card-game",
     "game",
-    "emoji",
-    "meme",
-    "bullet-hell"
+    "collection",
+    "battle"
   ],
-  "author": "Emoji Mayhem Team",
+  "author": "Development Team",
   "license": "MIT",
   "type": "module",
   "dependencies": {
@@ -64,7 +63,6 @@
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@playwright/test": "^1.54.2",
-    "@types/jest": "^30.0.0",
     "@types/node": "^24.3.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
@@ -77,11 +75,9 @@
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.3.0",
-    "jiti": "^2.5.1",
     "jsdom": "^26.1.0",
     "playwright": "1.54.2",
     "prettier": "^3.6.2",
-    "tsx": "4.20.4",
     "typescript": "^5.3.0",
     "typescript-eslint": "^8.39.1",
     "vite": "^5.1.0",

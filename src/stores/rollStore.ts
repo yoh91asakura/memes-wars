@@ -434,7 +434,7 @@ export const useRollStore = create<RollStore>()(
       }
     }),
     {
-      name: 'emoji-mayhem-roll-state',
+      name: 'card-game-roll-state',
       partialize: (state) => ({
         stats: state.stats,
         history: state.history,
