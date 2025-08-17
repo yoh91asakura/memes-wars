@@ -1,5 +1,5 @@
+import { describe, test, expect } from 'vitest';
 import { commonCards, getCommonCards, getCommonCardById, getCommonCardsByCost, getRandomCommonCard } from '@/data/cards/common';
-import { Card } from '@/types/card';
 
 describe('Common Cards', () => {
   test('should have exactly 10 common cards', () => {
@@ -32,7 +32,7 @@ describe('Common Cards', () => {
   test('should have valid emoji for all cards', () => {
     commonCards.forEach(card => {
       expect(card.emoji).toMatch(/[\u{1F300}-\u{1F9FF}]/u);
-      expect(card.emoji.length).toBe(2); // Most emojis are 2 chars in JS
+      expect(card.emoji.length).toBeGreaterThanOrEqual(2); // Emojis can be 2-4 chars
     });
   });
 

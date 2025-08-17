@@ -81,6 +81,38 @@ archon:search_code_examples(query="[specific feature] implementation", match_cou
 - Higher `task_order` = higher priority
 - Include meaningful descriptions and feature assignments
 
+## 🔒 PROTOCOLE ANTI-CONFLIT MULTI-AGENTS
+
+### RÈGLES CRITIQUES POUR ÉVITER LES CONFLITS:
+1. **TOUJOURS vérifier le statut avant de prendre une tâche**
+2. **JAMAIS travailler sur une tâche "in progress" d'un autre agent**
+3. **IMMÉDIATEMENT verrouiller la tâche (status + git push)**
+4. **Si conflit détecté → choisir une autre tâche**
+
+### Séquence de Verrouillage Obligatoire:
+```bash
+# 1. TOUJOURS synchroniser avec GitHub d'abord
+git pull origin master
+
+# 2. Vérifier que la tâche est disponible
+archon:manage_task(action="get", task_id="...")
+# Si status != "todo" → STOP, choisir autre tâche
+
+# 3. Verrouiller dans Archon
+archon:manage_task(
+  action="update",
+  task_id="...",
+  update_fields={"status": "in progress", "assignee": "[agent-name]"}
+)
+
+# 4. Pousser immédiatement le changement de statut
+git add .
+git commit -m "chore: starting task [task-id] - [task-title]"
+git push origin master
+
+# 5. Maintenant seulement, commencer le travail
+```
+
 ## Development Iteration Workflow
 
 ### Before Every Coding Session
@@ -136,33 +168,75 @@ archon:search_code_examples(
 
 ### Task Execution Protocol
 
-**1. Get Task Details:**
+**🔴 CRITICAL: Every task MUST be linked to a feature. No orphan tasks allowed.**
+
+**1. Get Task Details & Verify Feature Link:**
 ```bash
 archon:manage_task(action="get", task_id="[current_task_id]")
+# VERIFY: Task has a "feature" field assigned
+# If not, update immediately with appropriate feature
 ```
 
-**2. Update to In-Progress:**
+**2. VERROUILLER LA TÂCHE (CRITICAL - Anti-conflit multi-agents):**
 ```bash
+# TOUJOURS synchroniser d'abord
+git pull origin master
+
+# IMMÉDIATEMENT après avoir choisi une tâche:
 archon:manage_task(
   action="update",
   task_id="[current_task_id]",
-  update_fields={"status": "doing"}
+  update_fields={"status": "in progress", "assignee": "[agent-name]"}
 )
+
+# Pousser le changement de statut (sur master)
+git add .
+git commit -m "chore: starting task [task-id] - [task-title]"
+git push origin master
+
+# ⚠️ SI LA TÂCHE EST DÉJÀ "in progress" → CHOISIR UNE AUTRE TÂCHE
 ```
 
 **3. Implement with Research-Driven Approach:**
 - Use findings from `search_code_examples` to guide implementation
 - Follow patterns discovered in `perform_rag_query` results
 - Reference project features with `get_project_features` when needed
+- **SYNCHRONISER RÉGULIÈREMENT:** `git pull origin master` avant chaque commit
 
-**4. Complete Task:**
-- When you complete a task mark it under review so that the user can confirm and test.
+**4. Submit for Review:**
 ```bash
+# Synchroniser d'abord
+git pull origin master
+
+# Pousser le code implémenté
+git add .
+git commit -m "feat: [task-id] - [description of implementation]"
+git push origin master
+
+# Mettre à jour le statut
 archon:manage_task(
   action="update", 
   task_id="[current_task_id]",
-  update_fields={"status": "review"}
+  update_fields={"status": "in review"}
 )
+# Notify user: "Task [title] ready for review and testing"
+```
+
+**5. User Validation & Completion:**
+```bash
+# Après validation utilisateur
+git pull origin master
+
+archon:manage_task(
+  action="update",
+  task_id="[current_task_id]",
+  update_fields={"status": "done"}
+)
+
+# Pousser le changement de statut final
+git add .
+git commit -m "chore: completed task [task-id]"
+git push origin master
 ```
 
 ## Knowledge Management Integration
@@ -227,27 +301,50 @@ archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match
 
 ### Task Status Management
 
-**Status Progression:**
-- `todo` → `doing` → `review` → `done`
-- Use `review` status for tasks pending validation/testing
-- Use `archive` action for tasks no longer relevant
+**🔴 CRITICAL STATUS WORKFLOW:**
+
+**Status Progression (MANDATORY):**
+```
+todo → in progress → in review → done
+```
+
+**Status Definitions:**
+- **`todo`**: Task not started yet
+- **`in progress`**: Agent actively working on task
+- **`in review`**: Implementation complete, awaiting user validation
+- **`done`**: User confirmed no bugs, functionality works perfectly
+
+**🔐 VALIDATION GATES:**
+- **To `in progress`**: Agent starts work
+- **To `in review`**: Code complete, tests pass, ready for user
+- **To `done`**: ONLY after user explicitly confirms functionality
 
 **Status Update Examples:**
 ```bash
-# Move to review when implementation complete but needs testing
+# Start working on task
 archon:manage_task(
   action="update",
   task_id="...",
-  update_fields={"status": "review"}
+  update_fields={"status": "in progress"}
 )
 
-# Complete task after review passes
+# Submit for user review
+archon:manage_task(
+  action="update",
+  task_id="...",
+  update_fields={"status": "in review"}
+)
+# NOTIFY: "Task [title] ready for your review and testing"
+
+# Mark done ONLY after user approval
 archon:manage_task(
   action="update", 
   task_id="...",
   update_fields={"status": "done"}
 )
 ```
+
+**⚠️ NEVER mark a task as `done` without user validation!**
 
 ## Research-Driven Development Standards
 
@@ -270,30 +367,64 @@ archon:manage_task(
 
 ## Project Feature Integration
 
+### 🔴 MANDATORY: Feature-Task Linking
+
+**CRITICAL RULES:**
+1. **EVERY task MUST be linked to a feature**
+2. **NO orphan tasks allowed**
+3. **Features define the project scope**
+4. **Tasks without features = INVALID**
+
 ### Feature-Based Organization
 
-**Use features to organize related tasks:**
+**Check and Create Features:**
 
 ```bash
 # Get current project features
 archon:get_project_features(project_id="...")
 
-# Create tasks aligned with features
+# If no features exist, create them FIRST:
+# - Card System
+# - Deck Management
+# - Combat Engine
+# - User Interface
+# - Game Services
+# - Progression System
+
+# Create task WITH MANDATORY feature link
 archon:manage_task(
   action="create",
   project_id="...",
   title="...",
-  feature="Authentication",  # Align with project features
-  task_order=8
+  feature="Card System",  # 🔴 REQUIRED FIELD
+  task_order=8,
+  description="..."
 )
+```
+
+### Feature Validation Protocol
+
+**Before ANY task creation:**
+```bash
+# 1. List available features
+features = archon:get_project_features(project_id="...")
+
+# 2. If task doesn't fit existing features, create new feature
+if (!appropriate_feature_exists) {
+  // Create new feature first
+  // Then create task linked to it
+}
+
+# 3. NEVER create task without feature field
 ```
 
 ### Feature Development Workflow
 
-1. **Feature Planning**: Create feature-specific tasks
+1. **Feature Planning**: Define feature scope and create linked tasks
 2. **Feature Research**: Query for feature-specific patterns
-3. **Feature Implementation**: Complete tasks in feature groups
-4. **Feature Integration**: Test complete feature functionality
+3. **Feature Implementation**: Complete all tasks in feature group
+4. **Feature Validation**: User tests complete feature
+5. **Feature Completion**: All tasks in feature marked "done"
 
 ## Error Handling & Recovery
 
@@ -673,10 +804,27 @@ If you execute operations sequentially:
 - Respect file size limits (<15KB)
 - Maintain test coverage
 
-### Git Workflow Integration:
+### Git Workflow Integration (SIMPLE - TOUT SUR MASTER):
 ```bash
-# ALL git operations in ONE execution:
-git add . && git commit -m "feat: complete feature" && git push
+# WORKFLOW GIT SIMPLIFIÉ - PAS DE BRANCHES
+# Tout le monde travaille sur master
+# Synchronisation à chaque changement d'état
+
+# 1. Début de tâche
+git pull origin master
+# Update Archon status → in progress
+git add . && git commit -m "chore: starting task [id]" && git push origin master
+
+# 2. Pendant le développement
+git pull origin master  # Avant chaque commit
+git add . && git commit -m "feat: [description]" && git push origin master
+
+# 3. Fin de tâche
+git pull origin master
+# Update Archon status → in review
+git add . && git commit -m "feat: completed [task-id]" && git push origin master
+
+# RÈGLE D'OR: git pull → changements → git push
 ```
 
 # important-instruction-reminders

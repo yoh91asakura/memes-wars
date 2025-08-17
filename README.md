@@ -140,6 +140,27 @@ npm run test:coverage
 - Tournament mode
 - Mobile optimization
 
+## 🤖 For AI Agents
+
+**⚠️ IMPORTANT**: All AI agents must read [AGENT_WORKFLOW_GUIDE.md](./AGENT_WORKFLOW_GUIDE.md) before contributing.
+
+**Current Workflow Score: 90/100 (Grade A)**
+
+Quick commands for agents:
+```bash
+# Check workflow compliance
+npm run workflow:score
+
+# Create task branch (REQUIRED)
+git checkout -b task/your-task-name
+
+# Validate before commit
+npm run validate
+
+# If stuck on main with changes
+npm run workflow:migrate
+```
+
 ## 🤝 Contributing
 
 This project uses the Claude-Flow orchestration system. Please follow the SPARC methodology when contributing:
@@ -149,6 +170,7 @@ This project uses the Claude-Flow orchestration system. Please follow the SPARC 
 3. Keep files under 500 lines
 4. Use TypeScript strict mode
 5. Follow the established architecture
+6. **NEW**: Always work on task branches (never on main)
 
 ## 📝 Documentation
 

@@ -1,17 +1,24 @@
 export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic' | 'cosmic';
-export type CardType = 'creature' | 'spell' | 'artifact';
+export type CardType = 'spell' | 'attack' | 'defense' | 'healing' | 'support';
 
 export interface Card {
   id: string;
   name: string;
   rarity: Rarity;
-  emoji: string;
-  attack: number;
-  defense: number;
-  cost: number;
-  ability: string;
-  flavor: string;
   type: CardType;
+  cost: number;
+  damage: number;
+  description: string;
+  emoji: string;
+  color: string;
+  stats: {
+    attack: number;
+    defense: number;
+    health: number;
+  };
+  effects: string[];
+  tags: string[];
+  lore: string;
 }
 
 export interface CardFilter {

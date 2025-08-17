@@ -1,0 +1,192 @@
+[
+  {
+    "id": "common-001",
+    "name": "Fireball 🔥",
+    "rarity": "common",
+    "type": "spell",
+    "cost": 2,
+    "damage": 3,
+    "description": "Launch a blazing fireball at your opponent!",
+    "emoji": "🔥",
+    "color": "#FF6B35",
+    "stats": {
+      "attack": 3,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["direct_damage"],
+    "tags": ["spell", "fire", "damage"],
+    "lore": "The most basic spell taught to all emoji mages. Simple, effective, and surprisingly warm!"
+  },
+  {
+    "id": "common-002",
+    "name": "Shield Wall 🛡️",
+    "rarity": "common",
+    "type": "defense",
+    "cost": 1,
+    "damage": 0,
+    "description": "Raise a sturdy shield to block incoming attacks",
+    "emoji": "🛡️",
+    "color": "#4A90E2",
+    "stats": {
+      "attack": 0,
+      "defense": 2,
+      "health": 3
+    },
+    "effects": ["block_damage"],
+    "tags": ["defense", "shield", "protection"],
+    "lore": "Every emoji warrior knows that sometimes the best offense is a good defense!"
+  },
+  {
+    "id": "common-003",
+    "name": "Lightning Bolt ⚡",
+    "rarity": "common",
+    "type": "spell",
+    "cost": 3,
+    "damage": 4,
+    "description": "Strike fast with electric fury!",
+    "emoji": "⚡",
+    "color": "#FFD700",
+    "stats": {
+      "attack": 4,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["direct_damage", "stun"],
+    "tags": ["spell", "lightning", "damage"],
+    "lore": "Channel the power of the storm emoji, striking with shocking precision!"
+  },
+  {
+    "id": "common-004",
+    "name": "Health Potion ❤️",
+    "rarity": "common",
+    "type": "healing",
+    "cost": 2,
+    "damage": 0,
+    "description": "Restore your emoji's vitality",
+    "emoji": "❤️",
+    "color": "#FF1744",
+    "stats": {
+      "attack": 0,
+      "defense": 0,
+      "health": 4
+    },
+    "effects": ["heal"],
+    "tags": ["healing", "potion", "support"],
+    "lore": "Brewed by the finest emoji alchemists, guaranteed to make you feel 😊 again!"
+  },
+  {
+    "id": "common-005",
+    "name": "Rock Throw 🪨",
+    "rarity": "common",
+    "type": "attack",
+    "cost": 1,
+    "damage": 2,
+    "description": "A simple but effective stone projectile",
+    "emoji": "🪨",
+    "color": "#8D6E63",
+    "stats": {
+      "attack": 2,
+      "defense": 1,
+      "health": 2
+    },
+    "effects": ["basic_attack"],
+    "tags": ["attack", "earth", "basic"],
+    "lore": "Sometimes the oldest tricks are the best tricks!"
+  },
+  {
+    "id": "common-006",
+    "name": "Wind Gust 💨",
+    "rarity": "common",
+    "type": "spell",
+    "cost": 1,
+    "damage": 1,
+    "description": "Push your enemies back with a mighty wind",
+    "emoji": "💨",
+    "color": "#B3E5FC",
+    "stats": {
+      "attack": 1,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["push", "disrupt"],
+    "tags": ["spell", "wind", "control"],
+    "lore": "Harness the power of the emoji wind to control the battlefield!"
+  },
+  {
+    "id": "common-007",
+    "name": "Sword Slash ⚔️",
+    "rarity": "common",
+    "type": "attack",
+    "cost": 2,
+    "damage": 3,
+    "description": "A swift sword strike",
+    "emoji": "⚔️",
+    "color": "#C0C0C0",
+    "stats": {
+      "attack": 3,
+      "defense": 1,
+      "health": 2
+    },
+    "effects": ["melee_attack"],
+    "tags": ["attack", "weapon", "melee"],
+    "lore": "The classic emoji warrior's choice - sharp, reliable, and stylish!"
+  },
+  {
+    "id": "common-008",
+    "name": "Ice Shard ❄️",
+    "rarity": "common",
+    "type": "spell",
+    "cost": 2,
+    "damage": 2,
+    "description": "Freeze your enemies with icy projectiles",
+    "emoji": "❄️",
+    "color": "#81D4FA",
+    "stats": {
+      "attack": 2,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["freeze", "slow"],
+    "tags": ["spell", "ice", "control"],
+    "lore": "Winter is coming... to your enemies!"
+  },
+  {
+    "id": "common-009",
+    "name": "Poison Dart ☠️",
+    "rarity": "common",
+    "type": "attack",
+    "cost": 2,
+    "damage": 2,
+    "description": "A tiny dart with a toxic payload",
+    "emoji": "☠️",
+    "color": "#4CAF50",
+    "stats": {
+      "attack": 2,
+      "defense": 0,
+      "health": 1
+    },
+    "effects": ["poison", "damage_over_time"],
+    "tags": ["attack", "poison", "debuff"],
+    "lore": "Small but deadly - the perfect emoji assassin's tool!"
+  },
+  {
+    "id": "common-010",
+    "name": "Energy Boost 🔋",
+    "rarity": "common",
+    "type": "support",
+    "cost": 1,
+    "damage": 0,
+    "description": "Recharge your emoji's energy reserves",
+    "emoji": "🔋",
+    "color": "#00E676",
+    "stats": {
+      "attack": 0,
+      "defense": 0,
+      "health": 0
+    },
+    "effects": ["energy_gain", "draw_card"],
+    "tags": ["support", "energy", "utility"],
+    "lore": "Powered by pure emoji energy - keeps you going when the going gets tough!"
+  }
+]

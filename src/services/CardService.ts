@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { commonCards } from '@/data/cards/common';
 import {
   Card,
   Rarity,
@@ -95,6 +96,45 @@ const PASSIVE_ABILITIES: Record<Rarity, PassiveAbility[]> = {
 };
 
 export class CardService {
+  static getAllCards(): Card[] {
+    return [...commonCards];
+  }
+
+  static getCardsByRarity(rarity: Card['rarity']): Card[] {
+    switch (rarity) {
+      case 'common':
+        return commonCards;
+      default:
+        return [];
+    }
+  }
+
+  static getCardById(id: string): Card | undefined {
+    return commonCards.find(card => card.id === id);
+  }
+
+  static getCardsByCost(cost: number): Card[] {
+    return commonCards.filter(card => card.cost === cost);
+  }
+
+  static validateCard(card: Partial<Card>): boolean {
+    if (!card.id || !card.name || !card.rarity || !card.emoji) {
+      return false;
+    }
+    if (card.attack! < 0 || card.defense! < 0 || card.cost! < 1) {
+      return false;
+    }
+    return true;
+  }
+
+  static getRandomCard(): Card {
+    return commonCards[Math.floor(Math.random() * commonCards.length)];
+  }
+
+  static getCardsByAbility(ability: string): Card[] {
+    return commonCards.filter(card => card.ability === ability);
+  }
+
   generateCard(luckBonus: number = 0): Card {
     const rarity = rollRarity(luckBonus);
     const config = RARITY_CONFIGS[rarity];
