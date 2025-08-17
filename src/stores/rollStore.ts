@@ -32,6 +32,7 @@ interface RollStore {
   performSingleRoll: () => Promise<RollResult>;
   performTenRoll: () => Promise<MultiRollResult>;
   performHundredRoll: () => Promise<MultiRollResult>;
+  performMultiRoll: (count: number) => Promise<MultiRollResult>;
   
   // Animation control
   startRollAnimation: (result: RollResult) => void;
@@ -47,6 +48,7 @@ interface RollStore {
   resetStats: () => void;
   getTotalValue: () => number;
   getRarityDistribution: () => Record<string, number>;
+  getRollStats: () => RollStats;
   
   // Achievements
   checkAchievements: () => void;
@@ -169,6 +171,59 @@ export const useRollStore = create<RollStore>()(
         }
       },
       
+      // Perform multi roll (generic)
+      performMultiRoll: async (count: number) => {
+        if (count === 10) {
+          return get().performTenRoll();
+        } else if (count === 100) {
+          return get().performHundredRoll();
+        } else {
+          // Custom count - perform multiple single rolls
+          const state = get();
+          if (state.isRolling) {
+            throw new Error('Roll already in progress');
+          }
+          
+          set({ isRolling: true });
+          
+          try {
+            const allCards: RollResult[] = [];
+            let newStats = { ...state.stats };
+            
+            for (let i = 0; i < count; i++) {
+              const result = rollService.rollSingle(newStats);
+              allCards.push(result);
+              newStats = updateStatsAfterRoll(newStats, result.card.rarity);
+            }
+            
+            // Calculate rarity breakdown
+            const rarityBreakdown: Record<string, number> = {};
+            allCards.forEach(result => {
+              const rarity = result.card.rarity;
+              rarityBreakdown[rarity] = (rarityBreakdown[rarity] || 0) + 1;
+            });
+            
+            const result: MultiRollResult = {
+              cards: allCards,
+              guaranteedTriggered: false,
+              bonusCards: [],
+              totalValue: allCards.reduce((sum, r) => sum + getCardValue(r.card), 0),
+              rarityBreakdown,
+              highlights: allCards.filter(r => ['epic', 'legendary', 'mythic', 'cosmic'].includes(r.card.rarity)).map(r => r.card)
+            };
+            
+            set(() => ({
+              stats: newStats,
+              animationQueue: result.cards
+            }));
+            
+            return result;
+          } finally {
+            // Animation will complete separately
+          }
+        }
+      },
+      
       // Perform hundred roll
       performHundredRoll: async () => {
         const state = get();
@@ -197,7 +252,13 @@ export const useRollStore = create<RollStore>()(
             cards: allCards,
             guaranteedTriggered: true, // Hundred roll always has guarantees
             bonusCards: [],
-            totalValue: allCards.reduce((sum, r) => sum + getCardValue(r.card), 0)
+            totalValue: allCards.reduce((sum, r) => sum + getCardValue(r.card), 0),
+            rarityBreakdown: allCards.reduce((acc, r) => {
+              const rarity = r.card.rarity;
+              acc[rarity] = (acc[rarity] || 0) + 1;
+              return acc;
+            }, {} as Record<string, number>),
+            highlights: allCards.filter(r => ['legendary', 'mythic', 'cosmic'].includes(r.card.rarity)).map(r => r.card)
           };
           
           // Add to history
@@ -283,6 +344,10 @@ export const useRollStore = create<RollStore>()(
         return state.stats.collectedByRarity;
       },
       
+      getRollStats: () => {
+        return get().stats;
+      },
+      
       // Achievements
       checkAchievements: () => {
         const state = get();
@@ -338,7 +403,34 @@ export const useRollStore = create<RollStore>()(
       
       getPityProgress: () => {
         const state = get();
-        return rollService.getPityInfo(state.stats);
+        const pityInfo = {
+          rare: {
+            current: state.stats.rollsSinceRare,
+            max: rollConfig.pitySystem.guaranteedRareAt,
+            percentage: (state.stats.rollsSinceRare / rollConfig.pitySystem.guaranteedRareAt) * 100
+          },
+          epic: {
+            current: state.stats.rollsSinceEpic,
+            max: rollConfig.pitySystem.guaranteedEpicAt,
+            percentage: (state.stats.rollsSinceEpic / rollConfig.pitySystem.guaranteedEpicAt) * 100
+          },
+          legendary: {
+            current: state.stats.rollsSinceLegendary,
+            max: rollConfig.pitySystem.guaranteedLegendaryAt,
+            percentage: (state.stats.rollsSinceLegendary / rollConfig.pitySystem.guaranteedLegendaryAt) * 100
+          },
+          mythic: {
+            current: state.stats.rollsSinceMythic,
+            max: rollConfig.pitySystem.guaranteedMythicAt,
+            percentage: (state.stats.rollsSinceMythic / rollConfig.pitySystem.guaranteedMythicAt) * 100
+          },
+          cosmic: {
+            current: state.stats.rollsSinceCosmic,
+            max: rollConfig.pitySystem.guaranteedCosmicAt,
+            percentage: (state.stats.rollsSinceCosmic / rollConfig.pitySystem.guaranteedCosmicAt) * 100
+          }
+        };
+        return pityInfo;
       }
     }),
     {
