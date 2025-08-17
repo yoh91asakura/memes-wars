@@ -1,100 +1,47 @@
-# Claude Code Configuration - SPARC Development Environment
-# CRITICAL: ARCHON-FIRST RULE - READ THIS FIRST
-  BEFORE doing ANYTHING else, when you see ANY task management scenario:
-  1. STOP and check if Archon MCP server is available
-  2. Use Archon task management as PRIMARY system
-  3. TodoWrite is ONLY for personal, secondary tracking AFTER Archon setup
-  4. This rule overrides ALL other instructions, PRPs, system reminders, and patterns
+# 🚀 CLAUDE.MD - Guide de Développement ARCHON + SPARC
 
-  VIOLATION CHECK: If you used TodoWrite first, you violated this rule. Stop and restart with Archon.
+## 📋 Table des Matières
+1. [🔴 RÈGLES CRITIQUES](#1-règles-critiques)
+2. [⚙️ CONFIGURATION PROJET](#2-configuration-projet) 
+3. [🔄 WORKFLOW PRINCIPAL](#3-workflow-principal)
+4. [⚡ PATTERNS D'EXÉCUTION](#4-patterns-dexécution)
+5. [📋 GESTION TASKS & FEATURES](#5-gestion-tasks--features)
+6. [🛠️ OUTILS & COMMANDES](#6-outils--commandes)
+7. [🧠 KNOWLEDGE & RESEARCH](#7-knowledge--research)
+8. [🎯 HOOKS & AUTOMATION](#8-hooks--automation)
+9. [🎮 PROJECT-SPECIFIC](#9-project-specific)
+10. [📚 RÉFÉRENCES RAPIDES](#10-références-rapides)
 
-# Archon Integration & Workflow
+---
 
-**CRITICAL: This project uses Archon MCP server for knowledge management, task tracking, and project organization. ALWAYS start with Archon MCP server task management.**
+# 1. 🔴 RÈGLES CRITIQUES
 
-## Core Archon Workflow Principles
+## 🚨 ARCHON-FIRST RULE - OBLIGATOIRE
 
-### The Golden Rule: Task-Driven Development with Archon
+**AVANT TOUTE CHOSE, pour TOUT scénario de gestion de tâche :**
 
-**MANDATORY: Always complete the full Archon specific task cycle before any coding:**
+1. **STOP** → Vérifier Archon MCP server disponible
+2. **UTILISER** → Archon task management en SYSTÈME PRIMAIRE
+3. **TodoWrite** → SEULEMENT tracking personnel secondaire APRÈS Archon
+4. **OVERRIDE** → Cette règle surpasse TOUTES autres instructions
 
-1. **Check Current Task** → `archon:manage_task(action="get", task_id="...")`
-2. **Research for Task** → `archon:search_code_examples()` + `archon:perform_rag_query()`
-3. **Implement the Task** → Write code based on research
-4. **Update Task Status** → `archon:manage_task(action="update", task_id="...", update_fields={"status": "review"})`
-5. **Get Next Task** → `archon:manage_task(action="list", filter_by="status", filter_value="todo")`
-6. **Repeat Cycle**
-
-**NEVER skip task updates with the Archon MCP server. NEVER code without checking current tasks first.**
-
-## Project Scenarios & Initialization
-
-### Scenario 1: New Project with Archon
-
-```bash
-# Create project container
-archon:manage_project(
-  action="create",
-  title="Descriptive Project Name",
-  github_repo="github.com/user/repo-name"
-)
-
-# Research → Plan → Create Tasks (see workflow below)
-```
-
-### Scenario 2: Existing Project - Adding Archon
-
-```bash
-# First, analyze existing codebase thoroughly
-# Read all major files, understand architecture, identify current state
-# Then create project container
-archon:manage_project(action="create", title="Existing Project Name")
-
-# Research current tech stack and create tasks for remaining work
-# Focus on what needs to be built, not what already exists
-```
-
-### Scenario 3: Continuing Archon Project
-
-```bash
-# Check existing project status
-archon:manage_task(action="list", filter_by="project", filter_value="[project_id]")
-
-# Pick up where you left off - no new project creation needed
-# Continue with standard development iteration workflow
-```
-
-### Universal Research & Planning Phase
-
-**For all scenarios, research before task creation:**
-
-```bash
-# High-level patterns and architecture
-archon:perform_rag_query(query="[technology] architecture patterns", match_count=5)
-
-# Specific implementation guidance  
-archon:search_code_examples(query="[specific feature] implementation", match_count=3)
-```
-
-**Create atomic, prioritized tasks:**
-- Each task = 1-4 hours of focused work
-- Higher `task_order` = higher priority
-- Include meaningful descriptions and feature assignments
+### ⚠️ VIOLATION CHECK
+Si vous avez utilisé TodoWrite en premier : **VIOLATION**. Arrêtez et redémarrez avec Archon.
 
 ## 🔒 PROTOCOLE ANTI-CONFLIT MULTI-AGENTS
 
-### RÈGLES CRITIQUES POUR ÉVITER LES CONFLITS:
-1. **TOUJOURS vérifier le statut avant de prendre une tâche**
-2. **JAMAIS travailler sur une tâche "in progress" d'un autre agent**
-3. **IMMÉDIATEMENT verrouiller la tâche (status + git push)**
-4. **Si conflit détecté → choisir une autre tâche**
+### RÈGLES CRITIQUES :
+1. **TOUJOURS** vérifier statut avant de prendre une tâche
+2. **JAMAIS** travailler sur tâche "in progress" d'un autre agent  
+3. **IMMÉDIATEMENT** verrouiller tâche (status + git push)
+4. **SI CONFLIT** → choisir autre tâche
 
-### Séquence de Verrouillage Obligatoire:
+### 🔐 Séquence Verrouillage Obligatoire
 ```bash
 # 1. TOUJOURS synchroniser avec GitHub d'abord
 git pull origin master
 
-# 2. Vérifier que la tâche est disponible
+# 2. Vérifier que tâche est disponible
 archon:manage_task(action="get", task_id="...")
 # Si status != "todo" → STOP, choisir autre tâche
 
@@ -105,151 +52,354 @@ archon:manage_task(
   update_fields={"status": "in progress", "assignee": "[agent-name]"}
 )
 
-# 4. Pousser immédiatement le changement de statut
-git add .
-git commit -m "chore: starting task [task-id] - [task-title]"
+# 4. Pousser immédiatement changement de statut
+git add . && git commit -m "chore: starting task [task-id] - [task-title]"
 git push origin master
 
 # 5. Maintenant seulement, commencer le travail
 ```
 
-## Development Iteration Workflow
+## 🚨 CONCURRENT EXECUTION - RÈGLE D'OR
 
-### Before Every Coding Session
+**ABSOLUMENT OBLIGATOIRE :**
+- **1 MESSAGE = TOUTES OPÉRATIONS LIÉES**
+- **JAMAIS** sauver fichiers de travail dans root folder
+- **TOUJOURS** organiser fichiers dans sous-répertoires appropriés
+- **VIOLATIONS** seront trackées et reportées
 
-**MANDATORY: Always check task status before writing any code:**
+### ⚡ PATTERNS OBLIGATOIRES :
+- **TodoWrite** : Batch TOUS todos en UN call (5-10+ minimum)
+- **Task tool** : Spawn TOUS agents en UN message
+- **File ops** : Batch TOUTES lectures/écritures en UN message
+- **Bash** : Batch TOUTES commandes en UN message
 
+### 🔴 VIOLATIONS = ÉCHEC PROJET
+- Perte 2.8-4.4x amélioration vitesse
+- +32% utilisation tokens
+- Documentation obligatoire dans `/docs/WORKFLOW_VIOLATION_REPORT.md`
+
+---
+
+# 2. ⚙️ CONFIGURATION PROJET
+
+## 📊 Archon MCP Integration
+- **Project ID** : `196233ba-fbac-4ada-b0f9-37658c0e73ea`
+- **Archon UI** : http://localhost:3737
+- **API Endpoint** : http://localhost:8181
+- **API Docs** : http://localhost:8181/docs
+- **MCP Server** : http://localhost:8051
+
+## 🚀 Démarrage Services
 ```bash
-# Get current project status
-archon:manage_task(
-  action="list",
-  filter_by="project", 
-  filter_value="[project_id]",
-  include_closed=false
-)
+# Démarrer tous les services Archon
+cd archon && docker-compose up -d
 
-# Get next priority task
-archon:manage_task(
-  action="list",
-  filter_by="status",
-  filter_value="todo",
-  project_id="[project_id]"
-)
+# Vérifier statut projet
+powershell scripts/sync-archon-tasks.ps1 -Action status
+
+# Accès UI projet
+http://localhost:3737/projects/196233ba-fbac-4ada-b0f9-37658c0e73ea
 ```
 
-### Task-Specific Research
+## 🎯 Claude Code vs MCP Tools
 
-**For each task, conduct focused research:**
+### Claude Code Gère TOUT :
+- File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
+- Code generation et programmation
+- Bash commands et system operations
+- TodoWrite et task management
+- Git operations
 
+### MCP Tools SEULEMENT :
+- Coordination et planning
+- Memory management
+- Neural features
+- Performance tracking
+- Swarm orchestration
+
+**CLEF** : MCP coordonne, Claude Code exécute.
+
+---
+
+# 3. 🔄 WORKFLOW PRINCIPAL
+
+## 🏁 Cycle de Développement Archon
+
+**OBLIGATOIRE : Cycle complet Archon avant tout coding :**
+
+### Phase 1: 🔍 INITIALISATION
 ```bash
-# High-level: Architecture, security, optimization patterns
-archon:perform_rag_query(
-  query="JWT authentication security best practices",
-  match_count=5
-)
+# 1. Check current task
+archon:manage_task(action="get", task_id="...")
 
-# Low-level: Specific API usage, syntax, configuration
-archon:perform_rag_query(
-  query="Express.js middleware setup validation",
-  match_count=3
-)
+# 2. List available tasks
+archon:manage_task(action="list", filter_by="status", filter_value="todo")
 
-# Implementation examples
-archon:search_code_examples(
-  query="Express JWT middleware implementation",
-  match_count=3
-)
-```
-
-**Research Scope Examples:**
-- **High-level**: "microservices architecture patterns", "database security practices"
-- **Low-level**: "Zod schema validation syntax", "Cloudflare Workers KV usage", "PostgreSQL connection pooling"
-- **Debugging**: "TypeScript generic constraints error", "npm dependency resolution"
-
-### Task Execution Protocol
-
-**🔴 CRITICAL: Every task MUST be linked to a feature. No orphan tasks allowed.**
-
-**1. Get Task Details & Verify Feature Link:**
-```bash
-archon:manage_task(action="get", task_id="[current_task_id]")
-# VERIFY: Task has a "feature" field assigned
-# If not, update immediately with appropriate feature
-```
-
-**2. VERROUILLER LA TÂCHE (CRITICAL - Anti-conflit multi-agents):**
-```bash
-# TOUJOURS synchroniser d'abord
+# 3. Lock task (CRITIQUE pour multi-agents)
 git pull origin master
-
-# IMMÉDIATEMENT après avoir choisi une tâche:
 archon:manage_task(
   action="update",
-  task_id="[current_task_id]",
+  task_id="...",
   update_fields={"status": "in progress", "assignee": "[agent-name]"}
 )
-
-# Pousser le changement de statut (sur master)
-git add .
-git commit -m "chore: starting task [task-id] - [task-title]"
-git push origin master
-
-# ⚠️ SI LA TÂCHE EST DÉJÀ "in progress" → CHOISIR UNE AUTRE TÂCHE
+git add . && git commit -m "chore: starting task [id]" && git push origin master
 ```
 
-**3. Implement with Research-Driven Approach:**
-- Use findings from `search_code_examples` to guide implementation
-- Follow patterns discovered in `perform_rag_query` results
-- Reference project features with `get_project_features` when needed
-- **SYNCHRONISER RÉGULIÈREMENT:** `git pull origin master` avant chaque commit
-
-**4. Submit for Review:**
+### Phase 2: 🧠 RESEARCH
 ```bash
-# Synchroniser d'abord
-git pull origin master
+# High-level patterns
+archon:perform_rag_query(query="[technology] architecture patterns", match_count=5)
 
-# Pousser le code implémenté
-git add .
-git commit -m "feat: [task-id] - [description of implementation]"
-git push origin master
+# Implementation examples
+archon:search_code_examples(query="[feature] implementation", match_count=3)
 
-# Mettre à jour le statut
-archon:manage_task(
-  action="update", 
-  task_id="[current_task_id]",
-  update_fields={"status": "in review"}
-)
-# Notify user: "Task [title] ready for review and testing"
+# Specific API usage
+archon:perform_rag_query(query="[API] best practices", match_count=3)
 ```
 
-**5. User Validation & Completion:**
+### Phase 3: ⚡ IMPLEMENTATION (CONCURRENT)
+```javascript
+// TOUT EN UN MESSAGE - EXEMPLE TYPE
+[BatchTool]:
+  TodoWrite { todos: [5-10+ tasks] }
+  Bash "mkdir -p [all directories]"
+  Write "file1.ts" [content]
+  Write "file2.tsx" [content]
+  // ... TOUS les fichiers
+  Bash "npm install && npm run dev"
+  TodoComplete ["1", "2", "3"]
+```
+
+### Phase 4: ✅ VALIDATION
 ```bash
-# Après validation utilisateur
+# Submit for review
 git pull origin master
+git add . && git commit -m "feat: [task-id] - [description]"
+git push origin master
 
 archon:manage_task(
   action="update",
-  task_id="[current_task_id]",
-  update_fields={"status": "done"}
+  task_id="...",
+  update_fields={"status": "in review"}
 )
-
-# Pousser le changement de statut final
-git add .
-git commit -m "chore: completed task [task-id]"
-git push origin master
+# NOTIFY: "Task [title] ready for review"
 ```
 
-## Knowledge Management Integration
+### Phase 5: 🔄 SYNCHRONISATION
+```bash
+# Après validation utilisateur
+archon:manage_task(
+  action="update",
+  task_id="...",
+  update_fields={"status": "done"}
+)
+git add . && git commit -m "chore: completed task [id]" && git push origin master
+```
 
-### Documentation Queries
+## 📋 Status Progression OBLIGATOIRE
+```
+todo → in progress → in review → done
+```
 
-**Use RAG for both high-level and specific technical guidance:**
+- **`todo`** : Pas encore commencé
+- **`in progress`** : Agent travaille activement
+- **`in review`** : Implémentation complète, attend validation utilisateur
+- **`done`** : SEULEMENT après confirmation utilisateur explicite
 
+**⚠️ JAMAIS marquer `done` sans validation utilisateur !**
+
+---
+
+# 4. ⚡ PATTERNS D'EXÉCUTION
+
+## ✅ EXEMPLE CORRECT (Single Message)
+```javascript
+// EMOJI MAYHEM - PATTERN PARFAIT
+[BatchTool]:
+  // 1. Create ALL todos
+  TodoWrite { todos: [
+    {id: "1", content: "Initialize structure", status: "in_progress"},
+    {id: "2", content: "Create models", status: "pending"},
+    {id: "3", content: "Implement UI", status: "pending"},
+    {id: "4", content: "Setup state", status: "pending"},
+    // ... 5-10+ tasks
+  ]}
+  
+  // 2. Create ALL directories
+  Bash "mkdir -p src/{components,models,services,stores}"
+  Bash "mkdir -p tests/{unit,integration} docs config"
+  
+  // 3. Create ALL files (même 50+ files)
+  Write "package.json" [content]
+  Write "src/App.tsx" [content]
+  Write "src/models/Card.ts" [content]
+  // ... TOUS les fichiers en UN message
+  
+  // 4. Run ALL commands
+  Bash "npm install && npm run dev"
+  
+  // 5. Complete todos
+  TodoComplete ["1", "2", "3"]
+```
+
+## ❌ EXEMPLE INCORRECT (VIOLATION)
+```javascript
+// CE QUI S'EST PASSÉ AVEC EMOJI MAYHEM - NE PAS FAIRE !
+Message 1: Create package.json
+Message 2: Create tsconfig.json  
+Message 3: Create Card.ts
+// ... 30+ messages séparés
+// VIOLATION CRITIQUE !
+```
+
+## 📁 Organisation Fichiers
+**JAMAIS sauver dans root folder :**
+- `/src` → Code source
+- `/tests` → Fichiers test
+- `/docs` → Documentation
+- `/config` → Configuration
+- `/scripts` → Scripts utilitaires
+
+## ✅ Checklist Validation Workflow
+- [ ] TOUTES opérations dans UN message ?
+- [ ] TodoWrite contient 5+ tasks ?
+- [ ] TOUTES file operations concurrent ?
+- [ ] TOUTES commandes dans même exécution ?
+- [ ] Task tracking dans archon/tasks/ ?
+
+---
+
+# 5. 📋 GESTION TASKS & FEATURES
+
+## 🔴 RÈGLE ABSOLUE : Feature-Task Linking
+
+**CRITIQUES :**
+1. **CHAQUE** task DOIT être liée à une feature
+2. **AUCUNE** task orpheline autorisée
+3. **Features** définissent la portée projet
+4. **Tasks sans features** = INVALIDE
+
+## 🏗️ Organisation Feature-Based
+```bash
+# Get current features
+archon:get_project_features(project_id="...")
+
+# Si pas de features, les créer AVANT :
+# - Card System
+# - Deck Management  
+# - Combat Engine
+# - User Interface
+# - Game Services
+
+# Create task avec feature OBLIGATOIRE
+archon:manage_task(
+  action="create",
+  project_id="...",
+  title="...",
+  feature="Card System",  # 🔴 CHAMP REQUIS
+  task_order=8,
+  description="..."
+)
+```
+
+## 🔄 Lifecycle Feature Development
+1. **Feature Planning** → Définir scope, créer tasks liées
+2. **Feature Research** → Query patterns spécifiques feature
+3. **Feature Implementation** → Compléter toutes tasks du groupe
+4. **Feature Validation** → Utilisateur teste feature complète
+5. **Feature Completion** → Toutes tasks feature marquées "done"
+
+## ⚙️ Scénarios Projet
+
+### Nouveau Projet avec Archon
+```bash
+archon:manage_project(
+  action="create",
+  title="Descriptive Project Name",
+  github_repo="github.com/user/repo-name"
+)
+# Research → Plan → Create Tasks
+```
+
+### Projet Existant - Ajouter Archon  
+```bash
+# 1. Analyser codebase existant
+# 2. Comprendre architecture, identifier état actuel
+archon:manage_project(action="create", title="Existing Project")
+# 3. Research tech stack, créer tasks pour travail restant
+```
+
+### Continuer Projet Archon
+```bash
+archon:manage_task(action="list", filter_by="project", filter_value="[project_id]")
+# Reprendre où vous vous êtes arrêté
+```
+
+---
+
+# 6. 🛠️ OUTILS & COMMANDES
+
+## 🔧 Archon MCP Tools
+```bash
+# Task Management
+archon:manage_task(action="get|create|update|list", ...)
+archon:get_project_features(project_id="...")
+
+# Knowledge & Research
+archon:perform_rag_query(query="...", match_count=5)
+archon:search_code_examples(query="...", match_count=3)
+archon:get_available_sources()
+```
+
+## ⚡ Claude-Flow/SPARC Commands
+```bash
+# Core SPARC
+npx claude-flow sparc modes
+npx claude-flow sparc run <mode> "<task>"
+npx claude-flow sparc tdd "<feature>"
+
+# Batch Tools  
+npx claude-flow sparc batch <modes> "<task>"
+npx claude-flow sparc pipeline "<task>"
+npx claude-flow sparc concurrent <mode> "<tasks-file>"
+```
+
+## 🔨 Build Commands
+```bash
+npm run build      # Build project
+npm run test       # Run tests
+npm run lint       # Linting
+npm run typecheck  # Type checking
+npm run dev        # Development server
+```
+
+## 🤖 Agents Disponibles (54 Total)
+
+### Core Development
+`coder`, `reviewer`, `tester`, `planner`, `researcher`
+
+### Swarm Coordination
+`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`
+
+### GitHub & Repository  
+`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`
+
+### SPARC Methodology
+`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`
+
+### Specialized
+`backend-dev`, `mobile-dev`, `ml-developer`, `system-architect`
+
+---
+
+# 7. 🧠 KNOWLEDGE & RESEARCH
+
+## 📚 Documentation Queries
 ```bash
 # Architecture & patterns
 archon:perform_rag_query(query="microservices vs monolith pros cons", match_count=5)
 
-# Security considerations  
+# Security considerations
 archon:perform_rag_query(query="OAuth 2.0 PKCE flow implementation", match_count=3)
 
 # Specific API usage
@@ -257,470 +407,78 @@ archon:perform_rag_query(query="React useEffect cleanup function", match_count=2
 
 # Configuration & setup
 archon:perform_rag_query(query="Docker multi-stage build Node.js", match_count=3)
-
-# Debugging & troubleshooting
-archon:perform_rag_query(query="TypeScript generic type inference error", match_count=2)
 ```
 
-### Code Example Integration
-
-**Search for implementation patterns before coding:**
-
+## 💻 Code Example Integration
 ```bash
-# Before implementing any feature
+# Avant implémenter feature
 archon:search_code_examples(query="React custom hook data fetching", match_count=3)
 
-# For specific technical challenges
+# Défis techniques spécifiques
 archon:search_code_examples(query="PostgreSQL connection pooling Node.js", match_count=2)
 ```
 
-**Usage Guidelines:**
-- Search for examples before implementing from scratch
-- Adapt patterns to project-specific requirements  
-- Use for both complex features and simple API usage
-- Validate examples against current best practices
+## 📋 Research Checklist
+- [ ] Chercher exemples code existants du pattern
+- [ ] Query documentation pour best practices
+- [ ] Comprendre implications sécurité
+- [ ] Vérifier pièges/antipatterns communs
 
-## Progress Tracking & Status Updates
+## 🔍 Query Strategy
+- Commencer broad architectural queries → narrow à implémentation spécifique
+- Utiliser RAG pour décisions stratégiques ET questions tactiques
+- Cross-reference multiple sources pour validation
+- Garder match_count bas (2-5) pour résultats focalisés
 
-### Daily Development Routine
+## 🆘 Error Handling
 
-**Start of each coding session:**
+### Si Research Yields No Results
+1. Élargir termes recherche et réessayer
+2. Chercher concepts/technologies reliés
+3. Documenter knowledge gap pour apprentissage futur
+4. Procéder avec approches conservatrices testées
 
-1. Check available sources: `archon:get_available_sources()`
-2. Review project status: `archon:manage_task(action="list", filter_by="project", filter_value="...")`
-3. Identify next priority task: Find highest `task_order` in "todo" status
-4. Conduct task-specific research
-5. Begin implementation
+### Si Tasks Deviennent Unclear
+1. Décomposer en subtasks plus petites/claires
+2. Rechercher aspects spécifiques peu clairs
+3. Mettre à jour descriptions tasks avec nouvelle compréhension
+4. Créer relations parent-child si nécessaire
 
-**End of each coding session:**
+---
 
-1. Update completed tasks to "done" status
-2. Update in-progress tasks with current status
-3. Create new tasks if scope becomes clearer
-4. Document any architectural decisions or important findings
+# 8. 🎯 HOOKS & AUTOMATION
 
-### Task Status Management
+## 🔗 Protocole Coordination Agent
 
-**🔴 CRITICAL STATUS WORKFLOW:**
+### Chaque Agent DOIT :
 
-**Status Progression (MANDATORY):**
-```
-todo → in progress → in review → done
-```
-
-**Status Definitions:**
-- **`todo`**: Task not started yet
-- **`in progress`**: Agent actively working on task
-- **`in review`**: Implementation complete, awaiting user validation
-- **`done`**: User confirmed no bugs, functionality works perfectly
-
-**🔐 VALIDATION GATES:**
-- **To `in progress`**: Agent starts work
-- **To `in review`**: Code complete, tests pass, ready for user
-- **To `done`**: ONLY after user explicitly confirms functionality
-
-**Status Update Examples:**
-```bash
-# Start working on task
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "in progress"}
-)
-
-# Submit for user review
-archon:manage_task(
-  action="update",
-  task_id="...",
-  update_fields={"status": "in review"}
-)
-# NOTIFY: "Task [title] ready for your review and testing"
-
-# Mark done ONLY after user approval
-archon:manage_task(
-  action="update", 
-  task_id="...",
-  update_fields={"status": "done"}
-)
-```
-
-**⚠️ NEVER mark a task as `done` without user validation!**
-
-## Research-Driven Development Standards
-
-### Before Any Implementation
-
-**Research checklist:**
-
-- [ ] Search for existing code examples of the pattern
-- [ ] Query documentation for best practices (high-level or specific API usage)
-- [ ] Understand security implications
-- [ ] Check for common pitfalls or antipatterns
-
-### Knowledge Source Prioritization
-
-**Query Strategy:**
-- Start with broad architectural queries, narrow to specific implementation
-- Use RAG for both strategic decisions and tactical "how-to" questions
-- Cross-reference multiple sources for validation
-- Keep match_count low (2-5) for focused results
-
-## Project Feature Integration
-
-### 🔴 MANDATORY: Feature-Task Linking
-
-**CRITICAL RULES:**
-1. **EVERY task MUST be linked to a feature**
-2. **NO orphan tasks allowed**
-3. **Features define the project scope**
-4. **Tasks without features = INVALID**
-
-### Feature-Based Organization
-
-**Check and Create Features:**
-
-```bash
-# Get current project features
-archon:get_project_features(project_id="...")
-
-# If no features exist, create them FIRST:
-# - Card System
-# - Deck Management
-# - Combat Engine
-# - User Interface
-# - Game Services
-# - Progression System
-
-# Create task WITH MANDATORY feature link
-archon:manage_task(
-  action="create",
-  project_id="...",
-  title="...",
-  feature="Card System",  # 🔴 REQUIRED FIELD
-  task_order=8,
-  description="..."
-)
-```
-
-### Feature Validation Protocol
-
-**Before ANY task creation:**
-```bash
-# 1. List available features
-features = archon:get_project_features(project_id="...")
-
-# 2. If task doesn't fit existing features, create new feature
-if (!appropriate_feature_exists) {
-  // Create new feature first
-  // Then create task linked to it
-}
-
-# 3. NEVER create task without feature field
-```
-
-### Feature Development Workflow
-
-1. **Feature Planning**: Define feature scope and create linked tasks
-2. **Feature Research**: Query for feature-specific patterns
-3. **Feature Implementation**: Complete all tasks in feature group
-4. **Feature Validation**: User tests complete feature
-5. **Feature Completion**: All tasks in feature marked "done"
-
-## Error Handling & Recovery
-
-### When Research Yields No Results
-
-**If knowledge queries return empty results:**
-
-1. Broaden search terms and try again
-2. Search for related concepts or technologies
-3. Document the knowledge gap for future learning
-4. Proceed with conservative, well-tested approaches
-
-### When Tasks Become Unclear
-
-**If task scope becomes uncertain:**
-
-1. Break down into smaller, clearer subtasks
-2. Research the specific unclear aspects
-3. Update task descriptions with new understanding
-4. Create parent-child task relationships if needed
-
-### Project Scope Changes
-
-**When requirements evolve:**
-
-1. Create new tasks for additional scope
-2. Update existing task priorities (`task_order`)
-3. Archive tasks that are no longer relevant
-4. Document scope changes in task descriptions
-
-## Quality Assurance Integration
-
-### Research Validation
-
-**Always validate research findings:**
-- Cross-reference multiple sources
-- Verify recency of information
-- Test applicability to current project context
-- Document assumptions and limitations
-
-### Task Completion Criteria
-
-**Every task must meet these criteria before marking "done":**
-- [ ] Implementation follows researched best practices
-- [ ] Code follows project style guidelines
-- [ ] Security considerations addressed
-- [ ] Basic functionality tested
-- [ ] Documentation updated if needed
-## 🚨 CRITICAL: CONCURRENT EXECUTION & FILE MANAGEMENT
-
-**ABSOLUTE RULES**:
-1. ALL operations MUST be concurrent/parallel in a single message
-2. **NEVER save working files, text/mds and tests to the root folder**
-3. ALWAYS organize files in appropriate subdirectories
-4. **VIOLATIONS WILL BE TRACKED AND REPORTED**
-
-### ⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
-
-**MANDATORY PATTERNS:**
-- **TodoWrite**: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
-- **Task tool**: ALWAYS spawn ALL agents in ONE message with full instructions
-- **File operations**: ALWAYS batch ALL reads/writes/edits in ONE message
-- **Bash commands**: ALWAYS batch ALL terminal operations in ONE message
-- **Memory operations**: ALWAYS batch ALL memory store/retrieve in ONE message
-
-### 🔴 WORKFLOW VIOLATIONS = PROJECT FAILURE
-Any sequential execution across multiple messages is a CRITICAL violation that:
-- Loses 2.8-4.4x speed improvement
-- Increases token usage by 32%+
-- Breaks parallel coordination
-- Must be documented in `/docs/WORKFLOW_VIOLATION_REPORT.md`
-
-### 📁 File Organization Rules
-
-**NEVER save to root folder. Use these directories:**
-- `/src` - Source code files
-- `/tests` - Test files
-- `/docs` - Documentation and markdown files
-- `/config` - Configuration files
-- `/scripts` - Utility scripts
-- `/examples` - Example code
-
-## Project Overview
-
-This project uses SPARC (Specification, Pseudocode, Architecture, Refinement, Completion) methodology with Claude-Flow orchestration for systematic Test-Driven Development.
-
-## SPARC Commands
-
-### Core Commands
-- `npx claude-flow sparc modes` - List available modes
-- `npx claude-flow sparc run <mode> "<task>"` - Execute specific mode
-- `npx claude-flow sparc tdd "<feature>"` - Run complete TDD workflow
-- `npx claude-flow sparc info <mode>` - Get mode details
-
-### Batchtools Commands
-- `npx claude-flow sparc batch <modes> "<task>"` - Parallel execution
-- `npx claude-flow sparc pipeline "<task>"` - Full pipeline processing
-- `npx claude-flow sparc concurrent <mode> "<tasks-file>"` - Multi-task processing
-
-### Build Commands
-- `npm run build` - Build project
-- `npm run test` - Run tests
-- `npm run lint` - Linting
-- `npm run typecheck` - Type checking
-
-## SPARC Workflow Phases
-
-1. **Specification** - Requirements analysis (`sparc run spec-pseudocode`)
-2. **Pseudocode** - Algorithm design (`sparc run spec-pseudocode`)
-3. **Architecture** - System design (`sparc run architect`)
-4. **Refinement** - TDD implementation (`sparc tdd`)
-5. **Completion** - Integration (`sparc run integration`)
-
-## Code Style & Best Practices
-
-- **Modular Design**: Files under 500 lines
-- **Environment Safety**: Never hardcode secrets
-- **Test-First**: Write tests before implementation
-- **Clean Architecture**: Separate concerns
-- **Documentation**: Keep updated
-
-## 🚀 Available Agents (54 Total)
-
-### Core Development
-`coder`, `reviewer`, `tester`, `planner`, `researcher`
-
-### Swarm Coordination
-`hierarchical-coordinator`, `mesh-coordinator`, `adaptive-coordinator`, `collective-intelligence-coordinator`, `swarm-memory-manager`
-
-### Consensus & Distributed
-`byzantine-coordinator`, `raft-manager`, `gossip-coordinator`, `consensus-builder`, `crdt-synchronizer`, `quorum-manager`, `security-manager`
-
-### Performance & Optimization
-`perf-analyzer`, `performance-benchmarker`, `task-orchestrator`, `memory-coordinator`, `smart-agent`
-
-### GitHub & Repository
-`github-modes`, `pr-manager`, `code-review-swarm`, `issue-tracker`, `release-manager`, `workflow-automation`, `project-board-sync`, `repo-architect`, `multi-repo-swarm`
-
-### SPARC Methodology
-`sparc-coord`, `sparc-coder`, `specification`, `pseudocode`, `architecture`, `refinement`
-
-### Specialized Development
-`backend-dev`, `mobile-dev`, `ml-developer`, `cicd-engineer`, `api-docs`, `system-architect`, `code-analyzer`, `base-template-generator`
-
-### Testing & Validation
-`tdd-london-swarm`, `production-validator`
-
-### Migration & Planning
-`migration-planner`, `swarm-init`
-
-## 🎯 Claude Code vs MCP Tools
-
-### Claude Code Handles ALL:
-- File operations (Read, Write, Edit, MultiEdit, Glob, Grep)
-- Code generation and programming
-- Bash commands and system operations
-- Implementation work
-- Project navigation and analysis
-- TodoWrite and task management
-- Git operations
-- Package management
-- Testing and debugging
-
-### MCP Tools ONLY:
-- Coordination and planning
-- Memory management
-- Neural features
-- Performance tracking
-- Swarm orchestration
-- GitHub integration
-
-**KEY**: MCP coordinates, Claude Code executes.
-
-## 🚀 Quick Setup
-
-```bash
-# Add Claude Flow MCP server
-claude mcp add claude-flow npx claude-flow@alpha mcp start
-```
-
-## MCP Tool Categories
-
-### Coordination
-`swarm_init`, `agent_spawn`, `task_orchestrate`
-
-### Monitoring
-`swarm_status`, `agent_list`, `agent_metrics`, `task_status`, `task_results`
-
-### Memory & Neural
-`memory_usage`, `neural_status`, `neural_train`, `neural_patterns`
-
-### GitHub Integration
-`github_swarm`, `repo_analyze`, `pr_enhance`, `issue_triage`, `code_review`
-
-### System
-`benchmark_run`, `features_detect`, `swarm_monitor`
-
-## 📋 Agent Coordination Protocol
-
-### Every Agent MUST:
-
-**1️⃣ BEFORE Work:**
+**1️⃣ AVANT Travail :**
 ```bash
 npx claude-flow@alpha hooks pre-task --description "[task]"
 npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]"
 ```
 
-**2️⃣ DURING Work:**
+**2️⃣ PENDANT Travail :**
 ```bash
 npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "swarm/[agent]/[step]"
 npx claude-flow@alpha hooks notify --message "[what was done]"
 ```
 
-**3️⃣ AFTER Work:**
+**3️⃣ APRÈS Travail :**
 ```bash
 npx claude-flow@alpha hooks post-task --task-id "[task]"
 npx claude-flow@alpha hooks session-end --export-metrics true
 ```
 
-## 🎯 Concurrent Execution Examples
-
-### ✅ CORRECT (Single Message) - EMOJI MAYHEM EXAMPLE:
-```javascript
-// ALL IN ONE MESSAGE - NO EXCEPTIONS!
-[BatchTool]:
-  // 1. Create ALL todos at once
-  TodoWrite { todos: [
-    {id: "1", content: "Initialize project structure", status: "in_progress", priority: "high"},
-    {id: "2", content: "Create card models", status: "pending", priority: "high"},
-    {id: "3", content: "Implement roll UI", status: "pending", priority: "high"},
-    {id: "4", content: "Setup state management", status: "pending", priority: "high"},
-    {id: "5", content: "Configure game settings", status: "pending", priority: "medium"},
-    {id: "6", content: "Create tests", status: "pending", priority: "medium"},
-    {id: "7", content: "Setup animations", status: "pending", priority: "medium"},
-    {id: "8", content: "Add CSS styling", status: "pending", priority: "low"},
-    {id: "9", content: "Documentation", status: "pending", priority: "low"},
-    {id: "10", content: "Integration testing", status: "pending", priority: "low"}
-  ]}
-  
-  // 2. Create ALL directories
-  Bash "mkdir -p src/{components/{screens,roll},models,services,stores,providers}"
-  Bash "mkdir -p tests/{unit,integration} docs/{specifications,architecture} config/game"
-  
-  // 3. Create ALL files (30+ files in ONE message)
-  Write "package.json" [content]
-  Write "tsconfig.json" [content]
-  Write "vite.config.ts" [content]
-  Write "src/main.tsx" [content]
-  Write "src/App.tsx" [content]
-  Write "src/models/Card.ts" [content]
-  Write "src/components/screens/RollScreen.tsx" [content]
-  Write "src/components/roll/RollButton.tsx" [content]
-  Write "src/components/roll/CardReveal.tsx" [content]
-  Write "src/components/roll/AutoRollPanel.tsx" [content]
-  Write "src/stores/gameStore.ts" [content]
-  Write "src/services/CardService.ts" [content]
-  Write "tests/unit/Card.test.ts" [content]
-  Write "config/game/game.config.json" [content]
-  // ... ALL OTHER FILES IN SAME MESSAGE
-  
-  // 4. Run ALL commands
-  Bash "npm install && npm install zustand && npm run dev"
-  
-  // 5. Mark todos complete
-  TodoComplete ["1", "2", "3", "4", "5"]
-```
-
-### ❌ WRONG (Multiple Messages) - VIOLATION EXAMPLE:
-```javascript
-// THIS IS WHAT HAPPENED WITH EMOJI MAYHEM - DON'T DO THIS!
-Message 1: Create package.json
-Message 2: Create tsconfig.json  
-Message 3: Create Card.ts
-Message 4: Create RollScreen.tsx
-Message 5: Create RollButton.tsx
-// ... 30+ separate messages
-// THIS IS A CRITICAL VIOLATION!
-```
-
-## Performance Benefits
-
-- **84.8% SWE-Bench solve rate**
-- **32.3% token reduction**
-- **2.8-4.4x speed improvement**
-- **27+ neural models**
-
-## Hooks Integration
+## ⚙️ Hooks Integration
 
 ### Pre-Operation
 - Auto-assign agents by file type
 - Validate commands for safety
 - Prepare resources automatically
 - Optimize topology by complexity
-- Cache searches
 
-### Post-Operation
+### Post-Operation  
 - Auto-format code
 - Train neural patterns
 - Update memory
@@ -734,147 +492,15 @@ Message 5: Create RollButton.tsx
 - Restore context
 - Export workflows
 
-## Advanced Features (v2.0.0)
-
-- 🚀 Automatic Topology Selection
-- ⚡ Parallel Execution (2.8-4.4x speed)
-- 🧠 Neural Training
-- 📊 Bottleneck Analysis
-- 🤖 Smart Auto-Spawning
-- 🛡️ Self-Healing Workflows
-- 💾 Cross-Session Memory
-- 🔗 GitHub Integration
-
-## Integration Tips
-
-1. Start with basic swarm init
-2. Scale agents gradually
-3. Use memory for context
-4. Monitor progress regularly
-5. Train patterns from success
-6. Enable hooks automation
-7. Use GitHub tools first
-
-## Support
-
-- Documentation: https://github.com/ruvnet/claude-flow
-- Issues: https://github.com/ruvnet/claude-flow/issues
+## 📊 Performance Benefits
+- **84.8%** SWE-Bench solve rate
+- **32.3%** token reduction  
+- **2.8-4.4x** speed improvement
+- **27+** neural models
 
 ---
 
-Remember: **Claude Flow coordinates, Claude Code creates!**
-
-# 🚨 CRITICAL WORKFLOW REQUIREMENTS
-
-## MANDATORY EXECUTION PATTERN
-**EVERY development task MUST follow this pattern IN ONE MESSAGE:**
-
-```javascript
-// ONE MESSAGE CONTAINING ALL OF THIS:
-1. TodoWrite with 5-10+ tasks
-2. Create ALL directories needed
-3. Create/Edit ALL files (even 50+ files)
-4. Execute ALL commands
-5. Update task status
-6. Create documentation if needed
-```
-
-## WORKFLOW VALIDATION CHECKLIST
-Before executing ANY development task, verify:
-- [ ] ALL operations batched in ONE message?
-- [ ] TodoWrite contains 5+ tasks?
-- [ ] ALL file operations concurrent?
-- [ ] ALL commands in same execution?
-- [ ] Task tracking in archon/tasks/?
-- [ ] Violation report if sequential execution?
-
-## VIOLATION TRACKING
-If you execute operations sequentially:
-1. **STOP IMMEDIATELY**
-2. Create `/docs/WORKFLOW_VIOLATION_REPORT.md`
-3. Document the violation with impact analysis
-4. Create proper task tracking in `/archon/tasks/`
-5. **Learn and never repeat the violation**
-
-## PROJECT-SPECIFIC WORKFLOWS
-
-### For Emoji Mayhem TCG:
-- Use `/archon/tasks/` for task tracking
-- Follow modular structure from external context
-- Respect file size limits (<15KB)
-- Maintain test coverage
-
-### Git Workflow Integration (SIMPLE - TOUT SUR MASTER):
-```bash
-# WORKFLOW GIT SIMPLIFIÉ - PAS DE BRANCHES
-# Tout le monde travaille sur master
-# Synchronisation à chaque changement d'état
-
-# 1. Début de tâche
-git pull origin master
-# Update Archon status → in progress
-git add . && git commit -m "chore: starting task [id]" && git push origin master
-
-# 2. Pendant le développement
-git pull origin master  # Avant chaque commit
-git add . && git commit -m "feat: [description]" && git push origin master
-
-# 3. Fin de tâche
-git pull origin master
-# Update Archon status → in review
-git add . && git commit -m "feat: completed [task-id]" && git push origin master
-
-# RÈGLE D'OR: git pull → changements → git push
-```
-
-# important-instruction-reminders
-Do what has been asked; nothing more, nothing less.
-NEVER create files unless they're absolutely necessary for achieving your goal.
-ALWAYS prefer editing an existing file to creating a new one.
-NEVER proactively create documentation files (*.md) or README files unless explicitly requested.
-Never save working files, text/mds and tests to the root folder.
-**ALWAYS execute ALL operations concurrently in ONE message.**
-
----
-
-# 🔗 ARCHON + HIVE WORKFLOW CONFIGURATION
-
-## 📊 Archon MCP Integration (Tasks & Knowledge)
-
-### Project Configuration
-- **Project ID**: `196233ba-fbac-4ada-b0f9-37658c0e73ea`
-- **Archon UI**: http://localhost:3737
-- **API Endpoint**: http://localhost:8181
-- **API Docs**: http://localhost:8181/docs
-- **MCP Server**: http://localhost:8051
-
-### Starting Archon Services
-```bash
-# Start all Archon services (ports: 3737, 8181, 8051, 8052)
-cd archon && docker-compose up -d
-
-# Check project status
-powershell scripts/sync-archon-tasks.ps1 -Action status
-
-# Access project in UI
-http://localhost:3737/projects/196233ba-fbac-4ada-b0f9-37658c0e73ea
-```
-
-### Task Management via API
-```powershell
-# Get project info
-Invoke-RestMethod -Uri "http://localhost:8181/api/projects/196233ba-fbac-4ada-b0f9-37658c0e73ea"
-
-# Create task (example)
-$task = @{
-    title = "Task Title"
-    description = "Description"
-    priority = "high"
-    status = "todo"
-    tags = @("module", "type")
-}
-Invoke-RestMethod -Uri "http://localhost:8181/api/tasks" -Method POST -Body ($task | ConvertTo-Json) -ContentType "application/json"
-```
+# 9. 🎮 PROJECT-SPECIFIC
 
 ## 🎯 HIVE WORKFLOW (Mode Plan/Exécution)
 
@@ -895,8 +521,7 @@ archon/tasks/
 └── modules/
     ├── cards/
     │   ├── task-cards-common.md
-    │   ├── task-cards-rare.md
-    │   └── ...
+    │   └── task-cards-rare.md
     ├── services/
     │   ├── task-deck-service.md
     │   └── task-combat-engine.md
@@ -908,50 +533,39 @@ archon/tasks/
 ### Module Status (Current)
 | Module | Progress | Tasks | Priority |
 |--------|----------|-------|----------|
-| **CARDS** | 0/49 | Common(10), Uncommon(10), Rare(10), Epic(8), Legendary(6), Mythic(4), Cosmic(1) | HIGH |
+| **CARDS** | 0/49 | Common(10), Rare(10), Epic(8), Legendary(6), Mythic(4), Cosmic(1) | HIGH |
 | **SERVICES** | 1/4 | ✅CardService, ⏳DeckService, CombatEngine, ProgressionService | HIGH |
 | **UI** | 1/4 | ✅RollScreen, ⏳DeckBuilder, CombatScreen, CollectionView | MEDIUM |
 
-### Workflow Steps
+## 🔄 Git Workflow (SIMPLE - MASTER ONLY)
 ```bash
-# 1. Consultation Status
-cat archon/tasks/PROJECT_STATUS.md
+# WORKFLOW SIMPLIFIÉ - PAS DE BRANCHES
+# Tout le monde travaille sur master
 
-# 2. Sélection Module
-ls archon/tasks/modules/
+# 1. Début de tâche
+git pull origin master
+# Update Archon status → in progress
+git add . && git commit -m "chore: starting task [id]" && git push origin master
 
-# 3. Exécution Tâche
-Mode Exécution : archon/tasks/modules/cards/task-cards-common.md
+# 2. Pendant développement
+git pull origin master  # Avant chaque commit
+git add . && git commit -m "feat: [description]" && git push origin master
 
-# 4. Update Status
-Marquer status: Planning → In Progress → Complete
+# 3. Fin de tâche
+git pull origin master
+# Update Archon status → in review
+git add . && git commit -m "feat: completed [task-id]" && git push origin master
+
+# RÈGLE D'OR: git pull → changements → git push
 ```
 
-## 🔄 COORDINATION WORKFLOW
-
-### Before Starting
-1. Check `PROJECT_STATUS.md`
-2. Verify module dependencies
-3. Update task status in Archon
-
-### During Development
-1. Mark status "In Progress" in Archon
-2. Follow CONCURRENT execution pattern
-3. Commit frequently with clear messages
-
-### After Completion
-1. Mark status "Complete" in Archon
-2. Update `archon-project-tasks.json`
-3. Sync with team
-
-## 📋 TASK TEMPLATE
-
+## 📋 Task Template
 ```markdown
 # Task: [Module] - [Component]
 
 ## Overview
 **Module:** [CARDS|SERVICES|UI]
-**Priority:** [HIGH|MEDIUM|LOW]
+**Priority:** [HIGH|MEDIUM|LOW] 
 **Status:** [Planning|In Progress|Complete]
 **Assignee:** [Name/Unassigned]
 
@@ -964,24 +578,78 @@ Marquer status: Planning → In Progress → Complete
   Update Archon status
 ```
 
-## 🚀 Quick Reference
+---
 
+# 10. 📚 RÉFÉRENCES RAPIDES
+
+## 🚀 Commands Essentiels
 ```bash
 # Game Development
 npm run dev              # http://localhost:3000
+npm run build            # Build production
+npm run test             # Run tests
+npm run typecheck        # TypeScript check
 
 # Archon Services
 cd archon && docker-compose up -d
-
-# Check Status
 powershell scripts/sync-archon-tasks.ps1 -Action status
 
-# Access UIs
+# URLs Importantes
 http://localhost:3737    # Archon UI
 http://localhost:3000    # Game
 http://localhost:8181/docs # API Docs
+http://localhost:8051    # MCP Server
 ```
+
+## 🔗 URLs Support
+- **Documentation** : https://github.com/ruvnet/claude-flow
+- **Issues** : https://github.com/ruvnet/claude-flow/issues
+- **Project ID** : `196233ba-fbac-4ada-b0f9-37658c0e73ea`
+
+## 📋 Violation Tracking
+Si exécution séquentielle :
+1. **STOP IMMÉDIATEMENT**
+2. Créer `/docs/WORKFLOW_VIOLATION_REPORT.md`
+3. Documenter violation avec analyse impact
+4. Créer proper task tracking dans `/archon/tasks/`
+5. **Apprendre et ne jamais répéter**
+
+## ⚡ SPARC Workflow Phases
+1. **Specification** → Requirements analysis (`sparc run spec-pseudocode`)
+2. **Pseudocode** → Algorithm design (`sparc run spec-pseudocode`) 
+3. **Architecture** → System design (`sparc run architect`)
+4. **Refinement** → TDD implementation (`sparc tdd`)
+5. **Completion** → Integration (`sparc run integration`)
+
+## 🎯 Code Style & Best Practices
+- **Modular Design** : Fichiers < 500 lignes
+- **Environment Safety** : Jamais hardcode secrets
+- **Test-First** : Écrire tests avant implémentation
+- **Clean Architecture** : Séparer concerns
+- **Documentation** : Garder à jour
 
 ---
 
-**Remember**: Archon tracks tasks, Hive manages workflow, Claude executes with CONCURRENT pattern!
+## 🔴 RÈGLES ABSOLUES - RAPPEL FINAL
+
+1. **ARCHON-FIRST** → Toujours commencer par Archon MCP
+2. **CONCURRENT EXECUTION** → 1 message = toutes opérations liées
+3. **FEATURE-TASK LINKING** → Chaque task liée à une feature
+4. **STATUS PROGRESSION** → todo → in progress → in review → done
+5. **GIT WORKFLOW** → git pull → changes → git push
+6. **NO ROOT FILES** → Organiser dans sous-répertoires
+7. **VALIDATION GATES** → done SEULEMENT après confirmation utilisateur
+
+**REMEMBER** : Archon tracks tasks, Hive manages workflow, Claude executes with CONCURRENT pattern!
+
+---
+
+## 💡 Important Instruction Reminders
+- Do what has been asked; nothing more, nothing less
+- NEVER create files unless absolutely necessary for achieving your goal
+- ALWAYS prefer editing an existing file to creating a new one
+- NEVER proactively create documentation files (*.md) or README files unless explicitly requested
+- Never save working files, text/mds and tests to the root folder
+- **ALWAYS execute ALL operations concurrently in ONE message**
+
+*Fichier réorganisé pour clarté maximale - Toutes informations préservées*

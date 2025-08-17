@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRollStore } from '../../stores/rollStore';
 import { useGameStore } from '../../stores/gameStore';
 import { RollResult } from '../../services/RollService';
-import { Card } from '../../types/card';
+// Card import removed as not used directly
 import rollConfig from '../../../config/game/roll.config.json';
 import './EnhancedRollScreen.css';
 
@@ -12,7 +12,7 @@ interface EnhancedRollScreenProps {
 }
 
 export const EnhancedRollScreen: React.FC<EnhancedRollScreenProps> = ({ onClose }) => {
-  const [showResult, setShowResult] = useState(false);
+  const [, setShowResult] = useState(false);
   const [animationPhase, setAnimationPhase] = useState<'idle' | 'rolling' | 'revealing' | 'complete'>('idle');
   const [currentlyShowing, setCurrentlyShowing] = useState<RollResult | null>(null);
   const [queuedResults, setQueuedResults] = useState<RollResult[]>([]);
@@ -21,9 +21,7 @@ export const EnhancedRollScreen: React.FC<EnhancedRollScreenProps> = ({ onClose 
     performSingleRoll,
     performTenRoll,
     isRolling,
-    currentRoll,
     animationQueue,
-    completeRollAnimation,
     skipAnimation,
     canAffordRoll,
     getRollCost,
@@ -123,10 +121,6 @@ export const EnhancedRollScreen: React.FC<EnhancedRollScreenProps> = ({ onClose 
       cosmic: 'linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b, #fb5607)'
     };
     return colors[rarity as keyof typeof colors] || colors.common;
-  };
-
-  const getRarityEffects = (rarity: string) => {
-    return rollConfig.animations.effects[rarity as keyof typeof rollConfig.animations.effects] || [];
   };
 
   const pityProgress = getPityProgress();
@@ -252,7 +246,7 @@ export const EnhancedRollScreen: React.FC<EnhancedRollScreenProps> = ({ onClose 
                   onClick={handleSkipAnimation}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  delay={0.5}
+                  transition={{ delay: 0.5 }}
                 >
                   Continue
                 </motion.button>
@@ -332,16 +326,17 @@ interface CardRevealComponentProps {
 
 const CardRevealComponent: React.FC<CardRevealComponentProps> = ({ result, onAnimationComplete }) => {
   const { card, isGuaranteed, pityTriggered } = result;
+  
+  const getRarityEffects = (rarity: string) => {
+    return rollConfig.animations.effects[rarity as keyof typeof rollConfig.animations.effects] || [];
+  };
+  
   const effects = getRarityEffects(card.rarity);
 
   useEffect(() => {
     const timer = setTimeout(onAnimationComplete, 3000);
     return () => clearTimeout(timer);
   }, [onAnimationComplete]);
-
-  const getRarityEffects = (rarity: string) => {
-    return rollConfig.animations.effects[rarity as keyof typeof rollConfig.animations.effects] || [];
-  };
 
   return (
     <motion.div 

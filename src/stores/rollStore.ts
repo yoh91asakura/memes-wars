@@ -307,7 +307,7 @@ export const useRollStore = create<RollStore>()(
         });
         
         // First rarity achievements
-        Object.entries(rollConfig.achievementTriggers.rarityCollected).forEach(([rarity, reward]) => {
+        Object.entries(rollConfig.achievementTriggers.rarityCollected).forEach(([rarity]) => {
           const rarityKey = rarity.replace('first', '').toLowerCase();
           const achievementId = `first_${rarityKey}`;
           if (stats.collectedByRarity[rarityKey] > 0 && !achievements[achievementId]) {
