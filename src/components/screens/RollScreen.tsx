@@ -4,48 +4,103 @@ import { RollButton } from '../roll/RollButton';
 import { CardReveal } from '../roll/CardReveal';
 import { AutoRollPanel } from '../roll/AutoRollPanel';
 import { useGameStore } from '../../stores/gameStore';
+import { useRollStore } from '../../stores/rollStore';
 import { Card } from '../../types/card';
+import { Card as ComplexCard, Rarity, TrajectoryPattern } from '../../models/Card';
 import './RollScreen.css';
 
+// Helper function to convert simple Card to complex Card for reveal
+const convertToComplexCard = (simpleCard: Card): ComplexCard => {
+  return {
+    id: simpleCard.id,
+    name: simpleCard.name,
+    description: simpleCard.description || simpleCard.flavor || '',
+    rarity: simpleCard.rarity.toUpperCase() as Rarity,
+    emojis: [{
+      character: simpleCard.emoji,
+      damage: simpleCard.attack || 1,
+      speed: 300,
+      trajectory: TrajectoryPattern.STRAIGHT
+    }],
+    hp: simpleCard.defense || 10,
+    attackSpeed: 1.0,
+    passive: {
+      id: 'basic',
+      name: 'Basic',
+      description: simpleCard.ability || 'No special effect',
+      triggerChance: 0.1,
+      effect: () => {}
+    },
+    stackLevel: 1,
+    experience: 0,
+    borderColor: getRarityColor(simpleCard.rarity),
+    glowIntensity: 1
+  };
+};
+
+const getRarityColor = (rarity: string): string => {
+  const colors = {
+    'common': '#ffffff',
+    'uncommon': '#1eff00',
+    'rare': '#0070f3',
+    'epic': '#8b5cf6',
+    'legendary': '#f97316',
+    'mythic': '#ffd700',
+    'cosmic': '#ff00ff'
+  };
+  return colors[rarity as keyof typeof colors] || '#ffffff';
+};
+
 export const RollScreen: React.FC = () => {
-  const [isRolling, setIsRolling] = useState(false);
   const [revealedCard, setRevealedCard] = useState<Card | null>(null);
   const [showAutoRoll, setShowAutoRoll] = useState(false);
   const [autoRollActive, setAutoRollActive] = useState(false);
   const [hideRoll, setHideRoll] = useState(false);
   
-  const { rollCard, coins, spendCoins } = useGameStore();
+  const { coins, spendCoins, addToCollection } = useGameStore();
+  const { performSingleRoll, isRolling, completeRollAnimation } = useRollStore();
 
   const handleSingleRoll = useCallback(async () => {
     if (isRolling || coins < 100) return;
     
-    setIsRolling(true);
     setRevealedCard(null);
     
-    // Spend coins
-    const success = await spendCoins(100);
-    if (!success) {
-      setIsRolling(false);
-      return;
-    }
-    
-    // Get animation duration based on hideRoll setting
-    const animationDuration = hideRoll ? 250 : 2000;
-    
-    // Wait for suspense animation
-    setTimeout(async () => {
-      const card = await rollCard();
-      setRevealedCard(card);
-      setIsRolling(false);
+    try {
+      // Spend coins first
+      const success = await spendCoins(100);
+      if (!success) {
+        return;
+      }
       
-      // Auto-hide card after reveal
+      // Perform roll using RollService
+      const rollResult = await performSingleRoll();
+      
+      // Get animation duration based on hideRoll setting
+      const animationDuration = hideRoll ? 250 : 2000;
+      
+      // Wait for suspense animation
       setTimeout(() => {
-        if (!autoRollActive) {
-          setRevealedCard(null);
-        }
-      }, 3000);
-    }, animationDuration);
-  }, [isRolling, coins, rollCard, spendCoins, hideRoll, autoRollActive]);
+        setRevealedCard(rollResult.card);
+        
+        // Add to collection
+        addToCollection(rollResult.card);
+        
+        // Complete roll animation
+        completeRollAnimation();
+        
+        // Auto-hide card after reveal
+        setTimeout(() => {
+          if (!autoRollActive) {
+            setRevealedCard(null);
+          }
+        }, 3000);
+      }, animationDuration);
+      
+    } catch (error) {
+      console.error('Roll failed:', error);
+      completeRollAnimation();
+    }
+  }, [isRolling, coins, performSingleRoll, spendCoins, addToCollection, completeRollAnimation, hideRoll, autoRollActive]);
 
   const handleAutoRoll = useCallback(async (count: number) => {
     const totalCost = count * 100;
@@ -54,9 +109,13 @@ export const RollScreen: React.FC = () => {
     setAutoRollActive(true);
     setShowAutoRoll(false);
     
-    // Auto-roll logic would go here
-    // For now, just do a single roll as example
-    await handleSingleRoll();
+    // For now, just do single rolls in sequence
+    // TODO: Implement proper 10x and 100x roll logic
+    for (let i = 0; i < count; i++) {
+      await handleSingleRoll();
+      // Small delay between rolls
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
     
     setAutoRollActive(false);
   }, [coins, handleSingleRoll]);
@@ -133,7 +192,7 @@ export const RollScreen: React.FC = () => {
         <AnimatePresence>
           {revealedCard && !isRolling && (
             <CardReveal 
-              card={revealedCard as any}
+              card={convertToComplexCard(revealedCard)}
               onClose={() => setRevealedCard(null)}
               hideRoll={hideRoll}
             />
