@@ -31,6 +31,8 @@ export interface MultiRollResult {
   guaranteedTriggered: boolean;
   bonusCards: Card[];
   totalValue: number;
+  rarityBreakdown?: Record<string, number>;
+  highlights?: Card[];
 }
 
 export class RollService {
@@ -113,11 +115,17 @@ export class RollService {
       cards.push(this.rollSingle(currentStats));
     }
 
+    // Calculate rarity breakdown
+    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card));
+    const highlights = this.getHighlightCards(cards.map(r => r.card));
+
     return {
       cards,
       guaranteedTriggered: !hasRareOrBetter,
       bonusCards: [],
-      totalValue: cards.reduce((sum, result) => sum + this.getCardValue(result.card), 0)
+      totalValue: cards.reduce((sum, result) => sum + this.getCardValue(result.card), 0),
+      rarityBreakdown,
+      highlights
     };
   }
 
@@ -327,6 +335,121 @@ export class RollService {
    */
   addCardsToDatabase(rarity: string, cards: Card[]): void {
     this.allCards.set(rarity, cards);
+  }
+
+  /**
+   * Perform 100-roll with multiple guarantees and bonus rewards
+   */
+  rollHundred(stats: RollStats): MultiRollResult {
+    const cards: RollResult[] = [];
+    let currentStats = { ...stats };
+    const bonusCards: Card[] = [];
+    
+    // Track rarities obtained
+    const rarityCount = {
+      common: 0,
+      uncommon: 0,
+      rare: 0,
+      epic: 0,
+      legendary: 0,
+      mythic: 0,
+      cosmic: 0
+    };
+
+    // Perform 99 regular rolls
+    for (let i = 0; i < 99; i++) {
+      const result = this.rollSingle(currentStats);
+      cards.push(result);
+      
+      const rarity = result.card.rarity;
+      rarityCount[rarity as keyof typeof rarityCount]++;
+      
+      currentStats = this.updateStatsAfterRoll(currentStats, rarity);
+    }
+
+    // 100th roll: Guarantee epic or better if none obtained
+    const hasEpicOrBetter = rarityCount.epic > 0 || rarityCount.legendary > 0 || 
+                            rarityCount.mythic > 0 || rarityCount.cosmic > 0;
+    
+    if (!hasEpicOrBetter) {
+      const guaranteedRarity = this.getGuaranteedRarity(['epic', 'legendary', 'mythic', 'cosmic']);
+      const guaranteedCard = this.getRandomCardOfRarity(guaranteedRarity);
+      
+      cards.push({
+        card: { ...guaranteedCard, id: uuidv4() },
+        isGuaranteed: true,
+        pityTriggered: false,
+        rollNumber: currentStats.totalRolls + 100
+      });
+      
+      rarityCount[guaranteedRarity as keyof typeof rarityCount]++;
+    } else {
+      const result = this.rollSingle(currentStats);
+      cards.push(result);
+      rarityCount[result.card.rarity as keyof typeof rarityCount]++;
+    }
+
+    // Bonus rewards based on total value
+    const totalValue = cards.reduce((sum, result) => sum + this.getCardValue(result.card), 0);
+    
+    // Bonus epic card if total value > 5000
+    if (totalValue > 5000) {
+      const bonusEpic = this.getRandomCardOfRarity('epic');
+      if (bonusEpic) {
+        bonusCards.push({ ...bonusEpic, id: uuidv4() });
+      }
+    }
+    
+    // Bonus legendary card if total value > 10000
+    if (totalValue > 10000) {
+      const bonusLegendary = this.getRandomCardOfRarity('legendary');
+      if (bonusLegendary) {
+        bonusCards.push({ ...bonusLegendary, id: uuidv4() });
+      }
+    }
+
+    // Bonus mythic card if got 5+ legendaries
+    if (rarityCount.legendary >= 5) {
+      const bonusMythic = this.getRandomCardOfRarity('mythic');
+      if (bonusMythic) {
+        bonusCards.push({ ...bonusMythic, id: uuidv4() });
+      }
+    }
+
+    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card));
+    const highlights = this.getHighlightCards(cards.map(r => r.card));
+
+    return {
+      cards,
+      guaranteedTriggered: !hasEpicOrBetter,
+      bonusCards,
+      totalValue,
+      rarityBreakdown,
+      highlights
+    };
+  }
+
+  /**
+   * Calculate rarity breakdown for cards
+   */
+  private calculateRarityBreakdown(cards: Card[]): Record<string, number> {
+    const breakdown: Record<string, number> = {};
+    
+    for (const card of cards) {
+      breakdown[card.rarity] = (breakdown[card.rarity] || 0) + 1;
+    }
+    
+    return breakdown;
+  }
+
+  /**
+   * Get highlight cards (rare or better)
+   */
+  private getHighlightCards(cards: Card[]): Card[] {
+    const highlightRarities = ['rare', 'epic', 'legendary', 'mythic', 'cosmic'];
+    return cards.filter(card => highlightRarities.includes(card.rarity))
+                .sort((a, b) => this.getCardValue(b) - this.getCardValue(a))
+                .slice(0, 5); // Top 5 best cards
   }
 
   /**

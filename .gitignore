@@ -140,6 +140,121 @@ temp/
 # Vitest
 coverage/
 
+
+# Archon
+archon/data/
+archon/*.db
+archon/*.sqlite
+archon/docker-compose.yml
+archon/config/
+
+# Local configuration files
+.env.local
+.env.*.local
+*.local.json
+*.local.yml
+*.local.yaml
+config.local.*
+settings.local.*
+
+# MCP and Claude Flow
+.roo/mcp-archon.json
+.roo/*.local.json
+.claude/settings.local.json
+.claude-flow/sessions/
+.claude-flow/memory/
+.claude-flow/cache/
+
+# Platform-specific scripts backups
+*.backup
+*.bak
+*.old
+
+# Git hooks (platform-specific)
+.git/hooks/*
+!.git/hooks/*.sample
+
+# Playwright
+playwright-report/
+test-results/
+.playwright/
+
+# Windows specific configuration files
+start-archon.bat
+stop-archon.bat
+*.ps1.log
+*.bat
+*.ps1
+*.cmd
+windows-*.json
+windows-*.config
+.vs/
+*.vcxproj*
+*.sln
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+scripts/setup-windows.ps1
+scripts/*.bat
+scripts/*.ps1
+
+# Windows npm/node specific
+node.exe
+npm.cmd
+npx.cmd
+yarn.cmd
+pnpm.cmd
+
+# Windows build artifacts
+*.dll
+*.exe
+*.obj
+*.ilk
+*.pdb
+
+# Windows package manager
+packages.config
+*.nupkg
+
+# Platform-specific lock files that might differ
+package-lock.json.windows
+yarn.lock.windows
+pnpm-lock.yaml.windows
+
+# Task tracking temporary files
+tasks/*.tmp
+tasks/*.lock
+sync-status.json
+
+# Platform-specific configuration
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-workspace
+tsconfig.tsbuildinfo
+
+# Windows-specific Node/NPM paths
+node_modules/.bin/*.cmd
+node_modules/.bin/*.ps1
+node_modules/.cache/
+
+# Electron/Desktop app Windows specific
+out/
+release/
+dist-electron/
+*.msi
+*.exe
+*.appx
+
+# Windows Defender and system files
+System Volume Information/
+$WINDOWS.~BT/
+$WINDOWS.~WS/
+hiberfil.sys
+pagefile.sys
+swapfile.sys
+
 # Claude Flow generated files
 .claude/settings.local.json
 .mcp.json
@@ -164,9 +279,3 @@ claude-flow
 claude-flow.bat
 claude-flow.ps1
 hive-mind-prompt-*.txt
-
-# Archon
-archon/data/
-archon/*.db
-archon/*.sqlite
-archon/
