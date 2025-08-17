@@ -169,3 +169,4 @@ hive-mind-prompt-*.txt
 archon/data/
 archon/*.db
 archon/*.sqlite
+archon/
