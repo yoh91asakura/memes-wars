@@ -1,30 +1,36 @@
-import { Card } from '../../types/card';
+import { UnifiedCard } from '../../models/unified/Card';
 
-export const mythicCards: Card[] = [
+// TODO: Migrate existing mythic cards to unified model
+// This is a placeholder file created during card system migration
+
+export const mythicCards: UnifiedCard[] = [
+  // TODO: Add migrated mythic cards here
+  // Template for new cards:
+  /*
   {
-    id: 'mythic_1',
-    name: 'Universe Creator',
-    rarity: 'mythic',
-    type: 'creature',
-    cost: 15,
-    attack: 15,
-    defense: 15,
-    emoji: '✨🌍✨',
-    description: 'When played, create a new game rule',
-    color: '#FA5252',
-    ability: 'Reality Manipulation',
-    tags: ['cosmic', 'unique']
-  },
-  {
-    id: 'mythic_2',
-    name: 'Omega Protocol',
-    rarity: 'mythic',
-    type: 'spell',
-    cost: 20,
-    emoji: '💀⚡💀',
-    description: 'Win the game if you have less than 5 health',
-    color: '#FA5252',
-    effects: ['instant win condition'],
-    tags: ['ultimate', 'risky']
+    id: 'mythic_example',
+    name: 'Example Mythic Card',
+    description: 'Example card for mythic rarity',
+    rarity: UnifiedRarity.MYTHIC,
+    type: CardType.CREATURE,
+    cost: 3,
+    attack: 3,
+    defense: 3,
+    hp: 30,
+    attackSpeed: 1.0,
+    emojis: createDefaultEmojis('🎴', UnifiedRarity.MYTHIC),
+    passive: createDefaultPassive(),
+    stackLevel: 0,
+    experience: 0,
+    luck: 10,
+    emoji: '🎴',
+    color: '#808080',
+    tags: ['mythic', 'placeholder'],
+    stats: {
+      attack: 3,
+      defense: 3,
+      health: 30,
+    },
   }
+  */
 ];

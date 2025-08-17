@@ -9,7 +9,7 @@ import {
   getEmojiPower,
   calculateTotalBaseDamage 
 } from '../systems/emoji-database';
-import { Card } from '../types/card';
+import { UnifiedCard as Card } from '../models/unified/Card';
 
 /**
  * Assignment rules for each card rarity

@@ -1,7 +1,7 @@
 import { EmojiProjectile, EmojiFactory } from '../systems/emoji-system';
 import { getEmojiPower } from '../systems/emoji-database';
 import { EmojiSynergyCalculator } from './EmojiSynergyCalculator';
-import { Card } from '../types/card';
+import { UnifiedCard as Card } from '../models/unified/Card';
 import { EmojiPower } from '../types/emoji';
 
 export interface CombatEntity {
@@ -412,9 +412,20 @@ export class CombatEngine {
   ): CombatEntity {
     // Get emoji powers from card
     const emojiPowers: EmojiPower[] = [];
-    const emojis = card.emojis || (card.emoji ? [card.emoji] : []);
+    const emojis = card.emojis || [];
+    const legacyEmojis = card.emoji ? [card.emoji] : [];
     
-    for (const emojiChar of emojis) {
+    // Handle unified card emojis (EmojiProjectile objects)
+    for (const emojiObj of emojis) {
+      const emojiChar = typeof emojiObj === 'string' ? emojiObj : emojiObj.character;
+      const power = getEmojiPower(emojiChar);
+      if (power) {
+        emojiPowers.push(power);
+      }
+    }
+    
+    // Handle legacy emoji strings
+    for (const emojiChar of legacyEmojis) {
       const power = getEmojiPower(emojiChar);
       if (power) {
         emojiPowers.push(power);
@@ -422,9 +433,10 @@ export class CombatEngine {
     }
     
     // Calculate synergy bonuses
-    const synergies = card.emojiData?.activeSynergies || EmojiSynergyCalculator.calculateSynergies(emojis);
+    const allEmojiChars = [...emojis.map(e => e.character), ...legacyEmojis];
+    const synergies = EmojiSynergyCalculator.calculateSynergies(allEmojiChars);
     const synergyBonuses = {
-      damageBonus: EmojiSynergyCalculator.calculateSynergyDamageBonus(emojis, synergies),
+      damageBonus: EmojiSynergyCalculator.calculateSynergyDamageBonus(allEmojiChars, synergies),
       healingBonus: EmojiSynergyCalculator.calculateSynergyHealingBonus(synergies),
       controlBonus: EmojiSynergyCalculator.calculateControlDurationBonus(synergies),
       energyBonus: EmojiSynergyCalculator.calculateEnergyBonus(synergies)
@@ -444,7 +456,7 @@ export class CombatEngine {
       attackSpeed: 1.0,
       
       // Legacy support
-      emojis,
+      emojis: allEmojiChars,
       
       // New emoji system
       emojiPowers,

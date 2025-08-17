@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card } from '../../types/card';
+import { UnifiedCard as Card } from '../../models/unified/Card';
 import { COMPLETE_EMOJI_DATABASE } from '../../systems/emoji-database';
 import './CardTCG.css';
 
@@ -73,10 +73,10 @@ export const CardTCG: React.FC<CardTCGProps> = ({
   const getAllEmojis = () => {
     const allEmojis: string[] = [];
     
-    if (card.emojis) {
+    if (card.emojis && card.emojis.length > 0) {
       card.emojis.forEach(emoji => {
-        const emojiChar = typeof emoji === 'string' ? emoji : emoji;
-        allEmojis.push(emojiChar);
+        // emoji is now an EmojiProjectile object with character property
+        allEmojis.push(emoji.character);
       });
     } else if (card.emoji) {
       allEmojis.push(card.emoji);

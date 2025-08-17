@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { CombatEngine } from '../../services/CombatEngine';
-import { Card } from '../../types/card';
+import { UnifiedCard as Card } from '../../models/unified/Card';
 import './CombatScreen.css';
 
 interface CombatScreenProps {

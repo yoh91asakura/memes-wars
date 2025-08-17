@@ -1,8 +1,21 @@
-import { Card } from '../types/card';
-import { uncommonCards } from '../data/cards/uncommon/uncommon-cards';
+import { UnifiedCard as Card } from '../models/unified/Card';
+import { uncommonCards as legacyUncommonCards } from '../data/cards/uncommon/uncommon-cards';
+// Temporary adapter function until proper migration
+function adaptLegacyToUnified(oldCard: any): any {
+  return {
+    ...oldCard,
+    emojis: oldCard.emoji ? [{ character: oldCard.emoji }] : [],
+    hp: oldCard.defense || 10,
+    attackSpeed: 1.0,
+    passive: { id: 'none', name: 'None', effect: 'No effect' },
+    stackLevel: 0,
+    experience: 0,
+    luck: 0,
+  };
+}
 
 export class UncommonCardService {
-  private static readonly cards: Card[] = uncommonCards;
+  private static readonly cards: Card[] = legacyUncommonCards.map(adaptLegacyToUnified);
 
   static getAllCards(): Card[] {
     return [...this.cards];
@@ -30,7 +43,7 @@ export class UncommonCardService {
     return this.cards.filter(card => 
       card.name.toLowerCase().includes(lowercaseQuery) ||
       card.description?.toLowerCase().includes(lowercaseQuery) ||
-      card.emoji?.includes(query)
+      card.emojis?.some(emoji => emoji.character.includes(query)) || card.emoji?.includes(query)
     );
   }
 

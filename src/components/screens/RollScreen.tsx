@@ -2,9 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '../../stores/gameStore';
 import { useRollStore } from '../../stores/rollStore';
-import { Card } from '../../types/card';
+import { UnifiedCard as Card } from '../../models/unified/Card';
 import { RollResult, RollStats } from '../../services/RollService';
-import { AutoRollPanel } from '../roll/AutoRollPanel';
+// import { AutoRollPanel } from '../roll/AutoRollPanel'; // TODO: Implement auto-roll feature
 import { CardTCG } from '../cards/CardTCG';
 import './RollScreenSolsRNG.css';
 

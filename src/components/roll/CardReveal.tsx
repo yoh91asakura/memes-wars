@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card } from '../../types/card';
+import { UnifiedCard as Card } from '../../models/unified/Card';
 import { CardTCG } from '../cards/CardTCG';
 import './CardReveal.css';
 
