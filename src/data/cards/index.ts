@@ -6,8 +6,6 @@ import { epicCards } from './epic';
 import { legendaryCards } from './legendary';
 import { mythicCards } from './mythic';
 import { cosmicCards } from './cosmic';
-import { divineCards } from './divine';
-import { infinityCards } from './infinity';
 import { UnifiedCard, CardRarity } from '../../models/unified/Card';
 
 // Export all card arrays
@@ -19,8 +17,6 @@ export {
   legendaryCards,
   mythicCards,
   cosmicCards,
-  divineCards,
-  infinityCards
 };
 
 // Combine all cards into a single array
@@ -32,8 +28,6 @@ export const allCards: UnifiedCard[] = [
   ...legendaryCards,
   ...mythicCards,
   ...cosmicCards,
-  ...divineCards,
-  ...infinityCards
 ];
 
 // Card count by rarity (for verification)
@@ -45,8 +39,6 @@ export const cardCounts = {
   [CardRarity.LEGENDARY]: legendaryCards.length,
   [CardRarity.MYTHIC]: mythicCards.length,
   [CardRarity.COSMIC]: cosmicCards.length,
-  [CardRarity.DIVINE]: divineCards.length,
-  [CardRarity.INFINITY]: infinityCards.length,
   total: allCards.length
 };
 
@@ -118,15 +110,13 @@ export function validateCardCollection(): { isValid: boolean; errors: string[] }
     [CardRarity.LEGENDARY]: 6,
     [CardRarity.MYTHIC]: 4,
     [CardRarity.COSMIC]: 1,
-    [CardRarity.DIVINE]: 2,
-    [CardRarity.INFINITY]: 1
   };
 
   // Check card counts
   Object.entries(expectedCounts).forEach(([rarity, expected]) => {
-    const actual = cardCounts[rarity as CardRarity];
-    if (actual !== expected) {
-      errors.push(`${rarity}: expected ${expected}, got ${actual}`);
+    const actualCount = cardCounts[rarity as keyof typeof cardCounts];
+    if (actualCount !== expected) {
+      errors.push(`${rarity}: expected ${expected}, got ${actualCount}`);
     }
   });
 

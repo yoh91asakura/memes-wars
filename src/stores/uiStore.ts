@@ -2,6 +2,7 @@
 // Handles all user interface state that doesn't belong to other domains
 
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { UnifiedCard } from '../models/unified/Card';
 import { createStoreMiddleware } from './middleware';
 
@@ -92,17 +93,10 @@ export interface UIStore {
   reset: () => void;
 }
 
-const middleware = createStoreMiddleware('ui', {
-  enableLogger: true,
-  enableDebugger: true,
-  enablePersistence: true
-});
 
 export const useUIStore = create<UIStore>()(
-  middleware.persistence ? middleware.persistence(
-    middleware.debugger ? middleware.debugger(
-      middleware.logger ? middleware.logger(
-        (set, get) => ({
+  persist(
+    (set, get) => ({
           // Initial state
           currentPage: 'home',
           isNavigating: false,
@@ -331,9 +325,9 @@ export const useUIStore = create<UIStore>()(
               activeTab: 'collection'
             });
           }
-        })
-      ) : (set, get) => ({}) // Fallback if logger is disabled
-    ) : (set, get) => ({}), // Fallback if debugger is disabled
-    middleware.persistence
-  ) : (set, get) => ({}) // Fallback if persistence is disabled
+        }),
+    {
+      name: 'ui-store'
+    }
+  )
 );

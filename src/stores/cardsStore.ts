@@ -84,17 +84,10 @@ export interface CardsStore {
 }
 
 const rollService = RollService.getInstance();
-const middleware = createStoreMiddleware('cards', {
-  enableLogger: true,
-  enableDebugger: true,
-  enablePersistence: true
-});
 
 export const useCardsStore = create<CardsStore>()(
   persist(
-    middleware.debugger ? middleware.debugger(
-      middleware.logger ? middleware.logger(
-        (set, get) => ({
+    (set, get) => ({
           // Initial state
           collection: [],
           selectedCard: null,
@@ -439,9 +432,9 @@ export const useCardsStore = create<CardsStore>()(
               rollHistory: []
             });
           }
-        })
-      ) : (set, get) => ({}) // Fallback if logger is disabled
-    ) : (set, get) => ({}), // Fallback if debugger is disabled
-    middleware.persistence || {}
+        }),
+    {
+      name: 'cards-store'
+    }
   )
 );

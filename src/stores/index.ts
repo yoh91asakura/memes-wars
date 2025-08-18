@@ -1,13 +1,13 @@
 // Unified Store Architecture Index
 // This file provides the consolidated store architecture with proper separation of concerns
 
-export { usePlayerStore } from './playerStore';
+export { usePlayerStore } from './playerStoreSimple';
 export { useCardsStore } from './cardsStore';
 export { useGameStore } from './gameStore';
 export { useUIStore } from './uiStore';
 
 // Store types
-export type { PlayerStore } from './playerStore';
+export type { PlayerStore } from './playerStoreSimple';
 export type { CardsStore } from './cardsStore';
 export type { GameStore } from './gameStore';
 export type { UIStore } from './uiStore';
@@ -22,6 +22,3 @@ export interface RootStore {
 
 // Store middleware and utilities
 export { createStoreMiddleware } from './middleware';
-export { storeLogger } from './middleware/logger';
-export { storePersistence } from './middleware/persistence';
-export { storeDebugger } from './middleware/debugger';
