@@ -1,4 +1,11 @@
-import { UnifiedCard, CardRarity, CardType } from '../../models/unified/Card';
+import { 
+  UnifiedCard, 
+  CardRarity, 
+  CardType, 
+  MemeFamily, 
+  EffectType, 
+  TriggerType 
+} from '../../models/unified/Card';
 
 // Common cards using the unified card model
 export const commonCards: UnifiedCard[] = [
@@ -9,8 +16,15 @@ export const commonCards: UnifiedCard[] = [
     description: 'A blazing ember that burns with steady determination',
     emoji: '🔥',
     
-    // Game Mechanics
+    // Game Specification Requirements
     rarity: CardRarity.COMMON,
+    rarityProbability: 2,        // 1/2 chance
+    luck: 5,                     // Low luck for common
+    family: MemeFamily.ABSTRACT_CONCEPTS,
+    reference: 'This is fine - the classic fire meme representing chaos',
+    goldReward: 15,              // Random value in 10-20 range
+    
+    // Game Mechanics
     type: CardType.ATTACK,
     cost: 1,
     
@@ -20,46 +34,82 @@ export const commonCards: UnifiedCard[] = [
     health: 3,
     attackSpeed: 1.2,
     
-    // Advanced Properties
-    passiveAbility: {
-      name: 'Burn',
-      description: 'Deals 1 damage per turn for 2 turns',
-      trigger: 'onAttack',
-      effect: 'burn',
-      value: 1
-    },
-    emojiProjectile: {
-      emoji: '🔥',
+    // Enhanced Combat System
+    emojis: [{
+      character: '🔥',
       damage: 2,
       speed: 3,
       trajectory: 'straight',
-      effects: ['burn']
-    },
+      effects: [EffectType.BURN],
+      target: 'OPPONENT',
+      fireRate: 1.2,
+      piercing: false,
+      homing: false,
+      bounces: 0
+    }],
+    cardEffects: [{
+      id: 'burn_proc',
+      name: 'Ignite',
+      description: 'Chance to apply burn effect on hit',
+      trigger: TriggerType.ON_HIT,
+      chance: 0.25,               // 25% chance
+      effect: EffectType.BURN,
+      value: 1,
+      duration: 3,
+      cooldown: 2
+    }],
+    synergies: [MemeFamily.ABSTRACT_CONCEPTS],
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
     
     // Progression System
     level: 1,
     experience: 0,
     stackCount: 1,
     maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['💥', '🌶️'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
     
     // Visual & UI
     visual: {
       glow: '#FF6B35',
       borderColor: '#FF4500',
       backgroundColor: '#FFF8DC',
-      textColor: '#8B0000'
+      textColor: '#8B0000',
+      animation: 'flame',
+      particles: true
     },
     
-    // Metadata
-    effects: ['burn', 'damage'],
-    tags: ['fire', 'common', 'attack'],
-    flavor: 'Even the smallest flame can ignite a great fire.',
-    lore: 'Born from the first spark of creation, fire embers are the foundation of all flame magic.',
+    // Collection & Social
     craftable: false,
     isActive: true,
+    isLimited: false,
+    
+    // Metadata
+    effects: [EffectType.BURN],
+    tags: ['fire', 'common', 'attack', 'burn'],
+    flavor: 'Even the smallest flame can ignite a great fire.',
+    lore: 'Born from the first spark of creation, fire embers are the foundation of all flame magic. In the meme wars, this represents the "This is Fine" dog sitting in a burning room, accepting chaos with determination.',
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z'
+    updatedAt: '2025-01-01T00:00:00Z',
+    
+    // Legacy Compatibility
+    passiveAbility: {
+      name: 'Burn',
+      description: 'Deals 1 damage per turn for 2 turns',
+      trigger: 'onAttack',
+      effect: 'burn',
+      value: 1
+    }
   },
   {
     // Core Identity
@@ -68,8 +118,15 @@ export const commonCards: UnifiedCard[] = [
     description: 'A refreshing drop of pure water with healing properties',
     emoji: '💧',
     
-    // Game Mechanics
+    // Game Specification Requirements
     rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 8,
+    family: MemeFamily.ABSTRACT_CONCEPTS,
+    reference: 'Tears of joy - crying from laughter meme',
+    goldReward: 12,
+    
+    // Game Mechanics
     type: CardType.HEALING,
     cost: 1,
     
@@ -79,27 +136,49 @@ export const commonCards: UnifiedCard[] = [
     health: 3,
     attackSpeed: 0.8,
     
-    // Advanced Properties
-    passiveAbility: {
-      name: 'Refresh',
-      description: 'Heals 1 HP at the start of each turn',
-      trigger: 'onTurnStart',
-      effect: 'heal',
-      value: 1
-    },
-    emojiProjectile: {
-      emoji: '💧',
+    // Enhanced Combat System
+    emojis: [{
+      character: '💧',
       damage: 1,
       speed: 2,
       trajectory: 'arc',
-      effects: ['heal', 'cleanse']
-    },
+      effects: [EffectType.HEAL],
+      target: 'OPPONENT',
+      fireRate: 0.8,
+      piercing: false,
+      homing: false,
+      bounces: 0
+    }],
+    cardEffects: [{
+      id: 'refresh_proc',
+      name: 'Refresh',
+      description: 'Chance to heal self when attacking',
+      trigger: TriggerType.ON_HIT,
+      chance: 0.3,
+      effect: EffectType.HEAL,
+      value: 1,
+      duration: 0,
+      cooldown: 3
+    }],
+    synergies: [MemeFamily.ABSTRACT_CONCEPTS],
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
     
     // Progression System
     level: 1,
     experience: 0,
     stackCount: 1,
     maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['😢', '💦'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
     
     // Visual & UI
     visual: {
@@ -109,8 +188,13 @@ export const commonCards: UnifiedCard[] = [
       textColor: '#191970'
     },
     
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
     // Metadata
-    effects: ['heal', 'cleanse', 'support'],
+    effects: [EffectType.HEAL],
     tags: ['water', 'common', 'healing'],
     flavor: 'Life flows where water goes.',
     lore: 'These mystical drops contain the essence of all natural springs and can restore vitality.',
