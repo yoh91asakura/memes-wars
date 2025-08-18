@@ -1,12 +1,30 @@
-import { UnifiedCard as Card } from '../models/unified/Card';
+import type { Card } from '../components/types';
 import { commonCards } from '../data/cards/common';
 import { uncommonCards } from '../data/cards/uncommon';
-import rareCardsData from '../data/cards/rare/rare-cards.json';
-import epicCardsData from '../data/cards/epic/epic-cards.json';
-import legendaryCardsData from '../data/cards/legendary/legendary-cards.json';
-import mythicCardsData from '../data/cards/mythic/mythic-cards.json';
-import cosmicCardsData from '../data/cards/cosmic/cosmic-cards.json';
-import rollConfig from '../../config/game/roll.config.json';
+import { rareCards } from '../data/cards/rare';
+import { epicCards } from '../data/cards/epic';
+import { legendaryCards } from '../data/cards/legendary';
+import { mythicCards } from '../data/cards/mythic';
+import { cosmicCards } from '../data/cards/cosmic';
+// Create a proper config object
+const rollConfig = {
+  dropRates: {
+    common: 0.65,
+    uncommon: 0.25,
+    rare: 0.07,
+    epic: 0.025,
+    legendary: 0.004,
+    mythic: 0.0009,
+    cosmic: 0.0001
+  },
+  pitySystem: {
+    guaranteedRareAt: 10,
+    guaranteedEpicAt: 30,
+    guaranteedLegendaryAt: 90,
+    guaranteedMythicAt: 200,
+    guaranteedCosmicAt: 500
+  }
+};
 import { v4 as uuidv4 } from 'uuid';
 
 export interface RollResult {
@@ -55,11 +73,11 @@ export class RollService {
     // Note: We normalize rarity values to lowercase for consistency
     this.allCards.set('common', this.normalizeCardRarities(commonCards));
     this.allCards.set('uncommon', this.normalizeCardRarities(uncommonCards));
-    this.allCards.set('rare', this.normalizeCardRarities(rareCardsData as Card[]));
-    this.allCards.set('epic', this.normalizeCardRarities(epicCardsData as Card[]));
-    this.allCards.set('legendary', this.normalizeCardRarities(legendaryCardsData as Card[]));
-    this.allCards.set('mythic', this.normalizeCardRarities(mythicCardsData as Card[]));
-    this.allCards.set('cosmic', this.normalizeCardRarities(cosmicCardsData as any));
+    this.allCards.set('rare', this.normalizeCardRarities(rareCards));
+    this.allCards.set('epic', this.normalizeCardRarities(epicCards));
+    this.allCards.set('legendary', this.normalizeCardRarities(legendaryCards));
+    this.allCards.set('mythic', this.normalizeCardRarities(mythicCards));
+    this.allCards.set('cosmic', this.normalizeCardRarities(cosmicCards));
   }
 
   /**
@@ -468,11 +486,11 @@ export class RollService {
    */
   getAvailableRarities(): string[] {
     const rarities: string[] = [];
-    for (const [rarity, cards] of this.allCards) {
+    this.allCards.forEach((cards, rarity) => {
       if (cards.length > 0) {
         rarities.push(rarity);
       }
-    }
+    });
     return rarities;
   }
 }

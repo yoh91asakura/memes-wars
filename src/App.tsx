@@ -1,54 +1,57 @@
 import { useState } from 'react';
-import { RollScreen } from './components/screens/RollScreen';
-import { CombatScreen } from './components/screens/CombatScreen';
-import { GameProvider } from './providers/GameProvider';
-import BackendIntegrationDemo from './components/demo/BackendIntegrationDemo';
+import { MainLayout } from './components/templates/MainLayout/MainLayout';
+import { RollPage } from './components/pages/RollPage/RollPage';
+import { Text } from './components/atoms';
 import './App.css';
 
-type Screen = 'roll' | 'combat' | 'demo';
+type Page = 'roll' | 'collection' | 'battle';
 
 function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('roll');
+  const [currentPage, setCurrentPage] = useState<Page>('roll');
 
-  const renderScreen = () => {
-    switch (currentScreen) {
+  const handleNavigate = (page: string) => {
+    setCurrentPage(page as Page);
+  };
+
+  const renderPage = () => {
+    switch (currentPage) {
       case 'roll':
-        return <RollScreen onNavigateToCombat={() => setCurrentScreen('combat')} />;
-      case 'combat':
-        return <CombatScreen onNavigateBack={() => setCurrentScreen('roll')} />;
-      case 'demo':
-        return <BackendIntegrationDemo />;
+        return <RollPage testId="roll-page" />;
+      case 'collection':
+        return (
+          <div className="page-placeholder">
+            <Text variant="h3" color="inherit" align="center">
+              📦 Card Collection
+            </Text>
+            <Text variant="body" color="muted" align="center">
+              View and manage your collected cards (Coming Soon)
+            </Text>
+          </div>
+        );
+      case 'battle':
+        return (
+          <div className="page-placeholder">
+            <Text variant="h3" color="inherit" align="center">
+              ⚔️ Battle Arena
+            </Text>
+            <Text variant="body" color="muted" align="center">
+              Epic meme card battles await! (Coming Soon)
+            </Text>
+          </div>
+        );
       default:
-        return <RollScreen onNavigateToCombat={() => setCurrentScreen('combat')} />;
+        return <RollPage testId="roll-page" />;
     }
   };
 
   return (
-    <GameProvider>
-      <div className="app">
-        <nav className="app-nav">
-          <button 
-            className={`nav-btn ${currentScreen === 'roll' ? 'active' : ''}`}
-            onClick={() => setCurrentScreen('roll')}
-          >
-            📦 Card Rolls
-          </button>
-          <button 
-            className={`nav-btn ${currentScreen === 'combat' ? 'active' : ''}`}
-            onClick={() => setCurrentScreen('combat')}
-          >
-            ⚔️ Battle Arena
-          </button>
-          <button 
-            className={`nav-btn ${currentScreen === 'demo' ? 'active' : ''}`}
-            onClick={() => setCurrentScreen('demo')}
-          >
-            🔗 Backend Demo
-          </button>
-        </nav>
-        {renderScreen()}
-      </div>
-    </GameProvider>
+    <MainLayout 
+      currentPage={currentPage}
+      onNavigate={handleNavigate}
+      testId="main-app"
+    >
+      {renderPage()}
+    </MainLayout>
   );
 }
 

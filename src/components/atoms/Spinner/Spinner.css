@@ -1,0 +1,94 @@
+/* Spinner Component Styles */
+
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.spinner__circle {
+  border-radius: 50%;
+  border-style: solid;
+  animation: spin 1s linear infinite;
+}
+
+/* Size variants */
+.spinner--sm .spinner__circle {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+}
+
+.spinner--md .spinner__circle {
+  width: 24px;
+  height: 24px;
+  border-width: 3px;
+}
+
+.spinner--lg .spinner__circle {
+  width: 32px;
+  height: 32px;
+  border-width: 4px;
+}
+
+/* Color variants */
+.spinner--primary .spinner__circle {
+  border-color: #667eea;
+  border-top-color: transparent;
+}
+
+.spinner--secondary .spinner__circle {
+  border-color: #6c757d;
+  border-top-color: transparent;
+}
+
+.spinner--white .spinner__circle {
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+}
+
+/* Spin animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Screen reader only text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .spinner__circle {
+    animation: none;
+  }
+  
+  /* Alternative animation for reduced motion users */
+  .spinner__circle {
+    opacity: 0.6;
+    animation: pulse 2s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}

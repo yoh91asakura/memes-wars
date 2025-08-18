@@ -1,0 +1,178 @@
+/* RollButton Molecule Styles */
+
+.roll-button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.roll-button__container {
+  position: relative;
+  z-index: 2;
+}
+
+.roll-button__btn {
+  min-width: 200px;
+  min-height: 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 3px solid #fff;
+  box-shadow: 
+    0 4px 15px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.roll-button__btn::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s ease;
+}
+
+.roll-button__btn:hover::before {
+  left: 100%;
+}
+
+.roll-button__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.roll-button__particles {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.roll-button__particle {
+  position: absolute;
+  font-size: 1.5rem;
+  pointer-events: none;
+}
+
+/* Pulsing glow effect when enabled */
+.roll-button__btn:not(:disabled):not(.btn--disabled) {
+  animation: roll-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes roll-glow {
+  from {
+    box-shadow: 
+      0 4px 15px rgba(102, 126, 234, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  to {
+    box-shadow: 
+      0 6px 20px rgba(102, 126, 234, 0.6),
+      0 0 30px rgba(102, 126, 234, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Enhanced states */
+.roll-button__btn:hover:not(:disabled):not(.btn--disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(102, 126, 234, 0.5),
+    0 0 30px rgba(102, 126, 234, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.roll-button__btn:active:not(:disabled):not(.btn--disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 10px rgba(102, 126, 234, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Disabled state */
+.roll-button__btn:disabled,
+.roll-button__btn.btn--disabled {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  animation: none;
+}
+
+/* Success state after roll */
+.roll-button--success .roll-button__btn {
+  background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+  animation: success-pulse 0.6s ease;
+}
+
+@keyframes success-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .roll-button__btn {
+    min-width: 180px;
+    min-height: 56px;
+  }
+  
+  .roll-button__particles {
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  
+  .roll-button__particle {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .roll-button__btn {
+    min-width: 160px;
+    min-height: 52px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .roll-button__btn {
+    animation: none;
+  }
+  
+  .roll-button__btn:hover:not(:disabled):not(.btn--disabled) {
+    transform: none;
+  }
+  
+  .roll-button__btn::before {
+    display: none;
+  }
+  
+  .roll-button__particles {
+    display: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .roll-button__btn {
+    border: 3px solid #000;
+    background: #0066cc;
+  }
+  
+  .roll-button__btn:disabled,
+  .roll-button__btn.btn--disabled {
+    background: #666;
+    border-color: #333;
+  }
+}

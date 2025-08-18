@@ -1,0 +1,142 @@
+/* SearchBox Molecule Styles */
+
+.search-box {
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-box__input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-box__icon {
+  position: absolute;
+  left: 0.75rem;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.search-box__input {
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
+}
+
+.search-box__clear {
+  position: absolute;
+  right: 0.25rem;
+  z-index: 2;
+}
+
+.search-box__clear-btn {
+  padding: 0.25rem !important;
+  min-height: 32px !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease;
+}
+
+.search-box__clear-btn:hover {
+  background: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+}
+
+.search-box__results-count {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  color: #6c757d;
+  opacity: 0;
+  animation: fade-in 0.3s ease forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Enhanced focus styles for accessibility */
+.search-box__input-wrapper:focus-within {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Loading state */
+.search-box--loading .search-box__icon {
+  animation: search-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes search-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Compact variant */
+.search-box--compact {
+  max-width: 300px;
+}
+
+.search-box--compact .search-box__input {
+  padding: 0.5rem 2rem 0.5rem 2.25rem !important;
+}
+
+.search-box--compact .search-box__icon {
+  left: 0.5rem;
+}
+
+.search-box--compact .search-box__clear {
+  right: 0.125rem;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .search-box {
+    max-width: 100%;
+  }
+  
+  .search-box__input {
+    font-size: 1rem; /* Prevent zoom on iOS */
+  }
+  
+  .search-box__results-count {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .search-box__results-count {
+    color: #a0aec0;
+  }
+  
+  .search-box__clear-btn:hover {
+    background: rgba(248, 113, 113, 0.2) !important;
+    color: #f87171 !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .search-box__input-wrapper:focus-within {
+    outline: 3px solid #0066cc;
+  }
+  
+  .search-box__clear-btn:hover {
+    background: #ff0000 !important;
+    color: white !important;
+  }
+}

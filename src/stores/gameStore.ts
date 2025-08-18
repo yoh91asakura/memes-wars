@@ -17,6 +17,10 @@ interface GameStore {
   collection: LegacyCard[];
   currentDeck: LegacyCard[];
   
+  // Game state
+  currentMatch: any | null;
+  gameState: any | null;
+  
   // Actions
   rollCard: () => Promise<LegacyCard>;
   spendCoins: (amount: number) => Promise<boolean>;
@@ -25,6 +29,10 @@ interface GameStore {
   addToDeck: (card: LegacyCard) => boolean;
   removeFromDeck: (cardId: string) => void;
   gainExperience: (amount: number) => void;
+  
+  // Socket integration methods
+  updateGameState: (data: any) => void;
+  startMatch: (data: any) => void;
   
   // Utilities
   reset: () => void;
@@ -42,6 +50,8 @@ export const useGameStore = create<GameStore>()(
       level: 1,
       collection: [],
       currentDeck: [],
+      currentMatch: null,
+      gameState: null,
       
       // Roll a new card
       rollCard: async () => {
@@ -146,6 +156,20 @@ export const useGameStore = create<GameStore>()(
         });
       },
       
+      // Update game state from socket
+      updateGameState: (data: any) => {
+        set(() => ({
+          gameState: data
+        }));
+      },
+      
+      // Start a match from socket
+      startMatch: (data: any) => {
+        set(() => ({
+          currentMatch: data
+        }));
+      },
+      
       // Reset game state
       reset: () => {
         set({
@@ -155,6 +179,8 @@ export const useGameStore = create<GameStore>()(
           level: 1,
           collection: [],
           currentDeck: [],
+          currentMatch: null,
+          gameState: null,
         });
       },
     }),
@@ -167,6 +193,8 @@ export const useGameStore = create<GameStore>()(
         level: state.level,
         collection: state.collection,
         currentDeck: state.currentDeck,
+        currentMatch: state.currentMatch,
+        gameState: state.gameState,
       }),
     }
   )

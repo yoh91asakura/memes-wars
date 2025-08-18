@@ -1,36 +1,16 @@
-import { UnifiedCard } from '../../models/unified/Card';
+import type { Card } from '../../components/types';
 
-// TODO: Migrate existing epic cards to unified model
-// This is a placeholder file created during card system migration
-
-export const epicCards: UnifiedCard[] = [
-  // TODO: Add migrated epic cards here
-  // Template for new cards:
-  /*
+export const epicCards: Card[] = [
   {
-    id: 'epic_example',
-    name: 'Example Epic Card',
-    description: 'Example card for epic rarity',
-    rarity: UnifiedRarity.EPIC,
-    type: CardType.CREATURE,
-    cost: 3,
-    attack: 3,
-    defense: 3,
-    hp: 30,
-    attackSpeed: 1.0,
-    emojis: createDefaultEmojis('🎴', UnifiedRarity.EPIC),
-    passive: createDefaultPassive(),
-    stackLevel: 0,
-    experience: 0,
-    luck: 10,
-    emoji: '🎴',
-    color: '#808080',
-    tags: ['epic', 'placeholder'],
+    id: 'epic-001',
+    name: 'Phoenix 🔥🐦',
+    description: 'A legendary phoenix rises from the ashes',
+    rarity: 'epic',
+    emoji: '🔥🐦',
     stats: {
-      attack: 3,
-      defense: 3,
-      health: 30,
-    },
+      attack: 8,
+      defense: 6,
+      health: 7
+    }
   }
-  */
 ];

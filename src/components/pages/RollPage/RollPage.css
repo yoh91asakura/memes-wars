@@ -1,0 +1,70 @@
+/* RollPage Styles */
+
+.roll-page {
+  width: 100%;
+  min-height: 100%;
+}
+
+.roll-page__roll-section {
+  margin-bottom: 3rem;
+}
+
+.roll-page__recent-section {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.roll-page__section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.roll-page__recent-cards {
+  padding: 0;
+}
+
+.roll-page__empty-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+}
+
+.roll-page__empty-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 400px;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .roll-page__recent-section {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .roll-page__section-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .roll-page__empty-content {
+    padding: 1.5rem;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .roll-page__recent-section {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .roll-page__empty-section {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}

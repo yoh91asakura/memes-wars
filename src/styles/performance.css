@@ -1,0 +1,326 @@
+/* =================
+   PERFORMANCE OPTIMIZATIONS
+   ================= */
+
+@import url('./variables.css');
+
+/* === GPU ACCELERATION === */
+/* Force GPU acceleration for frequently animated elements */
+.gpu-accelerated,
+.enhanced-card-reveal,
+.main-roll-button,
+.particle,
+.coin-emoji,
+.pity-fill,
+.history-item {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Remove will-change after animations complete */
+.animation-complete {
+  will-change: auto;
+}
+
+/* === CRITICAL RENDERING OPTIMIZATIONS === */
+
+/* Contain layout changes to specific elements */
+.roll-history {
+  contain: layout style paint;
+}
+
+.pity-tracker {
+  contain: layout style paint;
+}
+
+.particle-container {
+  contain: layout style paint;
+  pointer-events: none; /* Improve click performance */
+}
+
+/* === LAYER PROMOTION === */
+/* Promote elements that need frequent repaints to their own layers */
+.enhanced-card-reveal,
+.particle-container,
+.main-roll-button {
+  isolation: isolate;
+  transform: translateZ(0);
+}
+
+/* === ANIMATION OPTIMIZATIONS === */
+
+/* Use transform and opacity for smooth animations */
+@keyframes optimizedFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateZ(0);
+  }
+}
+
+@keyframes optimizedScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+@keyframes optimizedSlideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateZ(0);
+  }
+}
+
+@keyframes optimizedSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateZ(0);
+  }
+}
+
+/* Optimize spinner rotation */
+@keyframes optimizedSpin {
+  from {
+    transform: rotate(0deg) translateZ(0);
+  }
+  to {
+    transform: rotate(360deg) translateZ(0);
+  }
+}
+
+/* === PERFORMANCE HINTS === */
+
+/* Improve scroll performance */
+.history-list {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* iOS momentum scrolling */
+  overscroll-behavior: contain; /* Prevent scroll chaining */
+}
+
+/* Optimize images and backgrounds */
+.enhanced-roll-screen {
+  image-rendering: optimizeSpeed;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* === REDUCE LAYOUT THRASHING === */
+
+/* Use flexbox efficiently */
+.roll-header,
+.coin-counter,
+.pity-label {
+  display: flex;
+  align-items: center;
+}
+
+/* Avoid expensive CSS properties during animations */
+.animating {
+  pointer-events: none; /* Disable interactions during animations */
+}
+
+.animating * {
+  box-shadow: none !important; /* Remove expensive shadows during animations */
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+/* === CRITICAL CONTENT LOADING === */
+
+/* Prioritize above-the-fold content */
+.roll-header,
+.coin-counter,
+.main-roll-button {
+  content-visibility: visible;
+}
+
+/* Defer non-critical content */
+.roll-history,
+.pity-tracker {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px 400px;
+}
+
+/* === INTERSECTION OBSERVER OPTIMIZATIONS === */
+
+/* Elements that can be lazy-loaded */
+.history-item:nth-child(n+6) {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 60px;
+}
+
+/* === FONT LOADING OPTIMIZATIONS === */
+
+/* Use font-display for better loading performance */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap; /* Swap with fallback font immediately */
+  src: local('Inter'), local('Inter-Regular');
+}
+
+/* === MEMORY MANAGEMENT === */
+
+/* Remove unused CSS animations on lower-end devices */
+@media (max-width: 480px), (prefers-reduced-motion: reduce) {
+  /* Simplify animations for better performance */
+  .particle-container {
+    display: none !important; /* Remove particles on mobile */
+  }
+  
+  .enhanced-card-reveal {
+    animation: optimizedFadeIn 0.3s ease-out;
+  }
+  
+  .history-item {
+    animation: optimizedFadeIn 0.2s ease-out;
+  }
+  
+  /* Remove expensive visual effects */
+  .cosmic-glow,
+  .mythic-glow,
+  .legendary-shine,
+  .epic-glow {
+    animation: none !important;
+    box-shadow: var(--shadow-md) !important;
+  }
+}
+
+/* === BATTERY OPTIMIZATION === */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all animations for battery saving */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Keep essential animations but make them instant */
+  .main-roll-button {
+    transition: transform 0.1s ease !important;
+  }
+}
+
+/* === NETWORK OPTIMIZATION === */
+
+/* Preload critical fonts */
+.font-preload-hint::before {
+  content: '';
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-normal);
+  font-weight: var(--font-weight-bold);
+  position: absolute;
+  left: -9999px;
+  visibility: hidden;
+}
+
+/* === VIEWPORT OPTIMIZATIONS === */
+
+/* Use efficient viewport units */
+.enhanced-roll-screen {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height */
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* === CRITICAL CSS RULES === */
+
+/* Inline critical styles for immediate rendering */
+.critical-above-fold {
+  /* Critical styles that should be inlined */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+}
+
+/* === LOADING PERFORMANCE === */
+
+/* Skeleton screens for better perceived performance */
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    var(--color-surface) 0%, 
+    var(--color-surface-light) 50%, 
+    var(--color-surface) 100%);
+  background-size: 200% 100%;
+  animation: optimizedShimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes optimizedShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* === HIGH REFRESH RATE OPTIMIZATIONS === */
+@media (min-resolution: 120dpi) {
+  /* Optimize for high refresh rate displays */
+  .main-roll-button {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .particle {
+    animation-timing-function: linear;
+  }
+}
+
+/* === TOUCH OPTIMIZATIONS === */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch device optimizations */
+  .main-roll-button,
+  .auto-roll-toggle-discrete,
+  .battle-nav-button {
+    /* Larger touch targets */
+    min-width: 44px;
+    min-height: 44px;
+    
+    /* Better touch feedback */
+    transition: transform 0.1s ease, background-color 0.1s ease;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .main-roll-button:hover,
+  .auto-roll-toggle-discrete:hover,
+  .battle-nav-button:hover {
+    transform: none !important;
+  }
+}
+
+/* === PRINT OPTIMIZATIONS === */
+@media print {
+  /* Remove all animations and transitions for printing */
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  /* Hide non-essential elements */
+  .particle-container,
+  .main-roll-button,
+  .dev-add-coins,
+  .dev-test-cards {
+    display: none !important;
+  }
+}

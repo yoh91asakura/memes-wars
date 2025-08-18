@@ -1,8 +1,34 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { RollService, RollResult, RollStats, MultiRollResult } from '../services/RollService';
-import { UnifiedCard as Card } from '../models/unified/Card';
-import rollConfig from '../../config/game/roll.config.json';
+import type { Card } from '../components/types';
+
+// Roll configuration
+const rollConfig = {
+  rollCosts: {
+    single: 100,
+    ten: 900,
+    hundred: 8000
+  },
+  achievementTriggers: {
+    rollCounts: [1, 10, 50, 100, 500, 1000, 5000],
+    collectionMilestones: [10, 25, 50, 100, 200, 300, 400],
+    rarityCollected: {
+      firstRare: 1000,
+      firstEpic: 5000,
+      firstLegendary: 15000,
+      firstMythic: 50000,
+      firstCosmic: 100000
+    }
+  },
+  pitySystem: {
+    guaranteedRareAt: 10,
+    guaranteedEpicAt: 30,
+    guaranteedLegendaryAt: 90,
+    guaranteedMythicAt: 200,
+    guaranteedCosmicAt: 500
+  }
+};
 
 interface RollHistory {
   id: string;
