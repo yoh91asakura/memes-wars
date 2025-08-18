@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UnifiedCard } from '../../../models/unified/Card';
 import { convertUnifiedCardToLegacy, rarityEnumToString } from '../../../utils/typeConversions';
+import { usePlayerStore } from '../../../stores/playerStore';
+import { useCardsStore } from '../../../stores/cardsStore';
 import { RollButton } from '../../molecules/RollButton/RollButton';
 import { Card } from '../../molecules/Card/Card';
 import { Text } from '../../atoms/Text';
@@ -11,25 +13,21 @@ import './RollPanel.css';
 
 interface RollPanelProps {
   onRoll?: () => Promise<UnifiedCard>;
-  rollCount?: number;
-  isRolling?: boolean;
-  lastRolledCard?: UnifiedCard | null;
-  coins?: number;
   className?: string;
   testId?: string;
 }
 
 export const RollPanel: React.FC<RollPanelProps> = ({
   onRoll,
-  rollCount = 0,
-  isRolling = false,
-  lastRolledCard,
-  coins = 0,
   className = '',
   testId,
 }) => {
   const [revealCard, setRevealCard] = useState<UnifiedCard | null>(null);
   const [showReveal, setShowReveal] = useState(false);
+  
+  // Store hooks
+  const { coins, stats } = usePlayerStore();
+  const { isRolling, lastRollResult } = useCardsStore();
 
   const handleRoll = async () => {
     if (!onRoll || isRolling) return;

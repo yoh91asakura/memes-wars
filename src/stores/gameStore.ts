@@ -1,201 +1,325 @@
+// Game Store - Manages game sessions, matches, and game-specific state
+// Focused only on active game state, separated from player progression
+
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { CardService } from '../services/CardService';
-import gameConfig from '../../config/game/game.config.json';
+import { UnifiedCard } from '../models/unified/Card';
+import { createStoreMiddleware } from './middleware';
 
-// Legacy card type for compatibility with existing stores
-type LegacyCard = any;
+export interface Deck {
+  id: string;
+  name: string;
+  cards: UnifiedCard[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-interface GameStore {
-  // Player state
-  coins: number;
-  gems: number;
-  experience: number;
-  level: number;
+export interface GameMatch {
+  id: string;
+  type: 'pvp' | 'pve' | 'practice';
+  status: 'waiting' | 'active' | 'completed' | 'disconnected';
+  players: {
+    id: string;
+    username: string;
+    deck: Deck;
+    health: number;
+    maxHealth: number;
+  }[];
+  startTime?: string;
+  endTime?: string;
+  winner?: string;
+}
+
+export interface GameStore {
+  // Current Game Session
+  currentMatch: GameMatch | null;
+  isInGame: boolean;
+  isConnected: boolean;
   
-  // Collection
-  collection: LegacyCard[];
-  currentDeck: LegacyCard[];
+  // Deck Management
+  decks: Deck[];
+  activeDeck: Deck | null;
+  maxDeckSize: number;
+  minDeckSize: number;
   
-  // Game state
-  currentMatch: any | null;
-  gameState: any | null;
+  // Game Settings
+  settings: {
+    soundEnabled: boolean;
+    musicEnabled: boolean;
+    effectsEnabled: boolean;
+    autoSave: boolean;
+    difficulty: 'easy' | 'normal' | 'hard';
+  };
   
-  // Actions
-  rollCard: () => Promise<LegacyCard>;
-  spendCoins: (amount: number) => Promise<boolean>;
-  spendGems: (amount: number) => Promise<boolean>;
-  addToCollection: (card: LegacyCard) => void;
-  addToDeck: (card: LegacyCard) => boolean;
-  removeFromDeck: (cardId: string) => void;
-  gainExperience: (amount: number) => void;
+  // Match Actions
+  startMatch: (matchData: Partial<GameMatch>) => void;
+  endMatch: (result: { winner?: string; reason?: string }) => void;
+  updateMatchStatus: (status: GameMatch['status']) => void;
+  updatePlayerHealth: (playerId: string, health: number) => void;
   
-  // Socket integration methods
-  updateGameState: (data: any) => void;
-  startMatch: (data: any) => void;
+  // Deck Actions
+  createDeck: (name: string, cards?: UnifiedCard[]) => Deck;
+  updateDeck: (deckId: string, updates: Partial<Deck>) => void;
+  deleteDeck: (deckId: string) => void;
+  setActiveDeck: (deckId: string) => void;
+  addCardToDeck: (deckId: string, card: UnifiedCard) => boolean;
+  removeCardFromDeck: (deckId: string, cardId: string) => void;
+  duplicateDeck: (deckId: string, newName: string) => Deck;
+  
+  // Settings Actions
+  updateSettings: (newSettings: Partial<GameStore['settings']>) => void;
+  
+  // Connection Actions
+  setConnectionStatus: (connected: boolean) => void;
+  
+  // Computed Getters
+  getValidDecks: () => Deck[];
+  getDeckById: (deckId: string) => Deck | undefined;
+  canAddCardToDeck: (deckId: string, card: UnifiedCard) => boolean;
   
   // Utilities
   reset: () => void;
+  resetGameSession: () => void;
 }
 
-const cardService = new CardService();
+const middleware = createStoreMiddleware('game', {
+  enableLogger: true,
+  enableDebugger: true,
+  enablePersistence: false // Game sessions shouldn't persist across browser sessions
+});
 
 export const useGameStore = create<GameStore>()(
-  persist(
-    (set, get) => ({
-      // Initial state
-      coins: gameConfig.game.startingCoins || 1000,
-      gems: gameConfig.game.startingGems || 10,
-      experience: 0,
-      level: 1,
-      collection: [],
-      currentDeck: [],
-      currentMatch: null,
-      gameState: null,
-      
-      // Roll a new card
-      rollCard: async () => {
-        const state = get();
-        if (state.coins < gameConfig.game.rollCost) {
-          throw new Error('Not enough coins');
-        }
+  middleware.debugger ? middleware.debugger(
+    middleware.logger ? middleware.logger(
+      (set, get) => ({
+        // Initial state
+        currentMatch: null,
+        isInGame: false,
+        isConnected: false,
+        decks: [],
+        activeDeck: null,
+        maxDeckSize: 30,
+        minDeckSize: 15,
+        settings: {
+          soundEnabled: true,
+          musicEnabled: true,
+          effectsEnabled: true,
+          autoSave: true,
+          difficulty: 'normal'
+        },
         
-        // Generate a new card
-        const newCard = await cardService.generateCard();
+        // Match Actions
+        startMatch: (matchData: Partial<GameMatch>) => {
+          const newMatch: GameMatch = {
+            id: `match-${Date.now()}`,
+            type: 'practice',
+            status: 'waiting',
+            players: [],
+            startTime: new Date().toISOString(),
+            ...matchData
+          };
+          
+          set({
+            currentMatch: newMatch,
+            isInGame: true
+          });
+        },
         
-        // Add to collection (simplified - no stacking for simple cards)
-        set(state => ({
-          collection: [...state.collection, newCard]
-        }));
+        endMatch: (result: { winner?: string; reason?: string }) => {
+          const state = get();
+          if (state.currentMatch) {
+            set({
+              currentMatch: {
+                ...state.currentMatch,
+                status: 'completed',
+                endTime: new Date().toISOString(),
+                winner: result.winner
+              },
+              isInGame: false
+            });
+          }
+        },
         
-        return newCard;
-      },
-      
-      // Spend coins
-      spendCoins: async (amount: number) => {
-        const state = get();
-        if (state.coins < amount) {
-          return false;
-        }
+        updateMatchStatus: (status: GameMatch['status']) => {
+          const state = get();
+          if (state.currentMatch) {
+            set({
+              currentMatch: {
+                ...state.currentMatch,
+                status
+              }
+            });
+          }
+        },
         
-        set(state => ({
-          coins: state.coins - amount
-        }));
+        updatePlayerHealth: (playerId: string, health: number) => {
+          const state = get();
+          if (state.currentMatch) {
+            const updatedPlayers = state.currentMatch.players.map(player =>
+              player.id === playerId ? { ...player, health } : player
+            );
+            
+            set({
+              currentMatch: {
+                ...state.currentMatch,
+                players: updatedPlayers
+              }
+            });
+          }
+        },
         
-        return true;
-      },
-      
-      // Spend gems
-      spendGems: async (amount: number) => {
-        const state = get();
-        if (state.gems < amount) {
-          return false;
-        }
+        // Deck Actions
+        createDeck: (name: string, cards: UnifiedCard[] = []) => {
+          const newDeck: Deck = {
+            id: `deck-${Date.now()}`,
+            name,
+            cards,
+            isActive: false,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          const state = get();
+          set({
+            decks: [...state.decks, newDeck],
+            activeDeck: state.decks.length === 0 ? newDeck : state.activeDeck
+          });
+          
+          return newDeck;
+        },
         
-        set(state => ({
-          gems: state.gems - amount
-        }));
-        
-        return true;
-      },
-      
-      // Add card to collection
-      addToCollection: (card: LegacyCard) => {
-        set(state => ({
-          collection: [...state.collection, card]
-        }));
-      },
-      
-      // Add card to deck
-      addToDeck: (card: LegacyCard) => {
-        const state = get();
-        if (state.currentDeck.length >= gameConfig.game.maxDeckSize) {
-          return false;
-        }
-        
-        // Check if card is already in deck
-        if (state.currentDeck.find(c => c.id === card.id)) {
-          return false;
-        }
-        
-        set(state => ({
-          currentDeck: [...state.currentDeck, card]
-        }));
-        
-        return true;
-      },
-      
-      // Remove card from deck
-      removeFromDeck: (cardId: string) => {
-        set(state => ({
-          currentDeck: state.currentDeck.filter(c => c.id !== cardId)
-        }));
-      },
-      
-      // Gain experience
-      gainExperience: (amount: number) => {
-        set(state => {
-          const newExp = state.experience + amount;
-          const expNeeded = Math.floor(
-            gameConfig.progression.experienceFormula.base * 
-            Math.pow(state.level, gameConfig.progression.experienceFormula.multiplier)
+        updateDeck: (deckId: string, updates: Partial<Deck>) => {
+          const state = get();
+          const updatedDecks = state.decks.map(deck =>
+            deck.id === deckId
+              ? { ...deck, ...updates, updatedAt: new Date().toISOString() }
+              : deck
           );
           
-          if (newExp >= expNeeded) {
-            // Level up!
-            return {
-              experience: newExp - expNeeded,
-              level: state.level + 1,
-              coins: state.coins + 500, // Bonus coins on level up
-            };
+          set({
+            decks: updatedDecks,
+            activeDeck: state.activeDeck?.id === deckId
+              ? { ...state.activeDeck, ...updates, updatedAt: new Date().toISOString() }
+              : state.activeDeck
+          });
+        },
+        
+        deleteDeck: (deckId: string) => {
+          const state = get();
+          const updatedDecks = state.decks.filter(deck => deck.id !== deckId);
+          
+          set({
+            decks: updatedDecks,
+            activeDeck: state.activeDeck?.id === deckId
+              ? (updatedDecks.length > 0 ? updatedDecks[0] : null)
+              : state.activeDeck
+          });
+        },
+        
+        setActiveDeck: (deckId: string) => {
+          const state = get();
+          const deck = state.decks.find(d => d.id === deckId);
+          if (deck) {
+            set({ activeDeck: deck });
+          }
+        },
+        
+        addCardToDeck: (deckId: string, card: UnifiedCard) => {
+          const state = get();
+          const deck = state.decks.find(d => d.id === deckId);
+          
+          if (!deck || deck.cards.length >= state.maxDeckSize) {
+            return false;
           }
           
-          return {
-            experience: newExp
+          const updatedDeck = {
+            ...deck,
+            cards: [...deck.cards, card],
+            updatedAt: new Date().toISOString()
           };
-        });
-      },
-      
-      // Update game state from socket
-      updateGameState: (data: any) => {
-        set(() => ({
-          gameState: data
-        }));
-      },
-      
-      // Start a match from socket
-      startMatch: (data: any) => {
-        set(() => ({
-          currentMatch: data
-        }));
-      },
-      
-      // Reset game state
-      reset: () => {
-        set({
-          coins: gameConfig.game.startingCoins || 1000,
-          gems: gameConfig.game.startingGems || 10,
-          experience: 0,
-          level: 1,
-          collection: [],
-          currentDeck: [],
-          currentMatch: null,
-          gameState: null,
-        });
-      },
-    }),
-    {
-      name: 'emoji-mayhem-game-state',
-      partialize: (state) => ({
-        coins: state.coins,
-        gems: state.gems,
-        experience: state.experience,
-        level: state.level,
-        collection: state.collection,
-        currentDeck: state.currentDeck,
-        currentMatch: state.currentMatch,
-        gameState: state.gameState,
-      }),
-    }
-  )
+          
+          get().updateDeck(deckId, updatedDeck);
+          return true;
+        },
+        
+        removeCardFromDeck: (deckId: string, cardId: string) => {
+          const state = get();
+          const deck = state.decks.find(d => d.id === deckId);
+          
+          if (deck) {
+            const updatedCards = deck.cards.filter(card => card.id !== cardId);
+            get().updateDeck(deckId, { cards: updatedCards });
+          }
+        },
+        
+        duplicateDeck: (deckId: string, newName: string) => {
+          const state = get();
+          const originalDeck = state.decks.find(d => d.id === deckId);
+          
+          if (originalDeck) {
+            return get().createDeck(newName, [...originalDeck.cards]);
+          }
+          
+          return get().createDeck(newName);
+        },
+        
+        // Settings Actions
+        updateSettings: (newSettings: Partial<GameStore['settings']>) => {
+          const state = get();
+          set({
+            settings: { ...state.settings, ...newSettings }
+          });
+        },
+        
+        // Connection Actions
+        setConnectionStatus: (connected: boolean) => {
+          set({ isConnected: connected });
+        },
+        
+        // Computed Getters
+        getValidDecks: () => {
+          const state = get();
+          return state.decks.filter(deck =>
+            deck.cards.length >= state.minDeckSize && deck.cards.length <= state.maxDeckSize
+          );
+        },
+        
+        getDeckById: (deckId: string) => {
+          const state = get();
+          return state.decks.find(deck => deck.id === deckId);
+        },
+        
+        canAddCardToDeck: (deckId: string, card: UnifiedCard) => {
+          const state = get();
+          const deck = state.decks.find(d => d.id === deckId);
+          return deck ? deck.cards.length < state.maxDeckSize : false;
+        },
+        
+        // Utilities
+        reset: () => {
+          set({
+            currentMatch: null,
+            isInGame: false,
+            isConnected: false,
+            decks: [],
+            activeDeck: null,
+            settings: {
+              soundEnabled: true,
+              musicEnabled: true,
+              effectsEnabled: true,
+              autoSave: true,
+              difficulty: 'normal'
+            }
+          });
+        },
+        
+        resetGameSession: () => {
+          set({
+            currentMatch: null,
+            isInGame: false
+          });
+        }
+      })
+    ) : (set, get) => ({}) // Fallback if logger is disabled
+  ) : (set, get) => ({}) // Fallback if debugger is disabled
 );

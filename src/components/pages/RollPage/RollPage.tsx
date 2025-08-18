@@ -5,9 +5,8 @@ import { Card } from '../../../components/types';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
 import { Text } from '../../atoms/Text';
-import { useRollStore } from '../../../stores/rollStore';
-import { useCollectionStore } from '../../../stores/collectionStore';
-import { useGameStore } from '../../../stores/gameStore';
+import { useCardsStore } from '../../../stores/cardsStore';
+import { usePlayerStore } from '../../../stores/playerStore';
 import './RollPage.css';
 
 interface RollPageProps {
@@ -23,10 +22,9 @@ export const RollPage: React.FC<RollPageProps> = ({
   const [rolledCards, setRolledCards] = useState<UnifiedCard[]>([]);
   const [lastRolledCard, setLastRolledCard] = useState<UnifiedCard | null>(null);
   
-  // Store hooks
-  const { performSingleRoll, isRolling, stats } = useRollStore();
-  const { addCard } = useCollectionStore();
-  const { coins, spendCoins } = useGameStore();
+  // Store hooks - using new consolidated stores
+  const { performSingleRoll, isRolling, getFilteredCards } = useCardsStore();
+  const { coins, spendCoins, stats } = usePlayerStore();
 
   const handleRoll = useCallback(async (): Promise<UnifiedCard> => {
     try {
@@ -41,10 +39,7 @@ export const RollPage: React.FC<RollPageProps> = ({
       const rollResult = await performSingleRoll();
       const newCard = rollResult.card;
       
-      // Add card to collection
-      addCard(newCard);
-      
-      // Update local state for display
+      // Update local state for display (card is automatically added to collection by cardsStore)
       setRolledCards(prev => [newCard, ...prev]);
       setLastRolledCard(newCard);
       
@@ -53,7 +48,7 @@ export const RollPage: React.FC<RollPageProps> = ({
       console.error('Roll failed:', error);
       throw error;
     }
-  }, [performSingleRoll, addCard, spendCoins]);
+  }, [performSingleRoll, spendCoins]);
 
   const handleCardClick = (_card: Card) => {
     // Card clicked - could open modal or navigate to details
@@ -66,10 +61,6 @@ export const RollPage: React.FC<RollPageProps> = ({
       <section className="roll-page__roll-section">
         <RollPanel
           onRoll={handleRoll}
-          rollCount={stats.totalRolls}
-          isRolling={isRolling}
-          lastRolledCard={lastRolledCard}
-          coins={coins}
         />
       </section>
 
