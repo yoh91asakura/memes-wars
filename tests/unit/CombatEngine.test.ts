@@ -242,9 +242,10 @@ describe('CombatEngine', () => {
 
     it('should handle cards without emojis', () => {
       const emptyCard: Card = {
-        ...mockCard
+        ...mockCard,
+        emojis: [], // Explicitly empty emojis array
+        emoji: undefined // No primary emoji
       };
-      delete (emptyCard as any).emoji;
       
       const entity = engine.createEntityFromCard(emptyCard, 'empty', 100, 200, true);
       expect(entity.emojis).toEqual([]);

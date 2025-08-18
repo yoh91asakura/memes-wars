@@ -15,6 +15,10 @@ export enum CardType {
   CREATURE = 'CREATURE',
   SPELL = 'SPELL',
   ARTIFACT = 'ARTIFACT',
+  ATTACK = 'ATTACK',
+  DEFENSE = 'DEFENSE',
+  HEALING = 'HEALING',
+  SUPPORT = 'SUPPORT',
 }
 
 // Alias pour la compatibilité
@@ -24,26 +28,26 @@ export { CardType as Type };
 export interface Card {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   emoji: string;
   rarity: CardRarity;
   type: CardType;
   cost: number;
   attack: number;
   defense: number;
-  health: number;
-  attackSpeed: number;
-  color: string;
-  effects: string[];
-  tags: string[];
+  health?: number;
+  attackSpeed?: number;
+  color?: string;
+  effects?: string[];
+  tags?: string[];
   flavor?: string;
   lore?: string;
-  craftable: boolean;
+  craftable?: boolean;
   craftCost?: number;
-  isActive: boolean;
-  releaseDate: string;
-  createdAt: string;
-  updatedAt: string;
+  isActive?: boolean;
+  releaseDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
   
   // Fields pour la compatibilité avec l'ancien système
   damage?: number;

@@ -1,19 +1,19 @@
-import { Card } from '../../card';
+import { Card, CardRarity, CardType } from '../../Card';
 
 export interface CommonCard extends Card {
-  rarity: 'common';
+  rarity: CardRarity.COMMON;
   cost: 1 | 2;
 }
 
 export interface CommonCreature extends CommonCard {
-  type: 'creature';
+  type: CardType.CREATURE;
   attack: 1 | 2 | 3;
   defense: 1 | 2 | 3 | 4;
   health: 1 | 2 | 3 | 4;
 }
 
 export interface CommonSpell extends CommonCard {
-  type: 'spell';
+  type: CardType.SPELL;
   attack: 0;
   defense: 0;
   health: 0;
@@ -39,8 +39,8 @@ export interface CommonCardData {
   id: string;
   name: string;
   emoji: string;
-  rarity: 'common';
-  type: 'creature' | 'spell';
+  rarity: CardRarity.COMMON;
+  type: CardType.CREATURE | CardType.SPELL;
   cost: number;
   attack: number;
   defense: number;

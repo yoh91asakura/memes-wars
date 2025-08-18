@@ -1,11 +1,11 @@
 import { UnifiedCard as Card } from '../models/unified/Card';
 import { commonCards } from '../data/cards/common';
 import { uncommonCards } from '../data/cards/uncommon';
-import { rareCards } from '../data/cards/rare';
-import { epicCards } from '../data/cards/epic';
-import { legendaryCards } from '../data/cards/legendary';
-import { mythicCards } from '../data/cards/mythic';
-import { cosmicCards } from '../data/cards/cosmic';
+import rareCardsData from '../data/cards/rare/rare-cards.json';
+import epicCardsData from '../data/cards/epic/epic-cards.json';
+import legendaryCardsData from '../data/cards/legendary/legendary-cards.json';
+import mythicCardsData from '../data/cards/mythic/mythic-cards.json';
+import cosmicCardsData from '../data/cards/cosmic/cosmic-cards.json';
 import rollConfig from '../../config/game/roll.config.json';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -52,13 +52,24 @@ export class RollService {
 
   private initializeCardDatabase(): void {
     // Initialize with all available cards
-    this.allCards.set('common', commonCards);
-    this.allCards.set('uncommon', uncommonCards);
-    this.allCards.set('rare', rareCards);
-    this.allCards.set('epic', epicCards);
-    this.allCards.set('legendary', legendaryCards);
-    this.allCards.set('mythic', mythicCards);
-    this.allCards.set('cosmic', cosmicCards);
+    // Note: We normalize rarity values to lowercase for consistency
+    this.allCards.set('common', this.normalizeCardRarities(commonCards));
+    this.allCards.set('uncommon', this.normalizeCardRarities(uncommonCards));
+    this.allCards.set('rare', this.normalizeCardRarities(rareCardsData as Card[]));
+    this.allCards.set('epic', this.normalizeCardRarities(epicCardsData as Card[]));
+    this.allCards.set('legendary', this.normalizeCardRarities(legendaryCardsData as Card[]));
+    this.allCards.set('mythic', this.normalizeCardRarities(mythicCardsData as Card[]));
+    this.allCards.set('cosmic', this.normalizeCardRarities(cosmicCardsData as any));
+  }
+
+  /**
+   * Normalize card rarities to lowercase for consistency
+   */
+  private normalizeCardRarities(cards: Card[]): Card[] {
+    return cards.map(card => ({
+      ...card,
+      rarity: card.rarity.toLowerCase() as any
+    }));
   }
 
   /**

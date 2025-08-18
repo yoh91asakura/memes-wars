@@ -155,6 +155,10 @@ describe('RollService', () => {
     it('should return all available rarities', () => {
       const rarities = rollService.getAvailableRarities();
       
+      // Debug: Log what rarities are actually available
+      console.log('Available rarities:', rarities);
+      console.log('Uncommon card test:', rollService.getRandomCardOfRarity('common'));
+      
       expect(rarities).toContain('common');
       expect(rarities).toContain('uncommon');
       expect(rarities).toContain('rare');

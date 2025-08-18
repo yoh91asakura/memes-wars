@@ -1,1 +1,3 @@
-export * from './mythic-cards.json';
+import mythicCardsData from './mythic-cards.json';
+export default mythicCardsData;
+export { mythicCardsData };

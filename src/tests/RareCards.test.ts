@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import rareCards from '../data/cards/rare/rare-cards.json';
-import { CardType } from '../types/card';
 
 describe('Rare Cards', () => {
   it('should have exactly 10 rare cards', () => {
@@ -37,7 +36,7 @@ describe('Rare Cards', () => {
   });
 
   it('should have valid card types', () => {
-    const validTypes: CardType[] = ['creature', 'spell', 'attack', 'defense', 'healing', 'support'];
+    const validTypes: string[] = ['creature', 'spell', 'attack', 'defense', 'healing', 'support'];
     rareCards.forEach(card => {
       expect(validTypes).toContain(card.type);
     });

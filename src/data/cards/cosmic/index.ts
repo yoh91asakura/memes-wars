@@ -1,1 +1,3 @@
-export * from './cosmic-cards.json';
+import cosmicCardsData from './cosmic-cards.json';
+export default cosmicCardsData;
+export { cosmicCardsData };

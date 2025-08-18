@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { useCards, useCardRoll, useCardStats } from '../../hooks/useCards';
-import { CardRarity, CardType } from '../../types/Card';
+import { CardRarity } from '../../types/Card';
 import './BackendIntegrationDemo.css';
 
 const BackendIntegrationDemo: React.FC = () => {
@@ -240,7 +240,7 @@ const BackendIntegrationDemo: React.FC = () => {
                     <span>❤️ {card.health}</span>
                   </div>
                   <div className="card-rarity">{card.rarity}</div>
-                  {card.flavor && <div className="card-flavor">"{card.flavor}"</div>}
+                  {card.flavor && <div className="card-flavor">&ldquo;{card.flavor}&rdquo;</div>}
                 </div>
               ))}
             </div>

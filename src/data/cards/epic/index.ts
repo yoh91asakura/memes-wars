@@ -1,1 +1,3 @@
-export * from './epic-cards.json';
+import epicCardsData from './epic-cards.json';
+export default epicCardsData;
+export { epicCardsData };

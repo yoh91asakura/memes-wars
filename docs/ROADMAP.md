@@ -56,7 +56,7 @@ src/
 └── sw.js                  # Service worker
 ```
 
-### Backend Architecture (Future)
+### Backend Architecture (✅ IMPLEMENTED)
 ```
 server/
 ├── api/                   # API layer
@@ -79,27 +79,33 @@ server/
 
 ## 📈 Phases de Développement
 
-### ⚫ Phase 0: OPTIMISATION & REFACTOR (Sprint 1) 🚀 EN COURS
-**Objectif**: Solidifier la base de code, aligner sur l'architecture cible et résoudre la dette technique critique.
+### ⚫ Phase 0: BACKEND & INTEGRATION (Sprint 1) ✅ COMPLETED
+**Objectif**: Créer un backend complet et intégrer frontend-backend.
 
-- [ ] **CRITICAL** [TASK-100] Refactoriser la structure des composants (Atomic Design)
-- [ ] **CRITICAL** [TASK-101] Granulariser la gestion de l'état (Zustand)
-- [ ] **CRITICAL** [TASK-102] Extraire la logique dans des Hooks personnalisés
-- [ ] **CRITICAL** [TASK-103] Renforcer la sécurité de typage (Éliminer les `any`)
-- [ ] **CRITICAL** [TASK-104] Solidifier et réparer la suite de tests
+- [x] **CRITICAL** [TASK-105] Setup Node.js/Express API Server
+- [x] **CRITICAL** [TASK-107] Connect Frontend to Backend API
+- [x] **CRITICAL** [TASK-108] Database Setup & Card Seeding
+- [x] **HIGH** Real-time Card Roll System Implementation
+- [x] **HIGH** PostgreSQL + Redis Integration
+- [x] **HIGH** TypeScript Backend with Zero Errors
+- [x] **MEDIUM** WebSocket Support for Multiplayer Features
+- [x] **MEDIUM** Comprehensive API Testing
+- [ ] **HIGH** [TASK-102] Extract Logic into Custom Hooks (Frontend)
+- [ ] **HIGH** [TASK-103] Strengthen Type Safety (Eliminate `any`)
 
-**Livrable**: Une base de code propre, testée, et prête pour le développement de nouvelles fonctionnalités.
+**Livrable**: Backend MVP complet avec intégration frontend fonctionnelle.
 
-### 🔵 Phase 1: Foundation (Sprint 2-3)
-**Objectif**: Stabiliser la base technique et unifier l'architecture
+### 🔵 Phase 1: Frontend Unification (Sprint 2)
+**Objectif**: Unifier les modèles de données et stabiliser le frontend
 
-#### Semaine 1-2: Refactoring Core
+#### Semaine 1-2: Type System Unification
 - [x] Task management system setup
-- [x] Initial card rolling system
-- [ ] **CRITIQUE** Unify Card Data Models (#e923a6ec313da21c)
-- [ ] **CRITIQUE** Migrate Card Data Files (#38a91892f830eea7)
-- [ ] **HIGH** Update Services for Unified Model (#06057300c901ee2f)
-- [ ] **HIGH** Update Components for Unified Model (#6ad2372185e9935a)
+- [x] Backend integration with real card data
+- [x] **CRITIQUE** Backend Card Models Implementation
+- [x] **CRITIQUE** Real Card Roll System with Probabilities
+- [ ] **CRITIQUE** Fix Frontend TypeScript Compatibility (60%)
+- [ ] **HIGH** Update Legacy Card Data Files
+- [ ] **HIGH** Migrate Frontend Components to Backend Types
 
 #### Semaine 3-4: State Management
 - [ ] **CRITIQUE** Consolidate Store Architecture (#199e14eb6453d09e)
@@ -206,7 +212,8 @@ server/
 
 | Milestone | Date Cible | Description | Critères de Succès |
 |-----------|------------|-------------|-------------------|
-| **M1: Foundation** | Semaine 4 | Architecture unifiée | - Code unifié<br>- Tests passants<br>- 0 dette technique critique |
+| **✅ M0: Backend MVP** | Semaine 1 | Backend complet & intégration | - API REST fonctionnelle<br>- 14 cartes meme en DB<br>- Frontend connecté<br>- Roll system intelligent |
+| **🔄 M1: Frontend Unity** | Semaine 2 | Types unifiés frontend | - Compatibilité TypeScript<br>- Migration legacy code<br>- 0 erreur de compilation |
 | **M2: Combat Alpha** | Semaine 8 | Combat local jouable | - Combat fluide à 60 FPS<br>- Projectiles fonctionnels<br>- Collisions précises |
 | **M3: UI Complete** | Semaine 12 | Interface complète | - Toutes les écrans<br>- Animations fluides<br>- Mobile responsive |
 | **M4: Multiplayer Beta** | Semaine 16 | Combat en ligne | - Matchmaking fonctionnel<br>- Latence < 100ms<br>- Synchronisation stable |
@@ -338,6 +345,6 @@ Todo: 400
 
 ---
 
-**Last Updated**: 2025-08-17
-**Version**: 1.0.0
-**Status**: Active Development - Phase 1
+**Last Updated**: 2025-08-18
+**Version**: 1.1.0
+**Status**: Active Development - Phase 1 (Backend MVP ✅ Complete)
