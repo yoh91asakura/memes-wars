@@ -55,7 +55,16 @@
     "mcp:swarm": "npx claude-flow",
     "mcp:hooks:pre-task": "npx claude-flow@alpha hooks pre-task",
     "mcp:hooks:post-task": "npx claude-flow@alpha hooks post-task",
-    "mcp:hooks:session-restore": "npx claude-flow@alpha hooks session-restore"
+    "mcp:hooks:session-restore": "npx claude-flow@alpha hooks session-restore",
+    "taskmaster:init": "./scripts/taskmaster-init.sh",
+    "taskmaster:check": "./scripts/taskmaster-check.sh",
+    "taskmaster:list": "task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars",
+    "taskmaster:stats": "task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars",
+    "taskmaster:add": "task-master-ai add_task --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars",
+    "taskmaster:todo": "task-master-ai get_tasks --filter todo --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars",
+    "taskmaster:active": "task-master-ai get_tasks --filter in-progress --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars",
+    "taskmaster:critical": "task-master-ai get_tasks --filter critical --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars",
+    "taskmaster:high": "task-master-ai get_tasks --filter high --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars"
   },
   "keywords": [
     "card-game",
