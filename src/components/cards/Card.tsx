@@ -28,6 +28,11 @@ export const Card: React.FC<CardProps> = ({
   selected = false,
   static: isStatic = false 
 }) => {
+  // Suppress unused variable warnings for props that may be used in future
+  void mode;
+  void size;
+  void showStats;
+  void showSynergies;
   // Configuration de rareté pour le type simple Card
   const rarityColors = {
     common: '#808080',

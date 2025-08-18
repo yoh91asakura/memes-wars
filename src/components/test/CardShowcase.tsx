@@ -190,7 +190,7 @@ export const CardShowcase: React.FC<CardShowcaseProps> = ({
         🃏 Showcase des Cartes - Mode {mode.toUpperCase()} - Taille {size.toUpperCase()}
       </h1>
       
-      {testCards.map((card, index) => (
+      {testCards.map((card) => (
         <div key={card.id} style={{ display: 'flex', justifyContent: 'center' }}>
           <Card 
             card={card}

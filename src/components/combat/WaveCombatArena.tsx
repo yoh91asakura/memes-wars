@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '../../types/card';
+import { UnifiedCard } from '../../models/unified/Card';
 import './WaveCombatArena.css';
 
 interface WaveCombatArenaProps {
-  playerCards: Card[];
-  opponentCards: Card[];
+  playerCards: UnifiedCard[];
+  opponentCards: UnifiedCard[];
   onBattleComplete?: (winner: 'player' | 'opponent') => void;
 }
 
@@ -85,8 +85,14 @@ export const WaveCombatArena: React.FC<WaveCombatArenaProps> = ({
       if (card.emoji) {
         playerEmojis.push(card.emoji);
       }
-      if (card.emojis) {
-        playerEmojis.push(...card.emojis);
+      if (card.emojis && Array.isArray(card.emojis)) {
+        // For UnifiedCard, emojis is EmojiProjectile[], extract characters
+        if (card.emojis.length > 0 && typeof card.emojis[0] === 'object') {
+          playerEmojis.push(...card.emojis.map(e => e.character));
+        } else {
+          // For legacy Card, emojis is string[]
+          playerEmojis.push(...(card.emojis as unknown as string[]));
+        }
       }
     });
     
@@ -96,8 +102,14 @@ export const WaveCombatArena: React.FC<WaveCombatArenaProps> = ({
       if (card.emoji) {
         opponentEmojis.push(card.emoji);
       }
-      if (card.emojis) {
-        opponentEmojis.push(...card.emojis);
+      if (card.emojis && Array.isArray(card.emojis)) {
+        // For UnifiedCard, emojis is EmojiProjectile[], extract characters
+        if (card.emojis.length > 0 && typeof card.emojis[0] === 'object') {
+          opponentEmojis.push(...card.emojis.map(e => e.character));
+        } else {
+          // For legacy Card, emojis is string[]
+          opponentEmojis.push(...(card.emojis as unknown as string[]));
+        }
       }
     });
     
@@ -440,7 +452,7 @@ export const WaveCombatArena: React.FC<WaveCombatArenaProps> = ({
         <div className="cards-row">
           {playerCards.map((card, index) => (
             <div key={index} className="display-card">
-              <div className="card-emoji">{card.emoji || card.emojis?.[0] || '❓'}</div>
+              <div className="card-emoji">{card.emoji || (card.emojis && card.emojis[0] ? (typeof card.emojis[0] === 'object' ? card.emojis[0].character : card.emojis[0]) : '❓')}</div>
               <div className="card-name">{card.name}</div>
               <div className="card-rarity">{card.rarity}</div>
             </div>

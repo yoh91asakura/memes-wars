@@ -558,3 +558,6 @@ export function calculateTotalBaseDamage(emojiCharacters: string[]): number {
 }
 
 export { EMOJI_POWERS_DATABASE };
+
+// Alias for backward compatibility
+export { EMOJI_POWERS_DATABASE as COMPLETE_EMOJI_DATABASE };

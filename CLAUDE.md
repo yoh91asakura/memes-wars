@@ -51,42 +51,64 @@ npm run tasks:list --status todo
 npm run tasks:list --priority high
 ```
 
-**2. SI TÂCHE N'EXISTE PAS** → Créer nouvelle tâche
+**2. SI TÂCHE N'EXISTE PAS** → L'agent crée nouvelle tâche
 ```bash
-# Mode rapide
-npm run tasks:new "Titre de la tâche"
+# L'agent analyse la demande utilisateur et :
+# 1. Détermine le prochain ID de tâche (TASK-XXX)
+# 2. Crée un slug descriptif basé sur la demande
+# 3. Crée le fichier tasks/active/TASK-XXX-slug.md
+# 4. Remplit TOUTES les sections du template :
+#    - Titre, priorité, taille
+#    - User Story complète
+#    - Description détaillée
+#    - Critères d'acceptation
+#    - Détails techniques
+#    - Fichiers et composants
+#    - Dépendances
+#    - Notes d'implémentation
+#    - Scénarios de test
 
-# Mode interactif (pour détails complets)
-npm run tasks:new
+# Résultat: fichier tasks/active/TASK-XXX-titre.md créé IMMÉDIATEMENT
 ```
 
-**3. ORGANISER LE TRAVAIL** → Assigner et prioriser
+**3. ORGANISER LE TRAVAIL** → L'agent assigne et priorise
 ```bash
-# Mettre à jour statut et priorité
-node scripts/tasks/update.js [id] --status in-progress --priority high
+# L'agent édite directement le fichier MD:
+code tasks/active/TASK-001-center-unified-card.md
+# L'agent modifie directement:
+# - **Status**: IN_PROGRESS
+# - **Assignee**: [Agent Name]
+# - **Priority**: HIGH (selon l'urgence)
+# L'agent ajoute dans Updates Log:
+# - 2025-08-17 - IN_PROGRESS - [Agent] - Starting implementation
 
-# Assigner à quelqu'un
-node scripts/tasks/update.js [id] --assignee "Claude"
-
-# Ajouter des tags
-node scripts/tasks/update.js [id] --tags "frontend,urgent"
+# L'agent commit les changements:
+git add tasks/active/TASK-001-*.md
+git commit -m "chore: assign TASK-001 to [Agent]"
 ```
 
 **4. CRÉER BRANCHE GIT** → Une branche par tâche
 ```bash
 git checkout main && git pull
-git checkout -b task/[id]-[description]
+# Utiliser l'ID de la tâche du fichier MD
+git checkout -b task/TASK-001-center-unified-card
+# Pattern: task/[TASK-ID]-[short-description]
 ```
 
 **5. SYNCHRONISER AVEC GITHUB** → Pull Request workflow
 ```bash
 # Commits réguliers sur la branche
-git add . && git commit -m "feat: [description]"
-git push origin task/[id]-[description]
+git add . && git commit -m "feat: TASK-001 - [description]"
+git push origin task/TASK-001-center-unified-card
 
 # Créer PR quand prêt pour review
-# Mettre à jour le statut de la tâche
-node scripts/tasks/update.js [id] --status review
+# Mettre à jour le statut de la tâche via CLI
+npm run task
+# Choisir "3. Update task status"
+# TASK ID: TASK-001
+# New Status: REVIEW
+
+# Le fichier MD sera mis à jour automatiquement
 ```
 
 ### 🔄 Tags Disponibles pour Organisation
@@ -165,17 +187,23 @@ mcp status || echo "MCP non disponible - utiliser patterns locaux"
 
 # 2. ⚙️ CONFIGURATION PROJET
 
-## 📊 Task Management System V2 - MODERNE
+## 📊 Task Management System V3 - FILE-BASED MODERNE
 
 ### 📁 Structure des fichiers critiques
 ```
 tasks/
-├── tasks.json              # ⚠️ SOURCE DE VÉRITÉ - Toutes les tâches
-├── PROJECT_STATUS.md       # 📊 Dashboard temps réel du sprint
-└── modules/                # 📝 Tâches modulaires détaillées
-    ├── cards/
-    ├── services/
-    └── ui/
+├── active/                 # ⚠️ TÂCHES ACTIVES - Un fichier Markdown par tâche
+│   ├── TASK-001-center-unified-card.md
+│   ├── TASK-002-recent-rolls-display.md
+│   └── TASK-XXX-description.md
+├── completed/              # 📋 TÂCHES TERMINÉES - Archive
+├── templates/              # 📝 Templates pour nouvelles tâches
+│   └── TASK_TEMPLATE.md
+└── PROJECT_STATUS.md       # 📊 Dashboard temps réel du sprint
+
+scripts/tasks/
+├── task-manager.js         # 🛠️ CLI pour gestion des tâches
+└── initialize-critical-tasks.ts
 
 docs/
 ├── ROADMAP.md             # 🎯 Vision et phases du projet
@@ -188,54 +216,93 @@ docs/
 #### AVANT TOUTE ACTION - Lire l'état actuel:
 ```bash
 # 1. TOUJOURS commencer par vérifier le PROJECT STATUS
-cat tasks/PROJECT_STATUS.md | head -50
+cat PROJECT_STATUS.md | head -50
 
-# 2. Vérifier les tâches en cours
-npm run tasks:list --status in-progress
+# 2. Lister les tâches actives (fichiers MD)
+ls tasks/active/
 
-# 3. Identifier les tâches bloquées
-npm run tasks:list --status blocked
+# 3. Utiliser le nouveau CLI de gestion
+npm run task
+# Puis choisir option "2. List all tasks"
+
+# 4. Chercher des tâches spécifiques
+grep -r "Status.*TODO" tasks/active/
+grep -r "Priority.*HIGH" tasks/active/
 ```
 
 #### PENDANT LE TRAVAIL - Mise à jour temps réel:
 ```bash
-# Mettre à jour le statut immédiatement
-node scripts/tasks/update.js [task-id] --status in-progress --assignee "[agent-name]"
+# Mettre à jour le statut via le CLI
+npm run task
+# Puis choisir option "3. Update task status"
+# Ou directement éditer le fichier MD:
 
-# Ajouter des commentaires de progression
-node scripts/tasks/update.js [task-id] --comment "Completed 40% - unified Card interface created"
+# Modifier le fichier de tâche directement
+code tasks/active/TASK-001-center-unified-card.md
 
-# Marquer les critères d'acceptation complétés
-node scripts/tasks/update.js [task-id] --complete-criteria "[criteria-id]"
+# Ajouter des commentaires de progression dans le fichier
+# Section "## 💬 Discussion & Notes"
+
+# Cocher les critères d'acceptation complétés
+# Dans la section "## ✅ Acceptance Criteria"
+# Changer "- [ ]" en "- [x]" pour les critères terminés
+
+# Mettre à jour le log
+# Dans la section "## 🔄 Updates Log"
+# Ajouter: - YYYY-MM-DD - IN_PROGRESS - [Developer] - [Notes]
 ```
 
 #### APRÈS CHAQUE MILESTONE - Synchroniser:
 ```bash
-# Mettre à jour PROJECT_STATUS.md automatiquement
-node scripts/tasks/generate-status.js > tasks/PROJECT_STATUS.md
-
-# Commit des changements d'état
-git add tasks/PROJECT_STATUS.md tasks/tasks.json
-git commit -m "chore: update project status - [task-id] progress"
+# Commiter les changements de tâche
+git add tasks/active/TASK-XXX-*.md
+git commit -m "chore: update task TASK-XXX progress"
 git push origin task/[task-id]
+
+# Si tâche terminée, déplacer vers completed
+npm run task
+# Choisir option "3. Update task status" et mettre DONE
+# Le système déplacera automatiquement vers tasks/completed/
+
+# Mettre à jour PROJECT_STATUS.md si nécessaire
+code PROJECT_STATUS.md
 ```
 
-## 🚀 Système de Tâches - Commandes Essentielles
+## 🚀 Système de Tâches V3 - FICHIERS MARKDOWN - Commandes Essentielles
 ```bash
-# Vision globale
-npm run tasks:list --stats          # Statistiques du sprint
-npm run tasks:list --critical       # Tâches CRITIQUES uniquement
-npm run tasks:list --blocked        # Tâches bloquées
+# === NOUVEAU CLI PRINCIPAL ===
+npm run task                        # Interface interactive complète
+npm run task:create                 # Alternative pour créer une tâche
 
-# Gestion des tâches
-npm run tasks:new                   # Créer nouvelle tâche (interactif)
-npm run tasks:update [id]           # Mettre à jour tâche
-npm run tasks:done [id]             # Marquer comme terminée
+# === NAVIGATION RAPIDE ===
+# Lister toutes les tâches actives
+ls tasks/active/
 
-# Reporting et monitoring
-npm run tasks:report                # Générer rapport complet
-npm run tasks:burndown              # Voir burndown chart
-npm run tasks:dependencies          # Analyser dépendances
+# Chercher par contenu
+grep -r "Priority.*HIGH" tasks/active/
+grep -r "Status.*IN_PROGRESS" tasks/active/
+grep -r "Epic.*UI" tasks/active/
+
+# === ÉDITION DIRECTE ===
+# Ouvrir une tâche pour modification
+code tasks/active/TASK-001-center-unified-card.md
+
+# Chercher tâches avec critères spécifiques
+grep -l "CRITICAL" tasks/active/*.md
+grep -l "TODO" tasks/active/*.md
+
+# === GESTION DES ÉTATS ===
+# Via CLI interactif
+npm run task  # Puis choisir "Update task status"
+
+# === REPORTING ===
+# Compter les tâches par statut
+grep -r "Status.*TODO" tasks/active/ | wc -l
+grep -r "Status.*IN_PROGRESS" tasks/active/ | wc -l
+find tasks/completed/ -name "*.md" | wc -l
+
+# Voir les tâches prioritaires
+grep -r "Priority.*CRITICAL" tasks/active/
 ```
 
 ## 🎯 Claude Code vs MCP Tools
@@ -1206,7 +1273,306 @@ npm run tasks:done [id]
 
 ---
 
-# 10. 📚 RÉFÉRENCES RAPIDES
+# 10. 🗂️ SYSTÈME DE TÂCHES V3 - FILE-BASED MODERNE
+
+## 🚀 NOUVEAU SYSTÈME DE GESTION DES TÂCHES
+
+Chaque tâche est maintenant un **fichier Markdown complet** avec :
+- ✅ Documentation complète intégrée
+- 📊 Métadonnées structurées
+- 🎯 User stories et critères d'acceptation
+- 📝 Logs de progression en temps réel
+- 🔧 Détails techniques complets
+- ⚠️ Gestion des risques
+- 🧪 Scénarios de test
+
+### 📁 Structure des Fichiers de Tâches
+```
+tasks/
+├── active/                          # 🔥 TÂCHES ACTIVES
+│   ├── TASK-001-center-unified-card.md
+│   ├── TASK-002-recent-rolls-display.md
+│   ├── TASK-003-remove-test-cards-button.md
+│   ├── TASK-004-fix-redundant-navigation.md
+│   └── TASK-XXX-description.md      # Format: TASK-[ID]-[slug].md
+├── completed/                       # 🏁 ARCHIVE DES TÂCHES TERMINÉES
+├── templates/                       # 📄 TEMPLATES RÉUTILISABLES
+│   └── TASK_TEMPLATE.md            # Template complet pour nouvelles tâches
+scripts/tasks/
+└── task-manager.js                  # 🛠️ CLI de gestion
+```
+
+### 🎯 Template de Tâche Complet
+Chaque tâche contient OBLIGATOIREMENT :
+```markdown
+# Task: [TITRE DE LA TÂCHE]
+
+## 📋 Metadata
+- **ID**: TASK-XXX
+- **Created**: YYYY-MM-DD
+- **Status**: TODO | IN_PROGRESS | REVIEW | DONE | BLOCKED
+- **Priority**: CRITICAL | HIGH | MEDIUM | LOW
+- **Size**: XS | S | M | L | XL
+- **Assignee**: [Developer Name]
+- **Epic**: [Epic/Category]
+- **Sprint**: [Sprint Number]
+
+## 🎯 User Story
+**As a** [persona]  
+**I want** [what]  
+**So that** [why]
+
+## 📝 Description
+[Detailed description]
+
+## ✅ Acceptance Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+## 🔧 Technical Details
+### Files to Modify
+- `path/to/file1.ts`
+- `path/to/file2.tsx`
+
+### Components Affected
+- Component1
+- Component2
+
+### Dependencies
+- TASK-XXX - Other Task
+- External library: Library Name
+
+## 💡 Implementation Notes
+[Technical approach and decisions]
+
+## ⚠️ Risks & Mitigations
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| Risk 1 | HIGH | LOW | Mitigation strategy |
+
+## 🧪 Test Scenarios
+1. **Scenario 1**:
+   - Given: [Context]
+   - When: [Action]
+   - Then: [Expected Result]
+
+## 📊 Definition of Done
+- [ ] Code implemented and working
+- [ ] Unit tests written and passing
+- [ ] Documentation updated
+- [ ] Code reviewed and approved
+- [ ] No console errors or warnings
+
+## 💬 Discussion & Notes
+[Additional notes and discussions]
+
+## 🔄 Updates Log
+- YYYY-MM-DD - STATUS - DEVELOPER - NOTES
+```
+
+### 🛠️ Création de Tâches par les Agents
+
+#### L'agent crée directement la tâche :
+```bash
+# L'agent analyse la demande utilisateur et crée immédiatement
+# un fichier Markdown complet dans tasks/active/
+
+# 1. Générer l'ID de tâche (TASK-XXX basé sur les existantes)
+# 2. Créer le slug descriptif
+# 3. Créer le fichier tasks/active/TASK-XXX-slug.md
+# 4. Remplir TOUTES les sections du template
+
+# Exemple :
+# Utilisateur : "Je veux centrer la carte dans l'interface"
+# → Agent crée tasks/active/TASK-001-center-unified-card.md
+```
+
+#### Lister toutes les tâches :
+```bash
+# Navigation directe des fichiers
+ls tasks/active/                     # Fichiers des tâches actives
+ls tasks/completed/                  # Archive des tâches terminées
+
+# Voir le contenu d'une tâche
+cat tasks/active/TASK-001-center-unified-card.md
+```
+
+#### Mettre à jour une tâche :
+```bash
+# L'agent édite directement le fichier Markdown
+code tasks/active/TASK-001-center-unified-card.md
+
+# L'agent modifie :
+# - **Status**: TODO → IN_PROGRESS
+# - **Assignee**: [Agent Name]
+# - Ajoute dans Updates Log :
+#   - 2025-08-17 - IN_PROGRESS - [Agent] - [Notes]
+
+# Si statut = DONE, l'agent déplace le fichier :
+# mv tasks/active/TASK-001-*.md tasks/completed/
+```
+
+### 🔍 Navigation et Recherche
+
+#### Recherche par contenu :
+```bash
+# Tâches par priorité
+grep -r "Priority.*HIGH" tasks/active/
+grep -r "Priority.*CRITICAL" tasks/active/
+
+# Tâches par statut
+grep -r "Status.*TODO" tasks/active/
+grep -r "Status.*IN_PROGRESS" tasks/active/
+
+# Tâches par assigné
+grep -r "Assignee.*Claude" tasks/active/
+
+# Tâches par epic
+grep -r "Epic.*UI" tasks/active/
+```
+
+#### Édition directe :
+```bash
+# Ouvrir une tâche pour modification
+code tasks/active/TASK-001-center-unified-card.md
+
+# Modifications typiques :
+# - Changer Status: TODO → IN_PROGRESS
+# - Cocher critères d'acceptation: [ ] → [x]
+# - Ajouter notes dans Discussion & Notes
+# - Mettre à jour Updates Log
+```
+
+### 📊 Reporting et Statistiques
+
+#### Compteurs par statut :
+```bash
+# Tâches actives par statut
+echo "TODO: $(grep -r 'Status.*TODO' tasks/active/ | wc -l)"
+echo "IN_PROGRESS: $(grep -r 'Status.*IN_PROGRESS' tasks/active/ | wc -l)"
+echo "REVIEW: $(grep -r 'Status.*REVIEW' tasks/active/ | wc -l)"
+echo "BLOCKED: $(grep -r 'Status.*BLOCKED' tasks/active/ | wc -l)"
+
+# Tâches terminées
+echo "COMPLETED: $(find tasks/completed/ -name '*.md' | wc -l)"
+```
+
+#### Tâches critiques :
+```bash
+# Lister les tâches critiques
+grep -l "Priority.*CRITICAL" tasks/active/*.md
+
+# Voir le contenu des tâches critiques
+for file in $(grep -l "Priority.*CRITICAL" tasks/active/*.md); do
+  echo "=== $file ==="
+  head -20 "$file"
+  echo
+done
+```
+
+### ⚡ Workflow avec le Nouveau Système
+
+#### 1. Début de Session (OBLIGATOIRE)
+```bash
+# Synchronisation Git
+git checkout main && git pull origin main
+
+# État des tâches
+ls tasks/active/                     # Voir fichiers tâches
+npm run task                         # CLI pour vue d'ensemble
+# Choisir "2. List all tasks"
+
+# Identifier sa tâche
+grep -r "Assignee.*[MonNom]" tasks/active/
+grep -r "Status.*TODO" tasks/active/
+```
+
+#### 2. Prendre une Tâche
+```bash
+# L'agent édite directement le fichier de tâche
+# Modifier dans tasks/active/TASK-001-center-unified-card.md :
+# - **Status**: IN_PROGRESS
+# - **Assignee**: Claude
+# - Ajouter dans Updates Log :
+#   - 2025-08-17 - IN_PROGRESS - Claude - Starting implementation
+
+# Créer branche Git
+git checkout -b task/TASK-001-center-unified-card
+
+# Push initial
+git add tasks/active/TASK-001-*.md
+git commit -m "chore: start TASK-001 - center unified card"
+git push -u origin task/TASK-001-center-unified-card
+```
+
+#### 3. Pendant le Travail
+```bash
+# Édition du fichier de tâche
+code tasks/active/TASK-001-center-unified-card.md
+
+# Cocher critères d'acceptation complétés :
+# - [ ] Card is horizontally centered → - [x] Card is horizontally centered
+
+# Ajouter notes dans Discussion & Notes :
+# "Implemented CSS flexbox centering. Tested on Chrome/Firefox."
+
+# Ajouter entrée Updates Log :
+# - 2025-08-17 - IN_PROGRESS - Claude - Completed CSS implementation
+
+# Commits réguliers
+git add .
+git commit -m "feat: TASK-001 - implement card centering"
+git push origin task/TASK-001-center-unified-card
+```
+
+#### 4. Fin de Tâche
+```bash
+# L'agent marque la tâche comme terminée en éditant le fichier
+# Modifier dans tasks/active/TASK-001-center-unified-card.md :
+# - **Status**: DONE
+# - Cocher tous les critères d'acceptation [x]
+# - Ajouter dans Updates Log :
+#   - 2025-08-17 - DONE - Claude - All criteria completed
+
+# L'agent déplace le fichier vers completed
+mv tasks/active/TASK-001-center-unified-card.md tasks/completed/
+
+# Créer Pull Request
+git add .
+git commit -m "feat: complete TASK-001 - center unified card model"
+git push origin task/TASK-001-center-unified-card
+# Créer PR via GitHub UI
+```
+
+### 🎯 Avantages du Système V3
+
+✅ **Documentation intégrée** : Chaque tâche auto-documentée  
+✅ **Git-friendly** : Un fichier = un diff clair  
+✅ **Recherche puissante** : grep, find, code search  
+✅ **Collaboration** : Édition simultanée possible  
+✅ **Historique** : Git track tous les changements  
+✅ **Flexible** : Édition manuelle ou CLI  
+✅ **Portable** : Aucune dépendance externe  
+✅ **Évolutif** : Ajout facile de nouveaux champs  
+
+### 🔧 Migration depuis l'Ancien Système
+
+Si vous avez des tâches dans l'ancien format JSON :
+```bash
+# Les tâches existantes sont conservées dans tasks.json
+# Les nouvelles tâches utilisent le système fichier MD
+# Coexistence possible pendant la transition
+
+# Pour migrer une tâche JSON vers MD :
+# L'agent lit tasks.json et crée les fichiers MD correspondants
+# dans tasks/active/ avec toutes les informations
+# L'agent marque les tâches JSON comme "migrated"
+```
+
+---
+
+# 11. 📚 RÉFÉRENCES RAPIDES
 
 ## 🚀 Commands Essentiels
 ```bash
