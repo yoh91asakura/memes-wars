@@ -129,7 +129,8 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     // Initialize database connection
-    // await initDatabase();
+    const { initDatabase } = await import('@database/connection');
+    await initDatabase();
 
     // Initialize Redis connection
     // await initRedis();

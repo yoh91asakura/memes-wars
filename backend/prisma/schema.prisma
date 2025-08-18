@@ -1,0 +1,427 @@
+// This is your Prisma schema file for The Meme Wars TCG
+// Comprehensive database design for multiplayer card game
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================
+// USER MANAGEMENT
+// =============================================
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique @db.VarChar(20)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  avatar    String?  @db.VarChar(500)
+  bio       String?  @db.VarChar(500)
+  
+  // Account status
+  emailVerified Boolean @default(false)
+  isActive      Boolean @default(true)
+  isBanned      Boolean @default(false)
+  banReason     String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastLogin DateTime?
+  
+  // Game statistics
+  stats UserStats?
+  
+  // User collections
+  cards     UserCard[]
+  decks     Deck[]
+  
+  // Match history
+  playerMatches PlayerMatch[]
+  
+  // Authentication tokens
+  refreshTokens RefreshToken[]
+  resetTokens   PasswordReset[]
+  
+  // Matchmaking queue
+  queueEntries MatchmakingQueue[]
+  
+  // Achievements
+  achievements UserAchievement[]
+  
+  @@map("users")
+}
+
+model UserStats {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Overall stats
+  gamesPlayed  Int @default(0)
+  gamesWon     Int @default(0)
+  gamesLost    Int @default(0)
+  currentStreak Int @default(0)
+  bestStreak   Int @default(0)
+  
+  // Ranked stats
+  currentRank     String  @default("Bronze")
+  rankPoints     Int     @default(1000)
+  seasonHigh     String?
+  rankedGames    Int     @default(0)
+  rankedWins     Int     @default(0)
+  
+  // Card stats
+  totalCards      Int @default(0)
+  uniqueCards     Int @default(0)
+  cardsRolled     Int @default(0)
+  pityCounter     Int @default(0)
+  
+  // Economic stats
+  totalSpent      Int @default(0)
+  totalEarned     Int @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("user_stats")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@map("refresh_tokens")
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  @@map("password_resets")
+}
+
+// =============================================
+// CARD SYSTEM
+// =============================================
+
+model Card {
+  id          String    @id @default(cuid())
+  name        String    @db.VarChar(100)
+  description String    @db.Text
+  emoji       String    @db.VarChar(50)
+  
+  // Card properties
+  rarity      CardRarity
+  type        CardType
+  cost        Int
+  attack      Int
+  defense     Int
+  health      Int
+  attackSpeed Float     @default(1.0)
+  
+  // Visual properties
+  color       String    @db.VarChar(50)
+  imageUrl    String?   @db.VarChar(500)
+  
+  // Game mechanics
+  effects     String[]  // JSON array of effect names
+  tags        String[]  // JSON array of tags
+  
+  // Metadata
+  flavor      String?   @db.Text
+  lore        String?   @db.Text
+  
+  // Crafting
+  craftable   Boolean   @default(false)
+  craftCost   Int?
+  
+  // Availability
+  isActive    Boolean   @default(true)
+  releaseDate DateTime  @default(now())
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  userCards UserCard[]
+  deckCards DeckCard[]
+  
+  @@unique([name])
+  @@map("cards")
+}
+
+model UserCard {
+  id       String @id @default(cuid())
+  userId   String
+  cardId   String
+  quantity Int    @default(1)
+  
+  // Card progression
+  experience  Int @default(0)
+  level      Int @default(1)
+  stackLevel Int @default(0)
+  
+  // Acquisition info
+  acquiredAt     DateTime @default(now())
+  acquisitionMethod String // "roll", "craft", "trade", "reward"
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, cardId])
+  @@map("user_cards")
+}
+
+// =============================================
+// DECK SYSTEM
+// =============================================
+
+model Deck {
+  id        String @id @default(cuid())
+  userId    String
+  name      String @db.VarChar(50)
+  
+  // Deck properties
+  isActive  Boolean @default(false) // Currently selected deck
+  isPublic  Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cards DeckCard[]
+  
+  // Match history with this deck
+  playerMatches PlayerMatch[]
+  
+  @@map("decks")
+}
+
+model DeckCard {
+  id       String @id @default(cuid())
+  deckId   String
+  cardId   String
+  quantity Int    @default(1)
+  position Int    // Position in deck for ordering
+  
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  
+  @@unique([deckId, cardId])
+  @@map("deck_cards")
+}
+
+// =============================================
+// MATCH SYSTEM
+// =============================================
+
+model Match {
+  id        String      @id @default(cuid())
+  status    MatchStatus @default(WAITING)
+  type      MatchType   @default(CASUAL)
+  
+  // Match configuration
+  maxPlayers    Int @default(2)
+  turnTimeLimit Int @default(60) // seconds
+  
+  // Match state
+  currentTurn   Int?      // Player index whose turn it is
+  turnNumber    Int       @default(1)
+  winner        String?   // userId of winner
+  endReason     String?   // "victory", "forfeit", "timeout", "disconnect"
+  
+  // Timing
+  startedAt  DateTime?
+  endedAt    DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  
+  // Relations
+  players PlayerMatch[]
+  events  MatchEvent[]
+  
+  @@map("matches")
+}
+
+model PlayerMatch {
+  id       String @id @default(cuid())
+  matchId  String
+  userId   String
+  deckId   String
+  
+  // Player state in match
+  health      Int     @default(100)
+  energy      Int     @default(0)
+  isReady     Boolean @default(false)
+  hasForfeited Boolean @default(false)
+  
+  // Match results
+  isWinner    Boolean @default(false)
+  finalHealth Int?
+  
+  // Statistics for this match
+  cardsPlayed   Int @default(0)
+  damageDealt   Int @default(0)
+  damageTaken   Int @default(0)
+  turnsPlayed   Int @default(0)
+  
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck  Deck  @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  
+  @@unique([matchId, userId])
+  @@map("player_matches")
+}
+
+model MatchEvent {
+  id       String    @id @default(cuid())
+  matchId  String
+  playerId String?   // null for system events
+  
+  // Event details
+  type        String  // "card_played", "turn_end", "damage_dealt", etc.
+  data        Json    // Event-specific data
+  turnNumber  Int
+  timestamp   DateTime @default(now())
+  
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  
+  @@map("match_events")
+}
+
+// =============================================
+// MATCHMAKING SYSTEM
+// =============================================
+
+model MatchmakingQueue {
+  id     String @id @default(cuid())
+  userId String
+  deckId String
+  
+  // Queue preferences
+  matchType       MatchType @default(CASUAL)
+  preferredRegion String    @default("auto")
+  
+  // Queue state
+  status          QueueStatus @default(WAITING)
+  estimatedWait   Int?        // seconds
+  
+  // Timing
+  joinedAt DateTime @default(now())
+  leftAt   DateTime?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("matchmaking_queue")
+}
+
+// =============================================
+// ACHIEVEMENT SYSTEM
+// =============================================
+
+model Achievement {
+  id          String @id @default(cuid())
+  name        String @unique @db.VarChar(100)
+  description String @db.Text
+  icon        String @db.VarChar(50)
+  
+  // Achievement properties
+  category    String  // "gameplay", "collection", "social", etc.
+  difficulty  String  // "easy", "medium", "hard", "legendary"
+  isSecret    Boolean @default(false)
+  
+  // Rewards
+  rewardType  String? // "currency", "card", "title", etc.
+  rewardValue String? // JSON with reward details
+  
+  createdAt DateTime @default(now())
+  
+  // Relations
+  userAchievements UserAchievement[]
+  
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String @id @default(cuid())
+  userId        String
+  achievementId String
+  
+  // Progress tracking
+  progress    Int     @default(0)
+  maxProgress Int     @default(1)
+  isCompleted Boolean @default(false)
+  
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+// =============================================
+// ENUMS
+// =============================================
+
+enum CardRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+  MYTHIC
+  COSMIC
+  
+  @@map("card_rarity")
+}
+
+enum CardType {
+  CREATURE
+  SPELL
+  ARTIFACT
+  
+  @@map("card_type")
+}
+
+enum MatchStatus {
+  WAITING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  
+  @@map("match_status")
+}
+
+enum MatchType {
+  CASUAL
+  RANKED
+  TOURNAMENT
+  CUSTOM
+  
+  @@map("match_type")
+}
+
+enum QueueStatus {
+  WAITING
+  MATCHED
+  CANCELLED
+  
+  @@map("queue_status")
+}
