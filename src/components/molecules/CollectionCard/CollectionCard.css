@@ -210,13 +210,6 @@
   --rarity-color: #e74c3c;
 }
 
-.collection-card--divine {
-  --rarity-color: #9b59b6;
-}
-
-.collection-card--infinity {
-  --rarity-color: #2c3e50;
-}
 
 /* Responsive Design */
 @media (max-width: 768px) {

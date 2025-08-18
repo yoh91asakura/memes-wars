@@ -135,9 +135,7 @@ export const useCollectionStore = create<CollectionStore>()(
                 'EPIC': 4,
                 'LEGENDARY': 5,
                 'MYTHIC': 6,
-                'COSMIC': 7,
-                'DIVINE': 8,
-                'INFINITY': 9
+                'COSMIC': 7
               };
               comparison = (rarityOrder[a.rarity as keyof typeof rarityOrder] || 0) - 
                           (rarityOrder[b.rarity as keyof typeof rarityOrder] || 0);
@@ -169,9 +167,7 @@ export const useCollectionStore = create<CollectionStore>()(
           EPIC: 0,
           LEGENDARY: 0,
           MYTHIC: 0,
-          COSMIC: 0,
-          DIVINE: 0,
-          INFINITY: 0
+          COSMIC: 0
         };
         
         // Count cards by rarity

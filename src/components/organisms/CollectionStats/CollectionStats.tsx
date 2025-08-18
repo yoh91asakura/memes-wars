@@ -22,9 +22,7 @@ const rarityDisplay = [
   { key: 'EPIC' as CardRarity, label: 'Epic', color: '#9b59b6', icon: '🟣' },
   { key: 'LEGENDARY' as CardRarity, label: 'Legendary', color: '#f39c12', icon: '🟠' },
   { key: 'MYTHIC' as CardRarity, label: 'Mythic', color: '#e67e22', icon: '🔴' },
-  { key: 'COSMIC' as CardRarity, label: 'Cosmic', color: '#e74c3c', icon: '✨' },
-  { key: 'DIVINE' as CardRarity, label: 'Divine', color: '#9b59b6', icon: '👑' },
-  { key: 'INFINITY' as CardRarity, label: 'Infinity', color: '#2c3e50', icon: '♾️' }
+  { key: 'COSMIC' as CardRarity, label: 'Cosmic', color: '#e74c3c', icon: '✨' }
 ];
 
 export const CollectionStats: React.FC<CollectionStatsProps> = ({

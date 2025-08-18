@@ -323,7 +323,7 @@ export const useCardsStore = create<CardsStore>()(
                   comparison = a.name.localeCompare(b.name);
                   break;
                 case 'rarity':
-                  const rarityOrder = ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC', 'COSMIC', 'DIVINE', 'INFINITY'];
+                  const rarityOrder = ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC', 'COSMIC'];
                   comparison = rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
                   break;
                 case 'power':
@@ -354,9 +354,7 @@ export const useCardsStore = create<CardsStore>()(
                 EPIC: 0,
                 LEGENDARY: 0,
                 MYTHIC: 0,
-                COSMIC: 0,
-                DIVINE: 0,
-                INFINITY: 0
+                COSMIC: 0
               },
               completionPercentage: 0,
               totalValue: 0

@@ -29,9 +29,7 @@ const rarityOptions = [
   { value: 'EPIC', label: 'Epic', color: '#9b59b6' },
   { value: 'LEGENDARY', label: 'Legendary', color: '#f39c12' },
   { value: 'MYTHIC', label: 'Mythic', color: '#e67e22' },
-  { value: 'COSMIC', label: 'Cosmic', color: '#e74c3c' },
-  { value: 'DIVINE', label: 'Divine', color: '#9b59b6' },
-  { value: 'INFINITY', label: 'Infinity', color: '#2c3e50' }
+  { value: 'COSMIC', label: 'Cosmic', color: '#e74c3c' }
 ];
 
 const sortOptions = [

@@ -24,10 +24,6 @@ export const rarityEnumToString = (rarity: CardRarity): Rarity => {
       return 'mythic';
     case CardRarity.COSMIC:
       return 'cosmic';
-    // Additional rarities default to cosmic for backward compatibility
-    case CardRarity.DIVINE:
-    case CardRarity.INFINITY:
-      return 'cosmic';
     default:
       return 'common';
   }

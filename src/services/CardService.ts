@@ -132,15 +132,11 @@ export class CardService {
       [CardRarity.EPIC]: 50,         // 1/50 = 2%
       [CardRarity.LEGENDARY]: 200,   // 1/200 = 0.5%
       [CardRarity.MYTHIC]: 1000,     // 1/1000 = 0.1%
-      [CardRarity.COSMIC]: 10000,    // 1/10000 = 0.01%
-      [CardRarity.DIVINE]: 100000,   // 1/100000 = 0.001%
-      [CardRarity.INFINITY]: 1000000 // 1/1000000 = 0.0001%
+      [CardRarity.COSMIC]: 10000     // 1/10000 = 0.01%
     };
     
     // Roll for each rarity starting from highest
     const rarityOrder = [
-      CardRarity.INFINITY,
-      CardRarity.DIVINE, 
       CardRarity.COSMIC,
       CardRarity.MYTHIC,
       CardRarity.LEGENDARY,
@@ -326,9 +322,7 @@ export class CardService {
       [CardRarity.EPIC]: 2.0,
       [CardRarity.LEGENDARY]: 3.0,
       [CardRarity.MYTHIC]: 4.0,
-      [CardRarity.COSMIC]: 5.0,
-      [CardRarity.DIVINE]: 10.0,
-      [CardRarity.INFINITY]: 20.0
+      [CardRarity.COSMIC]: 5.0
     };
     return bonusMap[rarity] || 1.0;
   }

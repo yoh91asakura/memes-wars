@@ -63,9 +63,7 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
     epic: '#9b59b6',
     legendary: '#f39c12',
     mythic: '#e67e22',
-    cosmic: '#e74c3c',
-    divine: '#9b59b6',
-    infinity: '#2c3e50'
+    cosmic: '#e74c3c'
   };
 
   const cardPower = card.attack + card.defense + card.health;

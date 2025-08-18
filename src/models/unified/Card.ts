@@ -12,8 +12,6 @@ export enum CardRarity {
   LEGENDARY = 'LEGENDARY',
   MYTHIC = 'MYTHIC',
   COSMIC = 'COSMIC',
-  DIVINE = 'DIVINE',
-  INFINITY = 'INFINITY',
 }
 
 export enum CardType {
@@ -398,22 +396,6 @@ export class CardUtils {
         luckRange: [500, 1000],
         emojiCount: [8, 10],
         dustValue: 8000
-      },
-      [CardRarity.DIVINE]: {
-        name: CardRarity.DIVINE,
-        probability: 100000,
-        goldReward: [15000, 25000],
-        luckRange: [1000, 2000],
-        emojiCount: [10, 12],
-        dustValue: 40000
-      },
-      [CardRarity.INFINITY]: {
-        name: CardRarity.INFINITY,
-        probability: 1000000,
-        goldReward: [50000, 100000],
-        luckRange: [2000, 5000],
-        emojiCount: [12, 15],
-        dustValue: 200000
       }
     };
     return configs[rarity] || configs[CardRarity.COMMON];
@@ -429,8 +411,6 @@ export class CardUtils {
       [CardRarity.LEGENDARY]: 3,
       [CardRarity.MYTHIC]: 2,
       [CardRarity.COSMIC]: 1,
-      [CardRarity.DIVINE]: 1,
-      [CardRarity.INFINITY]: 1,
     };
     return stackMap[rarity] || 5;
   }
@@ -479,22 +459,6 @@ export class CardUtils {
         borderColor: '#DB2777',
         backgroundColor: '#FDF2F8',
         textColor: '#831843',
-      },
-      [CardRarity.DIVINE]: {
-        glow: '#FFD700',
-        borderColor: '#FFC700',
-        backgroundColor: '#FFFEF0',
-        textColor: '#FFB300',
-        animation: 'sparkle' as const,
-        particles: true,
-      },
-      [CardRarity.INFINITY]: {
-        glow: '#9400D3',
-        borderColor: '#8B008B',
-        backgroundColor: '#FFF0F5',
-        textColor: '#4B0082',
-        animation: 'electric' as const,
-        particles: true,
       },
     };
     return visualMap[rarity as keyof typeof visualMap] || visualMap[CardRarity.COMMON];
@@ -607,8 +571,7 @@ export class CardUtils {
                        rarity === CardRarity.EPIC ? 2 :
                        rarity === CardRarity.LEGENDARY ? 2 :
                        rarity === CardRarity.MYTHIC ? 3 :
-                       rarity === CardRarity.COSMIC ? 3 :
-                       rarity === CardRarity.DIVINE ? 4 : 5;
+                       rarity === CardRarity.COSMIC ? 3 : 5;
     
     const availableEffects = Object.values(EffectType);
     
