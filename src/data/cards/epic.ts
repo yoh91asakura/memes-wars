@@ -18,7 +18,7 @@ export const epicCards: UnifiedCard[] = [
     // Game Specification Requirements
     rarity: CardRarity.EPIC,
     rarityProbability: 50,       // 1/50 chance
-    luck: 75,                    // Epic luck range 50-100
+    luck: 85,                    // Enhanced luck (60-100 range)
     family: MemeFamily.CLASSIC_INTERNET,
     reference: 'Chad vs Virgin - the classic comparison meme representing confidence',
     goldReward: 300,             // Random value in 200-400 range
@@ -27,11 +27,11 @@ export const epicCards: UnifiedCard[] = [
     type: CardType.CREATURE,
     cost: 4,
     
-    // Combat Stats
-    attack: 8,
-    defense: 6,
-    health: 7,
-    attackSpeed: 1.3,
+    // Combat Stats (card-database.md scaling)
+    attack: 10,
+    defense: 8,
+    health: 115,                 // Enhanced HP 100-125 range
+    attackSpeed: 2.3,            // Epic range 2.0-2.5
     
     // Enhanced Combat System
     emojis: [{

@@ -18,7 +18,7 @@ export const mythicCards: UnifiedCard[] = [
     // Game Specification Requirements
     rarity: CardRarity.MYTHIC,
     rarityProbability: 1000,     // 1/1000 chance
-    luck: 350,                   // Mythic luck range 200-500
+    luck: 450,                   // Enhanced luck (300-500 range)
     family: MemeFamily.ABSTRACT_CONCEPTS,
     reference: 'Galaxy Brain - expanding brain meme representing ultimate intelligence',
     goldReward: 2250,            // Random value in 1500-3000 range
@@ -27,11 +27,11 @@ export const mythicCards: UnifiedCard[] = [
     type: CardType.SPELL,
     cost: 6,
     
-    // Combat Stats
-    attack: 12,
-    defense: 8,
-    health: 20,
-    attackSpeed: 0.8,
+    // Combat Stats (card-database.md scaling)
+    attack: 25,
+    defense: 20,
+    health: 420,                 // Enhanced HP 380-430 range
+    attackSpeed: 3.8,            // Mythic range 3.5-4.0
     
     // Enhanced Combat System
     emojis: [{

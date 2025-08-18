@@ -18,7 +18,7 @@ export const legendaryCards: UnifiedCard[] = [
     // Game Specification Requirements
     rarity: CardRarity.LEGENDARY,
     rarityProbability: 200,      // 1/200 chance
-    luck: 150,                   // Legendary luck range 100-200
+    luck: 180,                   // Enhanced luck (120-200 range)
     family: MemeFamily.ABSTRACT_CONCEPTS,
     reference: 'Stonks - the deliberate misspelling representing financial success',
     goldReward: 750,             // Random value in 500-1000 range
@@ -27,11 +27,11 @@ export const legendaryCards: UnifiedCard[] = [
     type: CardType.SUPPORT,
     cost: 5,
     
-    // Combat Stats
-    attack: 6,
-    defense: 8,
-    health: 12,
-    attackSpeed: 1.0,
+    // Combat Stats (card-database.md scaling)
+    attack: 15,
+    defense: 12,
+    health: 250,                 // Enhanced HP 200-280 range
+    attackSpeed: 2.8,            // Legendary range 2.5-3.0
     
     // Enhanced Combat System
     emojis: [{

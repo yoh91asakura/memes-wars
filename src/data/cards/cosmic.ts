@@ -18,7 +18,7 @@ export const cosmicCards: UnifiedCard[] = [
     // Game Specification Requirements
     rarity: CardRarity.COSMIC,
     rarityProbability: 10000,    // 1/10000 chance
-    luck: 777,                   // Cosmic luck range 500-1000
+    luck: 888,                   // Enhanced luck (max cosmic range)
     family: MemeFamily.CLASSIC_INTERNET,
     reference: 'Big Chungus - the ultimate form of Bugs Bunny meme that became legendary',
     goldReward: 7500,            // Random value in 5000-10000 range
@@ -27,11 +27,11 @@ export const cosmicCards: UnifiedCard[] = [
     type: CardType.CREATURE,
     cost: 8,
     
-    // Combat Stats
-    attack: 25,
-    defense: 30,
-    health: 50,
-    attackSpeed: 0.5,
+    // Combat Stats (card-database.md scaling)
+    attack: 50,
+    defense: 40,
+    health: 1000,                // Enhanced HP max cosmic
+    attackSpeed: 5.0,            // Max cosmic range
     
     // Enhanced Combat System
     emojis: [{

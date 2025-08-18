@@ -4,27 +4,27 @@ export const rareCards: UnifiedCard[] = [
   {
     // Core Identity
     id: 'rare-001',
-    name: 'Ancient Dragon 🐉',
-    description: 'A mighty ancient dragon with devastating breath attacks',
-    emoji: '🐉',
+    name: 'Galaxy Brain 🧠',
+    description: 'Ascended intellect - big brain time activated',
+    emoji: '🧠',
     
     // Game Specification Requirements
     rarity: CardRarity.RARE,
     rarityProbability: 10,       // 1/10 chance
-    luck: 35,                    // Medium-high luck for rare
-    family: MemeFamily.MYTHOLOGY,
-    reference: 'Dragon hoard - legendary wealth and power meme',
-    goldReward: 100,             // High gold reward for rare
+    luck: 45,                    // Enhanced luck (35-50 range)
+    family: MemeFamily.ABSTRACT_CONCEPTS,
+    reference: 'Galaxy Brain - escalating intelligence meme format',
+    goldReward: 65,              // 50-75 range
     
     // Game Mechanics
     type: CardType.CREATURE,
     cost: 5,
     
-    // Combat Stats
-    attack: 6,
-    defense: 4,
-    health: 8,
-    attackSpeed: 0.8,
+    // Combat Stats (card-database.md scaling)
+    attack: 7,
+    defense: 5,
+    health: 65,                  // Enhanced HP 50-75 range
+    attackSpeed: 1.8,            // Rare range 1.5-2.0
     
     // Advanced Properties
     passiveAbility: {
@@ -69,31 +69,64 @@ export const rareCards: UnifiedCard[] = [
       textColor: '#00008B'
     },
     
-    // Enhanced Combat System
+    // Enhanced Combat System (emoji-powers.md compliant)
     emojis: [{
-      character: '🔥',
-      damage: 6,
-      speed: 2,
-      trajectory: 'straight',
-      effects: [EffectType.BURN, EffectType.AREA, EffectType.INTIMIDATE],
+      character: '🧠',           // Brain intelligence
+      damage: 8,                 // High damage for rare
+      speed: 6,
+      trajectory: 'homing',
+      effects: [EffectType.BOOST],
       target: 'OPPONENT',
-      fireRate: 0.8,
+      fireRate: 1.8,
+      piercing: true,
+      homing: true,
+      bounces: 0
+    }, {
+      character: '⚡',           // Lightning quick thinking
+      damage: 6,
+      speed: 7,
+      trajectory: 'straight',
+      effects: [EffectType.CHAIN],
+      target: 'OPPONENT',
+      fireRate: 1.5,
+      piercing: true,
+      homing: false,
+      bounces: 3
+    }, {
+      character: '🌟',          // Star knowledge
+      damage: 5,
+      speed: 5,
+      trajectory: 'wave',
+      effects: [EffectType.BURST],
+      target: 'OPPONENT',
+      fireRate: 1.6,
       piercing: false,
       homing: false,
+      bounces: 4
+    }, {
+      character: '🎯',          // Target precision
+      damage: 10,
+      speed: 8,
+      trajectory: 'homing',
+      effects: [EffectType.CRIT],
+      target: 'OPPONENT',
+      fireRate: 1.2,
+      piercing: false,
+      homing: true,
       bounces: 0
     }],
     cardEffects: [{
-      id: 'dragon_fury',
-      name: 'Dragon Fury',
-      description: 'Unleash devastating fire damage',
-      trigger: TriggerType.ON_HIT,
-      chance: 0.4,
-      effect: EffectType.BURN,
-      value: 3,
-      duration: 5,
-      cooldown: 4
+      id: 'big_brain_energy',
+      name: 'Big Brain Energy',
+      description: 'Intelligence boost increases all damage by 75%',
+      trigger: TriggerType.BATTLE_START,
+      chance: 1.0,
+      effect: EffectType.BOOST,
+      value: 75,                 // 75% damage boost
+      duration: 10,
+      cooldown: 0
     }],
-    synergies: [MemeFamily.MYTHOLOGY],
+    synergies: [MemeFamily.ABSTRACT_CONCEPTS],
     
     // Collection & Social
     craftable: true,
@@ -102,10 +135,10 @@ export const rareCards: UnifiedCard[] = [
     isLimited: false,
     
     // Metadata
-    effects: [EffectType.FIRE, EffectType.AREA, EffectType.INTIMIDATE, EffectType.FLYING],
-    tags: ['dragon', 'rare', 'creature', 'fire'],
-    flavor: 'Where dragons soar, legends are born.',
-    lore: 'The last of the ancient dragons, keeper of forgotten magics and guardian of hidden treasures.',
+    effects: [EffectType.BOOST, EffectType.CHAIN, EffectType.BURST, EffectType.CRIT],
+    tags: ['galaxy', 'brain', 'intelligence', 'rare'],
+    flavor: 'Ascended beyond mortal comprehension.',
+    lore: 'When regular brain time isn\'t enough, you activate Galaxy Brain mode - the ultimate form of intellectual superiority.',
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'
@@ -113,27 +146,27 @@ export const rareCards: UnifiedCard[] = [
   {
     // Core Identity
     id: 'rare-002',
-    name: 'Phoenix Rising 🔥',
-    description: 'A mythical phoenix that resurrects from its ashes',
-    emoji: '🔥',
+    name: 'Stonks Pepe 📈',
+    description: 'To the moon! Number go up! Diamond hands!',
+    emoji: '📈',
     
     // Game Specification Requirements
     rarity: CardRarity.RARE,
     rarityProbability: 10,
-    luck: 40,
-    family: MemeFamily.MYTHOLOGY,
-    reference: 'Rise from the ashes - comeback meme',
-    goldReward: 110,
+    luck: 50,                    // Max luck for rare
+    family: MemeFamily.CLASSIC_INTERNET,
+    reference: 'Stonks - financial success meme with deliberate misspelling',
+    goldReward: 75,              // Max gold for rare
     
     // Game Mechanics
     type: CardType.CREATURE,
     cost: 4,
     
-    // Combat Stats
-    attack: 5,
-    defense: 3,
-    health: 6,
-    attackSpeed: 1.0,
+    // Combat Stats (card-database.md scaling)
+    attack: 8,
+    defense: 6,
+    health: 75,                  // Max HP for rare
+    attackSpeed: 2.0,            // Max rare range
     
     // Advanced Properties
     passiveAbility: {
@@ -178,31 +211,64 @@ export const rareCards: UnifiedCard[] = [
       textColor: '#B22222'
     },
     
-    // Enhanced Combat System
+    // Enhanced Combat System (emoji-powers.md compliant)
     emojis: [{
-      character: '🔥',
-      damage: 5,
-      speed: 3,
-      trajectory: 'spiral',
-      effects: [EffectType.BURN, EffectType.HEAL_SELF],
+      character: '💎',           // Diamond hands
+      damage: 7,
+      speed: 6,
+      trajectory: 'straight',
+      effects: [EffectType.LUCKY],
       target: 'OPPONENT',
-      fireRate: 1.0,
-      piercing: false,
+      fireRate: 2.0,
+      piercing: true,
       homing: false,
       bounces: 0
+    }, {
+      character: '🚀',          // Rocket to moon
+      damage: 12,                // High damage
+      speed: 8,
+      trajectory: 'homing',
+      effects: [EffectType.BOOST],
+      target: 'OPPONENT',
+      fireRate: 1.5,
+      piercing: false,
+      homing: true,
+      bounces: 0
+    }, {
+      character: '💰',          // Money generation
+      damage: 4,
+      speed: 4,
+      trajectory: 'arc',
+      effects: [EffectType.LUCKY],
+      target: 'OPPONENT',
+      fireRate: 1.8,
+      piercing: false,
+      homing: false,
+      bounces: 2
+    }, {
+      character: '📈',          // Stonks chart
+      damage: 9,
+      speed: 7,
+      trajectory: 'wave',
+      effects: [EffectType.BURST],
+      target: 'OPPONENT',
+      fireRate: 1.7,
+      piercing: false,
+      homing: false,
+      bounces: 3
     }],
     cardEffects: [{
-      id: 'rebirth_proc',
-      name: 'Eternal Flame',
-      description: 'Chance to resurrect on death',
-      trigger: TriggerType.LOW_HP,
-      chance: 0.5,
-      effect: EffectType.RESURRECT,
-      value: 1,
-      duration: 0,
-      cooldown: 10
+      id: 'stonks_multiplier',
+      name: 'Stonks Multiplier',
+      description: 'Lucky effect triples gold rewards for 8 seconds',
+      trigger: TriggerType.ON_HIT,
+      chance: 0.4,
+      effect: EffectType.LUCKY,
+      value: 3,                  // 3x multiplier
+      duration: 8,
+      cooldown: 6
     }],
-    synergies: [MemeFamily.MYTHOLOGY],
+    synergies: [MemeFamily.CLASSIC_INTERNET, MemeFamily.ABSTRACT_CONCEPTS],
     
     // Collection & Social
     craftable: true,
@@ -211,10 +277,10 @@ export const rareCards: UnifiedCard[] = [
     isLimited: false,
     
     // Metadata
-    effects: [EffectType.FIRE, EffectType.RESURRECT, EffectType.FLYING],
-    tags: ['phoenix', 'rare', 'creature', 'fire'],
-    flavor: 'From ashes, eternal life.',
-    lore: 'Born from the eternal flames, the phoenix represents the cycle of death and rebirth.',
+    effects: [EffectType.LUCKY, EffectType.BOOST, EffectType.BURST],
+    tags: ['stonks', 'finance', 'money', 'rare'],
+    flavor: 'STONKS! Number go up! 💎🙌',
+    lore: 'From the depths of r/wallstreetbets comes the ultimate financial meme. Diamond hands hold forever, rockets go to moon.',
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'

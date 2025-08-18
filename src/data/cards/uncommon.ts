@@ -18,7 +18,7 @@ export const uncommonCards: UnifiedCard[] = [
     // Game Specification Requirements
     rarity: CardRarity.UNCOMMON,
     rarityProbability: 4,        // 1/4 chance
-    luck: 18,                    // Uncommon luck range 10-25
+    luck: 28,                    // Enhanced luck (20-35 range)
     family: MemeFamily.CLASSIC_INTERNET,
     reference: 'Doge - the classic Shiba Inu meme representing wisdom and positivity',
     goldReward: 35,              // Random value in 25-50 range
@@ -30,10 +30,10 @@ export const uncommonCards: UnifiedCard[] = [
     // Combat Stats
     attack: 3,
     defense: 2,
-    health: 4,
-    attackSpeed: 1.1,
+    health: 32,                  // Enhanced HP 25-40 range
+    attackSpeed: 1.1,            // Uncommon range 1.0-1.5
     
-    // Enhanced Combat System
+    // Enhanced Combat System (emoji-powers.md compliant)
     emojis: [{
       character: '🐕',
       damage: 3,
@@ -46,16 +46,27 @@ export const uncommonCards: UnifiedCard[] = [
       homing: false,
       bounces: 0
     }, {
-      character: '🌟',
-      damage: 2,
-      speed: 3,
+      character: '🌟',          // Star multi-hit
+      damage: 3,                 // From emoji-powers.md
+      speed: 4,
       trajectory: 'wave',
-      effects: [EffectType.BOOST],
+      effects: [EffectType.BURST],
+      target: 'OPPONENT',
+      fireRate: 1.0,
+      piercing: false,
+      homing: false,
+      bounces: 3                 // Multiple hits
+    }, {
+      character: '🍀',          // Lucky clover
+      damage: 2,
+      speed: 2,
+      trajectory: 'homing',
+      effects: [EffectType.LUCKY],
       target: 'OPPONENT',
       fireRate: 0.8,
       piercing: false,
-      homing: false,
-      bounces: 1
+      homing: true,
+      bounces: 0
     }],
     cardEffects: [{
       id: 'wisdom_proc',
@@ -122,7 +133,7 @@ export const uncommonCards: UnifiedCard[] = [
     // Game Specification Requirements
     rarity: CardRarity.UNCOMMON,
     rarityProbability: 4,
-    luck: 22,
+    luck: 32,                    // Enhanced luck
     family: MemeFamily.EMOTIONS_REACTIONS,
     reference: 'Surprised Pikachu face - classic reaction meme for unexpected situations',
     goldReward: 42,
@@ -134,10 +145,10 @@ export const uncommonCards: UnifiedCard[] = [
     // Combat Stats
     attack: 4,
     defense: 1,
-    health: 3,
-    attackSpeed: 1.5,
+    health: 38,                  // Enhanced HP 25-40 range
+    attackSpeed: 1.4,            // Uncommon range 1.0-1.5
     
-    // Enhanced Combat System
+    // Enhanced Combat System (emoji-powers.md compliant)
     emojis: [{
       character: '😱',
       damage: 4,
@@ -150,15 +161,26 @@ export const uncommonCards: UnifiedCard[] = [
       homing: true,
       bounces: 0
     }, {
-      character: '⚡',
-      damage: 3,
+      character: '⚡',           // Lightning chain damage
+      damage: 5,                 // From emoji-powers.md
       speed: 5,
       trajectory: 'straight',
-      effects: [EffectType.BURST],
+      effects: [EffectType.CHAIN],
       target: 'OPPONENT',
       fireRate: 1.2,
       piercing: true,
       homing: false,
+      bounces: 2                 // Chain lightning
+    }, {
+      character: '🎯',          // Target precision
+      damage: 4,
+      speed: 4,
+      trajectory: 'homing',
+      effects: [EffectType.CRIT],
+      target: 'OPPONENT',
+      fireRate: 1.0,
+      piercing: false,
+      homing: true,
       bounces: 0
     }],
     cardEffects: [{
