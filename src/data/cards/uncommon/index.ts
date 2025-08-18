@@ -1,1 +1,1 @@
-export { uncommonCards, getUncommonCards, getUncommonCardById, getUncommonCardsByCost, getRandomUncommonCard, getUncommonCardsByType } from './uncommon-cards';
+export * from './uncommon-cards';

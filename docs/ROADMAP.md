@@ -70,7 +70,18 @@ server/
 
 ## 📈 Phases de Développement
 
-### 🔵 Phase 1: Foundation (Sprint 1-2) ✅ EN COURS
+### ⚫ Phase 0: OPTIMISATION & REFACTOR (Sprint 1) 🚀 EN COURS
+**Objectif**: Solidifier la base de code, aligner sur l'architecture cible et résoudre la dette technique critique.
+
+- [ ] **CRITICAL** [TASK-100] Refactoriser la structure des composants (Atomic Design)
+- [ ] **CRITICAL** [TASK-101] Granulariser la gestion de l'état (Zustand)
+- [ ] **CRITICAL** [TASK-102] Extraire la logique dans des Hooks personnalisés
+- [ ] **CRITICAL** [TASK-103] Renforcer la sécurité de typage (Éliminer les `any`)
+- [ ] **CRITICAL** [TASK-104] Solidifier et réparer la suite de tests
+
+**Livrable**: Une base de code propre, testée, et prête pour le développement de nouvelles fonctionnalités.
+
+### 🔵 Phase 1: Foundation (Sprint 2-3)
 **Objectif**: Stabiliser la base technique et unifier l'architecture
 
 #### Semaine 1-2: Refactoring Core

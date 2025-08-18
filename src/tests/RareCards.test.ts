@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rareCards } from '../data/cards/rare';
+import rareCards from '../data/cards/rare/rare-cards.json';
 import { CardType } from '../types/card';
 
 describe('Rare Cards', () => {
