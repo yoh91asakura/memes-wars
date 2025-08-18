@@ -18,7 +18,7 @@ export const CardStats: React.FC<CardStatsProps> = ({
       <div className="card__stats-primary">
         <div className="card__stat-item">
           <Icon name="heart" size="sm" color="danger" />
-          <Text variant="caption" weight="bold" color="default">
+          <Text variant="caption" weight="bold">
             {card.health}
           </Text>
         </div>
