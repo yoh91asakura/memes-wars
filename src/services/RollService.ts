@@ -1,4 +1,5 @@
 import type { Card } from '../components/types';
+import { UnifiedCard, CardRarity } from '../models/unified/Card';
 import { commonCards } from '../data/cards/common';
 import { uncommonCards } from '../data/cards/uncommon';
 import { rareCards } from '../data/cards/rare';
@@ -70,23 +71,72 @@ export class RollService {
 
   private initializeCardDatabase(): void {
     // Initialize with all available cards
-    // Note: We normalize rarity values to lowercase for consistency
-    this.allCards.set('common', this.normalizeCardRarities(commonCards));
-    this.allCards.set('uncommon', this.normalizeCardRarities(uncommonCards));
-    this.allCards.set('rare', this.normalizeCardRarities(rareCards));
-    this.allCards.set('epic', this.normalizeCardRarities(epicCards));
-    this.allCards.set('legendary', this.normalizeCardRarities(legendaryCards));
-    this.allCards.set('mythic', this.normalizeCardRarities(mythicCards));
-    this.allCards.set('cosmic', this.normalizeCardRarities(cosmicCards));
+    // Convert UnifiedCard to legacy Card format for compatibility
+    this.allCards.set('common', this.convertUnifiedCardsToLegacy(commonCards));
+    this.allCards.set('uncommon', this.convertLegacyCards(uncommonCards));
+    this.allCards.set('rare', this.convertUnifiedCardsToLegacy(rareCards));
+    this.allCards.set('epic', this.convertLegacyCards(epicCards));
+    this.allCards.set('legendary', this.convertLegacyCards(legendaryCards));
+    this.allCards.set('mythic', this.convertLegacyCards(mythicCards));
+    this.allCards.set('cosmic', this.convertLegacyCards(cosmicCards));
   }
 
   /**
-   * Normalize card rarities to lowercase for consistency
+   * Convert UnifiedCard to legacy Card format for compatibility
    */
-  private normalizeCardRarities(cards: Card[]): Card[] {
+  private convertUnifiedCardsToLegacy(cards: UnifiedCard[]): Card[] {
+    return cards.map(card => ({
+      id: card.id,
+      name: card.name,
+      description: card.description,
+      emoji: card.emoji,
+      rarity: this.convertRarityToLegacy(card.rarity),
+      type: card.type?.toLowerCase(),
+      cost: card.cost,
+      damage: card.damage || card.attack,
+      attack: card.attack,
+      defense: card.defense,
+      stats: {
+        attack: card.attack || 0,
+        defense: card.defense || 0,
+        health: card.health || 0,
+        speed: card.attackSpeed
+      },
+      effects: card.effects?.map(e => e.toString()) || [],
+      tags: card.tags || [],
+      ability: card.ability || card.passiveAbility?.name,
+      flavor: card.flavor,
+      createdAt: card.createdAt ? new Date(card.createdAt) : undefined
+    }));
+  }
+
+  /**
+   * Convert CardRarity enum to legacy lowercase string
+   */
+  private convertRarityToLegacy(rarity: CardRarity): Card['rarity'] {
+    const rarityMap: Record<CardRarity, Card['rarity']> = {
+      [CardRarity.COMMON]: 'common',
+      [CardRarity.UNCOMMON]: 'uncommon',
+      [CardRarity.RARE]: 'rare',
+      [CardRarity.EPIC]: 'epic',
+      [CardRarity.LEGENDARY]: 'legendary',
+      [CardRarity.MYTHIC]: 'mythic',
+      [CardRarity.COSMIC]: 'cosmic',
+      [CardRarity.DIVINE]: 'mythic', // Map divine to mythic for now
+      [CardRarity.INFINITY]: 'cosmic' // Map infinity to cosmic for now
+    };
+    return rarityMap[rarity] || 'common';
+  }
+  
+  /**
+   * Convert legacy Card[] to Card[] (identity function for now)
+   */
+  private convertLegacyCards(cards: Card[]): Card[] {
+    // Legacy cards are already in the correct format
     return cards.map(card => ({
       ...card,
-      rarity: card.rarity.toLowerCase() as any
+      // Ensure consistency
+      rarity: card.rarity.toLowerCase() as Card['rarity']
     }));
   }
 

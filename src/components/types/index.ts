@@ -2,9 +2,6 @@
 export * from '../../models/unified/Card';
 export * from './emoji';
 
-// Legacy type aliases for backward compatibility
-export type { UnifiedCard as Card } from '../../models/unified/Card';
-
 // Global type definitions for The Meme Wars
 
 export interface User {
@@ -15,6 +12,8 @@ export interface User {
   createdAt: Date;
 }
 
+// Legacy Card interface - for backward compatibility with components
+// Using the simplified version that matches current component usage
 export interface Card {
   id: string;
   name: string;

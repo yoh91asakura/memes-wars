@@ -198,8 +198,6 @@ export const commonCards: UnifiedCard[] = [
     tags: ['water', 'common', 'healing'],
     flavor: 'Life flows where water goes.',
     lore: 'These mystical drops contain the essence of all natural springs and can restore vitality.',
-    craftable: false,
-    isActive: true,
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'
@@ -211,8 +209,15 @@ export const commonCards: UnifiedCard[] = [
     description: 'A solid stone that provides reliable defense',
     emoji: '🪨',
     
-    // Game Mechanics
+    // Game Specification Requirements
     rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 6,
+    family: MemeFamily.ABSTRACT_CONCEPTS,
+    reference: 'Rock solid - immovable object meme',
+    goldReward: 14,
+    
+    // Game Mechanics
     type: CardType.DEFENSE,
     cost: 2,
     
@@ -231,18 +236,31 @@ export const commonCards: UnifiedCard[] = [
       value: 1
     },
     emojiProjectile: {
-      emoji: '🪨',
+      character: '🪨',
       damage: 1,
       speed: 1,
       trajectory: 'straight',
-      effects: ['knockback', 'stun']
+      effects: [EffectType.KNOCKBACK, EffectType.STUN],
+      target: 'OPPONENT'
     },
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
     
     // Progression System
     level: 1,
     experience: 0,
     stackCount: 1,
     maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['🗿', '⛰️'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
     
     // Visual & UI
     visual: {
@@ -252,13 +270,42 @@ export const commonCards: UnifiedCard[] = [
       textColor: '#654321'
     },
     
+    // Enhanced Combat System
+    emojis: [{
+      character: '🪨',
+      damage: 1,
+      speed: 1,
+      trajectory: 'straight',
+      effects: [EffectType.KNOCKBACK, EffectType.STUN],
+      target: 'OPPONENT',
+      fireRate: 0.6,
+      piercing: false,
+      homing: false,
+      bounces: 0
+    }],
+    cardEffects: [{
+      id: 'fortify_proc',
+      name: 'Stone Wall',
+      description: 'Chance to block incoming damage',
+      trigger: TriggerType.ON_DAMAGE,
+      chance: 0.2,
+      effect: EffectType.SHIELD,
+      value: 2,
+      duration: 1,
+      cooldown: 3
+    }],
+    synergies: [MemeFamily.ABSTRACT_CONCEPTS],
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
     // Metadata
-    effects: ['defense', 'knockback', 'stun'],
+    effects: [EffectType.DEFENSE, EffectType.KNOCKBACK, EffectType.STUN],
     tags: ['earth', 'common', 'defense'],
     flavor: 'Steady and unmovable, like the mountains themselves.',
     lore: 'Forged in the depths of the earth, these stones have witnessed the rise and fall of civilizations.',
-    craftable: false,
-    isActive: true,
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'
@@ -270,8 +317,15 @@ export const commonCards: UnifiedCard[] = [
     description: 'A swift breeze that enhances speed and agility',
     emoji: '💨',
     
-    // Game Mechanics
+    // Game Specification Requirements
     rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 7,
+    family: MemeFamily.ABSTRACT_CONCEPTS,
+    reference: 'Gone with the wind - swift movement meme',
+    goldReward: 13,
+    
+    // Game Mechanics
     type: CardType.SUPPORT,
     cost: 1,
     
@@ -290,18 +344,31 @@ export const commonCards: UnifiedCard[] = [
       value: 25
     },
     emojiProjectile: {
-      emoji: '💨',
+      character: '💨',
       damage: 2,
       speed: 4,
       trajectory: 'wave',
-      effects: ['push', 'speed_boost']
+      effects: [EffectType.PUSH, EffectType.SPEED_BOOST],
+      target: 'OPPONENT'
     },
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
     
     // Progression System
     level: 1,
     experience: 0,
     stackCount: 1,
     maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['🌬️', '🌀'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
     
     // Visual & UI
     visual: {
@@ -311,13 +378,42 @@ export const commonCards: UnifiedCard[] = [
       textColor: '#696969'
     },
     
+    // Enhanced Combat System
+    emojis: [{
+      character: '💨',
+      damage: 2,
+      speed: 4,
+      trajectory: 'wave',
+      effects: [EffectType.PUSH, EffectType.SPEED_BOOST],
+      target: 'OPPONENT',
+      fireRate: 1.5,
+      piercing: false,
+      homing: false,
+      bounces: 0
+    }],
+    cardEffects: [{
+      id: 'swift_proc',
+      name: 'Tailwind',
+      description: 'Chance to boost team attack speed',
+      trigger: TriggerType.PERIODIC,
+      chance: 0.15,
+      effect: EffectType.SPEED_BOOST,
+      value: 1,
+      duration: 2,
+      cooldown: 4
+    }],
+    synergies: [MemeFamily.ABSTRACT_CONCEPTS],
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
     // Metadata
-    effects: ['speed', 'push', 'support'],
+    effects: [EffectType.SPEED, EffectType.PUSH, EffectType.SUPPORT],
     tags: ['air', 'common', 'support'],
     flavor: 'Swift as the wind, light as a feather.',
     lore: 'The essence of freedom itself, captured in a gentle breeze that can become a mighty gale.',
-    craftable: false,
-    isActive: true,
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'
@@ -329,8 +425,15 @@ export const commonCards: UnifiedCard[] = [
     description: 'A crackling spark of electricity with shocking power',
     emoji: '⚡',
     
-    // Game Mechanics
+    // Game Specification Requirements
     rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 9,
+    family: MemeFamily.ABSTRACT_CONCEPTS,
+    reference: 'Shocked Pikachu - electric surprise meme',
+    goldReward: 16,
+    
+    // Game Mechanics
     type: CardType.SPELL,
     cost: 2,
     
@@ -349,18 +452,31 @@ export const commonCards: UnifiedCard[] = [
       value: 50
     },
     emojiProjectile: {
-      emoji: '⚡',
+      character: '⚡',
       damage: 3,
       speed: 5,
       trajectory: 'homing',
-      effects: ['chain', 'paralyze']
+      effects: [EffectType.CHAIN, EffectType.PARALYZE],
+      target: 'OPPONENT'
     },
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
     
     // Progression System
     level: 1,
     experience: 0,
     stackCount: 1,
     maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['🌩️', '⚙'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
     
     // Visual & UI
     visual: {
@@ -370,13 +486,42 @@ export const commonCards: UnifiedCard[] = [
       textColor: '#B8860B'
     },
     
+    // Enhanced Combat System
+    emojis: [{
+      character: '⚡',
+      damage: 3,
+      speed: 5,
+      trajectory: 'homing',
+      effects: [EffectType.CHAIN, EffectType.PARALYZE],
+      target: 'OPPONENT',
+      fireRate: 1.8,
+      piercing: true,
+      homing: true,
+      bounces: 2
+    }],
+    cardEffects: [{
+      id: 'chain_proc',
+      name: 'Lightning Storm',
+      description: 'Chance to chain to multiple enemies',
+      trigger: TriggerType.ON_HIT,
+      chance: 0.35,
+      effect: EffectType.CHAIN,
+      value: 2,
+      duration: 0,
+      cooldown: 2
+    }],
+    synergies: [MemeFamily.ABSTRACT_CONCEPTS],
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
     // Metadata
-    effects: ['lightning', 'chain', 'paralyze'],
+    effects: [EffectType.LIGHTNING, EffectType.CHAIN, EffectType.PARALYZE],
     tags: ['lightning', 'common', 'spell'],
     flavor: 'Power courses through every bolt.',
     lore: 'Born from the fury of thunderstorms, these sparks contain the raw energy of nature itself.',
-    craftable: false,
-    isActive: true,
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'
