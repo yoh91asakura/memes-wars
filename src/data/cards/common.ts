@@ -525,5 +525,460 @@ export const commonCards: UnifiedCard[] = [
     releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    // Core Identity
+    id: 'common-006',
+    name: 'Trollface Classic 😈',
+    description: 'U mad bro? The classic internet troll',
+    emoji: '😈',
+    
+    // Game Specification Requirements
+    rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 7,
+    family: MemeFamily.CLASSIC_INTERNET,
+    reference: 'Trollface - the iconic meme representing internet trolling culture',
+    goldReward: 18,
+    
+    // Game Mechanics
+    type: CardType.SPELL,
+    cost: 1,
+    
+    // Combat Stats
+    attack: 2,
+    defense: 1,
+    health: 2,
+    attackSpeed: 1.6,
+    
+    // Enhanced Combat System
+    emojis: [{
+      character: '😈',
+      damage: 2,
+      speed: 4,
+      trajectory: 'random',
+      effects: [EffectType.CHAOS],
+      target: 'OPPONENT',
+      fireRate: 1.6,
+      piercing: false,
+      homing: false,
+      bounces: 2
+    }],
+    cardEffects: [{
+      id: 'troll_chaos',
+      name: 'Trolling',
+      description: 'Random chance to cause confusion',
+      trigger: TriggerType.ON_HIT,
+      chance: 0.2,
+      effect: EffectType.CHAOS,
+      value: 1,
+      duration: 2,
+      cooldown: 4
+    }],
+    synergies: [MemeFamily.CLASSIC_INTERNET],
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
+    
+    // Progression System
+    level: 1,
+    experience: 0,
+    stackCount: 1,
+    maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['😏', '😎'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
+    
+    // Visual & UI
+    visual: {
+      glow: '#9CA3AF',
+      borderColor: '#D1D5DB',
+      backgroundColor: '#F9FAFB',
+      textColor: '#374151'
+    },
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
+    // Metadata
+    effects: [EffectType.CHAOS],
+    tags: ['troll', 'common', 'chaos'],
+    flavor: 'U mad bro?',
+    lore: 'The original internet troll, spreading chaos and confusion wherever it goes.',
+    releaseDate: '2025-01-01T00:00:00Z',
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    // Core Identity
+    id: 'common-007',
+    name: 'Grumpy Cat 😾',
+    description: 'Eternally unimpressed feline',
+    emoji: '😾',
+    
+    // Game Specification Requirements
+    rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 6,
+    family: MemeFamily.ANIMALS,
+    reference: 'Grumpy Cat - the famous perpetually grumpy-looking cat',
+    goldReward: 14,
+    
+    // Game Mechanics
+    type: CardType.DEFENSE,
+    cost: 2,
+    
+    // Combat Stats
+    attack: 1,
+    defense: 3,
+    health: 4,
+    attackSpeed: 0.9,
+    
+    // Enhanced Combat System
+    emojis: [{
+      character: '😾',
+      damage: 1,
+      speed: 2,
+      trajectory: 'straight',
+      effects: [EffectType.POISON],
+      target: 'OPPONENT',
+      fireRate: 0.9,
+      piercing: false,
+      homing: false,
+      bounces: 0
+    }],
+    cardEffects: [{
+      id: 'grumpy_aura',
+      name: 'Grumpy Aura',
+      description: 'Reduces enemy morale and attack speed',
+      trigger: TriggerType.BATTLE_START,
+      chance: 0.5,
+      effect: EffectType.POISON,
+      value: 1,
+      duration: 5,
+      cooldown: 0
+    }],
+    synergies: [MemeFamily.ANIMALS],
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
+    
+    // Progression System
+    level: 1,
+    experience: 0,
+    stackCount: 1,
+    maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['🐈', '😿'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
+    
+    // Visual & UI
+    visual: {
+      glow: '#9CA3AF',
+      borderColor: '#D1D5DB',
+      backgroundColor: '#F9FAFB',
+      textColor: '#374151'
+    },
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
+    // Metadata
+    effects: [EffectType.POISON],
+    tags: ['cat', 'grumpy', 'animal', 'common'],
+    flavor: 'NO.',
+    lore: 'This perpetually unimpressed cat has mastered the art of disappointment.',
+    releaseDate: '2025-01-01T00:00:00Z',
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    // Core Identity
+    id: 'common-008',
+    name: 'Rage Face 😡',
+    description: 'FFFUUUUU- The classic rage expression',
+    emoji: '😡',
+    
+    // Game Specification Requirements
+    rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 4,
+    family: MemeFamily.CLASSIC_INTERNET,
+    reference: 'Rage Comics - the classic stick figure expressing frustration',
+    goldReward: 16,
+    
+    // Game Mechanics
+    type: CardType.ATTACK,
+    cost: 1,
+    
+    // Combat Stats
+    attack: 3,
+    defense: 1,
+    health: 2,
+    attackSpeed: 1.4,
+    
+    // Enhanced Combat System
+    emojis: [{
+      character: '😡',
+      damage: 3,
+      speed: 3,
+      trajectory: 'straight',
+      effects: [EffectType.BURST],
+      target: 'OPPONENT',
+      fireRate: 1.4,
+      piercing: false,
+      homing: false,
+      bounces: 0
+    }],
+    cardEffects: [{
+      id: 'rage_boost',
+      name: 'FFFUUUU',
+      description: 'Anger increases attack power temporarily',
+      trigger: TriggerType.ON_DAMAGE,
+      chance: 0.4,
+      effect: EffectType.BOOST,
+      value: 2,
+      duration: 3,
+      cooldown: 5
+    }],
+    synergies: [MemeFamily.CLASSIC_INTERNET],
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
+    
+    // Progression System
+    level: 1,
+    experience: 0,
+    stackCount: 1,
+    maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['🤬', '💢'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
+    
+    // Visual & UI
+    visual: {
+      glow: '#9CA3AF',
+      borderColor: '#D1D5DB',
+      backgroundColor: '#F9FAFB',
+      textColor: '#374151'
+    },
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
+    // Metadata
+    effects: [EffectType.BURST],
+    tags: ['rage', 'common', 'attack'],
+    flavor: 'FFFUUUUU-',
+    lore: 'The eternal expression of internet frustration, channeled into pure attacking fury.',
+    releaseDate: '2025-01-01T00:00:00Z',
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    // Core Identity
+    id: 'common-009',
+    name: 'Me Gusta 😏',
+    description: 'That creepy smile of satisfaction',
+    emoji: '😏',
+    
+    // Game Specification Requirements
+    rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 9,
+    family: MemeFamily.CLASSIC_INTERNET,
+    reference: 'Me Gusta - the creepy satisfied face from rage comics',
+    goldReward: 13,
+    
+    // Game Mechanics
+    type: CardType.SUPPORT,
+    cost: 1,
+    
+    // Combat Stats
+    attack: 2,
+    defense: 2,
+    health: 3,
+    attackSpeed: 1.0,
+    
+    // Enhanced Combat System
+    emojis: [{
+      character: '😏',
+      damage: 2,
+      speed: 2,
+      trajectory: 'wave',
+      effects: [EffectType.DRAIN],
+      target: 'OPPONENT',
+      fireRate: 1.0,
+      piercing: false,
+      homing: false,
+      bounces: 1
+    }],
+    cardEffects: [{
+      id: 'creepy_satisfaction',
+      name: 'Me Gusta',
+      description: 'Gains power from enemy suffering',
+      trigger: TriggerType.ON_HIT,
+      chance: 0.3,
+      effect: EffectType.DRAIN,
+      value: 1,
+      duration: 0,
+      cooldown: 2
+    }],
+    synergies: [MemeFamily.CLASSIC_INTERNET],
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
+    
+    // Progression System
+    level: 1,
+    experience: 0,
+    stackCount: 1,
+    maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['😈', '🙃'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
+    
+    // Visual & UI
+    visual: {
+      glow: '#9CA3AF',
+      borderColor: '#D1D5DB',
+      backgroundColor: '#F9FAFB',
+      textColor: '#374151'
+    },
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
+    // Metadata
+    effects: [EffectType.DRAIN],
+    tags: ['me gusta', 'common', 'drain'],
+    flavor: 'Me gusta...',
+    lore: 'The unsettling satisfaction that comes from others discomfort.',
+    releaseDate: '2025-01-01T00:00:00Z',
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    // Core Identity
+    id: 'common-010',
+    name: 'Forever Alone 😔',
+    description: 'The eternal sadness of solitude',
+    emoji: '😔',
+    
+    // Game Specification Requirements
+    rarity: CardRarity.COMMON,
+    rarityProbability: 2,
+    luck: 3,
+    family: MemeFamily.EMOTIONS_REACTIONS,
+    reference: 'Forever Alone - the melancholic figure representing loneliness',
+    goldReward: 11,
+    
+    // Game Mechanics
+    type: CardType.DEFENSE,
+    cost: 1,
+    
+    // Combat Stats
+    attack: 1,
+    defense: 4,
+    health: 5,
+    attackSpeed: 0.7,
+    
+    // Enhanced Combat System
+    emojis: [{
+      character: '😔',
+      damage: 1,
+      speed: 1,
+      trajectory: 'arc',
+      effects: [EffectType.SHIELD],
+      target: 'OPPONENT',
+      fireRate: 0.7,
+      piercing: false,
+      homing: false,
+      bounces: 0
+    }],
+    cardEffects: [{
+      id: 'loneliness_shield',
+      name: 'Forever Alone',
+      description: 'Loneliness creates a protective barrier',
+      trigger: TriggerType.BATTLE_START,
+      chance: 0.6,
+      effect: EffectType.SHIELD,
+      value: 3,
+      duration: 10,
+      cooldown: 0
+    }],
+    synergies: [MemeFamily.EMOTIONS_REACTIONS],
+    
+    // Economic System
+    goldGeneration: 1,
+    dustValue: 1,
+    tradeable: true,
+    
+    // Progression System
+    level: 1,
+    experience: 0,
+    stackCount: 1,
+    maxStacks: 10,
+    stackBonus: {
+      luckMultiplier: 0.1,
+      goldMultiplier: 0.15,
+      bonusEmojis: ['😢', '😞'],
+      effectBonus: 0.05,
+      damageBonus: 0.1
+    },
+    
+    // Visual & UI
+    visual: {
+      glow: '#9CA3AF',
+      borderColor: '#D1D5DB',
+      backgroundColor: '#F9FAFB',
+      textColor: '#374151'
+    },
+    
+    // Collection & Social
+    craftable: false,
+    isActive: true,
+    isLimited: false,
+    
+    // Metadata
+    effects: [EffectType.SHIELD],
+    tags: ['forever alone', 'common', 'defense', 'sad'],
+    flavor: 'Okay...',
+    lore: 'Sometimes solitude becomes a strength, creating walls that protect the heart.',
+    releaseDate: '2025-01-01T00:00:00Z',
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
   }
 ];
