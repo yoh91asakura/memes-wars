@@ -21,7 +21,7 @@ const createPrismaClient = () => {
   });
 
   // Log database queries in development
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     client.$on('query', (e) => {
       logger.debug('Database Query', {
         query: e.query,
@@ -54,7 +54,7 @@ const createPrismaClient = () => {
 };
 
 // Initialize Prisma client (reuse in development to prevent hot reload issues)
-if (process.env.NODE_ENV === 'production') {
+if (process.env['NODE_ENV'] === 'production') {
   prisma = createPrismaClient();
 } else {
   if (!globalThis.prismaGlobal) {

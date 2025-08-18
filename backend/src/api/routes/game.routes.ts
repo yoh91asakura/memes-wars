@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { asyncHandler, successResponse } from '@api/middleware/errorHandling';
 import { validate } from '@api/middleware/validation';
 
@@ -11,7 +11,7 @@ const router = Router();
  *     summary: Create a new match
  *     tags: [Game]
  */
-router.post('/match/create', validate.createMatch, asyncHandler(async (req, res) => {
+router.post('/match/create', validate.createMatch, asyncHandler(async (req: Request, res: Response) => {
   const { deckId, matchType = 'casual', opponentId } = req.body;
   const userId = 'temp-user-id';
 
@@ -37,7 +37,7 @@ router.post('/match/create', validate.createMatch, asyncHandler(async (req, res)
  *     summary: Get match details
  *     tags: [Game]
  */
-router.get('/match/:matchId', validate.getMatchById, asyncHandler(async (req, res) => {
+router.get('/match/:matchId', validate.getMatchById, asyncHandler(async (req: Request, res: Response) => {
   const { matchId } = req.params;
 
   // TODO: Fetch match from database

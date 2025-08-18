@@ -17,6 +17,9 @@ export const setupMatchmakingSocket = (io: SocketIOServer) => {
       try {
         const { userId, deckId, matchType, preferredRegion } = data;
         
+        // TODO: Use deckId for matchmaking
+        console.log('Queue data:', { deckId });
+        
         // Join queue room based on match type and region
         const queueRoom = `queue:${matchType}:${preferredRegion}`;
         await socket.join(queueRoom);
@@ -50,6 +53,9 @@ export const setupMatchmakingSocket = (io: SocketIOServer) => {
       try {
         const { userId, queueId } = data;
         
+        // TODO: Use queueId for queue management
+        console.log('Leaving queue:', { queueId });
+        
         // Leave all queue rooms
         const rooms = Array.from(socket.rooms);
         for (const room of rooms) {
@@ -76,6 +82,9 @@ export const setupMatchmakingSocket = (io: SocketIOServer) => {
     socket.on('queue-status', async (data: { userId: string }) => {
       try {
         const { userId } = data;
+        
+        // TODO: Use userId for queue status lookup
+        console.log('Getting queue status for user:', userId);
         
         // TODO: Get queue status from database
         const queueStatus = {

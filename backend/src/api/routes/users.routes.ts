@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { asyncHandler, successResponse } from '@api/middleware/errorHandling';
 import { validate } from '@api/middleware/validation';
 
@@ -19,9 +19,10 @@ const router = Router();
  *       200:
  *         description: User profile retrieved successfully
  */
-router.get('/profile', asyncHandler(async (req, res) => {
+router.get('/profile', asyncHandler(async (_req: Request, res: Response) => {
   // TODO: Get user from JWT token
   const userId = 'temp-user-id';
+  console.log('Getting profile for user:', userId);
 
   // TODO: Fetch user profile from database
   const userProfile = {
@@ -76,12 +77,12 @@ router.get('/profile', asyncHandler(async (req, res) => {
  *       200:
  *         description: Profile updated successfully
  */
-router.put('/profile', validate.updateProfile, asyncHandler(async (req, res) => {
+router.put('/profile', validate.updateProfile, asyncHandler(async (req: Request, res: Response) => {
   const userId = 'temp-user-id';
   const updateData = req.body;
 
   // TODO: Update user profile in database
-  // TODO: Handle username/email uniqueness validation
+  console.log('Updating profile for user:', userId, 'with data:', updateData);
 
   const updatedProfile = {
     id: userId,
@@ -104,8 +105,9 @@ router.put('/profile', validate.updateProfile, asyncHandler(async (req, res) => 
  *       200:
  *         description: User stats retrieved successfully
  */
-router.get('/stats', asyncHandler(async (req, res) => {
+router.get('/stats', asyncHandler(async (_req: Request, res: Response) => {
   const userId = 'temp-user-id';
+  console.log('Getting stats for user:', userId);
 
   // TODO: Calculate stats from game history
   const userStats = {
@@ -164,9 +166,11 @@ router.get('/stats', asyncHandler(async (req, res) => {
  *       200:
  *         description: Collection retrieved successfully
  */
-router.get('/collection', validate.pagination, asyncHandler(async (req, res) => {
+router.get('/collection', validate.pagination, asyncHandler(async (req: Request, res: Response) => {
   const userId = 'temp-user-id';
   const { page = 1, limit = 20, rarity } = req.query as any;
+
+  console.log('Getting collection for user:', userId, 'page:', page, 'rarity filter:', rarity);
 
   // TODO: Fetch user collection from database with filtering
   const collection = [
@@ -234,15 +238,12 @@ router.get('/collection', validate.pagination, asyncHandler(async (req, res) => 
  *       200:
  *         description: Password changed successfully
  */
-router.put('/change-password', validate.changePassword, asyncHandler(async (req, res) => {
+router.put('/change-password', validate.changePassword, asyncHandler(async (req: Request, res: Response) => {
   const userId = 'temp-user-id';
   const { currentPassword, newPassword } = req.body;
 
-  // TODO: Implement password change logic
-  // - Verify current password
-  // - Hash new password
-  // - Update password in database
-  // - Invalidate all existing sessions
+  // TODO: Implement password change logic with currentPassword and newPassword
+  console.log('Password change request for user:', userId, 'current password provided:', !!currentPassword, 'new password provided:', !!newPassword);
 
   successResponse(res, null, 'Password changed successfully');
 }));
@@ -265,7 +266,7 @@ router.put('/change-password', validate.changePassword, asyncHandler(async (req,
  *       404:
  *         description: User not found
  */
-router.get('/:userId', validate.getUserById, asyncHandler(async (req, res) => {
+router.get('/:userId', validate.getUserById, asyncHandler(async (req: Request, res: Response) => {
   const { userId } = req.params;
 
   // TODO: Fetch public profile from database

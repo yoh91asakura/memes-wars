@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { asyncHandler, successResponse } from '@api/middleware/errorHandling';
 import { validate } from '@api/middleware/validation';
 import { securityLogger } from '@api/middleware/logging';
@@ -44,14 +44,11 @@ router.use(securityLogger);
  *       400:
  *         description: Validation error or user already exists
  */
-router.post('/register', validate.register, asyncHandler(async (req, res) => {
+router.post('/register', validate.register, asyncHandler(async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
 
-  // TODO: Implement user registration logic
-  // - Check if user already exists
-  // - Hash password
-  // - Create user in database
-  // - Generate JWT tokens
+  // TODO: Implement user registration logic with password
+  console.log('Register attempt for:', email, 'password provided:', !!password);
   
   // Placeholder response
   const userData = {
@@ -97,14 +94,11 @@ router.post('/register', validate.register, asyncHandler(async (req, res) => {
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login', validate.login, asyncHandler(async (req, res) => {
+router.post('/login', validate.login, asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
-  // TODO: Implement login logic
-  // - Find user by email
-  // - Verify password
-  // - Generate JWT tokens
-  // - Update last login timestamp
+  // TODO: Implement login logic with password verification
+  console.log('Login attempt for:', email, 'password provided:', !!password);
 
   // Placeholder response
   const userData = {
@@ -146,13 +140,11 @@ router.post('/login', validate.login, asyncHandler(async (req, res) => {
  *       401:
  *         description: Invalid refresh token
  */
-router.post('/refresh', validate.refreshToken, asyncHandler(async (req, res) => {
+router.post('/refresh', validate.refreshToken, asyncHandler(async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
 
-  // TODO: Implement token refresh logic
-  // - Verify refresh token
-  // - Generate new access token
-  // - Optionally rotate refresh token
+  // TODO: Implement token refresh logic using refreshToken
+  console.log('Token refresh requested, token provided:', !!refreshToken);
 
   // Placeholder response
   const tokenData = {
@@ -176,7 +168,7 @@ router.post('/refresh', validate.refreshToken, asyncHandler(async (req, res) => 
  *       200:
  *         description: Logout successful
  */
-router.post('/logout', asyncHandler(async (req, res) => {
+router.post('/logout', asyncHandler(async (_req: Request, res: Response) => {
   // TODO: Implement logout logic
   // - Invalidate refresh token
   // - Add access token to blacklist (if using blacklist strategy)
@@ -207,14 +199,11 @@ router.post('/logout', asyncHandler(async (req, res) => {
  *       200:
  *         description: Password reset email sent
  */
-router.post('/forgot-password', validate.forgotPassword, asyncHandler(async (req, res) => {
+router.post('/forgot-password', validate.forgotPassword, asyncHandler(async (req: Request, res: Response) => {
   const { email } = req.body;
 
-  // TODO: Implement forgot password logic
-  // - Find user by email
-  // - Generate reset token
-  // - Send reset email
-  // - Store reset token with expiration
+  // TODO: Implement forgot password logic using email
+  console.log('Password reset requested for:', email);
 
   successResponse(res, null, 'Password reset email sent if account exists');
 }));
@@ -249,15 +238,11 @@ router.post('/forgot-password', validate.forgotPassword, asyncHandler(async (req
  *       400:
  *         description: Invalid or expired token
  */
-router.post('/reset-password', validate.resetPassword, asyncHandler(async (req, res) => {
+router.post('/reset-password', validate.resetPassword, asyncHandler(async (req: Request, res: Response) => {
   const { token, password } = req.body;
 
-  // TODO: Implement password reset logic
-  // - Verify reset token
-  // - Check token expiration
-  // - Hash new password
-  // - Update user password
-  // - Invalidate all user sessions
+  // TODO: Implement password reset logic using token and password
+  console.log('Password reset attempt with token:', !!token, 'password provided:', !!password);
 
   successResponse(res, null, 'Password reset successful');
 }));
@@ -285,13 +270,11 @@ router.post('/reset-password', validate.resetPassword, asyncHandler(async (req, 
  *       400:
  *         description: Invalid or expired token
  */
-router.post('/verify-email', asyncHandler(async (req, res) => {
+router.post('/verify-email', asyncHandler(async (req: Request, res: Response) => {
   const { token } = req.body;
 
-  // TODO: Implement email verification logic
-  // - Verify email token
-  // - Mark user email as verified
-  // - Update user status
+  // TODO: Implement email verification logic using token
+  console.log('Email verification attempt with token:', !!token);
 
   successResponse(res, null, 'Email verified successfully');
 }));

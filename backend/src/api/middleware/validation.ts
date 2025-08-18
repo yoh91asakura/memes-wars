@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError, z } from 'zod';
+import { ZodError, z, ZodSchema } from 'zod';
 import { ValidationError } from './errorHandling';
 
 // Validation middleware factory
 export const validateRequest = (schema: {
-  body?: AnyZodObject;
-  query?: AnyZodObject;
-  params?: AnyZodObject;
+  body?: ZodSchema<any>;
+  query?: ZodSchema<any>;
+  params?: ZodSchema<any>;
 }) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, _res: Response, next: NextFunction) => {
     try {
       // Validate request body
       if (schema.body) {

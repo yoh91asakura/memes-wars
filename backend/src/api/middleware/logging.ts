@@ -26,8 +26,8 @@ export const requestLogger = (req: RequestWithTiming, res: Response, next: NextF
   });
 
   // Override res.end to log response
-  const originalEnd = res.end;
-  res.end = function(chunk?: any, encoding?: any) {
+  const originalEnd = res.end.bind(res);
+  res.end = function(this: Response, chunk?: any, encoding?: any, cb?: any) {
     const duration = req.startTime ? Date.now() - req.startTime : 0;
     const { statusCode } = res;
     const contentLength = res.get('content-length') || '0';
@@ -46,14 +46,14 @@ export const requestLogger = (req: RequestWithTiming, res: Response, next: NextF
     });
 
     // Call original end method
-    originalEnd.call(this, chunk, encoding);
+    return originalEnd(chunk, encoding, cb);
   };
 
   next();
 };
 
 // API usage analytics middleware
-export const analyticsMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const analyticsMiddleware = (req: Request, _res: Response, next: NextFunction) => {
   // Track API endpoint usage
   const endpoint = `${req.method} ${req.route?.path || req.originalUrl}`;
   const userId = (req as any).user?.id;
@@ -75,8 +75,8 @@ export const performanceMonitor = (req: RequestWithTiming, res: Response, next: 
   req.startTime = Date.now();
 
   // Override res.end to measure performance
-  const originalEnd = res.end;
-  res.end = function(chunk?: any, encoding?: any) {
+  const originalEnd = res.end.bind(res);
+  res.end = function(this: Response, chunk?: any, encoding?: any, cb?: any) {
     const duration = req.startTime ? Date.now() - req.startTime : 0;
     
     // Log slow requests (> 1000ms)
@@ -100,14 +100,14 @@ export const performanceMonitor = (req: RequestWithTiming, res: Response, next: 
       memoryUsage: process.memoryUsage(),
     });
 
-    originalEnd.call(this, chunk, encoding);
+    return originalEnd(chunk, encoding, cb);
   };
 
   next();
 };
 
 // Security logging middleware
-export const securityLogger = (req: Request, res: Response, next: NextFunction) => {
+export const securityLogger = (req: Request, _res: Response, next: NextFunction) => {
   const suspiciousPatterns = [
     /\.\./,           // Directory traversal
     /<script/i,       // XSS attempts

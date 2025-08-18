@@ -71,7 +71,7 @@ interface ErrorResponse {
 }
 
 // 404 Not Found handler
-export const notFoundHandler = (req: Request, res: Response, next: NextFunction) => {
+export const notFoundHandler = (req: Request, _res: Response, next: NextFunction) => {
   const error = new NotFoundError(`Route ${req.originalUrl}`);
   next(error);
 };
@@ -81,7 +81,7 @@ export const errorHandler = (
   error: Error | AppError | ZodError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void => {
   let statusCode = 500;
   let message = 'Internal Server Error';
@@ -145,12 +145,12 @@ export const errorHandler = (
   }
 
   // Add details in development mode or for validation errors
-  if (details && (process.env.NODE_ENV === 'development' || statusCode === 400)) {
+  if (details && (process.env['NODE_ENV'] === 'development' || statusCode === 400)) {
     errorResponse.error.details = details;
   }
 
   // Don't leak error details in production for 5xx errors
-  if (statusCode >= 500 && process.env.NODE_ENV === 'production') {
+  if (statusCode >= 500 && process.env['NODE_ENV'] === 'production') {
     errorResponse.error.message = 'Internal Server Error';
   }
 

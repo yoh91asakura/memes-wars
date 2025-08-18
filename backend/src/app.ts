@@ -10,7 +10,7 @@ import { config } from '@config/index';
 import { logger } from '@/utils/logger';
 import { errorHandler, notFoundHandler } from '@api/middleware/errorHandling';
 import { requestLogger } from '@api/middleware/logging';
-import { validateRequest } from '@api/middleware/validation';
+import { cacheService } from '@services/CacheService';
 
 // Import routes
 import authRoutes from '@api/routes/auth.routes';
@@ -84,17 +84,41 @@ app.use(requestLogger);
 app.use('/api', limiter);
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    environment: config.server.env,
-    version: process.env.npm_package_version || '1.0.0',
-  });
+app.get('/health', async (_req, res) => {
+  try {
+    const cacheHealth = await cacheService.healthCheck();
+    const cacheStats = await cacheService.getStats();
+    
+    res.status(200).json({
+      status: 'OK',
+      timestamp: new Date().toISOString(),
+      environment: config.server.env,
+      version: process.env['npm_package_version'] || '1.0.0',
+      services: {
+        cache: {
+          status: cacheHealth.status,
+          latency: `${cacheHealth.latency}ms`,
+          stats: {
+            hits: cacheStats.hits,
+            misses: cacheStats.misses,
+            keys: cacheStats.keys,
+            memory: cacheStats.memory,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'ERROR',
+      timestamp: new Date().toISOString(),
+      environment: config.server.env,
+      error: 'Health check failed',
+    });
+  }
 });
 
 // API Documentation
-app.get('/api/docs', (req, res) => {
+app.get('/api/docs', (_req, res) => {
   res.json({
     message: 'API Documentation',
     version: '1.0.0',
@@ -128,12 +152,22 @@ app.use(errorHandler);
 // Start server
 const startServer = async () => {
   try {
-    // Initialize database connection
-    const { initDatabase } = await import('@database/connection');
-    await initDatabase();
+    // Try to initialize database connection
+    try {
+      const { initDatabase } = await import('@database/connection');
+      await initDatabase();
+    } catch (dbError) {
+      logger.warn('Database connection failed - continuing without database:', dbError);
+      logger.info('📊 Running in database-less mode - some features will be limited');
+    }
 
-    // Initialize Redis connection
-    // await initRedis();
+    // Try to initialize Redis cache connection  
+    try {
+      await cacheService.connect();
+    } catch (cacheError) {
+      logger.warn('Redis connection failed - continuing without cache:', cacheError);
+      logger.info('🔄 Running in cache-less mode - performance may be impacted');
+    }
 
     httpServer.listen(config.server.port, config.server.host, () => {
       logger.info(`🚀 Server running on http://${config.server.host}:${config.server.port}`);
@@ -152,16 +186,18 @@ const startServer = async () => {
 };
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   logger.info('SIGTERM received, shutting down gracefully');
+  await cacheService.disconnect();
   httpServer.close(() => {
     logger.info('Process terminated');
     process.exit(0);
   });
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   logger.info('SIGINT received, shutting down gracefully');
+  await cacheService.disconnect();
   httpServer.close(() => {
     logger.info('Process terminated');
     process.exit(0);
