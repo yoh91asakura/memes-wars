@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card as CardType } from '../../types';
+import { UnifiedCard } from '../../../models/unified/Card';
+import { convertUnifiedCardToLegacy, rarityEnumToString } from '../../../utils/typeConversions';
 import { RollButton } from '../../molecules/RollButton/RollButton';
 import { Card } from '../../molecules/Card/Card';
 import { Text } from '../../atoms/Text';
@@ -9,10 +10,11 @@ import { Badge } from '../../atoms/Badge';
 import './RollPanel.css';
 
 interface RollPanelProps {
-  onRoll?: () => Promise<CardType>;
+  onRoll?: () => Promise<UnifiedCard>;
   rollCount?: number;
   isRolling?: boolean;
-  lastRolledCard?: CardType | null;
+  lastRolledCard?: UnifiedCard | null;
+  coins?: number;
   className?: string;
   testId?: string;
 }
@@ -22,10 +24,11 @@ export const RollPanel: React.FC<RollPanelProps> = ({
   rollCount = 0,
   isRolling = false,
   lastRolledCard,
+  coins = 0,
   className = '',
   testId,
 }) => {
-  const [revealCard, setRevealCard] = useState<CardType | null>(null);
+  const [revealCard, setRevealCard] = useState<UnifiedCard | null>(null);
   const [showReveal, setShowReveal] = useState(false);
 
   const handleRoll = async () => {
@@ -66,13 +69,13 @@ export const RollPanel: React.FC<RollPanelProps> = ({
         </div>
 
         <div className="roll-panel__stat-item">
-          <Icon name="cards" size="md" color="success" />
+          <Icon emoji="💰" size="md" />
           <div className="roll-panel__stat-content">
-            <Text variant="h4" weight="bold" color="success">
-              {rollCount}
+            <Text variant="h4" weight="bold" color="warning">
+              {coins}
             </Text>
             <Text variant="caption" color="muted">
-              Cards Collected
+              Coins
             </Text>
           </div>
         </div>
@@ -100,7 +103,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
                 }}
               >
                 <Card
-                  card={cardToShow}
+                  card={convertUnifiedCardToLegacy(cardToShow)}
                   size="lg"
                   interactive={false}
                   className={showReveal ? 'roll-panel__card--revealed' : ''}
@@ -112,9 +115,9 @@ export const RollPanel: React.FC<RollPanelProps> = ({
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ delay: 0.3, duration: 0.5 }}
                   >
-                    <Badge variant={cardToShow.rarity as any} size="lg" rounded>
+                    <Badge variant="primary" size="lg" rounded>
                       <Icon name="star" size="sm" />
-                      {cardToShow.rarity.toUpperCase()}
+                      {rarityEnumToString(cardToShow.rarity).toUpperCase()}
                       <Icon name="star" size="sm" />
                     </Badge>
                   </motion.div>
@@ -144,6 +147,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
             onRoll={handleRoll}
             loading={isRolling}
             rollCount={rollCount}
+            disabled={coins < 100}
           />
         </div>
       </div>

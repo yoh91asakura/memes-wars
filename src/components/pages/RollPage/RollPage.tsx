@@ -1,8 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { Card as CardType } from '../../types';
+import { UnifiedCard } from '../../../models/unified/Card';
+import { convertUnifiedCardsToLegacy } from '../../../utils/typeConversions';
+import { Card } from '../../../components/types';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
 import { Text } from '../../atoms/Text';
+import { useRollStore } from '../../../stores/rollStore';
+import { useCollectionStore } from '../../../stores/collectionStore';
+import { useGameStore } from '../../../stores/gameStore';
 import './RollPage.css';
 
 interface RollPageProps {
@@ -10,100 +15,47 @@ interface RollPageProps {
   testId?: string;
 }
 
-// Mock cards data for demonstration
-const mockCards: CardType[] = [
-  {
-    id: '1',
-    name: 'Doge',
-    description: 'Such card, much wow!',
-    imageUrl: '',
-    emoji: '🐕',
-    rarity: 'common',
-    stats: { attack: 50, defense: 30, health: 80, speed: 60 },
-    createdAt: new Date('2024-01-01'),
-  },
-  {
-    id: '2',
-    name: 'Pepe',
-    description: 'Rare Pepe collectible',
-    imageUrl: '',
-    emoji: '🐸',
-    rarity: 'rare',
-    stats: { attack: 70, defense: 40, health: 90, speed: 55 },
-    createdAt: new Date('2024-01-02'),
-  },
-  {
-    id: '3',
-    name: 'Galaxy Cat',
-    description: 'A cosmic feline from space',
-    imageUrl: '',
-    emoji: '🐱',
-    rarity: 'cosmic',
-    stats: { attack: 120, defense: 80, health: 150, speed: 90 },
-    createdAt: new Date('2024-01-03'),
-  },
-];
 
 export const RollPage: React.FC<RollPageProps> = ({
   className = '',
   testId,
 }) => {
-  const [rolledCards, setRolledCards] = useState<CardType[]>([]);
-  const [isRolling, setIsRolling] = useState(false);
-  const [rollCount, setRollCount] = useState(0);
-  const [lastRolledCard, setLastRolledCard] = useState<CardType | null>(null);
+  const [rolledCards, setRolledCards] = useState<UnifiedCard[]>([]);
+  const [lastRolledCard, setLastRolledCard] = useState<UnifiedCard | null>(null);
+  
+  // Store hooks
+  const { performSingleRoll, isRolling, stats } = useRollStore();
+  const { addCard } = useCollectionStore();
+  const { coins, spendCoins } = useGameStore();
 
-  const handleRoll = useCallback(async (): Promise<CardType> => {
-    setIsRolling(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Random card selection with rarity weighting
-    const rarityWeights = {
-      common: 50,
-      rare: 30,
-      epic: 15,
-      legendary: 4,
-      cosmic: 1
-    };
-    
-    const totalWeight = Object.values(rarityWeights).reduce((sum, weight) => sum + weight, 0);
-    const random = Math.random() * totalWeight;
-    
-    let selectedRarity: CardType['rarity'] = 'common';
-    let currentWeight = 0;
-    
-    for (const [rarity, weight] of Object.entries(rarityWeights)) {
-      currentWeight += weight;
-      if (random <= currentWeight) {
-        selectedRarity = rarity as CardType['rarity'];
-        break;
+  const handleRoll = useCallback(async (): Promise<UnifiedCard> => {
+    try {
+      // Check if player has enough coins
+      const rollCost = 100; // Get from config
+      const success = await spendCoins(rollCost);
+      if (!success) {
+        throw new Error('Not enough coins to roll!');
       }
+      
+      // Perform the roll using the roll store
+      const rollResult = await performSingleRoll();
+      const newCard = rollResult.card;
+      
+      // Add card to collection
+      addCard(newCard);
+      
+      // Update local state for display
+      setRolledCards(prev => [newCard, ...prev]);
+      setLastRolledCard(newCard);
+      
+      return newCard;
+    } catch (error) {
+      console.error('Roll failed:', error);
+      throw error;
     }
-    
-    // Find a card of the selected rarity or fallback to a random card
-    const availableCards = mockCards.filter(card => card.rarity === selectedRarity);
-    const selectedCard = availableCards.length > 0 
-      ? availableCards[Math.floor(Math.random() * availableCards.length)]
-      : mockCards[Math.floor(Math.random() * mockCards.length)];
-    
-    // Create a unique instance of the card
-    const newCard: CardType = {
-      ...selectedCard,
-      id: `${selectedCard.id}-${Date.now()}`,
-      createdAt: new Date(),
-    };
-    
-    setRolledCards(prev => [newCard, ...prev]);
-    setRollCount(prev => prev + 1);
-    setLastRolledCard(newCard);
-    setIsRolling(false);
-    
-    return newCard;
-  }, []);
+  }, [performSingleRoll, addCard, spendCoins]);
 
-  const handleCardClick = (_card: CardType) => {
+  const handleCardClick = (_card: Card) => {
     // Card clicked - could open modal or navigate to details
     // Debug log removed
   };
@@ -114,9 +66,10 @@ export const RollPage: React.FC<RollPageProps> = ({
       <section className="roll-page__roll-section">
         <RollPanel
           onRoll={handleRoll}
-          rollCount={rollCount}
+          rollCount={stats.totalRolls}
           isRolling={isRolling}
           lastRolledCard={lastRolledCard}
+          coins={coins}
         />
       </section>
 
@@ -133,7 +86,7 @@ export const RollPage: React.FC<RollPageProps> = ({
           </div>
           
           <CardGrid
-            cards={rolledCards}
+            cards={convertUnifiedCardsToLegacy(rolledCards)}
             title=""
             searchable={true}
             onCardClick={handleCardClick}

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { RollService, RollResult, RollStats, MultiRollResult } from '../services/RollService';
-import type { Card } from '../components/types';
+// import type { Card } from '../components/types';
 
 // Roll configuration
 const rollConfig = {
@@ -233,9 +233,9 @@ export const useRollStore = create<RollStore>()(
               cards: allCards,
               guaranteedTriggered: false,
               bonusCards: [],
-              totalValue: allCards.reduce((sum, r) => sum + getCardValue(r.card), 0),
+              totalValue: allCards.reduce((sum, r) => sum + getCardValue(r.card as any), 0),
               rarityBreakdown,
-              highlights: allCards.filter(r => ['epic', 'legendary', 'mythic', 'cosmic'].includes(r.card.rarity)).map(r => r.card)
+              highlights: allCards.filter(r => ['epic', 'legendary', 'mythic', 'cosmic'].includes(r.card.rarity as any)).map(r => r.card)
             };
             
             set(() => ({
@@ -278,7 +278,7 @@ export const useRollStore = create<RollStore>()(
             cards: allCards,
             guaranteedTriggered: true, // Hundred roll always has guarantees
             bonusCards: [],
-            totalValue: allCards.reduce((sum, r) => sum + getCardValue(r.card), 0),
+            totalValue: allCards.reduce((sum, r) => sum + getCardValue(r.card as any), 0),
             rarityBreakdown: allCards.reduce((acc, r) => {
               const rarity = r.card.rarity;
               acc[rarity] = (acc[rarity] || 0) + 1;
@@ -517,7 +517,7 @@ function updateStatsAfterRoll(stats: RollStats, rarity: string): RollStats {
   return newStats;
 }
 
-function getCardValue(card: Card): number {
+function getCardValue(card: any): number {
   const rarityValues = {
     common: 1,
     uncommon: 5,
