@@ -1871,6 +1871,17 @@
         "dependencies": [],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Enhance Main Page UI and Fix Card Centering",
+        "description": "Improve the main page layout, fix card centering issues, optimize navigation, and enhance the recent rolls display",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -1878,7 +1889,7 @@
       "version": "2.0.0",
       "created": "2025-08-18T04:17:54.803Z",
       "description": "Tasks for master context",
-      "updated": "2025-08-18T04:20:17.438Z"
+      "updated": "2025-08-18T04:59:35.457Z"
     }
   }
 }

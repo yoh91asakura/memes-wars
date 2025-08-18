@@ -1,0 +1,161 @@
+/* RecentRollsList Styles */
+
+.recent-rolls-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.recent-rolls-list__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.recent-rolls-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.recent-rolls-list__item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.recent-rolls-list__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--rarity-color);
+  opacity: 0.8;
+}
+
+.recent-rolls-list__item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--rarity-color);
+  transform: translateX(4px);
+}
+
+.recent-rolls-list__item-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.recent-rolls-list__item-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.recent-rolls-list__item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recent-rolls-list__item-stats {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.recent-rolls-list__stat {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.recent-rolls-list__item-time {
+  flex-shrink: 0;
+  min-width: 60px;
+  text-align: right;
+}
+
+.recent-rolls-list__more {
+  text-align: center;
+  padding: 0.5rem;
+  opacity: 0.7;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .recent-rolls-list__item {
+    padding: 0.5rem 0.75rem;
+    gap: 0.75rem;
+  }
+  
+  .recent-rolls-list__item-emoji {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+  
+  .recent-rolls-list__item-stats {
+    display: none;
+  }
+  
+  .recent-rolls-list__item-time {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .recent-rolls-list__header {
+    flex-wrap: wrap;
+  }
+  
+  .recent-rolls-list__item {
+    flex-wrap: wrap;
+  }
+  
+  .recent-rolls-list__item-info {
+    width: 100%;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .recent-rolls-list__item {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .recent-rolls-list__item:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
+  .recent-rolls-list__item-emoji {
+    background: rgba(0, 0, 0, 0.2);
+  }
+  
+  .recent-rolls-list__stat {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}

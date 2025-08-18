@@ -7,6 +7,7 @@
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .roll-panel__stats {
@@ -45,10 +46,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  perspective: 1000px;
 }
 
 .roll-panel__revealed-card {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .roll-panel__card--revealed {

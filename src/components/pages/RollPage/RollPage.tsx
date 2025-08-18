@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Card as CardType } from '../../types';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
+import { RecentRollsList } from '../../organisms/RecentRollsList/RecentRollsList';
 import { Text } from '../../atoms';
 import './RollPage.css';
 
@@ -120,15 +121,26 @@ export const RollPage: React.FC<RollPageProps> = ({
         />
       </section>
 
-      {/* Recent Rolls */}
+      {/* Recent Rolls List - Compact View */}
       {rolledCards.length > 0 && (
         <section className="roll-page__recent-section">
+          <RecentRollsList
+            cards={rolledCards}
+            maxCards={10}
+            onCardClick={handleCardClick}
+          />
+        </section>
+      )}
+      
+      {/* Card Grid - Full Collection */}
+      {rolledCards.length > 5 && (
+        <section className="roll-page__collection-section">
           <div className="roll-page__section-header">
             <Text variant="h3" weight="bold" color="inherit">
-              Recent Rolls
+              Your Collection
             </Text>
             <Text variant="subtitle" color="muted">
-              Your latest card discoveries
+              All your discovered cards
             </Text>
           </div>
           
