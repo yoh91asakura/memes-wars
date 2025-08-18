@@ -1,11 +1,14 @@
 # 📊 The Meme Wars - Project Status Dashboard
 
-## 🎯 Current Sprint: Sprint 1 (OPTIMIZATION & REFACTOR)
+## 🎯 Current Sprint: Sprint 1 (OPTIMIZATION & BACKEND)
 **Period**: 2025-08-18 → 2025-09-01
-**Goal**: Solidifier la base de code, aligner sur l'architecture cible et résoudre la dette technique critique.
-**Progress**: ▓░░░░░░░░░ 10%
+**Goal**: Mettre en place le backend, optimiser les performances frontend et refactoriser la base de code.
+**Progress**: ▓░░░░░░░░░ 5%
 
-## 🔥 CRITICAL FOCUS: OPTIMIZATION SPRINT
+## 🔥 CRITICAL FOCUS: OPTIMIZATION & BACKEND SPRINT
+- **[TASK-105]** [BACKEND] - Setup Node.js/Express API Server (CRITICAL)
+- **[TASK-106]** [PERFORMANCE] - Optimize Frontend Performance (CRITICAL)
+- **[TASK-107]** [INTEGRATION] - Connect Frontend to Backend API (CRITICAL)
 - **[TASK-100]** Refactoriser la structure des composants (Atomic Design)
 - **[TASK-101]** Granulariser la gestion de l'état (Zustand)
 - **[TASK-102]** Extraire la logique dans des Hooks personnalisés

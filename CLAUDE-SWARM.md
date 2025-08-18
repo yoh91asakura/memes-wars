@@ -1,638 +1,184 @@
+# 🐝 CLAUDE-SWARM - Guide Orchestration Multi-Agents
 
-🚨 CRITICAL: PARALLEL EXECUTION AFTER SWARM INIT
-MANDATORY RULE: Once swarm is initialized with memory, ALL subsequent operations MUST be parallel:
+## 📋 Table des Matières
+1. [🚨 RÈGLES CRITIQUES SWARM](#1-règles-critiques-swarm)
+2. [⚙️ CONFIGURATION MCP SWARM](#2-configuration-mcp-swarm)
+3. [🔄 WORKFLOW SWARM PRINCIPAL](#3-workflow-swarm-principal)
+4. [⚡ PATTERNS CONCURRENT SWARM](#4-patterns-concurrent-swarm)
+5. [🛠️ OUTILS MCP DISPONIBLES](#5-outils-mcp-disponibles)
+6. [📊 MONITORING & TÉLÉMÉTRIE](#6-monitoring--télémétrie)
+7. [🎯 EXEMPLES PRATIQUES](#7-exemples-pratiques)
+8. [📚 RÉFÉRENCES RAPIDES SWARM](#8-références-rapides-swarm)
 
-TodoWrite → Always batch 5-10+ todos in ONE call
-Task spawning → Spawn ALL agents in ONE message
-File operations → Batch ALL reads/writes together
-NEVER operate sequentially after swarm init
-🚨 CRITICAL: CONCURRENT EXECUTION FOR ALL ACTIONS
-ABSOLUTE RULE: ALL operations MUST be concurrent/parallel in a single message:
+---
 
-🔴 MANDATORY CONCURRENT PATTERNS:
-TodoWrite: ALWAYS batch ALL todos in ONE call (5-10+ todos minimum)
-Task tool: ALWAYS spawn ALL agents in ONE message with full instructions
-File operations: ALWAYS batch ALL reads/writes/edits in ONE message
-Bash commands: ALWAYS batch ALL terminal operations in ONE message
-Memory operations: ALWAYS batch ALL memory store/retrieve in ONE message
-⚡ GOLDEN RULE: "1 MESSAGE = ALL RELATED OPERATIONS"
-Examples of CORRECT concurrent execution:
+# 1. 🚨 RÈGLES CRITIQUES SWARM
 
-// ✅ CORRECT: Everything in ONE message
+## 🚨 **CONCURRENT EXECUTION - RÈGLE ABSOLUE**
+
+**OBLIGATOIRE après initialisation swarm :**
+- **1 MESSAGE = TOUTES OPÉRATIONS LIÉES**
+- **TodoWrite** → Batch 5-10+ todos en UN call
+- **Task spawning** → Spawn TOUS agents en UN message  
+- **File operations** → Batch TOUTES lectures/écritures
+- **JAMAIS d'opérations séquentielles** après init swarm
+
+### ⚡ **GOLDEN RULE SWARM**
+```javascript
+// ✅ CORRECT: Tout en UN message
 [Single Message]:
-  - TodoWrite { todos: [10+ todos with all statuses/priorities] }
-  - Task("Agent 1 with full instructions and hooks")
-  - Task("Agent 2 with full instructions and hooks")
-  - Task("Agent 3 with full instructions and hooks")
-  - Read("file1.js")
-  - Read("file2.js")
-  - Read("file3.js")
-  - Write("output1.js", content)
-  - Write("output2.js", content)
-  - Bash("npm install")
-  - Bash("npm test")
-  - Bash("npm run build")
-Examples of WRONG sequential execution:
+  - mcp__claude-flow__swarm_init
+  - mcp__claude-flow__agent_spawn (5+ agents)
+  - TodoWrite { todos: [10+ todos] }
+  - Task("Agent 1 avec coordination complète")
+  - Task("Agent 2 avec coordination complète")
+  - Read/Write/Bash (toutes opérations)
+```
 
-// ❌ WRONG: Multiple messages (NEVER DO THIS)
-Message 1: TodoWrite { todos: [single todo] }
-Message 2: Task("Agent 1")
-Message 3: Task("Agent 2")
-Message 4: Read("file1.js")
-Message 5: Write("output1.js")
-Message 6: Bash("npm install")
-// This is 6x slower and breaks coordination!
-🎯 CONCURRENT EXECUTION CHECKLIST:
-Before sending ANY message, ask yourself:
+### ❌ **VIOLATIONS = ÉCHEC SWARM**
+```javascript
+// ❌ WRONG: Messages multiples (JAMAIS!)
+Message 1: swarm_init
+Message 2: agent_spawn
+Message 3: TodoWrite (1 todo)
+Message 4: Task(single agent)
+// Perte 6x performance!
+```
 
-✅ Are ALL related TodoWrite operations batched together?
-✅ Are ALL Task spawning operations in ONE message?
-✅ Are ALL file operations (Read/Write/Edit) batched together?
-✅ Are ALL bash commands grouped in ONE message?
-✅ Are ALL memory operations concurrent?
-If ANY answer is "No", you MUST combine operations into a single message!
+## 🎯 **CLAUDE CODE = SEUL EXÉCUTEUR**
 
-🚀 CRITICAL: Claude Code Does ALL Real Work
-🎯 CLAUDE CODE IS THE ONLY EXECUTOR
-ABSOLUTE RULE: Claude Code performs ALL actual work:
+### ✅ **Claude Code Gère TOUT :**
+- **ALL file operations** (Read, Write, Edit, MultiEdit, Bash)
+- **ALL code generation** et programming
+- **ALL TodoWrite** et task management
+- **ALL git operations** (commit, push, merge)
+- **ALL implementation work**
 
-✅ Claude Code ALWAYS Handles:
-🔧 ALL file operations (Read, Write, Edit, MultiEdit, Glob, Grep)
-💻 ALL code generation and programming tasks
-🖥️ ALL bash commands and system operations
-🏗️ ALL actual implementation work
-🔍 ALL project navigation and code analysis
-📝 ALL TodoWrite and task management
-🔄 ALL git operations (commit, push, merge)
-📦 ALL package management (npm, pip, etc.)
-🧪 ALL testing and validation
-🔧 ALL debugging and troubleshooting
-🧠 Claude Flow MCP Tools ONLY Handle:
-🎯 Coordination only - Planning Claude Code's actions
-💾 Memory management - Storing decisions and context
-🤖 Neural features - Learning from Claude Code's work
-📊 Performance tracking - Monitoring Claude Code's efficiency
-🐝 Swarm orchestration - Coordinating multiple Claude Code instances
-🔗 GitHub integration - Advanced repository coordination
-🚨 CRITICAL SEPARATION OF CONCERNS:
-❌ MCP Tools NEVER:
+### 🧠 **MCP Tools = COORDINATION SEULEMENT :**
+- **Coordination planning** - Organiser les actions de Claude Code
+- **Memory management** - Stocker contexte/décisions
+- **Performance tracking** - Monitoring efficacité
+- **Swarm orchestration** - Coordonner instances multiples
+- **GitHub integration** - Coordination repository avancée
 
-Write files or create content
-Execute bash commands
-Generate code
-Perform file operations
-Handle TodoWrite operations
-Execute system commands
-Do actual implementation work
-✅ MCP Tools ONLY:
+## 🔐 **PROTOCOLE COORDINATION OBLIGATOIRE**
 
-Coordinate and plan
-Store memory and context
-Track performance
-Orchestrate workflows
-Provide intelligence insights
-⚠️ Key Principle:
-MCP tools coordinate, Claude Code executes. Think of MCP tools as the "brain" that plans and coordinates, while Claude Code is the "hands" that do all the actual work.
+### **Chaque Agent DOIT :**
+1. **AVANT** → `npx claude-flow@alpha hooks pre-task --description "[task]"`
+2. **PENDANT** → `npx claude-flow@alpha hooks post-edit --file "[file]"`
+3. **MÉMOIRE** → `npx claude-flow@alpha hooks notify --message "[decision]"`
+4. **APRÈS** → `npx claude-flow@alpha hooks post-task --task-id "[task]"`
 
-🔄 WORKFLOW EXECUTION PATTERN:
-✅ CORRECT Workflow:
+---
 
-MCP: mcp__claude-flow__swarm_init (coordination setup)
-MCP: mcp__claude-flow__agent_spawn (planning agents)
-MCP: mcp__claude-flow__task_orchestrate (task coordination)
-Claude Code: Task tool to spawn agents with coordination instructions
-Claude Code: TodoWrite with ALL todos batched (5-10+ in ONE call)
-Claude Code: Read, Write, Edit, Bash (actual work)
-MCP: mcp__claude-flow__memory_usage (store results)
-❌ WRONG Workflow:
+# 2. ⚙️ CONFIGURATION MCP SWARM
 
-MCP: mcp__claude-flow__terminal_execute (DON'T DO THIS)
-MCP: File creation via MCP (DON'T DO THIS)
-MCP: Code generation via MCP (DON'T DO THIS)
-Claude Code: Sequential Task calls (DON'T DO THIS)
-Claude Code: Individual TodoWrite calls (DON'T DO THIS)
-🚨 REMEMBER:
-MCP tools = Coordination, planning, memory, intelligence
-Claude Code = All actual execution, coding, file operations
-🚀 CRITICAL: Parallel Execution & Batch Operations
-🚨 MANDATORY RULE #1: BATCH EVERYTHING
-When using swarms, you MUST use BatchTool for ALL operations:
-
-NEVER send multiple messages for related operations
-ALWAYS combine multiple tool calls in ONE message
-PARALLEL execution is MANDATORY, not optional
-⚡ THE GOLDEN RULE OF SWARMS
-If you need to do X operations, they should be in 1 message, not X messages
-🚨 MANDATORY TODO AND TASK BATCHING
-CRITICAL RULE FOR TODOS AND TASKS:
-
-TodoWrite MUST ALWAYS include ALL todos in ONE call (5-10+ todos)
-Task tool calls MUST be batched - spawn multiple agents in ONE message
-NEVER update todos one by one - this breaks parallel coordination
-NEVER spawn agents sequentially - ALL agents spawn together
-📦 BATCH TOOL EXAMPLES
-✅ CORRECT - Everything in ONE Message:
-
-[Single Message with BatchTool]:
-  // MCP coordination setup
-  mcp__claude-flow__swarm_init { topology: "mesh", maxAgents: 6 }
-  mcp__claude-flow__agent_spawn { type: "researcher" }
-  mcp__claude-flow__agent_spawn { type: "coder" }
-  mcp__claude-flow__agent_spawn { type: "analyst" }
-  mcp__claude-flow__agent_spawn { type: "tester" }
-  mcp__claude-flow__agent_spawn { type: "coordinator" }
-
-  // Claude Code execution - ALL in parallel
-  Task("You are researcher agent. MUST coordinate via hooks...")
-  Task("You are coder agent. MUST coordinate via hooks...")
-  Task("You are analyst agent. MUST coordinate via hooks...")
-  Task("You are tester agent. MUST coordinate via hooks...")
-  TodoWrite { todos: [5-10 todos with all priorities and statuses] }
-
-  // File operations in parallel
-  Bash "mkdir -p app/{src,tests,docs}"
-  Write "app/package.json"
-  Write "app/README.md"
-  Write "app/src/index.js"
-❌ WRONG - Multiple Messages (NEVER DO THIS):
-
-Message 1: mcp__claude-flow__swarm_init
-Message 2: Task("researcher agent")
-Message 3: Task("coder agent")
-Message 4: TodoWrite({ todo: "single todo" })
-Message 5: Bash "mkdir src"
-Message 6: Write "package.json"
-// This is 6x slower and breaks parallel coordination!
-🎯 BATCH OPERATIONS BY TYPE
-Todo and Task Operations (Single Message):
-
-TodoWrite → ALWAYS include 5-10+ todos in ONE call
-Task agents → Spawn ALL agents with full instructions in ONE message
-Agent coordination → ALL Task calls must include coordination hooks
-Status updates → Update ALL todo statuses together
-NEVER split todos or Task calls across messages!
-File Operations (Single Message):
-
-Read 10 files? → One message with 10 Read calls
-Write 5 files? → One message with 5 Write calls
-Edit 1 file many times? → One MultiEdit call
-Swarm Operations (Single Message):
-
-Need 8 agents? → One message with swarm_init + 8 agent_spawn calls
-Multiple memories? → One message with all memory_usage calls
-Task + monitoring? → One message with task_orchestrate + swarm_monitor
-Command Operations (Single Message):
-
-Multiple directories? → One message with all mkdir commands
-Install + test + lint? → One message with all npm commands
-Git operations? → One message with all git commands
-🚀 Quick Setup (Stdio MCP - Recommended)
-1. Add MCP Server (Stdio - No Port Needed)
-# Add Claude Flow MCP server to Claude Code using stdio
+## 🚀 **Setup Rapide (Stdio MCP)**
+```bash
+# Ajouter Claude Flow MCP server
 claude mcp add claude-flow npx claude-flow@alpha mcp start
-2. Use MCP Tools for Coordination in Claude Code
-Once configured, Claude Flow MCP tools enhance Claude Code's coordination:
 
-Initialize a swarm:
+# Vérifier installation
+npm run mcp:status
+```
 
-Use the mcp__claude-flow__swarm_init tool to set up coordination topology
-Choose: mesh, hierarchical, ring, or star
-This creates a coordination framework for Claude Code's work
-Spawn agents:
-
-Use mcp__claude-flow__agent_spawn tool to create specialized coordinators
-Agent types represent different thinking patterns, not actual coders
-They help Claude Code approach problems from different angles
-Orchestrate tasks:
-
-Use mcp__claude-flow__task_orchestrate tool to coordinate complex workflows
-This breaks down tasks for Claude Code to execute systematically
-The agents don't write code - they coordinate Claude Code's actions
-Available MCP Tools for Coordination
-Coordination Tools:
-mcp__claude-flow__swarm_init - Set up coordination topology for Claude Code
-mcp__claude-flow__agent_spawn - Create cognitive patterns to guide Claude Code
-mcp__claude-flow__task_orchestrate - Break down and coordinate complex tasks
-Monitoring Tools:
-mcp__claude-flow__swarm_status - Monitor coordination effectiveness
-mcp__claude-flow__agent_list - View active cognitive patterns
-mcp__claude-flow__agent_metrics - Track coordination performance
-mcp__claude-flow__task_status - Check workflow progress
-mcp__claude-flow__task_results - Review coordination outcomes
-Memory & Neural Tools:
-mcp__claude-flow__memory_usage - Persistent memory across sessions
-mcp__claude-flow__neural_status - Neural pattern effectiveness
-mcp__claude-flow__neural_train - Improve coordination patterns
-mcp__claude-flow__neural_patterns - Analyze thinking approaches
-GitHub Integration Tools (NEW!):
-mcp__claude-flow__github_swarm - Create specialized GitHub management swarms
-mcp__claude-flow__repo_analyze - Deep repository analysis with AI
-mcp__claude-flow__pr_enhance - AI-powered pull request improvements
-mcp__claude-flow__issue_triage - Intelligent issue classification
-mcp__claude-flow__code_review - Automated code review with swarms
-System Tools:
-mcp__claude-flow__benchmark_run - Measure coordination efficiency
-mcp__claude-flow__features_detect - Available capabilities
-mcp__claude-flow__swarm_monitor - Real-time coordination tracking
-Workflow Examples (Coordination-Focused)
-Research Coordination Example
-Context: Claude Code needs to research a complex topic systematically
-
-Step 1: Set up research coordination
-
-Tool: mcp__claude-flow__swarm_init
-Parameters: {"topology": "mesh", "maxAgents": 5, "strategy": "balanced"}
-Result: Creates a mesh topology for comprehensive exploration
-Step 2: Define research perspectives
-
-Tool: mcp__claude-flow__agent_spawn
-Parameters: {"type": "researcher", "name": "Literature Review"}
-Tool: mcp__claude-flow__agent_spawn
-Parameters: {"type": "analyst", "name": "Data Analysis"}
-Result: Different cognitive patterns for Claude Code to use
-Step 3: Coordinate research execution
-
-Tool: mcp__claude-flow__task_orchestrate
-Parameters: {"task": "Research neural architecture search papers", "strategy": "adaptive"}
-Result: Claude Code systematically searches, reads, and analyzes papers
-What Actually Happens:
-
-The swarm sets up a coordination framework
-Each agent MUST use Claude Flow hooks for coordination:
-npx claude-flow@alpha hooks pre-task before starting
-npx claude-flow@alpha hooks post-edit after each file operation
-npx claude-flow@alpha hooks notify to share decisions
-Claude Code uses its native Read, WebSearch, and Task tools
-The swarm coordinates through shared memory and hooks
-Results are synthesized by Claude Code with full coordination history
-Development Coordination Example
-Context: Claude Code needs to build a complex system with multiple components
-
-Step 1: Set up development coordination
-
-Tool: mcp__claude-flow__swarm_init
-Parameters: {"topology": "hierarchical", "maxAgents": 8, "strategy": "specialized"}
-Result: Hierarchical structure for organized development
-Step 2: Define development perspectives
-
-Tool: mcp__claude-flow__agent_spawn
-Parameters: {"type": "architect", "name": "System Design"}
-Result: Architectural thinking pattern for Claude Code
-Step 3: Coordinate implementation
-
-Tool: mcp__claude-flow__task_orchestrate
-Parameters: {"task": "Implement user authentication with JWT", "strategy": "parallel"}
-Result: Claude Code implements features using its native tools
-What Actually Happens:
-
-The swarm creates a development coordination plan
-Each agent coordinates using mandatory hooks:
-Pre-task hooks for context loading
-Post-edit hooks for progress tracking
-Memory storage for cross-agent coordination
-Claude Code uses Write, Edit, Bash tools for implementation
-Agents share progress through Claude Flow memory
-All code is written by Claude Code with full coordination
-GitHub Repository Management Example (NEW!)
-Context: Claude Code needs to manage a complex GitHub repository
-
-Step 1: Initialize GitHub swarm
-
-Tool: mcp__claude-flow__github_swarm
-Parameters: {"repository": "owner/repo", "agents": 5, "focus": "maintenance"}
-Result: Specialized swarm for repository management
-Step 2: Analyze repository health
-
-Tool: mcp__claude-flow__repo_analyze
-Parameters: {"deep": true, "include": ["issues", "prs", "code"]}
-Result: Comprehensive repository analysis
-Step 3: Enhance pull requests
-
-Tool: mcp__claude-flow__pr_enhance
-Parameters: {"pr_number": 123, "add_tests": true, "improve_docs": true}
-Result: AI-powered PR improvements
-Best Practices for Coordination
-✅ DO:
-Use MCP tools to coordinate Claude Code's approach to complex tasks
-Let the swarm break down problems into manageable pieces
-Use memory tools to maintain context across sessions
-Monitor coordination effectiveness with status tools
-Train neural patterns for better coordination over time
-Leverage GitHub tools for repository management
-❌ DON'T:
-Expect agents to write code (Claude Code does all implementation)
-Use MCP tools for file operations (use Claude Code's native tools)
-Try to make agents execute bash commands (Claude Code handles this)
-Confuse coordination with execution (MCP coordinates, Claude executes)
-Memory and Persistence
-The swarm provides persistent memory that helps Claude Code:
-
-Remember project context across sessions
-Track decisions and rationale
-Maintain consistency in large projects
-Learn from previous coordination patterns
-Store GitHub workflow preferences
-Performance Benefits
-When using Claude Flow coordination with Claude Code:
-
-84.8% SWE-Bench solve rate - Better problem-solving through coordination
-32.3% token reduction - Efficient task breakdown reduces redundancy
-2.8-4.4x speed improvement - Parallel coordination strategies
-27+ neural models - Diverse cognitive approaches
-GitHub automation - Streamlined repository management
-Claude Code Hooks Integration
-Claude Flow includes powerful hooks that automate coordination:
-
-Pre-Operation Hooks
-Auto-assign agents before file edits based on file type
-Validate commands before execution for safety
-Prepare resources automatically for complex operations
-Optimize topology based on task complexity analysis
-Cache searches for improved performance
-GitHub context loading for repository operations
-Post-Operation Hooks
-Auto-format code using language-specific formatters
-Train neural patterns from successful operations
-Update memory with operation context
-Analyze performance and identify bottlenecks
-Track token usage for efficiency metrics
-Sync GitHub state for consistency
-Session Management
-Generate summaries at session end
-Persist state across Claude Code sessions
-Track metrics for continuous improvement
-Restore previous session context automatically
-Export workflows for reuse
-Advanced Features (v2.0.0!)
-🚀 Automatic Topology Selection - Optimal swarm structure for each task
-⚡ Parallel Execution - 2.8-4.4x speed improvements
-🧠 Neural Training - Continuous learning from operations
-📊 Bottleneck Analysis - Real-time performance optimization
-🤖 Smart Auto-Spawning - Zero manual agent management
-🛡️ Self-Healing Workflows - Automatic error recovery
-💾 Cross-Session Memory - Persistent learning & context
-🔗 GitHub Integration - Repository-aware swarms
-Configuration
-Hooks are pre-configured in .claude/settings.json. Key features:
-
-Automatic agent assignment for different file types
-Code formatting on save
-Neural pattern learning from edits
-Session state persistence
-Performance tracking and optimization
-Intelligent caching and token reduction
-GitHub workflow automation
-See .claude/commands/ for detailed documentation on all features.
-
-Integration Tips
-Start Simple: Begin with basic swarm init and single agent
-Scale Gradually: Add more agents as task complexity increases
-Use Memory: Store important decisions and context
-Monitor Progress: Regular status checks ensure effective coordination
-Train Patterns: Let neural agents learn from successful coordinations
-Enable Hooks: Use the pre-configured hooks for automation
-GitHub First: Use GitHub tools for repository management
-🧠 SWARM ORCHESTRATION PATTERN
-You are the SWARM ORCHESTRATOR. IMMEDIATELY SPAWN AGENTS IN PARALLEL to execute tasks
-🚨 CRITICAL INSTRUCTION: You are the SWARM ORCHESTRATOR
-MANDATORY: When using swarms, you MUST:
-
-SPAWN ALL AGENTS IN ONE BATCH - Use multiple tool calls in a SINGLE message
-EXECUTE TASKS IN PARALLEL - Never wait for one task before starting another
-USE BATCHTOOL FOR EVERYTHING - Multiple operations = Single message with multiple tools
-ALL AGENTS MUST USE COORDINATION TOOLS - Every spawned agent MUST use claude-flow hooks and memory
-🎯 AGENT COUNT CONFIGURATION
-CRITICAL: Dynamic Agent Count Rules
-
-Check CLI Arguments First: If user runs npx claude-flow@alpha --agents 5, use 5 agents
-Auto-Decide if No Args: Without CLI args, analyze task complexity:
-Simple tasks (1-3 components): 3-4 agents
-Medium tasks (4-6 components): 5-7 agents
-Complex tasks (7+ components): 8-12 agents
-Agent Type Distribution: Balance agent types based on task:
-Always include 1 coordinator
-For code-heavy tasks: more coders
-For design tasks: more architects/analysts
-For quality tasks: more testers/reviewers
-Example Auto-Decision Logic:
-
-// If CLI args provided: npx claude-flow@alpha --agents 6
-maxAgents = CLI_ARGS.agents || determineAgentCount(task)
-
+## 🎯 **Configuration Agent Count**
+```javascript
+// Auto-décision basée sur complexité
 function determineAgentCount(task) {
-  // Analyze task complexity
   if (task.includes(['API', 'database', 'auth', 'tests'])) return 8
   if (task.includes(['frontend', 'backend'])) return 6
   if (task.includes(['simple', 'script'])) return 3
   return 5 // default
 }
-📋 MANDATORY AGENT COORDINATION PROTOCOL
-🔴 CRITICAL: Every Agent MUST Follow This Protocol
-When you spawn an agent using the Task tool, that agent MUST:
+```
 
-1️⃣ BEFORE Starting Work:
+---
 
-# Check previous work and load context
-npx claude-flow@alpha hooks pre-task --description "[agent task]" --auto-spawn-agents false
-npx claude-flow@alpha hooks session-restore --session-id "swarm-[id]" --load-memory true
-2️⃣ DURING Work (After EVERY Major Step):
+# 3. 🔄 WORKFLOW SWARM PRINCIPAL
 
-# Store progress in memory after each file operation
-npx claude-flow@alpha hooks post-edit --file "[filepath]" --memory-key "swarm/[agent]/[step]"
+## 🚨 **PATTERN SWARM OBLIGATOIRE**
 
-# Store decisions and findings
-npx claude-flow@alpha hooks notify --message "[what was done]" --telemetry true
-
-# Check coordination with other agents
-npx claude-flow@alpha hooks pre-search --query "[what to check]" --cache-results true
-3️⃣ AFTER Completing Work:
-
-# Save all results and learnings
-npx claude-flow@alpha hooks post-task --task-id "[task]" --analyze-performance true
-npx claude-flow@alpha hooks session-end --export-metrics true --generate-summary true
-🎯 AGENT PROMPT TEMPLATE
-When spawning agents, ALWAYS include these coordination instructions:
-
-You are the [Agent Type] agent in a coordinated swarm.
-
-MANDATORY COORDINATION:
-1. START: Run `npx claude-flow@alpha hooks pre-task --description "[your task]"`
-2. DURING: After EVERY file operation, run `npx claude-flow@alpha hooks post-edit --file "[file]" --memory-key "agent/[step]"`
-3. MEMORY: Store ALL decisions using `npx claude-flow@alpha hooks notify --message "[decision]"`
-4. END: Run `npx claude-flow@alpha hooks post-task --task-id "[task]" --analyze-performance true`
-
-Your specific task: [detailed task description]
-
-REMEMBER: Coordinate with other agents by checking memory BEFORE making decisions!
-⚡ PARALLEL EXECUTION IS MANDATORY
-THIS IS WRONG ❌ (Sequential - NEVER DO THIS):
-
-Message 1: Initialize swarm
-Message 2: Spawn agent 1
-Message 3: Spawn agent 2
-Message 4: TodoWrite (single todo)
-Message 5: Create file 1
-Message 6: TodoWrite (another single todo)
-THIS IS CORRECT ✅ (Parallel - ALWAYS DO THIS):
-
-Message 1: [BatchTool]
-  // MCP coordination setup
-  - mcp__claude-flow__swarm_init
-  - mcp__claude-flow__agent_spawn (researcher)
-  - mcp__claude-flow__agent_spawn (coder)
-  - mcp__claude-flow__agent_spawn (analyst)
-  - mcp__claude-flow__agent_spawn (tester)
-  - mcp__claude-flow__agent_spawn (coordinator)
-
-Message 2: [BatchTool - Claude Code execution]
-  // Task agents with full coordination instructions
-  - Task("You are researcher agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Research API patterns")
-  - Task("You are coder agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Implement REST endpoints")
-  - Task("You are analyst agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Analyze performance")
-  - Task("You are tester agent. MANDATORY: Run hooks pre-task, post-edit, post-task. Task: Write comprehensive tests")
-
-  // TodoWrite with ALL todos batched
-  - TodoWrite { todos: [
-      {id: "research", content: "Research API patterns", status: "in_progress", priority: "high"},
-      {id: "design", content: "Design database schema", status: "pending", priority: "high"},
-      {id: "implement", content: "Build REST endpoints", status: "pending", priority: "high"},
-      {id: "test", content: "Write unit tests", status: "pending", priority: "medium"},
-      {id: "docs", content: "Create API documentation", status: "pending", priority: "low"},
-      {id: "deploy", content: "Setup deployment", status: "pending", priority: "medium"}
-    ]}
-
-  // File operations in parallel
-  - Write "api/package.json"
-  - Write "api/server.js"
-  - Write "api/routes/users.js"
-  - Bash "mkdir -p api/{routes,models,tests}"
-🎯 MANDATORY SWARM PATTERN
-When given ANY complex task with swarms:
-
-STEP 1: IMMEDIATE PARALLEL SPAWN (Single Message!)
-[BatchTool]:
-  // IMPORTANT: Check CLI args for agent count, otherwise auto-decide based on task complexity
-  - mcp__claude-flow__swarm_init {
-      topology: "hierarchical",
-      maxAgents: CLI_ARGS.agents || AUTO_DECIDE(task_complexity), // Use CLI args or auto-decide
-      strategy: "parallel"
+### **ÉTAPE 1: SPAWN PARALLÈLE IMMÉDIAT (UN MESSAGE!)**
+```javascript
+[BatchTool Message 1]:
+  // MCP Coordination Setup
+  - mcp__claude-flow__swarm_init { 
+      topology: "hierarchical", 
+      maxAgents: AUTO_DECIDE_OR_CLI_ARGS,
+      strategy: "parallel" 
     }
-
-  // Spawn agents based on maxAgents count and task requirements
-  // If CLI specifies 3 agents, spawn 3. If no args, auto-decide optimal count (3-12)
+  
+  // Spawn TOUS les agents ensemble
   - mcp__claude-flow__agent_spawn { type: "architect", name: "System Designer" }
   - mcp__claude-flow__agent_spawn { type: "coder", name: "API Developer" }
-  - mcp__claude-flow__agent_spawn { type: "coder", name: "Frontend Dev" }
   - mcp__claude-flow__agent_spawn { type: "analyst", name: "DB Designer" }
   - mcp__claude-flow__agent_spawn { type: "tester", name: "QA Engineer" }
-  - mcp__claude-flow__agent_spawn { type: "researcher", name: "Tech Lead" }
   - mcp__claude-flow__agent_spawn { type: "coordinator", name: "PM" }
-  - TodoWrite { todos: [multiple todos at once] }
-
-STEP 2: PARALLEL TASK EXECUTION (Single Message!)
-[BatchTool]:
+  
+  // Orchestration
   - mcp__claude-flow__task_orchestrate { task: "main task", strategy: "parallel" }
   - mcp__claude-flow__memory_usage { action: "store", key: "init", value: {...} }
-  - Multiple Read operations
-  - Multiple Write operations
-  - Multiple Bash commands
+```
 
-STEP 3: CONTINUE PARALLEL WORK (Never Sequential!)
-📊 VISUAL TASK TRACKING FORMAT
-Use this format when displaying task progress:
+### **ÉTAPE 2: EXÉCUTION PARALLÈLE CLAUDE CODE (UN MESSAGE!)**
+```javascript
+[BatchTool Message 2]:
+  // Spawn agents avec coordination complète
+  - Task("You are architect agent. MANDATORY hooks: pre-task, post-edit, post-task. Task: Design system architecture")
+  - Task("You are coder agent. MANDATORY hooks: pre-task, post-edit, post-task. Task: Implement API endpoints")
+  - Task("You are tester agent. MANDATORY hooks: pre-task, post-edit, post-task. Task: Write comprehensive tests")
+  
+  // TodoWrite avec TOUS les todos
+  - TodoWrite { todos: [
+      {id: "design", content: "Design architecture", status: "in_progress", priority: "high"},
+      {id: "implement", content: "Build API", status: "pending", priority: "high"},
+      {id: "test", content: "Write tests", status: "pending", priority: "medium"},
+      {id: "docs", content: "Documentation", status: "pending", priority: "low"},
+      {id: "deploy", content: "Setup CI/CD", status: "pending", priority: "medium"}
+    ]}
+  
+  // File operations parallèles
+  - Write "src/models/index.ts"
+  - Write "src/services/api.ts" 
+  - Write "tests/unit/api.test.ts"
+  - Bash "mkdir -p src/{models,services,tests}"
+```
 
-📊 Progress Overview
-   ├── Total Tasks: X
-   ├── ✅ Completed: X (X%)
-   ├── 🔄 In Progress: X (X%)
-   ├── ⭕ Todo: X (X%)
-   └── ❌ Blocked: X (X%)
+---
 
-📋 Todo (X)
-   └── 🔴 001: [Task description] [PRIORITY] ▶
+# 4. ⚡ PATTERNS CONCURRENT SWARM
 
-🔄 In progress (X)
-   ├── 🟡 002: [Task description] ↳ X deps ▶
-   └── 🔴 003: [Task description] [PRIORITY] ▶
+## 📊 **Visual Task Tracking Format**
+```
+📊 Swarm Progress Overview
+   ├── Total Tasks: 8
+   ├── ✅ Completed: 2 (25%)
+   ├── 🔄 In Progress: 4 (50%)
+   ├── ⭕ Todo: 2 (25%)
+   └── 🐝 Agents Active: 5/5
 
-✅ Completed (X)
-   ├── ✅ 004: [Task description]
-   └── ... (more completed tasks)
+🐝 Swarm Status: ACTIVE
+├── 🏗️ Topology: hierarchical
+├── 👥 Agents: 5/5 active
+├── ⚡ Mode: parallel execution
+├── 📊 Tasks: 8 total (2 done, 4 progress, 2 pending)
+└── 🧠 Memory: 12 coordination points
 
-Priority indicators: 🔴 HIGH/CRITICAL, 🟡 MEDIUM, 🟢 LOW
-Dependencies: ↳ X deps | Actionable: ▶
-🎯 REAL EXAMPLE: Full-Stack App Development
-Task: "Build a complete REST API with authentication, database, and tests"
+Agent Activity:
+├── 🟢 architect: Designing database schema...
+├── 🟢 coder-1: Implementing auth endpoints...
+├── 🟢 analyst: Optimizing performance...
+├── 🟡 tester: Waiting for auth completion...
+└── 🟢 coordinator: Monitoring progress...
+```
 
-🚨 MANDATORY APPROACH - Everything in Parallel:
-
-// ✅ CORRECT: SINGLE MESSAGE with ALL operations
-[BatchTool - Message 1]:
-  // Initialize and spawn ALL agents at once
-  mcp__claude-flow__swarm_init { topology: "hierarchical", maxAgents: 8, strategy: "parallel" }
-  mcp__claude-flow__agent_spawn { type: "architect", name: "System Designer" }
-  mcp__claude-flow__agent_spawn { type: "coder", name: "API Developer" }
-  mcp__claude-flow__agent_spawn { type: "coder", name: "Auth Expert" }
-  mcp__claude-flow__agent_spawn { type: "analyst", name: "DB Designer" }
-  mcp__claude-flow__agent_spawn { type: "tester", name: "Test Engineer" }
-  mcp__claude-flow__agent_spawn { type: "coordinator", name: "Lead" }
-
-  // Update ALL todos at once - NEVER split todos!
-  TodoWrite { todos: [
-    { id: "design", content: "Design API architecture", status: "in_progress", priority: "high" },
-    { id: "auth", content: "Implement authentication", status: "pending", priority: "high" },
-    { id: "db", content: "Design database schema", status: "pending", priority: "high" },
-    { id: "api", content: "Build REST endpoints", status: "pending", priority: "high" },
-    { id: "tests", content: "Write comprehensive tests", status: "pending", priority: "medium" },
-    { id: "docs", content: "Document API endpoints", status: "pending", priority: "low" },
-    { id: "deploy", content: "Setup deployment pipeline", status: "pending", priority: "medium" },
-    { id: "monitor", content: "Add monitoring", status: "pending", priority: "medium" }
-  ]}
-
-  // Start orchestration
-  mcp__claude-flow__task_orchestrate { task: "Build REST API", strategy: "parallel" }
-
-  // Store initial memory
-  mcp__claude-flow__memory_usage { action: "store", key: "project/init", value: { started: Date.now() } }
-
-[BatchTool - Message 2]:
-  // Create ALL directories at once
-  Bash("mkdir -p test-app/{src,tests,docs,config}")
-  Bash("mkdir -p test-app/src/{models,routes,middleware,services}")
-  Bash("mkdir -p test-app/tests/{unit,integration}")
-
-  // Write ALL base files at once
-  Write("test-app/package.json", packageJsonContent)
-  Write("test-app/.env.example", envContent)
-  Write("test-app/README.md", readmeContent)
-  Write("test-app/src/server.js", serverContent)
-  Write("test-app/src/config/database.js", dbConfigContent)
-
-[BatchTool - Message 3]:
-  // Read multiple files for context
-  Read("test-app/package.json")
-  Read("test-app/src/server.js")
-  Read("test-app/.env.example")
-
-  // Run multiple commands
-  Bash("cd test-app && npm install")
-  Bash("cd test-app && npm run lint")
-  Bash("cd test-app && npm test")
-🚫 NEVER DO THIS (Sequential = WRONG):
-// ❌ WRONG: Multiple messages, one operation each
-Message 1: mcp__claude-flow__swarm_init
-Message 2: mcp__claude-flow__agent_spawn (just one agent)
-Message 3: mcp__claude-flow__agent_spawn (another agent)
-Message 4: TodoWrite (single todo)
-Message 5: Write (single file)
-// This is 5x slower and wastes swarm coordination!
-🔄 MEMORY COORDINATION PATTERN
-Every agent coordination step MUST use memory:
-
-// After each major decision or implementation
-mcp__claude-flow__memory_usage
-  action: "store"
-  key: "swarm-{id}/agent-{name}/{step}"
+## 🔄 **Memory Coordination Pattern**
+```javascript
+// Stockage décisions importantes
+mcp__claude-flow__memory_usage {
+  action: "store",
+  key: "swarm-{id}/agent-{name}/{step}",
   value: {
     timestamp: Date.now(),
     decision: "what was decided",
@@ -640,114 +186,160 @@ mcp__claude-flow__memory_usage
     nextSteps: ["step1", "step2"],
     dependencies: ["dep1", "dep2"]
   }
+}
 
-// To retrieve coordination data
-mcp__claude-flow__memory_usage
-  action: "retrieve"
+// Récupération données coordination
+mcp__claude-flow__memory_usage {
+  action: "retrieve", 
   key: "swarm-{id}/agent-{name}/{step}"
+}
+```
 
-// To check all swarm progress
-mcp__claude-flow__memory_usage
-  action: "list"
-  pattern: "swarm-{id}/*"
-⚡ PERFORMANCE TIPS
-Batch Everything: Never operate on single files when multiple are needed
-Parallel First: Always think "what can run simultaneously?"
-Memory is Key: Use memory for ALL cross-agent coordination
-Monitor Progress: Use mcp__claude-flow__swarm_monitor for real-time tracking
-Auto-Optimize: Let hooks handle topology and agent selection
-🎨 VISUAL SWARM STATUS
-When showing swarm status, use this format:
+---
 
-🐝 Swarm Status: ACTIVE
-├── 🏗️ Topology: hierarchical
-├── 👥 Agents: 6/8 active
-├── ⚡ Mode: parallel execution
-├── 📊 Tasks: 12 total (4 complete, 6 in-progress, 2 pending)
-└── 🧠 Memory: 15 coordination points stored
+# 5. 🛠️ OUTILS MCP DISPONIBLES
 
-Agent Activity:
-├── 🟢 architect: Designing database schema...
-├── 🟢 coder-1: Implementing auth endpoints...
-├── 🟢 coder-2: Building user CRUD operations...
-├── 🟢 analyst: Optimizing query performance...
-├── 🟡 tester: Waiting for auth completion...
-└── 🟢 coordinator: Monitoring progress...
-📊 NEW: Token Tracking & Telemetry System
-✅ Real Token Tracking Confirmed Working (Alpha-89)
-Claude Flow now includes REAL token tracking that captures actual Claude API usage:
+## 🎯 **Coordination Tools**
+- `mcp__claude-flow__swarm_init` - Setup topology coordination
+- `mcp__claude-flow__agent_spawn` - Créer patterns cognitifs
+- `mcp__claude-flow__task_orchestrate` - Coordonner workflows complexes
 
-Quick Setup:
+## 📊 **Monitoring Tools** 
+- `mcp__claude-flow__swarm_status` - Monitoring efficacité
+- `mcp__claude-flow__agent_metrics` - Performance tracking
+- `mcp__claude-flow__swarm_monitor` - Tracking temps réel
 
-# Enable telemetry
+## 🧠 **Memory & Neural Tools**
+- `mcp__claude-flow__memory_usage` - Mémoire persistante
+- `mcp__claude-flow__neural_train` - Améliorer patterns
+- `mcp__claude-flow__neural_patterns` - Analyser approches
+
+## 🐙 **GitHub Integration Tools (NEW!)**
+- `mcp__claude-flow__github_swarm` - Swarms GitHub spécialisés
+- `mcp__claude-flow__repo_analyze` - Analyse repository IA
+- `mcp__claude-flow__pr_enhance` - Améliorations PR IA
+- `mcp__claude-flow__code_review` - Code review automatisé
+
+---
+
+# 6. 📊 MONITORING & TÉLÉMÉTRIE
+
+## ✅ **Token Tracking Réel (Alpha-89)**
+```bash
+# Setup télémétrie
 ./claude-flow analysis setup-telemetry
 
-# Non-interactive mode with token tracking
+# Mode non-interactif avec tracking
 ./claude-flow swarm "task" --non-interactive
 
-# View usage report
+# Rapport utilisation
 ./claude-flow analysis token-usage --breakdown --cost-analysis
 
-# Real-time monitoring
+# Monitoring temps réel
 ./claude-flow analysis claude-monitor
-Confirmed Working Examples:
+```
 
-✅ Non-Interactive Mode: Full telemetry with real token data
-✅ Hybrid Mode: --claude --non-interactive shows API responses with tokens
-✅ Cost Analysis: Real-time Claude 3 Opus/Sonnet/Haiku pricing
-✅ Session Monitoring: Live token usage tracking
-API Response Example (Real Data):
+## 📈 **Bénéfices Performance**
+- **84.8%** SWE-Bench solve rate
+- **32.3%** réduction tokens  
+- **2.8-4.4x** amélioration vitesse
+- **27+** modèles neuraux
+- **GitHub automation** - Gestion repository streamlinée
 
-"usage": {
-  "input_tokens": 4,
-  "cache_creation_input_tokens": 30310,
-  "cache_read_input_tokens": 0,
-  "output_tokens": 1
-}
-📖 Full Documentation: Token-Tracking-Telemetry.md
+---
 
-📝 CRITICAL: TODOWRITE AND TASK TOOL BATCHING
-🚨 MANDATORY BATCHING RULES FOR TODOS AND TASKS
-TodoWrite Tool Requirements:
+# 7. 🎯 EXEMPLES PRATIQUES
 
-ALWAYS include 5-10+ todos in a SINGLE TodoWrite call
-NEVER call TodoWrite multiple times in sequence
-BATCH all todo updates together - status changes, new todos, completions
-INCLUDE all priority levels (high, medium, low) in one call
-Task Tool Requirements:
+## 🚀 **Exemple: Full-Stack App Development**
 
-SPAWN all agents using Task tool in ONE message
-NEVER spawn agents one by one across multiple messages
-INCLUDE full task descriptions and coordination instructions
-BATCH related Task calls together for parallel execution
-Example of CORRECT TodoWrite usage:
+**Task:** "Build complete REST API with auth, database, and tests"
 
-// ✅ CORRECT - All todos in ONE call
-TodoWrite { todos: [
-  { id: "1", content: "Initialize system", status: "completed", priority: "high" },
-  { id: "2", content: "Analyze requirements", status: "in_progress", priority: "high" },
-  { id: "3", content: "Design architecture", status: "pending", priority: "high" },
-  { id: "4", content: "Implement core", status: "pending", priority: "high" },
-  { id: "5", content: "Build features", status: "pending", priority: "medium" },
-  { id: "6", content: "Write tests", status: "pending", priority: "medium" },
-  { id: "7", content: "Add monitoring", status: "pending", priority: "medium" },
-  { id: "8", content: "Documentation", status: "pending", priority: "low" },
-  { id: "9", content: "Performance tuning", status: "pending", priority: "low" },
-  { id: "10", content: "Deploy to production", status: "pending", priority: "high" }
-]}
-Example of WRONG TodoWrite usage:
+```javascript
+// ✅ CORRECT: SINGLE MESSAGE avec TOUTES opérations
+[BatchTool Message 1]:
+  // Initialize et spawn TOUS agents ensemble
+  mcp__claude-flow__swarm_init { topology: "hierarchical", maxAgents: 8, strategy: "parallel" }
+  mcp__claude-flow__agent_spawn { type: "architect", name: "System Designer" }
+  mcp__claude-flow__agent_spawn { type: "coder", name: "API Developer" }
+  mcp__claude-flow__agent_spawn { type: "coder", name: "Auth Expert" }
+  mcp__claude-flow__agent_spawn { type: "analyst", name: "DB Designer" }
+  mcp__claude-flow__agent_spawn { type: "tester", name: "Test Engineer" }
 
-// ❌ WRONG - Multiple TodoWrite calls
-Message 1: TodoWrite { todos: [{ id: "1", content: "Task 1", ... }] }
-Message 2: TodoWrite { todos: [{ id: "2", content: "Task 2", ... }] }
-Message 3: TodoWrite { todos: [{ id: "3", content: "Task 3", ... }] }
-// This breaks parallel coordination!
-Claude Flow v2.0.0 Features
-Claude Flow extends the base coordination with:
+  // Update TOUS todos à la fois - JAMAIS split!
+  TodoWrite { todos: [
+    { id: "design", content: "Design API architecture", status: "in_progress", priority: "high" },
+    { id: "auth", content: "Implement authentication", status: "pending", priority: "high" },
+    { id: "db", content: "Design database schema", status: "pending", priority: "high" },
+    { id: "api", content: "Build REST endpoints", status: "pending", priority: "high" },
+    { id: "tests", content: "Write comprehensive tests", status: "pending", priority: "medium" },
+    { id: "docs", content: "Document API endpoints", status: "pending", priority: "low" },
+    { id: "deploy", content: "Setup deployment pipeline", status: "pending", priority: "medium" }
+  ]}
 
-🔗 GitHub Integration - Deep repository management
-🎯 Project Templates - Quick-start for common projects
-📊 Advanced Analytics - Detailed performance insights
-🤖 Custom Agent Types - Domain-specific coordinators
-🔄 Workflow Automation - Reusable task sequences
-🛡️ Enhanced Security - Safer command execution
+  // Start orchestration
+  mcp__claude-flow__task_orchestrate { task: "Build REST API", strategy: "parallel" }
+  mcp__claude-flow__memory_usage { action: "store", key: "project/init", value: { started: Date.now() } }
+
+[BatchTool Message 2]:
+  // Créer TOUS directories à la fois
+  Bash("mkdir -p api-app/{src,tests,docs,config}")
+  Bash("mkdir -p api-app/src/{models,routes,middleware,services}")
+  
+  // Write TOUS base files à la fois
+  Write("api-app/package.json", packageJsonContent)
+  Write("api-app/.env.example", envContent)
+  Write("api-app/src/server.js", serverContent)
+  Write("api-app/src/config/database.js", dbConfigContent)
+  
+  // Run multiple commands
+  Bash("cd api-app && npm install")
+  Bash("cd api-app && npm test")
+```
+
+---
+
+# 8. 📚 RÉFÉRENCES RAPIDES SWARM
+
+## 🚀 **Commandes Essentielles Swarm**
+```bash
+# MCP Swarm Operations
+npm run mcp:swarm                    # Lance Claude Flow
+npm run mcp:status                   # Vérifier MCP servers
+npm run mcp:hooks:pre-task          # Hook pré-tâche
+npm run mcp:hooks:post-task         # Hook post-tâche
+
+# Claude Flow Direct
+npx claude-flow@alpha swarm "task"   # Swarm mode
+npx claude-flow@alpha --agents 6    # Specify agent count
+```
+
+## ⚡ **Performance Tips**
+- **Batch Everything** - Jamais opérer sur fichier unique si multiples nécessaires
+- **Parallel First** - Toujours penser "que peut s'exécuter simultanément?"
+- **Memory is Key** - Utiliser memory pour TOUTE coordination cross-agent
+- **Monitor Progress** - `swarm_monitor` pour tracking temps réel
+- **Auto-Optimize** - Laisser hooks gérer topologie et sélection agents
+
+## 📋 **Checklist Validation Swarm**
+- [ ] **TOUS agents spawned** en UN message ?
+- [ ] **TodoWrite contient 5+ todos** en UN call ?
+- [ ] **TOUTES file operations** concurrent ?
+- [ ] **Hooks coordination** dans chaque agent ?
+- [ ] **Memory usage** pour cross-agent coordination ?
+
+---
+
+## 🔴 **RÈGLES ABSOLUES - RAPPEL FINAL**
+
+1. **CONCURRENT EXECUTION** → 1 message = toutes opérations swarm
+2. **SWARM COORDINATION** → MCP coordinate, Claude Code execute  
+3. **AGENT HOOKS** → pre-task, post-edit, post-task OBLIGATOIRES
+4. **MEMORY COORDINATION** → Stocker TOUTES décisions importantes
+5. **BATCH EVERYTHING** → TodoWrite, Task spawning, File ops en parallel
+6. **NEVER SEQUENTIAL** → Après swarm init, TOUT doit être concurrent
+
+**REMEMBER:** Swarm MCP coordinate workflows, Claude Code executes with CONCURRENT pattern!
+
+---
+
+*Guide reformaté selon standards CLAUDE.md - Intégration MCP Swarm complète*

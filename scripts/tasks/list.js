@@ -178,7 +178,7 @@ Object.entries(tasksByStatus).forEach(([status, statusTasks]) => {
         console.log(`  ⚠️  Blocked: ${task.blockedReason}`);
       }
       
-      if (task.subtasks.length > 0) {
+      if (task.subtasks && task.subtasks.length > 0) {
         const completed = task.subtasks.filter(st => st.completed).length;
         console.log(`  📌 Subtasks: ${completed}/${task.subtasks.length} completed`);
         task.subtasks.forEach(st => {

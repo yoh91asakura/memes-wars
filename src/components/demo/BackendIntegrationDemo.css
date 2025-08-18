@@ -1,0 +1,529 @@
+/* Styles pour le composant de démo d'intégration backend */
+
+.backend-demo {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Arial', sans-serif;
+}
+
+.demo-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+}
+
+.demo-header h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+}
+
+.demo-header p {
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* Section commune */
+.stats-section,
+.roll-section,
+.search-section,
+.filters-section,
+.cards-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stats-section h3,
+.roll-section h3,
+.search-section h3,
+.filters-section h3,
+.cards-section h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+/* Statistiques */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.stat-item strong {
+  display: block;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Section Roll */
+.roll-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-group label {
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.control-group select,
+.control-group input {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.roll-button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.roll-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(238, 90, 36, 0.4);
+}
+
+.roll-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Résultat du roll */
+.roll-result {
+  padding: 1rem;
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: white;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.roll-result h4 {
+  margin: 0 0 0.5rem 0;
+}
+
+.roll-info {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.rolled-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.rolled-card {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 2px solid transparent;
+}
+
+.rolled-card.rarity-common {
+  border-color: #95a5a6;
+}
+
+.rolled-card.rarity-uncommon {
+  border-color: #27ae60;
+}
+
+.rolled-card.rarity-rare {
+  border-color: #3498db;
+}
+
+.rolled-card.rarity-epic {
+  border-color: #9b59b6;
+}
+
+.rolled-card.rarity-legendary {
+  border-color: #f39c12;
+}
+
+.rolled-card.rarity-mythic {
+  border-color: #e74c3c;
+}
+
+.rolled-card .card-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.rolled-card .card-name {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.rolled-card .card-rarity {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* Section Recherche */
+.search-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.search-controls input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.search-controls button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #00cec9, #00b894);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-controls button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 184, 148, 0.4);
+}
+
+/* Filtres */
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-btn.rarity-common {
+  border-color: #95a5a6;
+  color: #95a5a6;
+}
+
+.filter-btn.rarity-uncommon {
+  border-color: #27ae60;
+  color: #27ae60;
+}
+
+.filter-btn.rarity-rare {
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.filter-btn.rarity-epic {
+  border-color: #9b59b6;
+  color: #9b59b6;
+}
+
+.filter-btn.rarity-legendary {
+  border-color: #f39c12;
+  color: #f39c12;
+}
+
+.filter-btn.rarity-mythic {
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+.clear-filters-btn {
+  padding: 0.5rem 1rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.clear-filters-btn:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+
+/* Grille de cartes */
+.pagination-info {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.demo-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.demo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.demo-card.rarity-common {
+  border-color: #95a5a6;
+}
+
+.demo-card.rarity-uncommon {
+  border-color: #27ae60;
+}
+
+.demo-card.rarity-rare {
+  border-color: #3498db;
+}
+
+.demo-card.rarity-epic {
+  border-color: #9b59b6;
+}
+
+.demo-card.rarity-legendary {
+  border-color: #f39c12;
+}
+
+.demo-card.rarity-mythic {
+  border-color: #e74c3c;
+  background: linear-gradient(135deg, #fff, #ffeaa7);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.card-emoji {
+  font-size: 2.5rem;
+}
+
+.card-cost {
+  background: #34495e;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.card-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.card-description {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
+
+.card-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.card-stats span {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.card-rarity {
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.demo-card.rarity-common .card-rarity {
+  background: #95a5a6;
+}
+
+.demo-card.rarity-uncommon .card-rarity {
+  background: #27ae60;
+}
+
+.demo-card.rarity-rare .card-rarity {
+  background: #3498db;
+}
+
+.demo-card.rarity-epic .card-rarity {
+  background: #9b59b6;
+}
+
+.demo-card.rarity-legendary .card-rarity {
+  background: #f39c12;
+}
+
+.demo-card.rarity-mythic .card-rarity {
+  background: #e74c3c;
+}
+
+.card-flavor {
+  font-style: italic;
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* Contrôles de pagination */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination-btn {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #74b9ff, #0984e3);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(116, 185, 255, 0.4);
+}
+
+.pagination-btn:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.page-info {
+  font-weight: 600;
+  color: #2c3e50;
+  padding: 0.75rem;
+}
+
+/* États de chargement et d'erreur */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.error {
+  background: #fff5f5;
+  color: #e53e3e;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #e53e3e;
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .backend-demo {
+    padding: 1rem;
+  }
+  
+  .roll-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-buttons {
+    justify-content: center;
+  }
+  
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .rolled-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

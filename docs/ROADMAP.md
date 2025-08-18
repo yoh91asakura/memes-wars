@@ -1,25 +1,25 @@
 # 🎯 The Meme Wars - Roadmap vers l'Architecture Cible
 
 ## 📊 Vision Produit
-**Objectif Final**: Un jeu de cartes à collectionner multijoueur avec des mécaniques de combat bullet-hell uniques, utilisant des emojis comme projectiles.
+**Objectif Final**: Un jeu de cartes à collectionner multijoueur avec des mécaniques de combat bullet-hell uniques, utilisant des emojis comme projectiles, supporté par un backend robuste et performant.
 
 ## 🏗️ Architecture Cible
 
 ### Frontend Architecture
 ```
 src/
+├── api/                   # API client layer
+│   ├── client.ts          # Axios/Fetch client
+│   ├── websocket.ts       # WebSocket client
+│   └── offlineQueue.ts    # Offline queue
 ├── core/                    # Core systems
 │   ├── engine/             # Game engine
 │   │   ├── physics/        # Physics & collision
 │   │   ├── rendering/      # WebGL/Canvas rendering
 │   │   └── audio/          # Sound system
-│   ├── networking/         # Multiplayer
-│   │   ├── websocket/      # Real-time communication
-│   │   ├── matchmaking/    # Player matching
-│   │   └── sync/           # State synchronization
-│   └── ai/                 # AI systems
-│       ├── opponents/      # AI opponents
-│       └── assistants/     # Player helpers
+│   └── workers/            # Web workers
+│       ├── combat.worker.ts
+│       └── physics.worker.ts
 ├── features/               # Feature modules
 │   ├── combat/            # Combat system
 │   │   ├── arena/         # Combat arena
@@ -39,12 +39,21 @@ src/
 │       └── shop/          # In-game shop
 ├── shared/                # Shared utilities
 │   ├── ui/               # UI component library
+│   │   ├── atoms/
+│   │   ├── molecules/
+│   │   └── organisms/
 │   ├── utils/            # Utility functions
+│   ├── hooks/            # Custom hooks
 │   └── constants/        # Game constants
-└── infrastructure/        # Technical infrastructure
-    ├── state/            # State management
-    ├── persistence/      # Data persistence
-    └── monitoring/       # Performance monitoring
+├── infrastructure/        # Technical infrastructure
+│   ├── state/            # State management (Zustand)
+│   │   ├── playerStore.ts
+│   │   ├── collectionStore.ts
+│   │   ├── combatStore.ts
+│   │   └── syncStore.ts
+│   ├── persistence/      # Data persistence
+│   └── monitoring/       # Performance monitoring
+└── sw.js                  # Service worker
 ```
 
 ### Backend Architecture (Future)

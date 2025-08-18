@@ -48,7 +48,14 @@
     "clean:install": "npm run clean && npm install",
     "postinstall": "cross-env-shell \"echo 'Setup complete! Run npm run dev to start development' || echo 'Setup complete! Run npm run dev to start development'\"",
     "predev": "npm run typecheck",
-    "prebuild": "npm run validate"
+    "prebuild": "npm run validate",
+    "mcp:status": "echo 'Checking MCP servers...' && npx @playwright/mcp --help && npx @0xshariq/github-mcp-server --help && npx claude-flow --version",
+    "mcp:playwright": "npx @playwright/mcp",
+    "mcp:github": "npx @0xshariq/github-mcp-server",
+    "mcp:swarm": "npx claude-flow",
+    "mcp:hooks:pre-task": "npx claude-flow@alpha hooks pre-task",
+    "mcp:hooks:post-task": "npx claude-flow@alpha hooks post-task",
+    "mcp:hooks:session-restore": "npx claude-flow@alpha hooks session-restore"
   },
   "keywords": [
     "card-game",
@@ -68,7 +75,10 @@
     "zustand": "^4.5.7"
   },
   "devDependencies": {
+    "@0xshariq/github-mcp-server": "2.3.0",
     "@eslint/js": "^9.33.0",
+    "@modelcontextprotocol/sdk": "1.17.3",
+    "@playwright/mcp": "0.0.34",
     "@playwright/test": "^1.54.2",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^24.3.0",
@@ -80,6 +90,7 @@
     "@vitejs/plugin-react": "^4.2.0",
     "@vitest/coverage-v8": "^1.3.0",
     "chalk": "^5.3.0",
+    "claude-flow": "2.0.0-alpha.86",
     "cli-table3": "^0.6.3",
     "commander": "^12.0.0",
     "cross-env": "10.0.0",
@@ -91,6 +102,7 @@
     "ora": "^8.0.1",
     "playwright": "1.54.2",
     "prettier": "^3.6.2",
+    "ruv-swarm": "1.0.18",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.0",
     "typescript-eslint": "^8.39.1",

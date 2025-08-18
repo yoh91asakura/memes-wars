@@ -1,37 +1,60 @@
 import { CardEmojiData } from './emoji';
 
-export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic' | 'cosmic';
-export type CardType = 'creature' | 'spell' | 'attack' | 'defense' | 'healing' | 'support';
+// Types pour correspondre au backend Prisma
+export enum CardRarity {
+  COMMON = 'COMMON',
+  UNCOMMON = 'UNCOMMON',
+  RARE = 'RARE',
+  EPIC = 'EPIC',
+  LEGENDARY = 'LEGENDARY',
+  MYTHIC = 'MYTHIC',
+  COSMIC = 'COSMIC',
+}
+
+export enum CardType {
+  CREATURE = 'CREATURE',
+  SPELL = 'SPELL',
+  ARTIFACT = 'ARTIFACT',
+}
+
+// Alias pour la compatibilité
+export type Rarity = CardRarity;
+export { CardType as Type };
 
 export interface Card {
   id: string;
   name: string;
-  rarity: Rarity;
+  description: string;
+  emoji: string;
+  rarity: CardRarity;
   type: CardType;
   cost: number;
+  attack: number;
+  defense: number;
+  health: number;
+  attackSpeed: number;
+  color: string;
+  effects: string[];
+  tags: string[];
+  flavor?: string;
+  lore?: string;
+  craftable: boolean;
+  craftCost?: number;
+  isActive: boolean;
+  releaseDate: string;
+  createdAt: string;
+  updatedAt: string;
+  
+  // Fields pour la compatibilité avec l'ancien système
   damage?: number;
-  description?: string;
-  
-  // Legacy emoji field (for backward compatibility)
-  emoji?: string;
-  
-  // New multi-emoji system
+  ability?: string;
   emojis?: string[];
   emojiData?: CardEmojiData;
-  
-  color?: string;
-  attack?: number;
-  defense?: number;
-  ability?: string;
-  flavor?: string;
   stats?: {
     attack: number;
     defense: number;
     health: number;
   };
-  effects?: string[];
-  tags?: string[];
-  lore?: string;
 }
 
 export interface CardFilter {
