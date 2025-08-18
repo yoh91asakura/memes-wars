@@ -3,8 +3,7 @@ import { Navigation } from '../../organisms/Navigation/Navigation';
 import { Text } from '../../atoms/Text';
 import { Icon } from '../../atoms/Icon';
 import { Badge } from '../../atoms/Badge';
-import { useGameStore } from '../../../stores/gameStore';
-import { useCollectionStore } from '../../../stores/collectionStore';
+import { usePlayerStore, useCardsStore } from '../../../stores';
 import './MainLayout.css';
 
 interface MainLayoutProps {
@@ -22,8 +21,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   className = '',
   testId,
 }) => {
-  const { coins, gems, level } = useGameStore();
-  const { collection } = useCollectionStore();
+  const { coins, gems, level } = usePlayerStore();
+  const { collection } = useCardsStore();
   const navigationItems = [
     {
       id: 'roll',

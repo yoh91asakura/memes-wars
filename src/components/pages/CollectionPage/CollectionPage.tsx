@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCollectionStore } from '../../../stores/collectionStore';
+import { useCardsStore } from '../../../stores';
 import { useGameStore } from '../../../stores/gameStore';
 import { CollectionFilters } from '../../organisms/CollectionFilters';
 import { CollectionStats } from '../../organisms/CollectionStats';
@@ -32,10 +32,11 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     getFilteredCards,
     getCollectionStats,
     removeCard
-  } = useCollectionStore();
+  } = useCardsStore();
   
-  // Game store for deck management
-  const { addToDeck, currentDeck } = useGameStore();
+  // Game store for deck management  
+  const { activeDeck, addCardToDeck } = useGameStore();
+  const currentDeck = activeDeck?.cards || [];
   
   // Local state
   const [showStats, setShowStats] = useState(true);
@@ -76,7 +77,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   };
   
   const handleAddToDeck = (card: UnifiedCard) => {
-    const success = addToDeck(card);
+    // For now, we'll need an active deck to add to. TODO: implement proper deck selection
+    const deckId = activeDeck?.id;
+    if (!deckId) return false;
+    const success = addCardToDeck(deckId, card);
     if (success) {
       // Show success feedback
         // Success feedback removed - could integrate with toast notifications
@@ -346,11 +350,11 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                   <Button
                     variant="primary"
                     onClick={() => handleAddToDeck(selectedCard)}
-                    disabled={currentDeck.some(card => card.id === selectedCard.id)}
+                    disabled={currentDeck.some((card: any) => card.id === selectedCard.id)}
                     testId="detail-add-deck"
                   >
                     <Icon name="plus" size="sm" />
-                    {currentDeck.some(card => card.id === selectedCard.id) 
+                    {currentDeck.some((card: any) => card.id === selectedCard.id) 
                       ? 'Already in Deck' 
                       : 'Add to Deck'
                     }

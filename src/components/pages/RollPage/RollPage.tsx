@@ -20,11 +20,10 @@ export const RollPage: React.FC<RollPageProps> = ({
   testId,
 }) => {
   const [rolledCards, setRolledCards] = useState<UnifiedCard[]>([]);
-  const [lastRolledCard, setLastRolledCard] = useState<UnifiedCard | null>(null);
   
   // Store hooks - using new consolidated stores
-  const { performSingleRoll, isRolling, getFilteredCards } = useCardsStore();
-  const { coins, spendCoins, stats } = usePlayerStore();
+  const { performSingleRoll, isRolling } = useCardsStore();
+  const { spendCoins } = usePlayerStore();
 
   const handleRoll = useCallback(async (): Promise<UnifiedCard> => {
     try {
@@ -41,7 +40,6 @@ export const RollPage: React.FC<RollPageProps> = ({
       
       // Update local state for display (card is automatically added to collection by cardsStore)
       setRolledCards(prev => [newCard, ...prev]);
-      setLastRolledCard(newCard);
       
       return newCard;
     } catch (error) {

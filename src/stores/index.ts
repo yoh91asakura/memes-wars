@@ -7,10 +7,12 @@ export { useGameStore } from './gameStore';
 export { useUIStore } from './uiStore';
 
 // Store types
-export type { PlayerStore } from './playerStoreSimple';
-export type { CardsStore } from './cardsStore';
-export type { GameStore } from './gameStore';
-export type { UIStore } from './uiStore';
+import type { PlayerStore } from './playerStoreSimple';
+import type { CardsStore } from './cardsStore';
+import type { GameStore } from './gameStore';
+import type { UIStore } from './uiStore';
+
+export type { PlayerStore, CardsStore, GameStore, UIStore };
 
 // Combined root store interface for type safety
 export interface RootStore {

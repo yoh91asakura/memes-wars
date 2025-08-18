@@ -3,7 +3,6 @@
 
 import { create } from 'zustand';
 import { UnifiedCard } from '../models/unified/Card';
-import { createStoreMiddleware } from './middleware';
 
 export interface Deck {
   id: string;
@@ -75,6 +74,7 @@ export interface GameStore {
   // Computed Getters
   getValidDecks: () => Deck[];
   getDeckById: (deckId: string) => Deck | undefined;
+  getActiveDeck: () => Deck | null;
   canAddCardToDeck: (deckId: string, card: UnifiedCard) => boolean;
   
   // Utilities
@@ -82,16 +82,8 @@ export interface GameStore {
   resetGameSession: () => void;
 }
 
-const middleware = createStoreMiddleware('game', {
-  enableLogger: true,
-  enableDebugger: true,
-  enablePersistence: false // Game sessions shouldn't persist across browser sessions
-});
-
 export const useGameStore = create<GameStore>()(
-  middleware.debugger ? middleware.debugger(
-    middleware.logger ? middleware.logger(
-      (set, get) => ({
+  (set, get) => ({
         // Initial state
         currentMatch: null,
         isInGame: false,
@@ -289,6 +281,11 @@ export const useGameStore = create<GameStore>()(
           return state.decks.find(deck => deck.id === deckId);
         },
         
+        getActiveDeck: () => {
+          const state = get();
+          return state.activeDeck;
+        },
+        
         canAddCardToDeck: (deckId: string, card: UnifiedCard) => {
           const state = get();
           const deck = state.decks.find(d => d.id === deckId);
@@ -320,6 +317,4 @@ export const useGameStore = create<GameStore>()(
           });
         }
       })
-    ) : (set, get) => ({}) // Fallback if logger is disabled
-  ) : (set, get) => ({}) // Fallback if debugger is disabled
 );

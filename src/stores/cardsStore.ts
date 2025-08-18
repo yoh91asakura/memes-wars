@@ -5,7 +5,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { UnifiedCard, CardRarity } from '../models/unified/Card';
 import { RollService, RollResult, MultiRollResult } from '../services/RollService';
-import { createStoreMiddleware } from './middleware';
 
 // Roll configuration
 const rollConfig = {

@@ -4,7 +4,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { UnifiedCard } from '../models/unified/Card';
-import { createStoreMiddleware } from './middleware';
 
 export interface Notification {
   id: string;

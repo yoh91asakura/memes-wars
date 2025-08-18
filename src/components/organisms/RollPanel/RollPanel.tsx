@@ -48,7 +48,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
     }
   };
 
-  const cardToShow = revealCard || lastRolledCard;
+  const cardToShow = revealCard || (lastRollResult && 'card' in lastRollResult ? lastRollResult.card : null);
 
   return (
     <div className={`roll-panel ${className}`.trim()} data-testid={testId}>
@@ -58,7 +58,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
           <Icon name="roll" size="md" color="primary" />
           <div className="roll-panel__stat-content">
             <Text variant="h4" weight="bold" color="primary">
-              {rollCount}
+              {stats?.totalRolls || 0}
             </Text>
             <Text variant="caption" color="muted">
               Total Rolls
@@ -144,7 +144,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
           <RollButton
             onRoll={handleRoll}
             loading={isRolling}
-            rollCount={rollCount}
+            rollCount={stats?.totalRolls || 0}
             disabled={coins < 100}
           />
         </div>
