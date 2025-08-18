@@ -1,11 +1,23 @@
 import { v4 as uuidv4 } from 'uuid';
 import { commonCards } from '../data/cards/common';
 import { rareCards } from '../data/cards/rare';
-import { UnifiedCard, CardRarity, CardFilter, CardUtils } from '../models/unified/Card';
+import { 
+  UnifiedCard, 
+  CardRarity, 
+  CardType,
+  MemeFamily,
+  EffectType,
+  CardFilter, 
+  CardUtils,
+  RarityConfig 
+} from '../models/unified/Card';
 
-// Unified card service that works with the unified card model
+// Enhanced card service with full game specification support
 export class CardService {
   private allCards: UnifiedCard[];
+  private cardsByRarity: Map<CardRarity, UnifiedCard[]>;
+  private cardsByFamily: Map<MemeFamily, UnifiedCard[]>;
+  private cardsByType: Map<CardType, UnifiedCard[]>;
   
   constructor() {
     // Combine all card collections
@@ -13,7 +25,46 @@ export class CardService {
       ...commonCards,
       ...rareCards,
       // TODO: Add other rarities as they are migrated
+      // ...uncommonCards,
+      // ...epicCards,
+      // ...legendaryCards,
+      // ...mythicCards,
+      // ...cosmicCards,
+      // ...divineCards,
+      // ...infinityCards,
     ];
+    
+    // Build lookup maps for performance
+    this.buildLookupMaps();
+  }
+  
+  // Build optimized lookup maps
+  private buildLookupMaps(): void {
+    this.cardsByRarity = new Map();
+    this.cardsByFamily = new Map();
+    this.cardsByType = new Map();
+    
+    this.allCards.forEach(card => {
+      // Group by rarity
+      if (!this.cardsByRarity.has(card.rarity)) {
+        this.cardsByRarity.set(card.rarity, []);
+      }
+      this.cardsByRarity.get(card.rarity)!.push(card);
+      
+      // Group by family
+      if (card.family) {
+        if (!this.cardsByFamily.has(card.family)) {
+          this.cardsByFamily.set(card.family, []);
+        }
+        this.cardsByFamily.get(card.family)!.push(card);
+      }
+      
+      // Group by type
+      if (!this.cardsByType.has(card.type)) {
+        this.cardsByType.set(card.type, []);
+      }
+      this.cardsByType.get(card.type)!.push(card);
+    });
   }
   
   // Get all cards
@@ -26,9 +77,9 @@ export class CardService {
     return this.allCards.find(card => card.id === id);
   }
 
-  // Get cards by rarity (updated to use enum)
+  // Get cards by rarity (optimized with lookup map)
   getCardsByRarity(rarity: CardRarity): UnifiedCard[] {
-    return this.allCards.filter(card => card.rarity === rarity);
+    return this.cardsByRarity.get(rarity) || [];
   }
   
   // Get cards by rarity (legacy string support)
@@ -36,6 +87,25 @@ export class CardService {
     const normalizedRarity = rarity.toUpperCase() as keyof typeof CardRarity;
     const rarityEnum = CardRarity[normalizedRarity];
     return rarityEnum ? this.getCardsByRarity(rarityEnum) : [];
+  }
+  
+  // Get cards by meme family
+  getCardsByFamily(family: MemeFamily): UnifiedCard[] {
+    return this.cardsByFamily.get(family) || [];
+  }
+  
+  // Get cards by type
+  getCardsByType(type: CardType): UnifiedCard[] {
+    return this.cardsByType.get(type) || [];
+  }
+  
+  // Get cards with specific effects
+  getCardsByEffect(effect: EffectType): UnifiedCard[] {
+    return this.allCards.filter(card => 
+      card.effects?.includes(effect) ||
+      card.cardEffects?.some(cardEffect => cardEffect.effect === effect) ||
+      card.emojis?.some(emoji => emoji.effects?.includes(effect))
+    );
   }
 
   // Generate a random card based on rarity weights
@@ -54,31 +124,86 @@ export class CardService {
     return { ...cardPool[randomIndex] }; // Return a copy
   }
   
-  // Generate card with rarity probabilities
+  // Generate card with game specification probabilities (1/X format)
   async generateCardWithProbabilities(): Promise<UnifiedCard> {
-    const rarityWeights = {
-      [CardRarity.COMMON]: 60,
-      [CardRarity.UNCOMMON]: 25,
-      [CardRarity.RARE]: 10,
-      [CardRarity.EPIC]: 3,
-      [CardRarity.LEGENDARY]: 1.5,
-      [CardRarity.MYTHIC]: 0.4,
-      [CardRarity.COSMIC]: 0.1
+    // Use actual game spec probabilities (1/X format)
+    const rarityProbabilities = {
+      [CardRarity.COMMON]: 2,        // 1/2 = 50%
+      [CardRarity.UNCOMMON]: 4,      // 1/4 = 25%
+      [CardRarity.RARE]: 10,         // 1/10 = 10%
+      [CardRarity.EPIC]: 50,         // 1/50 = 2%
+      [CardRarity.LEGENDARY]: 200,   // 1/200 = 0.5%
+      [CardRarity.MYTHIC]: 1000,     // 1/1000 = 0.1%
+      [CardRarity.COSMIC]: 10000,    // 1/10000 = 0.01%
+      [CardRarity.DIVINE]: 100000,   // 1/100000 = 0.001%
+      [CardRarity.INFINITY]: 1000000 // 1/1000000 = 0.0001%
     };
     
-    const totalWeight = Object.values(rarityWeights).reduce((sum, weight) => sum + weight, 0);
-    const random = Math.random() * totalWeight;
+    // Roll for each rarity starting from highest
+    const rarityOrder = [
+      CardRarity.INFINITY,
+      CardRarity.DIVINE, 
+      CardRarity.COSMIC,
+      CardRarity.MYTHIC,
+      CardRarity.LEGENDARY,
+      CardRarity.EPIC,
+      CardRarity.RARE,
+      CardRarity.UNCOMMON,
+      CardRarity.COMMON
+    ];
     
-    let currentWeight = 0;
-    for (const [rarity, weight] of Object.entries(rarityWeights)) {
-      currentWeight += weight;
-      if (random <= currentWeight) {
-        const targetRarity = CardRarity[rarity as keyof typeof CardRarity];
-        return this.generateCard(targetRarity);
+    for (const rarity of rarityOrder) {
+      const probability = rarityProbabilities[rarity];
+      const roll = Math.floor(Math.random() * probability) + 1;
+      
+      if (roll === 1) { // Hit the 1/X chance
+        const cardsOfRarity = this.getCardsByRarity(rarity);
+        if (cardsOfRarity.length > 0) {
+          return this.generateCard(rarity);
+        }
       }
     }
     
+    // Fallback to common
     return this.generateCard(CardRarity.COMMON);
+  }
+  
+  // Roll with pity system (prevents long streaks of bad luck)
+  async rollCardWithPity(pityCounter: number = 0): Promise<{ card: UnifiedCard, newPityCounter: number, goldReward: number }> {
+    let targetRarity = CardRarity.COMMON;
+    let newPityCounter = pityCounter + 1;
+    
+    // Pity system - guaranteed higher rarity after bad streaks
+    if (pityCounter >= 50) {
+      targetRarity = CardRarity.RARE;
+      newPityCounter = 0;
+    } else if (pityCounter >= 20) {
+      targetRarity = CardRarity.UNCOMMON;
+    }
+    
+    const card = await (targetRarity === CardRarity.COMMON ? 
+      this.generateCardWithProbabilities() : 
+      this.generateCard(targetRarity)
+    );
+    
+    // Reset pity counter if we got something good
+    if (card.rarity !== CardRarity.COMMON) {
+      newPityCounter = 0;
+    }
+    
+    // Calculate gold reward (cards generate gold when rolled)
+    const goldReward = this.calculateRollGoldReward(card);
+    
+    return { card, newPityCounter, goldReward };
+  }
+  
+  // Calculate gold reward from rolling a card
+  private calculateRollGoldReward(card: UnifiedCard): number {
+    const baseReward = card.goldReward || 10;
+    const luckBonus = Math.floor((card.luck || 0) * 0.1);
+    const rarityBonus = this.getRarityBonus(card.rarity);
+    
+    return Math.floor(baseReward * rarityBonus) + luckBonus;
   }
 
   // Roll a card with unique instance
@@ -92,8 +217,17 @@ export class CardService {
     };
   }
 
-  // Filter cards by comprehensive criteria
-  filterCards(criteria: CardFilter): UnifiedCard[] {
+  // Enhanced filtering with new game spec properties
+  filterCards(criteria: CardFilter & {
+    family?: MemeFamily;
+    effect?: EffectType;
+    minLuck?: number;
+    maxLuck?: number;
+    tradeable?: boolean;
+    isLimited?: boolean;
+    minGoldReward?: number;
+    maxGoldReward?: number;
+  }): UnifiedCard[] {
     return this.allCards.filter(card => {
       if (criteria.rarity && card.rarity !== criteria.rarity) return false;
       if (criteria.type && card.type !== criteria.type) return false;
@@ -108,8 +242,26 @@ export class CardService {
       if (criteria.isActive !== undefined && card.isActive !== criteria.isActive) return false;
       if (criteria.tags && !criteria.tags.some(tag => card.tags?.includes(tag))) return false;
       
+      // New game spec filters
+      if (criteria.family && card.family !== criteria.family) return false;
+      if (criteria.effect && !this.cardHasEffect(card, criteria.effect)) return false;
+      if (criteria.minLuck !== undefined && (card.luck || 0) < criteria.minLuck) return false;
+      if (criteria.maxLuck !== undefined && (card.luck || 0) > criteria.maxLuck) return false;
+      if (criteria.tradeable !== undefined && card.tradeable !== criteria.tradeable) return false;
+      if (criteria.isLimited !== undefined && card.isLimited !== criteria.isLimited) return false;
+      if (criteria.minGoldReward !== undefined && (card.goldReward || 0) < criteria.minGoldReward) return false;
+      if (criteria.maxGoldReward !== undefined && (card.goldReward || 0) > criteria.maxGoldReward) return false;
+      
       return true;
     });
+  }
+  
+  // Check if card has specific effect
+  private cardHasEffect(card: UnifiedCard, effect: EffectType): boolean {
+    return !!
+      (card.effects?.includes(effect) ||
+      card.cardEffects?.some(cardEffect => cardEffect.effect === effect) ||
+      card.emojis?.some(emoji => emoji.effects?.includes(effect)));
   }
 
   // Get random cards
@@ -118,7 +270,7 @@ export class CardService {
     return shuffled.slice(0, count);
   }
 
-  // Search cards by name, description, or tags
+  // Enhanced search with new properties
   searchCards(query: string): UnifiedCard[] {
     const lowercaseQuery = query.toLowerCase();
     return this.allCards.filter(card => 
@@ -126,20 +278,44 @@ export class CardService {
       card.description.toLowerCase().includes(lowercaseQuery) ||
       card.emoji.includes(query) ||
       card.tags?.some(tag => tag.toLowerCase().includes(lowercaseQuery)) ||
-      card.effects?.some(effect => effect.toLowerCase().includes(lowercaseQuery))
+      card.effects?.some(effect => effect.toString().toLowerCase().includes(lowercaseQuery)) ||
+      card.reference?.toLowerCase().includes(lowercaseQuery) ||
+      card.lore?.toLowerCase().includes(lowercaseQuery) ||
+      card.flavor?.toLowerCase().includes(lowercaseQuery) ||
+      card.family?.toLowerCase().includes(lowercaseQuery)
     );
   }
   
-  // Get card statistics
+  // Enhanced card statistics with game spec properties
   getCardStats(card: UnifiedCard): {
     totalPower: number;
     isValid: boolean;
     rarityBonus: number;
+    effectCount: number;
+    emojiCount: number;
+    goldValue: number;
+    dustValue: number;
+    stackBonuses: {
+      totalLuckBonus: number;
+      totalGoldBonus: number;
+      totalDamageBonus: number;
+    };
   } {
+    const stackLevel = card.stackCount - 1;
+    
     return {
       totalPower: CardUtils.calculatePower(card),
       isValid: CardUtils.isValid(card),
-      rarityBonus: this.getRarityBonus(card.rarity)
+      rarityBonus: this.getRarityBonus(card.rarity),
+      effectCount: card.cardEffects?.length || 0,
+      emojiCount: card.emojis?.length || 0,
+      goldValue: card.goldReward || 0,
+      dustValue: card.dustValue || 0,
+      stackBonuses: {
+        totalLuckBonus: stackLevel * (card.stackBonus?.luckMultiplier || 0) * 100,
+        totalGoldBonus: stackLevel * (card.stackBonus?.goldMultiplier || 0) * 100,
+        totalDamageBonus: stackLevel * (card.stackBonus?.damageBonus || 0) * 100
+      }
     };
   }
   
@@ -165,5 +341,141 @@ export class CardService {
   // Validate card data
   validateCard(card: UnifiedCard): boolean {
     return CardUtils.isValid(card);
+  }
+  
+  // Get family synergies for deck building
+  getFamilySynergies(cards: UnifiedCard[]): Map<MemeFamily, number> {
+    const familyCounts = new Map<MemeFamily, number>();
+    
+    cards.forEach(card => {
+      if (card.family) {
+        familyCounts.set(card.family, (familyCounts.get(card.family) || 0) + 1);
+      }
+    });
+    
+    return familyCounts;
+  }
+  
+  // Calculate deck power with synergies
+  calculateDeckPower(cards: UnifiedCard[]): {
+    totalPower: number;
+    familyBonuses: Map<MemeFamily, number>;
+    recommendedSynergies: MemeFamily[];
+  } {
+    const familySynergies = this.getFamilySynergies(cards);
+    const familyBonuses = new Map<MemeFamily, number>();
+    let totalPower = 0;
+    
+    cards.forEach(card => {
+      let cardPower = CardUtils.calculatePower(card);
+      
+      // Apply family synergy bonuses
+      if (card.family) {
+        const familyCount = familySynergies.get(card.family) || 0;
+        if (familyCount >= 2) {
+          const synergyBonus = Math.floor(cardPower * 0.1 * familyCount); // 10% per family card
+          cardPower += synergyBonus;
+          familyBonuses.set(card.family, (familyBonuses.get(card.family) || 0) + synergyBonus);
+        }
+      }
+      
+      totalPower += cardPower;
+    });
+    
+    // Recommend families with potential for more synergy
+    const recommendedSynergies = Array.from(familySynergies.entries())
+      .filter(([_, count]) => count === 1)
+      .map(([family, _]) => family);
+    
+    return { totalPower, familyBonuses, recommendedSynergies };
+  }
+  
+  // Get cards that would synergize with current deck
+  getRecommendedCards(currentDeck: UnifiedCard[], limit: number = 10): UnifiedCard[] {
+    const deckFamilies = this.getFamilySynergies(currentDeck);
+    const deckTypes = new Map<CardType, number>();
+    
+    // Count current types
+    currentDeck.forEach(card => {
+      deckTypes.set(card.type, (deckTypes.get(card.type) || 0) + 1);
+    });
+    
+    // Find cards that would create or enhance synergies
+    const recommendations = this.allCards
+      .filter(card => !currentDeck.some(deckCard => deckCard.id === card.id))
+      .map(card => {
+        let synergyScore = 0;
+        
+        // Family synergy bonus
+        if (card.family && deckFamilies.has(card.family)) {
+          synergyScore += (deckFamilies.get(card.family) || 0) * 10;
+        }
+        
+        // Type diversity bonus
+        const typeCount = deckTypes.get(card.type) || 0;
+        if (typeCount === 0) {
+          synergyScore += 5; // New type bonus
+        } else if (typeCount < 2) {
+          synergyScore += 2; // Type balance bonus
+        }
+        
+        // Power level consideration
+        synergyScore += CardUtils.calculatePower(card) * 0.1;
+        
+        return { card, synergyScore };
+      })
+      .sort((a, b) => b.synergyScore - a.synergyScore)
+      .slice(0, limit)
+      .map(rec => rec.card);
+    
+    return recommendations;
+  }
+  
+  // Get collection statistics
+  getCollectionStats(): {
+    totalCards: number;
+    byRarity: Map<CardRarity, number>;
+    byFamily: Map<MemeFamily, number>;
+    byType: Map<CardType, number>;
+    totalEffects: number;
+    averageLuck: number;
+    totalGoldValue: number;
+    totalDustValue: number;
+  } {
+    const stats = {
+      totalCards: this.allCards.length,
+      byRarity: new Map<CardRarity, number>(),
+      byFamily: new Map<MemeFamily, number>(),
+      byType: new Map<CardType, number>(),
+      totalEffects: 0,
+      averageLuck: 0,
+      totalGoldValue: 0,
+      totalDustValue: 0
+    };
+    
+    let totalLuck = 0;
+    
+    this.allCards.forEach(card => {
+      // Count by rarity
+      stats.byRarity.set(card.rarity, (stats.byRarity.get(card.rarity) || 0) + 1);
+      
+      // Count by family
+      if (card.family) {
+        stats.byFamily.set(card.family, (stats.byFamily.get(card.family) || 0) + 1);
+      }
+      
+      // Count by type
+      stats.byType.set(card.type, (stats.byType.get(card.type) || 0) + 1);
+      
+      // Aggregate other stats
+      stats.totalEffects += card.cardEffects?.length || 0;
+      totalLuck += card.luck || 0;
+      stats.totalGoldValue += card.goldReward || 0;
+      stats.totalDustValue += card.dustValue || 0;
+    });
+    
+    stats.averageLuck = totalLuck / this.allCards.length;
+    
+    return stats;
   }
 }
