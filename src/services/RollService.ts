@@ -73,12 +73,12 @@ export class RollService {
     // Initialize with all available cards
     // Convert UnifiedCard to legacy Card format for compatibility
     this.allCards.set('common', this.convertUnifiedCardsToLegacy(commonCards));
-    this.allCards.set('uncommon', this.convertLegacyCards(uncommonCards));
+    this.allCards.set('uncommon', this.convertUnifiedCardsToLegacy(uncommonCards));
     this.allCards.set('rare', this.convertUnifiedCardsToLegacy(rareCards));
-    this.allCards.set('epic', this.convertLegacyCards(epicCards));
-    this.allCards.set('legendary', this.convertLegacyCards(legendaryCards));
-    this.allCards.set('mythic', this.convertLegacyCards(mythicCards));
-    this.allCards.set('cosmic', this.convertLegacyCards(cosmicCards));
+    this.allCards.set('epic', this.convertUnifiedCardsToLegacy(epicCards));
+    this.allCards.set('legendary', this.convertUnifiedCardsToLegacy(legendaryCards));
+    this.allCards.set('mythic', this.convertUnifiedCardsToLegacy(mythicCards));
+    this.allCards.set('cosmic', this.convertUnifiedCardsToLegacy(cosmicCards));
   }
 
   /**
@@ -128,17 +128,6 @@ export class RollService {
     return rarityMap[rarity] || 'common';
   }
   
-  /**
-   * Convert legacy Card[] to Card[] (identity function for now)
-   */
-  private convertLegacyCards(cards: Card[]): Card[] {
-    // Legacy cards are already in the correct format
-    return cards.map(card => ({
-      ...card,
-      // Ensure consistency
-      rarity: card.rarity.toLowerCase() as Card['rarity']
-    }));
-  }
 
   /**
    * Perform a single roll with pity system
