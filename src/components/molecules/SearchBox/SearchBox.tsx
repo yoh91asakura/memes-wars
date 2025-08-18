@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Icon, Button } from '../../atoms';
+import { Input } from '../../atoms/Input';
+import { Icon } from '../../atoms/Icon';
+import { Button } from '../../atoms/Button';
 import './SearchBox.css';
 
 interface SearchBoxProps {

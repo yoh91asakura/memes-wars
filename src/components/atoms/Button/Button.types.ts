@@ -1,11 +1,18 @@
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { HTMLMotionProps } from 'framer-motion';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'ghost' | 'outline';
+// Base component props that all components should extend
+export interface BaseComponentProps {
+  className?: string;
+  children?: ReactNode;
+  testId?: string;
+}
+
+export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'ghost' | 'outline';
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type ButtonShape = 'rectangle' | 'rounded' | 'pill' | 'circle';
 
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {
+export interface ButtonProps extends BaseComponentProps, Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {
   /** Button variant */
   variant?: ButtonVariant;
   
@@ -19,10 +26,10 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   loading?: boolean;
   
   /** Icon to show before text */
-  leftIcon?: React.ReactNode;
+  leftIcon?: ReactNode;
   
   /** Icon to show after text */
-  rightIcon?: React.ReactNode;
+  rightIcon?: ReactNode;
   
   /** Full width button */
   fullWidth?: boolean;
@@ -33,11 +40,14 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   /** Custom motion props */
   motionProps?: HTMLMotionProps<'button'>;
   
-  /** Accessible label for screen readers */
-  'aria-label'?: string;
-  
   /** Loading text for screen readers */
   loadingText?: string;
+  
+  /** Click handler */
+  onClick?: () => void;
+  
+  /** Button type */
+  type?: 'button' | 'submit' | 'reset';
 }
 
 export interface StyledButtonProps {

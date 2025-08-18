@@ -1,5 +1,8 @@
 import React from 'react';
-import { Button, Text, Icon, Badge } from '../../atoms';
+import { Button } from '../../atoms/Button';
+import { Text } from '../../atoms/Text';
+import { Icon } from '../../atoms/Icon';
+import { Badge } from '../../atoms/Badge';
 import './Navigation.css';
 
 interface NavigationItem {

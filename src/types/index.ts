@@ -1,6 +1,9 @@
 // Re-export the unified card model for backward compatibility
-export * from '../../models/unified/Card';
-export * from './emoji';
+export * from '../models/unified/Card';
+export * from '../components/types/emoji';
+
+// Component types
+export * from './components';
 
 // Global type definitions for The Meme Wars
 
@@ -72,17 +75,10 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-// Component Props Types
-export interface BaseComponentProps {
+export interface InputProps {
   className?: string;
   children?: React.ReactNode;
   testId?: string;
-}
-
-// Re-export Button types from atoms
-export type { ButtonProps, ButtonVariant, ButtonSize, ButtonShape } from '../atoms/Button';
-
-export interface InputProps extends BaseComponentProps {
   type?: 'text' | 'email' | 'password' | 'search' | 'number';
   placeholder?: string;
   value?: string;
@@ -93,13 +89,6 @@ export interface InputProps extends BaseComponentProps {
   onChange?: (value: string) => void;
   onBlur?: () => void;
   onFocus?: () => void;
-}
-
-// Animation types
-export interface AnimationConfig {
-  duration: number;
-  easing: string;
-  delay?: number;
 }
 
 // Theme types
@@ -132,3 +121,6 @@ export interface Theme {
     };
   };
 }
+
+// Re-export base component props for backward compatibility
+export type { BaseComponentProps } from './components';

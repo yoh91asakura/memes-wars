@@ -12,10 +12,13 @@ const getVariantStyles = (variant: string) => {
       &:hover:not(:disabled) {
         background: linear-gradient(135deg, ${({ theme }) => theme.colors.primary[600]}, ${({ theme }) => theme.colors.primary[700]});
         border-color: ${({ theme }) => theme.colors.primary[700]};
+        transform: translateY(-1px);
+        box-shadow: ${({ theme }) => theme.shadows.lg};
       }
       
       &:active:not(:disabled) {
         background: ${({ theme }) => theme.colors.primary[700]};
+        transform: translateY(0);
       }
     `,
     
@@ -27,10 +30,13 @@ const getVariantStyles = (variant: string) => {
       &:hover:not(:disabled) {
         background: ${({ theme }) => theme.colors.gray[100]};
         border-color: ${({ theme }) => theme.colors.gray[400]};
+        transform: translateY(-1px);
+        box-shadow: ${({ theme }) => theme.shadows.md};
       }
       
       &:active:not(:disabled) {
         background: ${({ theme }) => theme.colors.gray[200]};
+        transform: translateY(0);
       }
     `,
     
@@ -41,6 +47,8 @@ const getVariantStyles = (variant: string) => {
       
       &:hover:not(:disabled) {
         background: linear-gradient(135deg, ${({ theme }) => theme.colors.success[600]}, ${({ theme }) => theme.colors.success[700]});
+        transform: translateY(-1px);
+        box-shadow: ${({ theme }) => theme.shadows.lg};
       }
     `,
     
@@ -51,16 +59,20 @@ const getVariantStyles = (variant: string) => {
       
       &:hover:not(:disabled) {
         background: linear-gradient(135deg, ${({ theme }) => theme.colors.warning[600]}, ${({ theme }) => theme.colors.warning[700]});
+        transform: translateY(-1px);
+        box-shadow: ${({ theme }) => theme.shadows.lg};
       }
     `,
     
-    error: css`
+    danger: css`
       background: linear-gradient(135deg, ${({ theme }) => theme.colors.error[500]}, ${({ theme }) => theme.colors.error[600]});
       color: ${({ theme }) => theme.colors.text.inverse};
       border: 1px solid ${({ theme }) => theme.colors.error[600]};
       
       &:hover:not(:disabled) {
         background: linear-gradient(135deg, ${({ theme }) => theme.colors.error[600]}, ${({ theme }) => theme.colors.error[700]});
+        transform: translateY(-1px);
+        box-shadow: ${({ theme }) => theme.shadows.lg};
       }
     `,
     
@@ -71,25 +83,18 @@ const getVariantStyles = (variant: string) => {
       
       &:hover:not(:disabled) {
         background: ${({ theme }) => theme.colors.gray[100]};
-      }
-      
-      &:active:not(:disabled) {
-        background: ${({ theme }) => theme.colors.gray[200]};
+        color: ${({ theme }) => theme.colors.text.primary};
       }
     `,
     
     outline: css`
       background: transparent;
       color: ${({ theme }) => theme.colors.primary[600]};
-      border: 1px solid ${({ theme }) => theme.colors.primary[300]};
+      border: 1px solid ${({ theme }) => theme.colors.primary[600]};
       
       &:hover:not(:disabled) {
-        background: ${({ theme }) => theme.colors.primary[50]};
-        border-color: ${({ theme }) => theme.colors.primary[500]};
-      }
-      
-      &:active:not(:disabled) {
-        background: ${({ theme }) => theme.colors.primary[100]};
+        background: ${({ theme }) => theme.colors.primary[600]};
+        color: ${({ theme }) => theme.colors.text.inverse};
       }
     `,
   };
@@ -97,38 +102,37 @@ const getVariantStyles = (variant: string) => {
   return variantMap[variant as keyof typeof variantMap] || variantMap.primary;
 };
 
-const getSizeStyles = (size: string, isTouch: boolean) => {
-  const touchMultiplier = isTouch ? 1.2 : 1;
-  
+const getSizeStyles = (size: string) => {
   const sizeMap = {
     xs: css`
-      padding: ${({ theme }) => `calc(${theme.spacing[1]} * ${touchMultiplier}) calc(${theme.spacing[2]} * ${touchMultiplier})`};
+      padding: ${({ theme }) => theme.spacing[1]} ${({ theme }) => theme.spacing[2]};
       font-size: ${({ theme }) => theme.typography.sizes.xs};
-      min-height: ${44 * (isTouch ? 1 : 0.8)}px; /* Touch target minimum */
+      font-weight: ${({ theme }) => theme.typography.weights.medium};
+      min-height: 28px;
     `,
-    
     sm: css`
-      padding: ${({ theme }) => `calc(${theme.spacing[2]} * ${touchMultiplier}) calc(${theme.spacing[3]} * ${touchMultiplier})`};
+      padding: ${({ theme }) => theme.spacing[2]} ${({ theme }) => theme.spacing[3]};
       font-size: ${({ theme }) => theme.typography.sizes.sm};
-      min-height: ${44 * (isTouch ? 1 : 0.9)}px;
+      font-weight: ${({ theme }) => theme.typography.weights.medium};
+      min-height: 32px;
     `,
-    
     md: css`
-      padding: ${({ theme }) => `calc(${theme.spacing[3]} * ${touchMultiplier}) calc(${theme.spacing[4]} * ${touchMultiplier})`};
+      padding: ${({ theme }) => theme.spacing[3]} ${({ theme }) => theme.spacing[4]};
       font-size: ${({ theme }) => theme.typography.sizes.base};
-      min-height: ${44 * touchMultiplier}px;
+      font-weight: ${({ theme }) => theme.typography.weights.medium};
+      min-height: 40px;
     `,
-    
     lg: css`
-      padding: ${({ theme }) => `calc(${theme.spacing[4]} * ${touchMultiplier}) calc(${theme.spacing[6]} * ${touchMultiplier})`};
+      padding: ${({ theme }) => theme.spacing[4]} ${({ theme }) => theme.spacing[6]};
       font-size: ${({ theme }) => theme.typography.sizes.lg};
-      min-height: ${48 * touchMultiplier}px;
+      font-weight: ${({ theme }) => theme.typography.weights.semibold};
+      min-height: 48px;
     `,
-    
     xl: css`
-      padding: ${({ theme }) => `calc(${theme.spacing[5]} * ${touchMultiplier}) calc(${theme.spacing[8]} * ${touchMultiplier})`};
+      padding: ${({ theme }) => theme.spacing[5]} ${({ theme }) => theme.spacing[8]};
       font-size: ${({ theme }) => theme.typography.sizes.xl};
-      min-height: ${56 * touchMultiplier}px;
+      font-weight: ${({ theme }) => theme.typography.weights.semibold};
+      min-height: 56px;
     `,
   };
   
@@ -140,15 +144,12 @@ const getShapeStyles = (shape: string) => {
     rectangle: css`
       border-radius: ${({ theme }) => theme.borderRadius.none};
     `,
-    
     rounded: css`
       border-radius: ${({ theme }) => theme.borderRadius.md};
     `,
-    
     pill: css`
       border-radius: ${({ theme }) => theme.borderRadius.full};
     `,
-    
     circle: css`
       border-radius: ${({ theme }) => theme.borderRadius.full};
       aspect-ratio: 1;
@@ -161,49 +162,51 @@ const getShapeStyles = (shape: string) => {
 
 export const StyledButton = styled.button<StyledButtonProps>`
   /* Reset */
+  appearance: none;
+  border: none;
+  margin: 0;
+  outline: none;
+  text-decoration: none;
+  
+  /* Base styles */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing[2]};
-  
-  /* Typography */
   font-family: ${({ theme }) => theme.typography.fonts.sans};
-  font-weight: ${({ theme }) => theme.typography.weights.medium};
-  line-height: ${({ theme }) => theme.typography.lineHeights.none};
-  text-decoration: none;
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.animations.durations.fast} ${({ theme }) => theme.animations.easings.easeInOut};
+  user-select: none;
   white-space: nowrap;
   
-  /* Layout */
+  /* Size styles */
+  ${({ $size }) => getSizeStyles($size)}
+  
+  /* Shape styles */
+  ${({ $shape }) => getShapeStyles($shape)}
+  
+  /* Variant styles */
+  ${({ $variant }) => getVariantStyles($variant)}
+  
+  /* Full width */
   ${({ $fullWidth }) => $fullWidth && css`
     width: 100%;
   `}
   
-  /* Interaction */
-  cursor: ${({ $disabled, $loading }) => ($disabled || $loading) ? 'not-allowed' : 'pointer'};
-  user-select: none;
-  
-  /* Transitions */
-  transition: all ${({ theme }) => theme.animations.durations.normal} ${({ theme }) => theme.animations.easings.easeOut};
-  
-  /* Variants */
-  ${({ $variant }) => getVariantStyles($variant)}
-  
-  /* Sizes */
-  ${({ $size, $isTouch }) => getSizeStyles($size, $isTouch)}
-  
-  /* Shapes */
-  ${({ $shape }) => getShapeStyles($shape)}
-  
-  /* States */
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
+  /* Loading state */
   ${({ $loading }) => $loading && css`
-    position: relative;
-    color: transparent;
+    pointer-events: none;
+    opacity: 0.8;
   `}
+  
+  /* Disabled state */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
   
   /* Focus styles */
   &:focus-visible {
@@ -211,88 +214,104 @@ export const StyledButton = styled.button<StyledButtonProps>`
     outline-offset: 2px;
   }
   
-  /* Loading state */
-  ${({ $loading }) => $loading && css`
-    pointer-events: none;
+  /* Touch styles */
+  ${({ $isTouch }) => $isTouch && css`
+    &:hover {
+      transform: none;
+    }
   `}
 `;
 
 export const StyledMotionButton = styled(motion.button)<StyledButtonProps>`
   /* Reset */
+  appearance: none;
+  border: none;
+  margin: 0;
+  outline: none;
+  text-decoration: none;
+  
+  /* Base styles */
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing[2]};
-  
-  /* Typography */
   font-family: ${({ theme }) => theme.typography.fonts.sans};
-  font-weight: ${({ theme }) => theme.typography.weights.medium};
-  line-height: ${({ theme }) => theme.typography.lineHeights.none};
-  text-decoration: none;
+  line-height: ${({ theme }) => theme.typography.lineHeights.tight};
+  cursor: pointer;
+  transition: all ${({ theme }) => theme.animations.durations.fast} ${({ theme }) => theme.animations.easings.easeInOut};
+  user-select: none;
   white-space: nowrap;
   
-  /* Layout */
+  /* Size styles */
+  ${({ $size }) => getSizeStyles($size)}
+  
+  /* Shape styles */
+  ${({ $shape }) => getShapeStyles($shape)}
+  
+  /* Variant styles */
+  ${({ $variant }) => getVariantStyles($variant)}
+  
+  /* Full width */
   ${({ $fullWidth }) => $fullWidth && css`
     width: 100%;
   `}
   
-  /* Interaction */
-  cursor: ${({ $disabled, $loading }) => ($disabled || $loading) ? 'not-allowed' : 'pointer'};
-  user-select: none;
-  
-  /* Variants */
-  ${({ $variant }) => getVariantStyles($variant)}
-  
-  /* Sizes */
-  ${({ $size, $isTouch }) => getSizeStyles($size, $isTouch)}
-  
-  /* Shapes */
-  ${({ $shape }) => getShapeStyles($shape)}
-  
-  /* States */
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
+  /* Loading state */
   ${({ $loading }) => $loading && css`
-    position: relative;
-    color: transparent;
+    pointer-events: none;
+    opacity: 0.8;
   `}
+  
+  /* Disabled state */
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
   
   /* Focus styles */
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.primary[500]};
     outline-offset: 2px;
   }
+  
+  /* Touch styles */
+  ${({ $isTouch }) => $isTouch && css`
+    &:hover {
+      transform: none;
+    }
+  `}
 `;
 
 export const ButtonSpinner = styled(motion.div)`
-  position: absolute;
-  inset: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: currentColor;
-`;
-
-export const ButtonSpinnerIcon = styled.svg`
   width: 1em;
   height: 1em;
 `;
 
-export const ButtonIcon = styled.span<{ $position: 'left' | 'right' }>`
-  display: flex;
+export const ButtonSpinnerIcon = styled.svg`
+  width: 100%;
+  height: 100%;
+`;
+
+export const ButtonIcon = styled.div<{ $position: 'left' | 'right' }>`
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
   
-  svg {
-    width: 1em;
-    height: 1em;
-  }
+  ${({ $position }) => $position === 'left' && css`
+    margin-right: -${({ theme }) => theme.spacing[1]};
+  `}
+  
+  ${({ $position }) => $position === 'right' && css`
+    margin-left: -${({ theme }) => theme.spacing[1]};
+  `}
 `;
 
 export const ButtonText = styled.span`
-  display: flex;
-  align-items: center;
+  /* Text specific styles can go here if needed */
 `;

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Card as CardType } from '../../types';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
-import { Text } from '../../atoms';
+import { Text } from '../../atoms/Text';
 import './RollPage.css';
 
 interface RollPageProps {

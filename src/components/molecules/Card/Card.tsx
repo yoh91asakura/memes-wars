@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card as CardType } from '../../types';
-import { Text, Badge, Icon } from '../../atoms';
+import { Text } from '../../atoms/Text';
+import { Badge } from '../../atoms/Badge';
+import { Icon } from '../../atoms/Icon';
 import './Card.css';
 
 interface CardProps {

@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 import { Card as CardType } from '../../types';
 import { Card } from '../../molecules/Card/Card';
 import { SearchBox } from '../../molecules/SearchBox/SearchBox';
-import { Text, Button, Icon } from '../../atoms';
+import { Text } from '../../atoms/Text';
+import { Button } from '../../atoms/Button';
+import { Icon } from '../../atoms/Icon';
 import './CardGrid.css';
 
 interface CardGridProps {

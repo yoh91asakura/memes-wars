@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card as CardType } from '../../types';
 import { RollButton } from '../../molecules/RollButton/RollButton';
 import { Card } from '../../molecules/Card/Card';
-import { Text, Icon, Badge } from '../../atoms';
+import { Text } from '../../atoms/Text';
+import { Icon } from '../../atoms/Icon';
+import { Badge } from '../../atoms/Badge';
 import './RollPanel.css';
 
 interface RollPanelProps {

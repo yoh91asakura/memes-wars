@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigation } from '../../organisms/Navigation/Navigation';
-import { Text, Icon } from '../../atoms';
+import { Text } from '../../atoms/Text';
+import { Icon } from '../../atoms/Icon';
 import './MainLayout.css';
 
 interface MainLayoutProps {

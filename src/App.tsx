@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MainLayout } from './components/templates/MainLayout/MainLayout';
 import { RollPage } from './components/pages/RollPage/RollPage';
-import { Text } from './components/atoms';
+import { Text } from './components/atoms/Text';
 import './App.css';
 
 type Page = 'roll' | 'collection' | 'battle';

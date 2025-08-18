@@ -1,66 +1,68 @@
-import React from 'react';
-import { BaseComponentProps } from '../../types';
-import './Text.css';
+import { forwardRef, memo } from 'react';
+import { TextProps } from './Text.types';
+import { StyledText } from './Text.styles';
 
-interface TextProps extends BaseComponentProps {
-  variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'body' | 'caption' | 'subtitle';
-  color?: 'primary' | 'secondary' | 'muted' | 'success' | 'warning' | 'danger' | 'inherit';
-  weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
-  align?: 'left' | 'center' | 'right' | 'justify';
-  as?: keyof JSX.IntrinsicElements;
-  truncate?: boolean;
-}
+const getElementFromVariant = (variant: string): keyof JSX.IntrinsicElements => {
+  const elementMap: Record<string, keyof JSX.IntrinsicElements> = {
+    h1: 'h1',
+    h2: 'h2',
+    h3: 'h3',
+    h4: 'h4',
+    h5: 'h5',
+    h6: 'h6',
+    subtitle: 'h2',
+    body: 'p',
+    caption: 'span',
+    overline: 'span',
+  };
+  
+  return elementMap[variant] || 'span';
+};
 
-export const Text: React.FC<TextProps> = ({
+/**
+ * Text Component
+ * 
+ * A flexible text component with multiple variants, weights, colors, and alignment options.
+ * Follows the atomic design system and uses styled-components for styling.
+ */
+export const Text = memo(forwardRef<HTMLElement, TextProps>(({
   variant = 'body',
-  color = 'inherit',
   weight = 'normal',
   align = 'left',
-  as,
+  color = 'primary',
   truncate = false,
-  className = '',
+  uppercase = false,
+  italic = false,
+  as,
   children,
+  className = '',
   testId,
-}) => {
-  // Determine the HTML element to render
-  const getElement = (): keyof JSX.IntrinsicElements => {
-    if (as) return as;
-    
-    switch (variant) {
-      case 'h1':
-      case 'h2':
-      case 'h3':
-      case 'h4':
-      case 'h5':
-      case 'h6':
-        return variant;
-      case 'caption':
-        return 'small';
-      case 'subtitle':
-        return 'h6';
-      default:
-        return 'p';
-    }
+  ...props
+}, ref) => {
+  const Element = as || getElementFromVariant(variant);
+  
+  const styledProps = {
+    $variant: variant,
+    $weight: weight,
+    $align: align,
+    $color: color,
+    $truncate: truncate,
+    $uppercase: uppercase,
+    $italic: italic,
   };
 
-  const Element = getElement();
-
-  const textClass = [
-    'text',
-    `text--${variant}`,
-    `text--${color}`,
-    `text--${weight}`,
-    `text--${align}`,
-    truncate && 'text--truncate',
-    className
-  ].filter(Boolean).join(' ');
-
   return (
-    <Element 
-      className={textClass}
+    <StyledText
+      as={Element}
+      ref={ref}
+      className={className}
       data-testid={testId}
+      {...styledProps}
+      {...props}
     >
       {children}
-    </Element>
+    </StyledText>
   );
-};
+}));
+
+Text.displayName = 'Text';
