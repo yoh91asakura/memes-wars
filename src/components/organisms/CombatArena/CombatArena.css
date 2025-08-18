@@ -1,0 +1,299 @@
+/* Combat Arena Styles */
+
+.combat-arena {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.combat-arena canvas {
+  background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+  border-radius: 8px;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.combat-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.control-btn {
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid #333;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.control-btn:hover {
+  background: rgba(59, 130, 246, 0.8);
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.control-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.2);
+}
+
+/* Combat UI Overlays */
+.combat-timer {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  z-index: 10;
+}
+
+.combat-winner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fbbf24;
+  font-size: 48px;
+  font-weight: bold;
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+  text-align: center;
+  z-index: 20;
+  animation: winnerPulse 2s ease-in-out infinite;
+}
+
+@keyframes winnerPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Debug Info Panel */
+.debug-panel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  backdrop-filter: blur(8px);
+  border: 1px solid #333;
+  z-index: 10;
+}
+
+/* Player Health Bars */
+.player-health-bar {
+  background: #333;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 8px;
+  margin-bottom: 2px;
+}
+
+.player-health-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: inherit;
+}
+
+.player-health-fill.high { background: #10b981; }
+.player-health-fill.medium { background: #f59e0b; }
+.player-health-fill.low { background: #ef4444; }
+
+/* Projectile Effects */
+.projectile-trail {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 2;
+  fill: none;
+  filter: blur(1px);
+}
+
+/* Screen Effects */
+@keyframes screenShake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.screen-shake {
+  animation: screenShake 0.6s ease-in-out;
+}
+
+.flash-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+  z-index: 15;
+}
+
+.flash-effect.active {
+  opacity: 0.5;
+}
+
+.flash-damage { background: #ef4444; }
+.flash-heal { background: #10b981; }
+.flash-critical { background: #fbbf24; }
+
+/* Combat Phase Indicators */
+.phase-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 36px;
+  font-weight: bold;
+  text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.8);
+  z-index: 20;
+  animation: phaseAppear 1s ease-out;
+}
+
+@keyframes phaseAppear {
+  0% { 
+    opacity: 0; 
+    transform: translate(-50%, -50%) scale(0.5); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1.2); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translate(-50%, -50%) scale(1); 
+  }
+}
+
+.phase-countdown { color: #fbbf24; }
+.phase-ready { color: #10b981; }
+.phase-paused { color: #6b7280; }
+
+/* Arena Boundaries */
+.arena-boundary {
+  stroke: #333;
+  stroke-width: 4;
+  fill: none;
+}
+
+.arena-obstacle {
+  fill: #555;
+  stroke: none;
+}
+
+.arena-obstacle.bouncy {
+  stroke: #00ff00;
+  stroke-width: 2;
+}
+
+.arena-obstacle.destructible {
+  stroke: #ff6b35;
+  stroke-width: 2;
+}
+
+/* Minimap */
+.combat-minimap {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 150px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #333;
+  border-radius: 6px;
+  z-index: 10;
+}
+
+.minimap-canvas {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .combat-arena {
+    padding: 10px;
+  }
+  
+  .combat-controls {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .control-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+  
+  .combat-timer {
+    font-size: 20px;
+  }
+  
+  .combat-winner {
+    font-size: 32px;
+  }
+  
+  .phase-indicator {
+    font-size: 28px;
+  }
+}
+
+/* Performance Optimizations */
+.combat-arena canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .combat-arena canvas,
+  .control-btn,
+  .player-health-fill,
+  .flash-effect {
+    transition: none;
+  }
+  
+  .winnerPulse,
+  .phaseAppear,
+  .screenShake {
+    animation: none;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .control-btn {
+    border-color: white;
+    background: black;
+  }
+  
+  .debug-panel {
+    border-color: white;
+    background: black;
+  }
+}
