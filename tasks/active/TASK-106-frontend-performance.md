@@ -3,10 +3,10 @@
 ## 📋 Metadata
 - **ID**: TASK-106
 - **Created**: 2025-08-18
-- **Status**: IN_PROGRESS
+- **Status**: TODO
 - **Priority**: CRITICAL
 - **Size**: L
-- **Assignee**: Claude
+- **Assignee**: [Unassigned]
 - **Epic**: Performance Optimization
 - **Sprint**: Optimization Sprint
 
