@@ -1,1725 +1,1884 @@
 {
-  "tasks": [
-    {
-      "id": 1,
-      "title": "Test the new task management system",
-      "description": "",
-      "status": "done",
-      "priority": "medium",
-      "assignee": null,
-      "tags": [],
-      "createdAt": "2025-08-17T20:18:58.582Z",
-      "updatedAt": "2025-08-17T20:19:18.868Z",
-      "completedAt": "2025-08-17T20:19:18.869Z",
-      "blockedReason": null,
-      "subtasks": []
-    },
-    {
-      "id": 2,
-      "title": "Implement emoji battle system high game,combat",
-      "description": "",
-      "status": "done",
-      "priority": "medium",
-      "assignee": "Claude",
-      "tags": [],
-      "createdAt": "2025-08-17T20:20:25.223Z",
-      "updatedAt": "2025-08-17T23:05:30.000Z",
-      "completedAt": "2025-08-17T23:05:30.000Z",
-      "blockedReason": null,
-      "subtasks": []
-    },
-    {
-      "id": 3,
-      "title": "Add card collection feature",
-      "description": "",
-      "status": "in-progress",
-      "priority": "high",
-      "assignee": null,
-      "tags": [],
-      "createdAt": "2025-08-17T20:20:45.157Z",
-      "updatedAt": "2025-08-17T20:21:20.262Z",
-      "completedAt": null,
-      "blockedReason": null,
-      "subtasks": []
-    },
-    {
-      "id": 4,
-      "title": "Improve roll system",
-      "description": "",
-      "status": "review",
-      "priority": "medium",
-      "assignee": "Claude",
-      "tags": [],
-      "createdAt": "2025-08-17T21:12:32.122Z",
-      "updatedAt": "2025-08-17T21:26:49.139Z",
-      "completedAt": null,
-      "blockedReason": null,
-      "subtasks": []
-    },
-    {
-      "id": "e923a6ec313da21c",
-      "title": "Unify Card Data Models",
-      "description": "Consolidate the two parallel card systems (Card.ts and card.ts) into a single, unified model",
-      "userStory": {
-        "persona": "developer",
-        "want": "a single, consistent card model",
-        "reason": "I can maintain and extend the code without confusion"
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Test the new task management system",
+        "description": "",
+        "status": "done",
+        "priority": "medium",
+        "assignee": null,
+        "tags": [],
+        "createdAt": "2025-08-17T20:18:58.582Z",
+        "updatedAt": "2025-08-17T20:19:18.868Z",
+        "completedAt": "2025-08-17T20:19:18.869Z",
+        "blockedReason": null,
+        "subtasks": []
       },
-      "status": "in-progress",
-      "priority": "critical",
-      "size": "L",
-      "dependencies": [],
-      "assignee": "Claude",
-      "acceptanceCriteria": [
-        {
-          "id": "e923a6ec313da21c-ac-0",
-          "description": "Single Card interface defined in src/models/unified/Card.ts",
-          "completed": false
-        },
-        {
-          "id": "e923a6ec313da21c-ac-1",
-          "description": "All card properties consolidated from both existing models",
-          "completed": false
-        },
-        {
-          "id": "e923a6ec313da21c-ac-2",
-          "description": "TypeScript strict mode passing with no errors",
-          "completed": false
-        },
-        {
-          "id": "e923a6ec313da21c-ac-3",
-          "description": "All existing code migrated to use new model",
-          "completed": false
-        },
-        {
-          "id": "e923a6ec313da21c-ac-4",
-          "description": "No duplicate card type definitions remain",
-          "completed": false
-        },
-        {
-          "id": "e923a6ec313da21c-ac-5",
-          "description": "Card model supports both simple and complex card types",
-          "completed": false
-        },
-        {
-          "id": "e923a6ec313da21c-ac-6",
-          "description": "Backward compatibility maintained for existing data",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/models/Card.ts",
-          "src/types/card.ts",
-          "src/services/RollService.ts",
-          "src/services/CardService.ts",
-          "src/stores/gameStore.ts",
-          "src/stores/rollStore.ts"
-        ],
-        "components": [
-          "CardDisplay",
-          "CardReveal",
-          "RollScreen"
-        ],
-        "services": [
-          "RollService",
-          "CardService"
-        ],
-        "userImpact": "No visible changes, but more stable application",
-        "businessValue": "Reduced bugs and faster feature development",
-        "risks": [
-          "Breaking existing card data",
-          "Type conflicts during migration"
-        ],
-        "testScenarios": [
-          "All existing cards load correctly",
-          "New cards can be created with all properties",
-          "Roll system works with unified model",
-          "Collection management works correctly"
-        ],
-        "suggestedApproach": "Create new unified model first, then migrate incrementally with adapter pattern"
+      {
+        "id": 2,
+        "title": "Implement emoji battle system high game,combat",
+        "description": "",
+        "status": "done",
+        "priority": "medium",
+        "assignee": "Claude",
+        "tags": [],
+        "createdAt": "2025-08-17T20:20:25.223Z",
+        "updatedAt": "2025-08-17T23:05:30.000Z",
+        "completedAt": "2025-08-17T23:05:30.000Z",
+        "blockedReason": null,
+        "subtasks": []
       },
-      "tags": [
-        "refactoring",
-        "architecture",
-        "technical-debt"
-      ],
-      "labels": [],
-      "epic": "refactoring-core",
-      "createdAt": "2025-08-17T22:10:20.382Z",
-      "updatedAt": "2025-08-17T22:10:20.384Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "e923a6ec313da21c-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.384Z"
-        }
-      ]
-    },
-    {
-      "id": "199e14eb6453d09e",
-      "title": "Consolidate Store Architecture",
-      "description": "Unify gameStore and rollStore to eliminate duplicate state management",
-      "userStory": {
-        "persona": "developer",
-        "want": "a clear, modular store architecture",
-        "reason": "state management is predictable and maintainable"
+      {
+        "id": 3,
+        "title": "Add card collection feature",
+        "description": "",
+        "status": "in-progress",
+        "priority": "high",
+        "assignee": null,
+        "tags": [],
+        "createdAt": "2025-08-17T20:20:45.157Z",
+        "updatedAt": "2025-08-17T20:21:20.262Z",
+        "completedAt": null,
+        "blockedReason": null,
+        "subtasks": []
       },
-      "status": "backlog",
-      "priority": "critical",
-      "size": "M",
-      "dependencies": [
-        "Unify Card Data Models"
-      ],
-      "acceptanceCriteria": [
-        {
-          "id": "199e14eb6453d09e-ac-0",
-          "description": "Central gameStore with modular slices",
-          "completed": false
-        },
-        {
-          "id": "199e14eb6453d09e-ac-1",
-          "description": "No duplicate state management logic",
-          "completed": false
-        },
-        {
-          "id": "199e14eb6453d09e-ac-2",
-          "description": "Clear separation of concerns between stores",
-          "completed": false
-        },
-        {
-          "id": "199e14eb6453d09e-ac-3",
-          "description": "All components using centralized stores",
-          "completed": false
-        },
-        {
-          "id": "199e14eb6453d09e-ac-4",
-          "description": "Store actions are typed and documented",
-          "completed": false
-        },
-        {
-          "id": "199e14eb6453d09e-ac-5",
-          "description": "Middleware for persistence implemented",
-          "completed": false
-        },
-        {
-          "id": "199e14eb6453d09e-ac-6",
-          "description": "DevTools integration working",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/stores/gameStore.ts",
-          "src/stores/rollStore.ts",
-          "src/stores/index.ts"
-        ],
-        "components": [
-          "All components using stores"
-        ],
-        "userImpact": "Faster UI updates and more consistent state",
-        "businessValue": "Easier to add new features and fix bugs",
-        "risks": [
-          "State migration issues",
-          "Component breaking changes"
-        ],
-        "testScenarios": [
-          "State persists across page refreshes",
-          "All UI components update correctly",
-          "No race conditions in state updates",
-          "Undo/redo functionality possible"
-        ],
-        "suggestedApproach": "Use Zustand slices pattern with immer for immutability"
+      {
+        "id": 4,
+        "title": "Improve roll system",
+        "description": "",
+        "status": "review",
+        "priority": "medium",
+        "assignee": "Claude",
+        "tags": [],
+        "createdAt": "2025-08-17T21:12:32.122Z",
+        "updatedAt": "2025-08-17T21:26:49.139Z",
+        "completedAt": null,
+        "blockedReason": null,
+        "subtasks": []
       },
-      "tags": [
-        "architecture",
-        "state-management",
-        "refactoring"
-      ],
-      "labels": [],
-      "epic": "refactoring-core",
-      "createdAt": "2025-08-17T22:10:20.389Z",
-      "updatedAt": "2025-08-17T22:10:20.389Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "199e14eb6453d09e-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.389Z"
-        }
-      ]
-    },
-    {
-      "id": "9e4e9a89b054420c",
-      "title": "Implement Combat Arena Component",
-      "description": "Create the main combat arena where cards battle using emoji projectiles",
-      "userStory": {
-        "persona": "player",
-        "want": "to see my cards battle in an arena",
-        "reason": "I can enjoy strategic combat gameplay"
-      },
-      "status": "backlog",
-      "priority": "high",
-      "size": "XL",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "9e4e9a89b054420c-ac-0",
-          "description": "Combat arena renders at 60 FPS",
-          "completed": false
+      {
+        "id": "e923a6ec313da21c",
+        "title": "Unify Card Data Models",
+        "description": "Consolidate the two parallel card systems (Card.ts and card.ts) into a single, unified model",
+        "userStory": {
+          "persona": "developer",
+          "want": "a single, consistent card model",
+          "reason": "I can maintain and extend the code without confusion"
         },
-        {
-          "id": "9e4e9a89b054420c-ac-1",
-          "description": "Player and opponent zones clearly defined",
-          "completed": false
-        },
-        {
-          "id": "9e4e9a89b054420c-ac-2",
-          "description": "Card placement system working",
-          "completed": false
-        },
-        {
-          "id": "9e4e9a89b054420c-ac-3",
-          "description": "Visual feedback for actions",
-          "completed": false
-        },
-        {
-          "id": "9e4e9a89b054420c-ac-4",
-          "description": "Responsive design for different screen sizes",
-          "completed": false
-        },
-        {
-          "id": "9e4e9a89b054420c-ac-5",
-          "description": "Smooth animations for card movements",
-          "completed": false
-        },
-        {
-          "id": "9e4e9a89b054420c-ac-6",
-          "description": "Arena boundaries properly defined",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/components/combat/CombatArena.tsx",
-          "src/components/combat/PlayerZone.tsx",
-          "src/components/combat/OpponentZone.tsx"
+        "status": "in-progress",
+        "priority": "critical",
+        "size": "L",
+        "dependencies": [],
+        "assignee": "Claude",
+        "acceptanceCriteria": [
+          {
+            "id": "e923a6ec313da21c-ac-0",
+            "description": "Single Card interface defined in src/models/unified/Card.ts",
+            "completed": false
+          },
+          {
+            "id": "e923a6ec313da21c-ac-1",
+            "description": "All card properties consolidated from both existing models",
+            "completed": false
+          },
+          {
+            "id": "e923a6ec313da21c-ac-2",
+            "description": "TypeScript strict mode passing with no errors",
+            "completed": false
+          },
+          {
+            "id": "e923a6ec313da21c-ac-3",
+            "description": "All existing code migrated to use new model",
+            "completed": false
+          },
+          {
+            "id": "e923a6ec313da21c-ac-4",
+            "description": "No duplicate card type definitions remain",
+            "completed": false
+          },
+          {
+            "id": "e923a6ec313da21c-ac-5",
+            "description": "Card model supports both simple and complex card types",
+            "completed": false
+          },
+          {
+            "id": "e923a6ec313da21c-ac-6",
+            "description": "Backward compatibility maintained for existing data",
+            "completed": false
+          }
         ],
-        "components": [
-          "CombatScreen",
-          "CombatArena"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
         ],
-        "services": [
-          "CombatService"
+        "context": {
+          "files": [
+            "src/models/Card.ts",
+            "src/types/card.ts",
+            "src/services/RollService.ts",
+            "src/services/CardService.ts",
+            "src/stores/gameStore.ts",
+            "src/stores/rollStore.ts"
+          ],
+          "components": [
+            "CardDisplay",
+            "CardReveal",
+            "RollScreen"
+          ],
+          "services": [
+            "RollService",
+            "CardService"
+          ],
+          "userImpact": "No visible changes, but more stable application",
+          "businessValue": "Reduced bugs and faster feature development",
+          "risks": [
+            "Breaking existing card data",
+            "Type conflicts during migration"
+          ],
+          "testScenarios": [
+            "All existing cards load correctly",
+            "New cards can be created with all properties",
+            "Roll system works with unified model",
+            "Collection management works correctly"
+          ],
+          "suggestedApproach": "Create new unified model first, then migrate incrementally with adapter pattern"
+        },
+        "tags": [
+          "refactoring",
+          "architecture",
+          "technical-debt"
         ],
-        "userImpact": "Core gameplay feature becomes available",
-        "businessValue": "Main game loop completed, ready for players",
-        "risks": [
-          "Performance issues with many cards",
-          "Browser compatibility"
-        ],
-        "testScenarios": [
-          "Arena renders on all screen sizes",
-          "Can place cards in valid zones",
-          "Cannot place cards in invalid zones",
-          "Visual feedback is clear and immediate"
-        ],
-        "suggestedApproach": "Use Canvas or WebGL for performance, React for UI overlay"
-      },
-      "tags": [
-        "feature",
-        "combat",
-        "ui",
-        "gameplay"
-      ],
-      "labels": [],
-      "epic": "combat-system",
-      "createdAt": "2025-08-17T22:10:20.395Z",
-      "updatedAt": "2025-08-17T22:10:20.395Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "9e4e9a89b054420c-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.395Z"
-        }
-      ]
-    },
-    {
-      "id": "9e8f0f92f8e2b700",
-      "title": "Create Emoji Projectile System",
-      "description": "Implement the emoji projectile mechanics with various trajectory patterns",
-      "userStory": {
-        "persona": "player",
-        "want": "to see emoji projectiles flying in combat",
-        "reason": "combat is visually exciting and unique"
-      },
-      "status": "backlog",
-      "priority": "high",
-      "size": "L",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "9e8f0f92f8e2b700-ac-0",
-          "description": "Projectiles spawn from cards correctly",
-          "completed": false
-        },
-        {
-          "id": "9e8f0f92f8e2b700-ac-1",
-          "description": "Trajectory patterns implemented (straight, wave, spiral, homing)",
-          "completed": false
-        },
-        {
-          "id": "9e8f0f92f8e2b700-ac-2",
-          "description": "Projectile speed and damage calculated correctly",
-          "completed": false
-        },
-        {
-          "id": "9e8f0f92f8e2b700-ac-3",
-          "description": "Visual effects for projectile trails",
-          "completed": false
-        },
-        {
-          "id": "9e8f0f92f8e2b700-ac-4",
-          "description": "Projectiles despawn at boundaries",
-          "completed": false
-        },
-        {
-          "id": "9e8f0f92f8e2b700-ac-5",
-          "description": "Memory management for many projectiles",
-          "completed": false
-        },
-        {
-          "id": "9e8f0f92f8e2b700-ac-6",
-          "description": "Smooth animation at 60 FPS with 100+ projectiles",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/systems/ProjectileSystem.ts",
-          "src/models/Projectile.ts",
-          "src/components/combat/ProjectileRenderer.tsx"
-        ],
-        "components": [
-          "ProjectileRenderer",
-          "CombatArena"
-        ],
-        "services": [
-          "ProjectileService",
-          "PhysicsEngine"
-        ],
-        "userImpact": "Unique and engaging combat visuals",
-        "businessValue": "Differentiates game from competitors",
-        "risks": [
-          "Performance degradation",
-          "Memory leaks"
-        ],
-        "testScenarios": [
-          "Spawn 100 projectiles without lag",
-          "All trajectory patterns work correctly",
-          "Projectiles interact with boundaries",
-          "Memory is properly cleaned up"
-        ],
-        "suggestedApproach": "Object pooling for projectiles, WebGL for rendering"
-      },
-      "tags": [
-        "feature",
-        "combat",
-        "graphics",
-        "performance"
-      ],
-      "labels": [],
-      "epic": "combat-system",
-      "createdAt": "2025-08-17T22:10:20.398Z",
-      "updatedAt": "2025-08-17T22:10:20.398Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "9e8f0f92f8e2b700-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.398Z"
-        }
-      ]
-    },
-    {
-      "id": "6c8c43ec02b33732",
-      "title": "Implement Collision Detection",
-      "description": "Create accurate and performant collision detection for projectiles",
-      "userStory": {
-        "persona": "player",
-        "want": "projectiles to hit targets and deal damage",
-        "reason": "combat has meaningful consequences"
-      },
-      "status": "backlog",
-      "priority": "high",
-      "size": "L",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "6c8c43ec02b33732-ac-0",
-          "description": "Accurate AABB collision detection",
-          "completed": false
-        },
-        {
-          "id": "6c8c43ec02b33732-ac-1",
-          "description": "Pixel-perfect collision for special cases",
-          "completed": false
-        },
-        {
-          "id": "6c8c43ec02b33732-ac-2",
-          "description": "Spatial partitioning for performance",
-          "completed": false
-        },
-        {
-          "id": "6c8c43ec02b33732-ac-3",
-          "description": "Collision events properly fired",
-          "completed": false
-        },
-        {
-          "id": "6c8c43ec02b33732-ac-4",
-          "description": "No false positives or negatives",
-          "completed": false
-        },
-        {
-          "id": "6c8c43ec02b33732-ac-5",
-          "description": "Performance remains stable with many objects",
-          "completed": false
-        },
-        {
-          "id": "6c8c43ec02b33732-ac-6",
-          "description": "Collision shapes properly defined for all entities",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/systems/CollisionSystem.ts",
-          "src/systems/PhysicsEngine.ts",
-          "src/utils/collision.ts"
-        ],
-        "components": [
-          "CombatArena"
-        ],
-        "services": [
-          "CollisionService",
-          "PhysicsEngine"
-        ],
-        "userImpact": "Combat mechanics work correctly",
-        "businessValue": "Core gameplay loop functional",
-        "risks": [
-          "Performance issues",
-          "Inaccurate collisions"
-        ],
-        "testScenarios": [
-          "Projectiles hit targets accurately",
-          "No tunneling at high speeds",
-          "Performance with 200+ collision checks/frame",
-          "Edge cases handled properly"
-        ],
-        "suggestedApproach": "Quadtree for spatial partitioning, AABB for broad phase"
-      },
-      "tags": [
-        "feature",
-        "combat",
-        "physics",
-        "performance"
-      ],
-      "labels": [],
-      "epic": "combat-system",
-      "createdAt": "2025-08-17T22:10:20.403Z",
-      "updatedAt": "2025-08-17T22:10:20.403Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "6c8c43ec02b33732-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.403Z"
-        }
-      ]
-    },
-    {
-      "id": "a9b013ace8904679",
-      "title": "Implement HP and Damage System",
-      "description": "",
-      "status": "backlog",
-      "priority": "high",
-      "size": "M",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "a9b013ace8904679-ac-0",
-          "description": "HP bars display for all entities",
-          "completed": false
-        },
-        {
-          "id": "a9b013ace8904679-ac-1",
-          "description": "Damage calculations work correctly",
-          "completed": false
-        },
-        {
-          "id": "a9b013ace8904679-ac-2",
-          "description": "Damage numbers appear on hit",
-          "completed": false
-        },
-        {
-          "id": "a9b013ace8904679-ac-3",
-          "description": "Critical hits and effects implemented",
-          "completed": false
-        },
-        {
-          "id": "a9b013ace8904679-ac-4",
-          "description": "Healing mechanics work",
-          "completed": false
-        },
-        {
-          "id": "a9b013ace8904679-ac-5",
-          "description": "Death/defeat conditions trigger correctly",
-          "completed": false
-        },
-        {
-          "id": "a9b013ace8904679-ac-6",
-          "description": "HP persistence between rounds",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/systems/DamageSystem.ts"
-        ],
-        "components": [
-          "HealthBar",
-          "DamageNumber",
-          "CombatHUD"
-        ],
-        "services": [
-          "DamageCalculator",
-          "CombatService"
+        "labels": [],
+        "epic": "refactoring-core",
+        "createdAt": "2025-08-17T22:10:20.382Z",
+        "updatedAt": "2025-08-17T22:10:20.384Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "e923a6ec313da21c-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.384Z"
+          }
         ]
       },
-      "tags": [
-        "feature",
-        "combat",
-        "ui",
-        "gameplay"
-      ],
-      "labels": [],
-      "epic": "combat-system",
-      "createdAt": "2025-08-17T22:10:20.408Z",
-      "updatedAt": "2025-08-17T22:10:20.408Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "a9b013ace8904679-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.408Z"
-        }
-      ]
-    },
-    {
-      "id": "7a4bfdad11a2e5de",
-      "title": "Create Main Menu Interface",
-      "description": "",
-      "status": "backlog",
-      "priority": "medium",
-      "size": "M",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "7a4bfdad11a2e5de-ac-0",
-          "description": "Main menu displays on app load",
-          "completed": false
+      {
+        "id": 199,
+        "title": "Consolidate Store Architecture",
+        "description": "Unify gameStore and rollStore to eliminate duplicate state management",
+        "userStory": {
+          "persona": "developer",
+          "want": "a clear, modular store architecture",
+          "reason": "state management is predictable and maintainable"
         },
-        {
-          "id": "7a4bfdad11a2e5de-ac-1",
-          "description": "All navigation options visible",
-          "completed": false
-        },
-        {
-          "id": "7a4bfdad11a2e5de-ac-2",
-          "description": "Animations smooth and appealing",
-          "completed": false
-        },
-        {
-          "id": "7a4bfdad11a2e5de-ac-3",
-          "description": "Settings accessible",
-          "completed": false
-        },
-        {
-          "id": "7a4bfdad11a2e5de-ac-4",
-          "description": "Profile information displayed",
-          "completed": false
-        },
-        {
-          "id": "7a4bfdad11a2e5de-ac-5",
-          "description": "News/updates section visible",
-          "completed": false
-        },
-        {
-          "id": "7a4bfdad11a2e5de-ac-6",
-          "description": "Responsive on all devices",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/components/menu/MainMenu.tsx"
+        "status": "backlog",
+        "priority": "critical",
+        "size": "M",
+        "dependencies": [
+          "Unify Card Data Models"
         ],
-        "components": [
-          "MainMenu",
-          "MenuButton",
-          "Navigation"
+        "acceptanceCriteria": [
+          {
+            "id": "199e14eb6453d09e-ac-0",
+            "description": "Central gameStore with modular slices",
+            "completed": false
+          },
+          {
+            "id": "199e14eb6453d09e-ac-1",
+            "description": "No duplicate state management logic",
+            "completed": false
+          },
+          {
+            "id": "199e14eb6453d09e-ac-2",
+            "description": "Clear separation of concerns between stores",
+            "completed": false
+          },
+          {
+            "id": "199e14eb6453d09e-ac-3",
+            "description": "All components using centralized stores",
+            "completed": false
+          },
+          {
+            "id": "199e14eb6453d09e-ac-4",
+            "description": "Store actions are typed and documented",
+            "completed": false
+          },
+          {
+            "id": "199e14eb6453d09e-ac-5",
+            "description": "Middleware for persistence implemented",
+            "completed": false
+          },
+          {
+            "id": "199e14eb6453d09e-ac-6",
+            "description": "DevTools integration working",
+            "completed": false
+          }
         ],
-        "services": [
-          "NavigationService"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
+        ],
+        "context": {
+          "files": [
+            "src/stores/gameStore.ts",
+            "src/stores/rollStore.ts",
+            "src/stores/index.ts"
+          ],
+          "components": [
+            "All components using stores"
+          ],
+          "userImpact": "Faster UI updates and more consistent state",
+          "businessValue": "Easier to add new features and fix bugs",
+          "risks": [
+            "State migration issues",
+            "Component breaking changes"
+          ],
+          "testScenarios": [
+            "State persists across page refreshes",
+            "All UI components update correctly",
+            "No race conditions in state updates",
+            "Undo/redo functionality possible"
+          ],
+          "suggestedApproach": "Use Zustand slices pattern with immer for immutability"
+        },
+        "tags": [
+          "architecture",
+          "state-management",
+          "refactoring"
+        ],
+        "labels": [],
+        "epic": "refactoring-core",
+        "createdAt": "2025-08-17T22:10:20.389Z",
+        "updatedAt": "2025-08-17T22:10:20.389Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "199e14eb6453d09e-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.389Z"
+          }
         ]
       },
-      "tags": [
-        "ui",
-        "navigation",
-        "feature"
-      ],
-      "labels": [],
-      "epic": "ui-completion",
-      "createdAt": "2025-08-17T22:10:20.413Z",
-      "updatedAt": "2025-08-17T22:10:20.413Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "7a4bfdad11a2e5de-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.413Z"
-        }
-      ]
-    },
-    {
-      "id": "a677e76104d451d9",
-      "title": "Implement Card Collection View",
-      "description": "",
-      "status": "backlog",
-      "priority": "medium",
-      "size": "L",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "a677e76104d451d9-ac-0",
-          "description": "Grid view of all owned cards",
-          "completed": false
+      {
+        "id": 9,
+        "title": "Implement Combat Arena Component",
+        "description": "Create the main combat arena where cards battle using emoji projectiles",
+        "userStory": {
+          "persona": "player",
+          "want": "to see my cards battle in an arena",
+          "reason": "I can enjoy strategic combat gameplay"
         },
-        {
-          "id": "a677e76104d451d9-ac-1",
-          "description": "Filter by rarity, type, cost",
-          "completed": false
-        },
-        {
-          "id": "a677e76104d451d9-ac-2",
-          "description": "Sort by various attributes",
-          "completed": false
-        },
-        {
-          "id": "a677e76104d451d9-ac-3",
-          "description": "Search functionality",
-          "completed": false
-        },
-        {
-          "id": "a677e76104d451d9-ac-4",
-          "description": "Card details on click/hover",
-          "completed": false
-        },
-        {
-          "id": "a677e76104d451d9-ac-5",
-          "description": "Collection statistics displayed",
-          "completed": false
-        },
-        {
-          "id": "a677e76104d451d9-ac-6",
-          "description": "Smooth scrolling with many cards",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/components/collection/CollectionView.tsx"
+        "status": "backlog",
+        "priority": "high",
+        "size": "XL",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "9e4e9a89b054420c-ac-0",
+            "description": "Combat arena renders at 60 FPS",
+            "completed": false
+          },
+          {
+            "id": "9e4e9a89b054420c-ac-1",
+            "description": "Player and opponent zones clearly defined",
+            "completed": false
+          },
+          {
+            "id": "9e4e9a89b054420c-ac-2",
+            "description": "Card placement system working",
+            "completed": false
+          },
+          {
+            "id": "9e4e9a89b054420c-ac-3",
+            "description": "Visual feedback for actions",
+            "completed": false
+          },
+          {
+            "id": "9e4e9a89b054420c-ac-4",
+            "description": "Responsive design for different screen sizes",
+            "completed": false
+          },
+          {
+            "id": "9e4e9a89b054420c-ac-5",
+            "description": "Smooth animations for card movements",
+            "completed": false
+          },
+          {
+            "id": "9e4e9a89b054420c-ac-6",
+            "description": "Arena boundaries properly defined",
+            "completed": false
+          }
         ],
-        "components": [
-          "CollectionView",
-          "CardGrid",
-          "FilterPanel"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
         ],
-        "services": [
-          "CollectionService"
+        "context": {
+          "files": [
+            "src/components/combat/CombatArena.tsx",
+            "src/components/combat/PlayerZone.tsx",
+            "src/components/combat/OpponentZone.tsx"
+          ],
+          "components": [
+            "CombatScreen",
+            "CombatArena"
+          ],
+          "services": [
+            "CombatService"
+          ],
+          "userImpact": "Core gameplay feature becomes available",
+          "businessValue": "Main game loop completed, ready for players",
+          "risks": [
+            "Performance issues with many cards",
+            "Browser compatibility"
+          ],
+          "testScenarios": [
+            "Arena renders on all screen sizes",
+            "Can place cards in valid zones",
+            "Cannot place cards in invalid zones",
+            "Visual feedback is clear and immediate"
+          ],
+          "suggestedApproach": "Use Canvas or WebGL for performance, React for UI overlay"
+        },
+        "tags": [
+          "feature",
+          "combat",
+          "ui",
+          "gameplay"
+        ],
+        "labels": [],
+        "epic": "combat-system",
+        "createdAt": "2025-08-17T22:10:20.395Z",
+        "updatedAt": "2025-08-17T22:10:20.395Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "9e4e9a89b054420c-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.395Z"
+          }
         ]
       },
-      "tags": [
-        "ui",
-        "feature",
-        "collection"
-      ],
-      "labels": [],
-      "epic": "ui-completion",
-      "createdAt": "2025-08-17T22:10:20.419Z",
-      "updatedAt": "2025-08-17T22:10:20.419Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "a677e76104d451d9-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.419Z"
-        }
-      ]
-    },
-    {
-      "id": "e71ac67cc12e1523",
-      "title": "Create Basic Deck Builder",
-      "description": "",
-      "status": "backlog",
-      "priority": "medium",
-      "size": "XL",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "e71ac67cc12e1523-ac-0",
-          "description": "Drag and drop cards into deck",
-          "completed": false
+      {
+        "id": 9,
+        "title": "Create Emoji Projectile System",
+        "description": "Implement the emoji projectile mechanics with various trajectory patterns",
+        "userStory": {
+          "persona": "player",
+          "want": "to see emoji projectiles flying in combat",
+          "reason": "combat is visually exciting and unique"
         },
-        {
-          "id": "e71ac67cc12e1523-ac-1",
-          "description": "Deck validation rules enforced",
-          "completed": false
-        },
-        {
-          "id": "e71ac67cc12e1523-ac-2",
-          "description": "Save/load deck functionality",
-          "completed": false
-        },
-        {
-          "id": "e71ac67cc12e1523-ac-3",
-          "description": "Deck statistics displayed",
-          "completed": false
-        },
-        {
-          "id": "e71ac67cc12e1523-ac-4",
-          "description": "Mana curve visualization",
-          "completed": false
-        },
-        {
-          "id": "e71ac67cc12e1523-ac-5",
-          "description": "Export/import deck codes",
-          "completed": false
-        },
-        {
-          "id": "e71ac67cc12e1523-ac-6",
-          "description": "Multiple deck slots",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/components/deckbuilder/DeckBuilder.tsx"
+        "status": "backlog",
+        "priority": "high",
+        "size": "L",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "9e8f0f92f8e2b700-ac-0",
+            "description": "Projectiles spawn from cards correctly",
+            "completed": false
+          },
+          {
+            "id": "9e8f0f92f8e2b700-ac-1",
+            "description": "Trajectory patterns implemented (straight, wave, spiral, homing)",
+            "completed": false
+          },
+          {
+            "id": "9e8f0f92f8e2b700-ac-2",
+            "description": "Projectile speed and damage calculated correctly",
+            "completed": false
+          },
+          {
+            "id": "9e8f0f92f8e2b700-ac-3",
+            "description": "Visual effects for projectile trails",
+            "completed": false
+          },
+          {
+            "id": "9e8f0f92f8e2b700-ac-4",
+            "description": "Projectiles despawn at boundaries",
+            "completed": false
+          },
+          {
+            "id": "9e8f0f92f8e2b700-ac-5",
+            "description": "Memory management for many projectiles",
+            "completed": false
+          },
+          {
+            "id": "9e8f0f92f8e2b700-ac-6",
+            "description": "Smooth animation at 60 FPS with 100+ projectiles",
+            "completed": false
+          }
         ],
-        "components": [
-          "DeckBuilder",
-          "DeckSlot",
-          "ManaCurve"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
         ],
-        "services": [
-          "DeckService",
-          "ValidationService"
+        "context": {
+          "files": [
+            "src/systems/ProjectileSystem.ts",
+            "src/models/Projectile.ts",
+            "src/components/combat/ProjectileRenderer.tsx"
+          ],
+          "components": [
+            "ProjectileRenderer",
+            "CombatArena"
+          ],
+          "services": [
+            "ProjectileService",
+            "PhysicsEngine"
+          ],
+          "userImpact": "Unique and engaging combat visuals",
+          "businessValue": "Differentiates game from competitors",
+          "risks": [
+            "Performance degradation",
+            "Memory leaks"
+          ],
+          "testScenarios": [
+            "Spawn 100 projectiles without lag",
+            "All trajectory patterns work correctly",
+            "Projectiles interact with boundaries",
+            "Memory is properly cleaned up"
+          ],
+          "suggestedApproach": "Object pooling for projectiles, WebGL for rendering"
+        },
+        "tags": [
+          "feature",
+          "combat",
+          "graphics",
+          "performance"
+        ],
+        "labels": [],
+        "epic": "combat-system",
+        "createdAt": "2025-08-17T22:10:20.398Z",
+        "updatedAt": "2025-08-17T22:10:20.398Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "9e8f0f92f8e2b700-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.398Z"
+          }
         ]
       },
-      "tags": [
-        "ui",
-        "feature",
-        "deckbuilding"
-      ],
-      "labels": [],
-      "epic": "ui-completion",
-      "createdAt": "2025-08-17T22:10:20.425Z",
-      "updatedAt": "2025-08-17T22:10:20.425Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "e71ac67cc12e1523-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.425Z"
-        }
-      ]
-    },
-    {
-      "id": "4517dbdd9f4dc526",
-      "title": "Optimize React Component Performance",
-      "description": "",
-      "status": "backlog",
-      "priority": "high",
-      "size": "L",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "4517dbdd9f4dc526-ac-0",
-          "description": "All components use React.memo where appropriate",
-          "completed": false
+      {
+        "id": 6,
+        "title": "Implement Collision Detection",
+        "description": "Create accurate and performant collision detection for projectiles",
+        "userStory": {
+          "persona": "player",
+          "want": "projectiles to hit targets and deal damage",
+          "reason": "combat has meaningful consequences"
         },
-        {
-          "id": "4517dbdd9f4dc526-ac-1",
-          "description": "useMemo and useCallback properly implemented",
-          "completed": false
-        },
-        {
-          "id": "4517dbdd9f4dc526-ac-2",
-          "description": "No unnecessary re-renders",
-          "completed": false
-        },
-        {
-          "id": "4517dbdd9f4dc526-ac-3",
-          "description": "Bundle size reduced by 30%",
-          "completed": false
-        },
-        {
-          "id": "4517dbdd9f4dc526-ac-4",
-          "description": "Initial load time under 3 seconds",
-          "completed": false
-        },
-        {
-          "id": "4517dbdd9f4dc526-ac-5",
-          "description": "Time to interactive under 5 seconds",
-          "completed": false
-        },
-        {
-          "id": "4517dbdd9f4dc526-ac-6",
-          "description": "Lighthouse score above 90",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/components/screens/RollScreen.tsx"
+        "status": "backlog",
+        "priority": "high",
+        "size": "L",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "6c8c43ec02b33732-ac-0",
+            "description": "Accurate AABB collision detection",
+            "completed": false
+          },
+          {
+            "id": "6c8c43ec02b33732-ac-1",
+            "description": "Pixel-perfect collision for special cases",
+            "completed": false
+          },
+          {
+            "id": "6c8c43ec02b33732-ac-2",
+            "description": "Spatial partitioning for performance",
+            "completed": false
+          },
+          {
+            "id": "6c8c43ec02b33732-ac-3",
+            "description": "Collision events properly fired",
+            "completed": false
+          },
+          {
+            "id": "6c8c43ec02b33732-ac-4",
+            "description": "No false positives or negatives",
+            "completed": false
+          },
+          {
+            "id": "6c8c43ec02b33732-ac-5",
+            "description": "Performance remains stable with many objects",
+            "completed": false
+          },
+          {
+            "id": "6c8c43ec02b33732-ac-6",
+            "description": "Collision shapes properly defined for all entities",
+            "completed": false
+          }
         ],
-        "components": [
-          "All major components"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
         ],
-        "services": []
-      },
-      "tags": [
-        "performance",
-        "optimization",
-        "refactoring"
-      ],
-      "labels": [],
-      "epic": "performance-optimization",
-      "createdAt": "2025-08-17T22:10:20.431Z",
-      "updatedAt": "2025-08-17T22:10:20.431Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "4517dbdd9f4dc526-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.431Z"
-        }
-      ]
-    },
-    {
-      "id": "6c5b7859a32a421b",
-      "title": "Write Unit Tests for Core Services",
-      "description": "",
-      "status": "backlog",
-      "priority": "medium",
-      "size": "L",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "6c5b7859a32a421b-ac-0",
-          "description": "RollService 100% coverage",
-          "completed": false
+        "context": {
+          "files": [
+            "src/systems/CollisionSystem.ts",
+            "src/systems/PhysicsEngine.ts",
+            "src/utils/collision.ts"
+          ],
+          "components": [
+            "CombatArena"
+          ],
+          "services": [
+            "CollisionService",
+            "PhysicsEngine"
+          ],
+          "userImpact": "Combat mechanics work correctly",
+          "businessValue": "Core gameplay loop functional",
+          "risks": [
+            "Performance issues",
+            "Inaccurate collisions"
+          ],
+          "testScenarios": [
+            "Projectiles hit targets accurately",
+            "No tunneling at high speeds",
+            "Performance with 200+ collision checks/frame",
+            "Edge cases handled properly"
+          ],
+          "suggestedApproach": "Quadtree for spatial partitioning, AABB for broad phase"
         },
-        {
-          "id": "6c5b7859a32a421b-ac-1",
-          "description": "CardService 100% coverage",
-          "completed": false
-        },
-        {
-          "id": "6c5b7859a32a421b-ac-2",
-          "description": "Store actions tested",
-          "completed": false
-        },
-        {
-          "id": "6c5b7859a32a421b-ac-3",
-          "description": "Utility functions tested",
-          "completed": false
-        },
-        {
-          "id": "6c5b7859a32a421b-ac-4",
-          "description": "Edge cases covered",
-          "completed": false
-        },
-        {
-          "id": "6c5b7859a32a421b-ac-5",
-          "description": "Tests run in under 10 seconds",
-          "completed": false
-        },
-        {
-          "id": "6c5b7859a32a421b-ac-6",
-          "description": "CI/CD integration ready",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/services/__tests__/"
+        "tags": [
+          "feature",
+          "combat",
+          "physics",
+          "performance"
         ],
-        "components": [],
-        "services": [
-          "All services"
+        "labels": [],
+        "epic": "combat-system",
+        "createdAt": "2025-08-17T22:10:20.403Z",
+        "updatedAt": "2025-08-17T22:10:20.403Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "6c8c43ec02b33732-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.403Z"
+          }
         ]
       },
-      "tags": [
-        "testing",
-        "quality",
-        "technical-debt"
-      ],
-      "labels": [],
-      "epic": "testing-quality",
-      "createdAt": "2025-08-17T22:10:20.438Z",
-      "updatedAt": "2025-08-17T22:10:20.438Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "6c5b7859a32a421b-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.438Z"
-        }
-      ]
-    },
-    {
-      "id": "543ad37ac269dd23",
-      "title": "Create E2E Tests for Critical Flows",
-      "description": "",
-      "status": "backlog",
-      "priority": "medium",
-      "size": "L",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "543ad37ac269dd23-ac-0",
-          "description": "Card rolling flow tested",
-          "completed": false
-        },
-        {
-          "id": "543ad37ac269dd23-ac-1",
-          "description": "Collection management tested",
-          "completed": false
-        },
-        {
-          "id": "543ad37ac269dd23-ac-2",
-          "description": "Combat flow tested",
-          "completed": false
-        },
-        {
-          "id": "543ad37ac269dd23-ac-3",
-          "description": "Navigation tested",
-          "completed": false
-        },
-        {
-          "id": "543ad37ac269dd23-ac-4",
-          "description": "Tests run in CI/CD",
-          "completed": false
-        },
-        {
-          "id": "543ad37ac269dd23-ac-5",
-          "description": "Visual regression tests",
-          "completed": false
-        },
-        {
-          "id": "543ad37ac269dd23-ac-6",
-          "description": "Cross-browser testing",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "tests/e2e/"
+      {
+        "id": "a9b013ace8904679",
+        "title": "Implement HP and Damage System",
+        "description": "",
+        "status": "backlog",
+        "priority": "high",
+        "size": "M",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "a9b013ace8904679-ac-0",
+            "description": "HP bars display for all entities",
+            "completed": false
+          },
+          {
+            "id": "a9b013ace8904679-ac-1",
+            "description": "Damage calculations work correctly",
+            "completed": false
+          },
+          {
+            "id": "a9b013ace8904679-ac-2",
+            "description": "Damage numbers appear on hit",
+            "completed": false
+          },
+          {
+            "id": "a9b013ace8904679-ac-3",
+            "description": "Critical hits and effects implemented",
+            "completed": false
+          },
+          {
+            "id": "a9b013ace8904679-ac-4",
+            "description": "Healing mechanics work",
+            "completed": false
+          },
+          {
+            "id": "a9b013ace8904679-ac-5",
+            "description": "Death/defeat conditions trigger correctly",
+            "completed": false
+          },
+          {
+            "id": "a9b013ace8904679-ac-6",
+            "description": "HP persistence between rounds",
+            "completed": false
+          }
         ],
-        "components": [],
-        "services": []
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
+        ],
+        "context": {
+          "files": [
+            "src/systems/DamageSystem.ts"
+          ],
+          "components": [
+            "HealthBar",
+            "DamageNumber",
+            "CombatHUD"
+          ],
+          "services": [
+            "DamageCalculator",
+            "CombatService"
+          ]
+        },
+        "tags": [
+          "feature",
+          "combat",
+          "ui",
+          "gameplay"
+        ],
+        "labels": [],
+        "epic": "combat-system",
+        "createdAt": "2025-08-17T22:10:20.408Z",
+        "updatedAt": "2025-08-17T22:10:20.408Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "a9b013ace8904679-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.408Z"
+          }
+        ]
       },
-      "tags": [
-        "testing",
-        "e2e",
-        "quality"
-      ],
-      "labels": [],
-      "epic": "testing-quality",
-      "createdAt": "2025-08-17T22:10:20.445Z",
-      "updatedAt": "2025-08-17T22:10:20.445Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "543ad37ac269dd23-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.445Z"
-        }
-      ]
-    },
-    {
-      "id": "cf4a8fe4c357c19c",
-      "title": "Create Technical Documentation",
-      "description": "",
-      "status": "backlog",
-      "priority": "low",
-      "size": "M",
-      "dependencies": [],
-      "acceptanceCriteria": [
-        {
-          "id": "cf4a8fe4c357c19c-ac-0",
-          "description": "Architecture overview documented",
-          "completed": false
-        },
-        {
-          "id": "cf4a8fe4c357c19c-ac-1",
-          "description": "API documentation complete",
-          "completed": false
-        },
-        {
-          "id": "cf4a8fe4c357c19c-ac-2",
-          "description": "Component library documented",
-          "completed": false
-        },
-        {
-          "id": "cf4a8fe4c357c19c-ac-3",
-          "description": "Setup guide updated",
-          "completed": false
-        },
-        {
-          "id": "cf4a8fe4c357c19c-ac-4",
-          "description": "Deployment guide created",
-          "completed": false
-        },
-        {
-          "id": "cf4a8fe4c357c19c-ac-5",
-          "description": "Code style guide defined",
-          "completed": false
-        },
-        {
-          "id": "cf4a8fe4c357c19c-ac-6",
-          "description": "Contributing guidelines written",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "Tests written and passing",
-        "Documentation updated",
-        "Code reviewed",
-        "No console errors",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "docs/"
+      {
+        "id": 7,
+        "title": "Create Main Menu Interface",
+        "description": "",
+        "status": "backlog",
+        "priority": "medium",
+        "size": "M",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "7a4bfdad11a2e5de-ac-0",
+            "description": "Main menu displays on app load",
+            "completed": false
+          },
+          {
+            "id": "7a4bfdad11a2e5de-ac-1",
+            "description": "All navigation options visible",
+            "completed": false
+          },
+          {
+            "id": "7a4bfdad11a2e5de-ac-2",
+            "description": "Animations smooth and appealing",
+            "completed": false
+          },
+          {
+            "id": "7a4bfdad11a2e5de-ac-3",
+            "description": "Settings accessible",
+            "completed": false
+          },
+          {
+            "id": "7a4bfdad11a2e5de-ac-4",
+            "description": "Profile information displayed",
+            "completed": false
+          },
+          {
+            "id": "7a4bfdad11a2e5de-ac-5",
+            "description": "News/updates section visible",
+            "completed": false
+          },
+          {
+            "id": "7a4bfdad11a2e5de-ac-6",
+            "description": "Responsive on all devices",
+            "completed": false
+          }
         ],
-        "components": [],
-        "services": []
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
+        ],
+        "context": {
+          "files": [
+            "src/components/menu/MainMenu.tsx"
+          ],
+          "components": [
+            "MainMenu",
+            "MenuButton",
+            "Navigation"
+          ],
+          "services": [
+            "NavigationService"
+          ]
+        },
+        "tags": [
+          "ui",
+          "navigation",
+          "feature"
+        ],
+        "labels": [],
+        "epic": "ui-completion",
+        "createdAt": "2025-08-17T22:10:20.413Z",
+        "updatedAt": "2025-08-17T22:10:20.413Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "7a4bfdad11a2e5de-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.413Z"
+          }
+        ]
       },
-      "tags": [
-        "documentation",
-        "technical-debt"
-      ],
-      "labels": [],
-      "epic": "testing-quality",
-      "createdAt": "2025-08-17T22:10:20.452Z",
-      "updatedAt": "2025-08-17T22:10:20.452Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "cf4a8fe4c357c19c-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:10:20.452Z"
-        }
-      ]
-    },
-    {
-      "id": "38a91892f830eea7",
-      "title": "Migrate Card Data Files to Unified Model",
-      "description": "Migrate all card data files (common, uncommon, rare, epic, legendary, mythic, cosmic) to use the unified card model",
-      "userStory": {
-        "persona": "developer",
-        "want": "all card data to use the unified model",
-        "reason": "data consistency and easier maintenance"
+      {
+        "id": "a677e76104d451d9",
+        "title": "Implement Card Collection View",
+        "description": "",
+        "status": "backlog",
+        "priority": "medium",
+        "size": "L",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "a677e76104d451d9-ac-0",
+            "description": "Grid view of all owned cards",
+            "completed": false
+          },
+          {
+            "id": "a677e76104d451d9-ac-1",
+            "description": "Filter by rarity, type, cost",
+            "completed": false
+          },
+          {
+            "id": "a677e76104d451d9-ac-2",
+            "description": "Sort by various attributes",
+            "completed": false
+          },
+          {
+            "id": "a677e76104d451d9-ac-3",
+            "description": "Search functionality",
+            "completed": false
+          },
+          {
+            "id": "a677e76104d451d9-ac-4",
+            "description": "Card details on click/hover",
+            "completed": false
+          },
+          {
+            "id": "a677e76104d451d9-ac-5",
+            "description": "Collection statistics displayed",
+            "completed": false
+          },
+          {
+            "id": "a677e76104d451d9-ac-6",
+            "description": "Smooth scrolling with many cards",
+            "completed": false
+          }
+        ],
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
+        ],
+        "context": {
+          "files": [
+            "src/components/collection/CollectionView.tsx"
+          ],
+          "components": [
+            "CollectionView",
+            "CardGrid",
+            "FilterPanel"
+          ],
+          "services": [
+            "CollectionService"
+          ]
+        },
+        "tags": [
+          "ui",
+          "feature",
+          "collection"
+        ],
+        "labels": [],
+        "epic": "ui-completion",
+        "createdAt": "2025-08-17T22:10:20.419Z",
+        "updatedAt": "2025-08-17T22:10:20.419Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "a677e76104d451d9-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.419Z"
+          }
+        ]
       },
-      "status": "todo",
-      "priority": "critical",
-      "size": "L",
-      "dependencies": [
-        "Unify Card Data Models"
-      ],
-      "acceptanceCriteria": [
-        {
-          "id": "973b0297b15b40b6-ac-0",
-          "description": "All common.ts cards converted to unified format",
-          "completed": false
-        },
-        {
-          "id": "138496678fd0def3-ac-1",
-          "description": "All uncommon.ts cards converted to unified format",
-          "completed": false
-        },
-        {
-          "id": "e3c400eab7f79a5d-ac-2",
-          "description": "All rare.ts cards converted to unified format",
-          "completed": false
-        },
-        {
-          "id": "ded4eef67de1353c-ac-3",
-          "description": "All epic.ts cards converted to unified format",
-          "completed": false
-        },
-        {
-          "id": "6709334539d3fb9f-ac-4",
-          "description": "All legendary.ts cards converted to unified format",
-          "completed": false
-        },
-        {
-          "id": "aef2d8a26c92bfb6-ac-5",
-          "description": "All mythic.ts cards converted to unified format",
-          "completed": false
-        },
-        {
-          "id": "51ed231a32f2e678-ac-6",
-          "description": "All cosmic.ts cards converted to unified format",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "All card data files migrated",
-        "Backward compatibility maintained",
-        "No console errors",
-        "TypeScript compilation passes"
-      ],
-      "context": {
-        "files": [
-          "src/data/cards/common.ts",
-          "src/data/cards/uncommon.ts",
-          "src/data/cards/rare.ts",
-          "src/data/cards/epic.ts",
-          "src/data/cards/legendary.ts",
-          "src/data/cards/mythic.ts",
-          "src/data/cards/cosmic.ts"
+      {
+        "id": "e71ac67cc12e1523",
+        "title": "Create Basic Deck Builder",
+        "description": "",
+        "status": "backlog",
+        "priority": "medium",
+        "size": "XL",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "e71ac67cc12e1523-ac-0",
+            "description": "Drag and drop cards into deck",
+            "completed": false
+          },
+          {
+            "id": "e71ac67cc12e1523-ac-1",
+            "description": "Deck validation rules enforced",
+            "completed": false
+          },
+          {
+            "id": "e71ac67cc12e1523-ac-2",
+            "description": "Save/load deck functionality",
+            "completed": false
+          },
+          {
+            "id": "e71ac67cc12e1523-ac-3",
+            "description": "Deck statistics displayed",
+            "completed": false
+          },
+          {
+            "id": "e71ac67cc12e1523-ac-4",
+            "description": "Mana curve visualization",
+            "completed": false
+          },
+          {
+            "id": "e71ac67cc12e1523-ac-5",
+            "description": "Export/import deck codes",
+            "completed": false
+          },
+          {
+            "id": "e71ac67cc12e1523-ac-6",
+            "description": "Multiple deck slots",
+            "completed": false
+          }
         ],
-        "components": [
-          "All card-related components"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
         ],
-        "services": [
-          "CardService",
-          "RollService"
+        "context": {
+          "files": [
+            "src/components/deckbuilder/DeckBuilder.tsx"
+          ],
+          "components": [
+            "DeckBuilder",
+            "DeckSlot",
+            "ManaCurve"
+          ],
+          "services": [
+            "DeckService",
+            "ValidationService"
+          ]
+        },
+        "tags": [
+          "ui",
+          "feature",
+          "deckbuilding"
         ],
-        "userImpact": "Consistent card properties and behavior",
-        "businessValue": "Unified development experience",
-        "risks": [
-          "Data loss during migration",
-          "Compatibility issues"
-        ],
-        "testScenarios": [
-          "All existing cards load correctly",
-          "Card properties are preserved",
-          "Roll system works with new format",
-          "UI components display cards correctly"
-        ],
-        "suggestedApproach": "Migrate one rarity at a time with validation"
+        "labels": [],
+        "epic": "ui-completion",
+        "createdAt": "2025-08-17T22:10:20.425Z",
+        "updatedAt": "2025-08-17T22:10:20.425Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "e71ac67cc12e1523-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.425Z"
+          }
+        ]
       },
-      "tags": [
-        "data-migration",
-        "refactoring",
-        "cards"
-      ],
-      "labels": [],
-      "epic": "refactoring-core",
-      "createdAt": "2025-08-17T22:31:55.665Z",
-      "updatedAt": "2025-08-17T22:31:55.665Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "14a73239d8686363-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:31:55.665Z"
-        }
-      ]
-    },
-    {
-      "id": "06057300c901ee2f",
-      "title": "Update Services for Unified Card Model",
-      "description": "Update CardService, RollService, and related services to work with the unified card model",
-      "userStory": {
-        "persona": "developer",
-        "want": "all services to use the unified card model",
-        "reason": "consistent API and functionality"
+      {
+        "id": 4517,
+        "title": "Optimize React Component Performance",
+        "description": "",
+        "status": "backlog",
+        "priority": "high",
+        "size": "L",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "4517dbdd9f4dc526-ac-0",
+            "description": "All components use React.memo where appropriate",
+            "completed": false
+          },
+          {
+            "id": "4517dbdd9f4dc526-ac-1",
+            "description": "useMemo and useCallback properly implemented",
+            "completed": false
+          },
+          {
+            "id": "4517dbdd9f4dc526-ac-2",
+            "description": "No unnecessary re-renders",
+            "completed": false
+          },
+          {
+            "id": "4517dbdd9f4dc526-ac-3",
+            "description": "Bundle size reduced by 30%",
+            "completed": false
+          },
+          {
+            "id": "4517dbdd9f4dc526-ac-4",
+            "description": "Initial load time under 3 seconds",
+            "completed": false
+          },
+          {
+            "id": "4517dbdd9f4dc526-ac-5",
+            "description": "Time to interactive under 5 seconds",
+            "completed": false
+          },
+          {
+            "id": "4517dbdd9f4dc526-ac-6",
+            "description": "Lighthouse score above 90",
+            "completed": false
+          }
+        ],
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
+        ],
+        "context": {
+          "files": [
+            "src/components/screens/RollScreen.tsx"
+          ],
+          "components": [
+            "All major components"
+          ],
+          "services": []
+        },
+        "tags": [
+          "performance",
+          "optimization",
+          "refactoring"
+        ],
+        "labels": [],
+        "epic": "performance-optimization",
+        "createdAt": "2025-08-17T22:10:20.431Z",
+        "updatedAt": "2025-08-17T22:10:20.431Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "4517dbdd9f4dc526-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.431Z"
+          }
+        ]
       },
-      "status": "todo",
-      "priority": "high",
-      "size": "M",
-      "dependencies": [
-        "Migrate Card Data Files to Unified Model"
-      ],
-      "acceptanceCriteria": [
-        {
-          "id": "2bc231686f13f4aa-ac-0",
-          "description": "CardService updated to handle unified model",
-          "completed": false
-        },
-        {
-          "id": "40e92b88b9b77269-ac-1",
-          "description": "RollService updated to handle unified model",
-          "completed": false
-        },
-        {
-          "id": "d2d6f6e730db1690-ac-2",
-          "description": "EmojiAssignmentService updated",
-          "completed": false
-        },
-        {
-          "id": "9fe6106a736552aa-ac-3",
-          "description": "UncommonCardService updated",
-          "completed": false
-        },
-        {
-          "id": "328afed83f1e322f-ac-4",
-          "description": "CombatEngine updated for unified cards",
-          "completed": false
-        },
-        {
-          "id": "1a6dc6ecea13deda-ac-5",
-          "description": "All service methods return unified cards",
-          "completed": false
-        },
-        {
-          "id": "613e10762da6cd18-ac-6",
-          "description": "Backward compatibility adapters implemented",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "All services updated",
-        "Tests passing",
-        "Documentation updated",
-        "No breaking changes for existing code"
-      ],
-      "context": {
-        "files": [
-          "src/services/CardService.ts",
-          "src/services/RollService.ts",
-          "src/services/EmojiAssignmentService.ts",
-          "src/services/UncommonCardService.ts",
-          "src/services/CombatEngine.ts"
+      {
+        "id": 6,
+        "title": "Write Unit Tests for Core Services",
+        "description": "",
+        "status": "backlog",
+        "priority": "medium",
+        "size": "L",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "6c5b7859a32a421b-ac-0",
+            "description": "RollService 100% coverage",
+            "completed": false
+          },
+          {
+            "id": "6c5b7859a32a421b-ac-1",
+            "description": "CardService 100% coverage",
+            "completed": false
+          },
+          {
+            "id": "6c5b7859a32a421b-ac-2",
+            "description": "Store actions tested",
+            "completed": false
+          },
+          {
+            "id": "6c5b7859a32a421b-ac-3",
+            "description": "Utility functions tested",
+            "completed": false
+          },
+          {
+            "id": "6c5b7859a32a421b-ac-4",
+            "description": "Edge cases covered",
+            "completed": false
+          },
+          {
+            "id": "6c5b7859a32a421b-ac-5",
+            "description": "Tests run in under 10 seconds",
+            "completed": false
+          },
+          {
+            "id": "6c5b7859a32a421b-ac-6",
+            "description": "CI/CD integration ready",
+            "completed": false
+          }
         ],
-        "components": [],
-        "services": [
-          "All card-related services"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
         ],
-        "userImpact": "More reliable card operations",
-        "businessValue": "Consistent service layer",
-        "risks": [
-          "Breaking existing functionality"
+        "context": {
+          "files": [
+            "src/services/__tests__/"
+          ],
+          "components": [],
+          "services": [
+            "All services"
+          ]
+        },
+        "tags": [
+          "testing",
+          "quality",
+          "technical-debt"
         ],
-        "testScenarios": [
-          "All service methods work correctly",
-          "Card generation uses unified model",
-          "Roll results are consistent",
-          "Combat calculations work properly"
-        ],
-        "suggestedApproach": "Update services incrementally with adapter pattern"
+        "labels": [],
+        "epic": "testing-quality",
+        "createdAt": "2025-08-17T22:10:20.438Z",
+        "updatedAt": "2025-08-17T22:10:20.438Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "6c5b7859a32a421b-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.438Z"
+          }
+        ]
       },
-      "tags": [
-        "services",
-        "refactoring",
-        "api"
-      ],
-      "labels": [],
-      "epic": "refactoring-core",
-      "createdAt": "2025-08-17T22:31:55.665Z",
-      "updatedAt": "2025-08-17T22:31:55.665Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "7062ac41d34519f3-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:31:55.665Z"
-        }
-      ]
-    },
-    {
-      "id": "6ad2372185e9935a",
-      "title": "Update Components for Unified Card Model",
-      "description": "Update all React components to work with the unified card model",
-      "userStory": {
-        "persona": "user",
-        "want": "consistent card display and behavior",
-        "reason": "better user experience"
+      {
+        "id": 543,
+        "title": "Create E2E Tests for Critical Flows",
+        "description": "",
+        "status": "backlog",
+        "priority": "medium",
+        "size": "L",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "543ad37ac269dd23-ac-0",
+            "description": "Card rolling flow tested",
+            "completed": false
+          },
+          {
+            "id": "543ad37ac269dd23-ac-1",
+            "description": "Collection management tested",
+            "completed": false
+          },
+          {
+            "id": "543ad37ac269dd23-ac-2",
+            "description": "Combat flow tested",
+            "completed": false
+          },
+          {
+            "id": "543ad37ac269dd23-ac-3",
+            "description": "Navigation tested",
+            "completed": false
+          },
+          {
+            "id": "543ad37ac269dd23-ac-4",
+            "description": "Tests run in CI/CD",
+            "completed": false
+          },
+          {
+            "id": "543ad37ac269dd23-ac-5",
+            "description": "Visual regression tests",
+            "completed": false
+          },
+          {
+            "id": "543ad37ac269dd23-ac-6",
+            "description": "Cross-browser testing",
+            "completed": false
+          }
+        ],
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
+        ],
+        "context": {
+          "files": [
+            "tests/e2e/"
+          ],
+          "components": [],
+          "services": []
+        },
+        "tags": [
+          "testing",
+          "e2e",
+          "quality"
+        ],
+        "labels": [],
+        "epic": "testing-quality",
+        "createdAt": "2025-08-17T22:10:20.445Z",
+        "updatedAt": "2025-08-17T22:10:20.445Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "543ad37ac269dd23-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.445Z"
+          }
+        ]
       },
-      "status": "todo",
-      "priority": "high",
-      "size": "L",
-      "dependencies": [
-        "Update Services for Unified Card Model"
-      ],
-      "acceptanceCriteria": [
-        {
-          "id": "cda2ddf1d082b454-ac-0",
-          "description": "CardDisplay component updated",
-          "completed": false
-        },
-        {
-          "id": "46642ea0b0a1e810-ac-1",
-          "description": "CardReveal component updated",
-          "completed": false
-        },
-        {
-          "id": "87dc31b8ecd5bb82-ac-2",
-          "description": "CardTCG component updated",
-          "completed": false
-        },
-        {
-          "id": "0a922066dd7420b2-ac-3",
-          "description": "RollScreen component updated",
-          "completed": false
-        },
-        {
-          "id": "f3aec1fd5d7416b1-ac-4",
-          "description": "CombatScreen component updated",
-          "completed": false
-        },
-        {
-          "id": "c38bb881cc33ed59-ac-5",
-          "description": "All components display unified card properties",
-          "completed": false
-        },
-        {
-          "id": "2360c91d4abb58fc-ac-6",
-          "description": "No UI regressions or breaking changes",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "All components updated",
-        "UI works correctly",
-        "No visual regressions",
-        "TypeScript compilation passes"
-      ],
-      "context": {
-        "files": [
-          "src/components/cards/CardDisplay.tsx",
-          "src/components/roll/CardReveal.tsx",
-          "src/components/cards/CardTCG.tsx",
-          "src/components/screens/RollScreen.tsx",
-          "src/components/screens/CombatScreen.tsx"
+      {
+        "id": "cf4a8fe4c357c19c",
+        "title": "Create Technical Documentation",
+        "description": "",
+        "status": "backlog",
+        "priority": "low",
+        "size": "M",
+        "dependencies": [],
+        "acceptanceCriteria": [
+          {
+            "id": "cf4a8fe4c357c19c-ac-0",
+            "description": "Architecture overview documented",
+            "completed": false
+          },
+          {
+            "id": "cf4a8fe4c357c19c-ac-1",
+            "description": "API documentation complete",
+            "completed": false
+          },
+          {
+            "id": "cf4a8fe4c357c19c-ac-2",
+            "description": "Component library documented",
+            "completed": false
+          },
+          {
+            "id": "cf4a8fe4c357c19c-ac-3",
+            "description": "Setup guide updated",
+            "completed": false
+          },
+          {
+            "id": "cf4a8fe4c357c19c-ac-4",
+            "description": "Deployment guide created",
+            "completed": false
+          },
+          {
+            "id": "cf4a8fe4c357c19c-ac-5",
+            "description": "Code style guide defined",
+            "completed": false
+          },
+          {
+            "id": "cf4a8fe4c357c19c-ac-6",
+            "description": "Contributing guidelines written",
+            "completed": false
+          }
         ],
-        "components": [
-          "All card-related components"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "Tests written and passing",
+          "Documentation updated",
+          "Code reviewed",
+          "No console errors",
+          "Performance acceptable"
         ],
-        "services": [],
-        "userImpact": "Consistent card display and interaction",
-        "businessValue": "Better user experience",
-        "risks": [
-          "UI breaking changes",
-          "Performance issues"
+        "context": {
+          "files": [
+            "docs/"
+          ],
+          "components": [],
+          "services": []
+        },
+        "tags": [
+          "documentation",
+          "technical-debt"
         ],
-        "testScenarios": [
-          "All card components render correctly",
-          "Card properties display properly",
-          "Interactions work as expected",
-          "Performance is maintained"
-        ],
-        "suggestedApproach": "Update components incrementally with testing"
+        "labels": [],
+        "epic": "testing-quality",
+        "createdAt": "2025-08-17T22:10:20.452Z",
+        "updatedAt": "2025-08-17T22:10:20.452Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "cf4a8fe4c357c19c-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:10:20.452Z"
+          }
+        ]
       },
-      "tags": [
-        "components",
-        "ui",
-        "refactoring"
-      ],
-      "labels": [],
-      "epic": "refactoring-core",
-      "createdAt": "2025-08-17T22:31:55.665Z",
-      "updatedAt": "2025-08-17T22:31:55.665Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "488c47e328594d93-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:31:55.665Z"
-        }
-      ]
-    },
-    {
-      "id": "f88b3f5225c4f1fb",
-      "title": "Add Missing Card Properties and Enhancements",
-      "description": "Add missing properties like PassiveAbility and EmojiProjectile configurations to existing cards",
-      "userStory": {
-        "persona": "player",
-        "want": "all cards to have complete properties and abilities",
-        "reason": "richer gameplay experience"
+      {
+        "id": 38,
+        "title": "Migrate Card Data Files to Unified Model",
+        "description": "Migrate all card data files (common, uncommon, rare, epic, legendary, mythic, cosmic) to use the unified card model",
+        "userStory": {
+          "persona": "developer",
+          "want": "all card data to use the unified model",
+          "reason": "data consistency and easier maintenance"
+        },
+        "status": "todo",
+        "priority": "critical",
+        "size": "L",
+        "dependencies": [
+          "Unify Card Data Models"
+        ],
+        "acceptanceCriteria": [
+          {
+            "id": "973b0297b15b40b6-ac-0",
+            "description": "All common.ts cards converted to unified format",
+            "completed": false
+          },
+          {
+            "id": "138496678fd0def3-ac-1",
+            "description": "All uncommon.ts cards converted to unified format",
+            "completed": false
+          },
+          {
+            "id": "e3c400eab7f79a5d-ac-2",
+            "description": "All rare.ts cards converted to unified format",
+            "completed": false
+          },
+          {
+            "id": "ded4eef67de1353c-ac-3",
+            "description": "All epic.ts cards converted to unified format",
+            "completed": false
+          },
+          {
+            "id": "6709334539d3fb9f-ac-4",
+            "description": "All legendary.ts cards converted to unified format",
+            "completed": false
+          },
+          {
+            "id": "aef2d8a26c92bfb6-ac-5",
+            "description": "All mythic.ts cards converted to unified format",
+            "completed": false
+          },
+          {
+            "id": "51ed231a32f2e678-ac-6",
+            "description": "All cosmic.ts cards converted to unified format",
+            "completed": false
+          }
+        ],
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "All card data files migrated",
+          "Backward compatibility maintained",
+          "No console errors",
+          "TypeScript compilation passes"
+        ],
+        "context": {
+          "files": [
+            "src/data/cards/common.ts",
+            "src/data/cards/uncommon.ts",
+            "src/data/cards/rare.ts",
+            "src/data/cards/epic.ts",
+            "src/data/cards/legendary.ts",
+            "src/data/cards/mythic.ts",
+            "src/data/cards/cosmic.ts"
+          ],
+          "components": [
+            "All card-related components"
+          ],
+          "services": [
+            "CardService",
+            "RollService"
+          ],
+          "userImpact": "Consistent card properties and behavior",
+          "businessValue": "Unified development experience",
+          "risks": [
+            "Data loss during migration",
+            "Compatibility issues"
+          ],
+          "testScenarios": [
+            "All existing cards load correctly",
+            "Card properties are preserved",
+            "Roll system works with new format",
+            "UI components display cards correctly"
+          ],
+          "suggestedApproach": "Migrate one rarity at a time with validation"
+        },
+        "tags": [
+          "data-migration",
+          "refactoring",
+          "cards"
+        ],
+        "labels": [],
+        "epic": "refactoring-core",
+        "createdAt": "2025-08-17T22:31:55.665Z",
+        "updatedAt": "2025-08-17T22:31:55.665Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "14a73239d8686363-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:31:55.665Z"
+          }
+        ]
       },
-      "status": "todo",
-      "priority": "medium",
-      "size": "M",
-      "dependencies": [
-        "Migrate Card Data Files to Unified Model"
-      ],
-      "acceptanceCriteria": [
-        {
-          "id": "42e150709d27301a-ac-0",
-          "description": "All cards have PassiveAbility defined",
-          "completed": false
+      {
+        "id": 6057300,
+        "title": "Update Services for Unified Card Model",
+        "description": "Update CardService, RollService, and related services to work with the unified card model",
+        "userStory": {
+          "persona": "developer",
+          "want": "all services to use the unified card model",
+          "reason": "consistent API and functionality"
         },
-        {
-          "id": "6a3b45489c321010-ac-1",
-          "description": "All cards have EmojiProjectile configurations",
-          "completed": false
-        },
-        {
-          "id": "1c409ead39e26082-ac-2",
-          "description": "Stack levels and experience added to existing cards",
-          "completed": false
-        },
-        {
-          "id": "e94ca39d2f32e66f-ac-3",
-          "description": "Combat stats calculated for all cards",
-          "completed": false
-        },
-        {
-          "id": "15a9600f1a7cde6c-ac-4",
-          "description": "Visual properties (glow, borders) added",
-          "completed": false
-        },
-        {
-          "id": "61aa8279ffd492fb-ac-5",
-          "description": "Unique abilities created for each rarity level",
-          "completed": false
-        },
-        {
-          "id": "84f933d817260085-ac-6",
-          "description": "Card balance validated and tested",
-          "completed": false
-        }
-      ],
-      "definitionOfDone": [
-        "Code implemented and tested",
-        "All cards enhanced",
-        "Game balance maintained",
-        "Documentation updated",
-        "Performance acceptable"
-      ],
-      "context": {
-        "files": [
-          "src/data/cards/*/",
-          "src/models/unified/Card.ts"
+        "status": "todo",
+        "priority": "high",
+        "size": "M",
+        "dependencies": [
+          "Migrate Card Data Files to Unified Model"
         ],
-        "components": [
-          "Card display components"
+        "acceptanceCriteria": [
+          {
+            "id": "2bc231686f13f4aa-ac-0",
+            "description": "CardService updated to handle unified model",
+            "completed": false
+          },
+          {
+            "id": "40e92b88b9b77269-ac-1",
+            "description": "RollService updated to handle unified model",
+            "completed": false
+          },
+          {
+            "id": "d2d6f6e730db1690-ac-2",
+            "description": "EmojiAssignmentService updated",
+            "completed": false
+          },
+          {
+            "id": "9fe6106a736552aa-ac-3",
+            "description": "UncommonCardService updated",
+            "completed": false
+          },
+          {
+            "id": "328afed83f1e322f-ac-4",
+            "description": "CombatEngine updated for unified cards",
+            "completed": false
+          },
+          {
+            "id": "1a6dc6ecea13deda-ac-5",
+            "description": "All service methods return unified cards",
+            "completed": false
+          },
+          {
+            "id": "613e10762da6cd18-ac-6",
+            "description": "Backward compatibility adapters implemented",
+            "completed": false
+          }
         ],
-        "services": [
-          "CardService",
-          "RollService"
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "All services updated",
+          "Tests passing",
+          "Documentation updated",
+          "No breaking changes for existing code"
         ],
-        "userImpact": "More engaging cards with unique abilities",
-        "businessValue": "Richer gameplay mechanics",
-        "risks": [
-          "Game balance issues",
-          "Performance impact"
+        "context": {
+          "files": [
+            "src/services/CardService.ts",
+            "src/services/RollService.ts",
+            "src/services/EmojiAssignmentService.ts",
+            "src/services/UncommonCardService.ts",
+            "src/services/CombatEngine.ts"
+          ],
+          "components": [],
+          "services": [
+            "All card-related services"
+          ],
+          "userImpact": "More reliable card operations",
+          "businessValue": "Consistent service layer",
+          "risks": [
+            "Breaking existing functionality"
+          ],
+          "testScenarios": [
+            "All service methods work correctly",
+            "Card generation uses unified model",
+            "Roll results are consistent",
+            "Combat calculations work properly"
+          ],
+          "suggestedApproach": "Update services incrementally with adapter pattern"
+        },
+        "tags": [
+          "services",
+          "refactoring",
+          "api"
         ],
-        "testScenarios": [
-          "All passive abilities work correctly",
-          "Projectile configurations are valid",
-          "Card stats are balanced",
-          "Visual enhancements display properly"
-        ],
-        "suggestedApproach": "Enhance cards by rarity level with playtesting"
+        "labels": [],
+        "epic": "refactoring-core",
+        "createdAt": "2025-08-17T22:31:55.665Z",
+        "updatedAt": "2025-08-17T22:31:55.665Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "7062ac41d34519f3-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:31:55.665Z"
+          }
+        ]
       },
-      "tags": [
-        "enhancement",
-        "gameplay",
-        "balance"
-      ],
-      "labels": [],
-      "epic": "refactoring-core",
-      "createdAt": "2025-08-17T22:31:55.665Z",
-      "updatedAt": "2025-08-17T22:31:55.665Z",
-      "autoCreated": false,
-      "autoAssignable": true,
-      "comments": [],
-      "activity": [
-        {
-          "id": "ea847f06071286e5-activity-1",
-          "type": "status_change",
-          "actor": "system",
-          "details": "Task created",
-          "timestamp": "2025-08-17T22:31:55.665Z"
-        }
-      ]
+      {
+        "id": 6,
+        "title": "Update Components for Unified Card Model",
+        "description": "Update all React components to work with the unified card model",
+        "userStory": {
+          "persona": "user",
+          "want": "consistent card display and behavior",
+          "reason": "better user experience"
+        },
+        "status": "todo",
+        "priority": "high",
+        "size": "L",
+        "dependencies": [
+          "Update Services for Unified Card Model"
+        ],
+        "acceptanceCriteria": [
+          {
+            "id": "cda2ddf1d082b454-ac-0",
+            "description": "CardDisplay component updated",
+            "completed": false
+          },
+          {
+            "id": "46642ea0b0a1e810-ac-1",
+            "description": "CardReveal component updated",
+            "completed": false
+          },
+          {
+            "id": "87dc31b8ecd5bb82-ac-2",
+            "description": "CardTCG component updated",
+            "completed": false
+          },
+          {
+            "id": "0a922066dd7420b2-ac-3",
+            "description": "RollScreen component updated",
+            "completed": false
+          },
+          {
+            "id": "f3aec1fd5d7416b1-ac-4",
+            "description": "CombatScreen component updated",
+            "completed": false
+          },
+          {
+            "id": "c38bb881cc33ed59-ac-5",
+            "description": "All components display unified card properties",
+            "completed": false
+          },
+          {
+            "id": "2360c91d4abb58fc-ac-6",
+            "description": "No UI regressions or breaking changes",
+            "completed": false
+          }
+        ],
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "All components updated",
+          "UI works correctly",
+          "No visual regressions",
+          "TypeScript compilation passes"
+        ],
+        "context": {
+          "files": [
+            "src/components/cards/CardDisplay.tsx",
+            "src/components/roll/CardReveal.tsx",
+            "src/components/cards/CardTCG.tsx",
+            "src/components/screens/RollScreen.tsx",
+            "src/components/screens/CombatScreen.tsx"
+          ],
+          "components": [
+            "All card-related components"
+          ],
+          "services": [],
+          "userImpact": "Consistent card display and interaction",
+          "businessValue": "Better user experience",
+          "risks": [
+            "UI breaking changes",
+            "Performance issues"
+          ],
+          "testScenarios": [
+            "All card components render correctly",
+            "Card properties display properly",
+            "Interactions work as expected",
+            "Performance is maintained"
+          ],
+          "suggestedApproach": "Update components incrementally with testing"
+        },
+        "tags": [
+          "components",
+          "ui",
+          "refactoring"
+        ],
+        "labels": [],
+        "epic": "refactoring-core",
+        "createdAt": "2025-08-17T22:31:55.665Z",
+        "updatedAt": "2025-08-17T22:31:55.665Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "488c47e328594d93-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:31:55.665Z"
+          }
+        ]
+      },
+      {
+        "id": "f88b3f5225c4f1fb",
+        "title": "Add Missing Card Properties and Enhancements",
+        "description": "Add missing properties like PassiveAbility and EmojiProjectile configurations to existing cards",
+        "userStory": {
+          "persona": "player",
+          "want": "all cards to have complete properties and abilities",
+          "reason": "richer gameplay experience"
+        },
+        "status": "todo",
+        "priority": "medium",
+        "size": "M",
+        "dependencies": [
+          "Migrate Card Data Files to Unified Model"
+        ],
+        "acceptanceCriteria": [
+          {
+            "id": "42e150709d27301a-ac-0",
+            "description": "All cards have PassiveAbility defined",
+            "completed": false
+          },
+          {
+            "id": "6a3b45489c321010-ac-1",
+            "description": "All cards have EmojiProjectile configurations",
+            "completed": false
+          },
+          {
+            "id": "1c409ead39e26082-ac-2",
+            "description": "Stack levels and experience added to existing cards",
+            "completed": false
+          },
+          {
+            "id": "e94ca39d2f32e66f-ac-3",
+            "description": "Combat stats calculated for all cards",
+            "completed": false
+          },
+          {
+            "id": "15a9600f1a7cde6c-ac-4",
+            "description": "Visual properties (glow, borders) added",
+            "completed": false
+          },
+          {
+            "id": "61aa8279ffd492fb-ac-5",
+            "description": "Unique abilities created for each rarity level",
+            "completed": false
+          },
+          {
+            "id": "84f933d817260085-ac-6",
+            "description": "Card balance validated and tested",
+            "completed": false
+          }
+        ],
+        "definitionOfDone": [
+          "Code implemented and tested",
+          "All cards enhanced",
+          "Game balance maintained",
+          "Documentation updated",
+          "Performance acceptable"
+        ],
+        "context": {
+          "files": [
+            "src/data/cards/*/",
+            "src/models/unified/Card.ts"
+          ],
+          "components": [
+            "Card display components"
+          ],
+          "services": [
+            "CardService",
+            "RollService"
+          ],
+          "userImpact": "More engaging cards with unique abilities",
+          "businessValue": "Richer gameplay mechanics",
+          "risks": [
+            "Game balance issues",
+            "Performance impact"
+          ],
+          "testScenarios": [
+            "All passive abilities work correctly",
+            "Projectile configurations are valid",
+            "Card stats are balanced",
+            "Visual enhancements display properly"
+          ],
+          "suggestedApproach": "Enhance cards by rarity level with playtesting"
+        },
+        "tags": [
+          "enhancement",
+          "gameplay",
+          "balance"
+        ],
+        "labels": [],
+        "epic": "refactoring-core",
+        "createdAt": "2025-08-17T22:31:55.665Z",
+        "updatedAt": "2025-08-17T22:31:55.665Z",
+        "autoCreated": false,
+        "autoAssignable": true,
+        "comments": [],
+        "activity": [
+          {
+            "id": "ea847f06071286e5-activity-1",
+            "type": "status_change",
+            "actor": "system",
+            "details": "Task created",
+            "timestamp": "2025-08-17T22:31:55.665Z"
+          }
+        ]
+      },
+      {
+        "id": null,
+        "title": "Center Unified Card Model on Screen",
+        "description": "Fix card centering issue where unified card model is not properly positioned on screen across different viewport sizes",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Display Recent Rolls List Below Header",
+        "description": "Add a section below the main header that displays the last 5-10 card rolls with thumbnails, names, rarity, and timestamps",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Remove Unnecessary DEV Test Cards Button",
+        "description": "Remove the 'Test Cards (DEV)' button from production interface while preserving development access",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Fix Redundant Navigation Menu",
+        "description": "Consolidate redundant navigation systems (top menu + floating action button) into a single, consistent navigation pattern",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Extract Logic into Custom Hooks",
+        "description": "Extract reusable component logic into custom React hooks to separate business logic from presentation",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Eliminate Any Types for Better Type Safety",
+        "description": "Replace all instances of the 'any' type with specific TypeScript types throughout the codebase",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Fix and Improve Test Suite",
+        "description": "Fix all failing unit tests and improve test coverage throughout the application",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Optimize Frontend Performance",
+        "description": "Implement comprehensive frontend performance optimizations including code splitting, lazy loading, virtual scrolling, WebWorkers, and Service Workers",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Fix Frontend-Backend TypeScript Compatibility",
+        "description": "Resolve TypeScript compatibility issues between the new backend API and existing frontend code",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Implement Advanced Card Collection View",
+        "description": "Create a comprehensive collection view that allows players to browse, filter, sort, and search their owned cards",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Implement User Authentication System",
+        "description": "Implement complete user authentication system with registration, login, and profile management",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Create Comprehensive Technical Documentation",
+        "description": "Create comprehensive technical documentation including architecture overview, API docs, component library, setup/deployment guides",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Fix Card Display Glitch on Mobile",
+        "description": "Fix card display issues that affect 30% of mobile users",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": null,
+        "title": "Fix Memory Leak in Roll Animation",
+        "description": "Fix memory leak in roll animation that causes slowdown after 50+ rolls",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "lastUpdated": "2025-08-17T22:31:55.665Z",
+      "version": "2.0.0",
+      "created": "2025-08-18T04:17:54.803Z",
+      "description": "Tasks for master context",
+      "updated": "2025-08-18T04:20:17.438Z"
     }
-  ],
-  "metadata": {
-    "lastUpdated": "2025-08-17T22:31:55.665Z",
-    "version": "2.0.0"
   }
 }

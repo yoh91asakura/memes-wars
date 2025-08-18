@@ -1,0 +1,105 @@
+{
+  "id": "199e14eb6453d09e",
+  "title": "Consolidate Store Architecture",
+  "description": "Unify gameStore and rollStore to eliminate duplicate state management",
+  "userStory": {
+    "persona": "developer",
+    "want": "a clear, modular store architecture",
+    "reason": "state management is predictable and maintainable"
+  },
+  "status": "backlog",
+  "priority": "critical",
+  "size": "M",
+  "dependencies": [
+    "Unify Card Data Models"
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "199e14eb6453d09e-ac-0",
+      "description": "Central gameStore with modular slices",
+      "completed": false
+    },
+    {
+      "id": "199e14eb6453d09e-ac-1",
+      "description": "No duplicate state management logic",
+      "completed": false
+    },
+    {
+      "id": "199e14eb6453d09e-ac-2",
+      "description": "Clear separation of concerns between stores",
+      "completed": false
+    },
+    {
+      "id": "199e14eb6453d09e-ac-3",
+      "description": "All components using centralized stores",
+      "completed": false
+    },
+    {
+      "id": "199e14eb6453d09e-ac-4",
+      "description": "Store actions are typed and documented",
+      "completed": false
+    },
+    {
+      "id": "199e14eb6453d09e-ac-5",
+      "description": "Middleware for persistence implemented",
+      "completed": false
+    },
+    {
+      "id": "199e14eb6453d09e-ac-6",
+      "description": "DevTools integration working",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "src/stores/gameStore.ts",
+      "src/stores/rollStore.ts",
+      "src/stores/index.ts"
+    ],
+    "components": [
+      "All components using stores"
+    ],
+    "userImpact": "Faster UI updates and more consistent state",
+    "businessValue": "Easier to add new features and fix bugs",
+    "risks": [
+      "State migration issues",
+      "Component breaking changes"
+    ],
+    "testScenarios": [
+      "State persists across page refreshes",
+      "All UI components update correctly",
+      "No race conditions in state updates",
+      "Undo/redo functionality possible"
+    ],
+    "suggestedApproach": "Use Zustand slices pattern with immer for immutability"
+  },
+  "tags": [
+    "architecture",
+    "state-management",
+    "refactoring"
+  ],
+  "labels": [],
+  "epic": "refactoring-core",
+  "createdAt": "2025-08-17T22:10:20.389Z",
+  "updatedAt": "2025-08-17T22:10:20.389Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "199e14eb6453d09e-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.389Z"
+    }
+  ]
+}

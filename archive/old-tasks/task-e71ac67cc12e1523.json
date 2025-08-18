@@ -1,0 +1,89 @@
+{
+  "id": "e71ac67cc12e1523",
+  "title": "Create Basic Deck Builder",
+  "description": "",
+  "status": "backlog",
+  "priority": "medium",
+  "size": "XL",
+  "dependencies": [],
+  "acceptanceCriteria": [
+    {
+      "id": "e71ac67cc12e1523-ac-0",
+      "description": "Drag and drop cards into deck",
+      "completed": false
+    },
+    {
+      "id": "e71ac67cc12e1523-ac-1",
+      "description": "Deck validation rules enforced",
+      "completed": false
+    },
+    {
+      "id": "e71ac67cc12e1523-ac-2",
+      "description": "Save/load deck functionality",
+      "completed": false
+    },
+    {
+      "id": "e71ac67cc12e1523-ac-3",
+      "description": "Deck statistics displayed",
+      "completed": false
+    },
+    {
+      "id": "e71ac67cc12e1523-ac-4",
+      "description": "Mana curve visualization",
+      "completed": false
+    },
+    {
+      "id": "e71ac67cc12e1523-ac-5",
+      "description": "Export/import deck codes",
+      "completed": false
+    },
+    {
+      "id": "e71ac67cc12e1523-ac-6",
+      "description": "Multiple deck slots",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "src/components/deckbuilder/DeckBuilder.tsx"
+    ],
+    "components": [
+      "DeckBuilder",
+      "DeckSlot",
+      "ManaCurve"
+    ],
+    "services": [
+      "DeckService",
+      "ValidationService"
+    ]
+  },
+  "tags": [
+    "ui",
+    "feature",
+    "deckbuilding"
+  ],
+  "labels": [],
+  "epic": "ui-completion",
+  "createdAt": "2025-08-17T22:10:20.425Z",
+  "updatedAt": "2025-08-17T22:10:20.425Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "e71ac67cc12e1523-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.425Z"
+    }
+  ]
+}

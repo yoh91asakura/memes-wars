@@ -407,3 +407,18 @@ claude-flow
 claude-flow.bat
 claude-flow.ps1
 hive-mind-prompt-*.txt
+
+logs
+dev-debug.log
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+*.ntvs*
+*.njsproj
+*.sw?
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/ 

@@ -1,3 +1,10 @@
+// Re-export the unified card model for backward compatibility
+export * from '../../models/unified/Card';
+export * from './emoji';
+
+// Legacy type aliases for backward compatibility
+export type { UnifiedCard as Card } from '../../models/unified/Card';
+
 // Global type definitions for The Meme Wars
 
 export interface User {

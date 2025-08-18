@@ -1,0 +1,82 @@
+{
+  "id": "543ad37ac269dd23",
+  "title": "Create E2E Tests for Critical Flows",
+  "description": "",
+  "status": "backlog",
+  "priority": "medium",
+  "size": "L",
+  "dependencies": [],
+  "acceptanceCriteria": [
+    {
+      "id": "543ad37ac269dd23-ac-0",
+      "description": "Card rolling flow tested",
+      "completed": false
+    },
+    {
+      "id": "543ad37ac269dd23-ac-1",
+      "description": "Collection management tested",
+      "completed": false
+    },
+    {
+      "id": "543ad37ac269dd23-ac-2",
+      "description": "Combat flow tested",
+      "completed": false
+    },
+    {
+      "id": "543ad37ac269dd23-ac-3",
+      "description": "Navigation tested",
+      "completed": false
+    },
+    {
+      "id": "543ad37ac269dd23-ac-4",
+      "description": "Tests run in CI/CD",
+      "completed": false
+    },
+    {
+      "id": "543ad37ac269dd23-ac-5",
+      "description": "Visual regression tests",
+      "completed": false
+    },
+    {
+      "id": "543ad37ac269dd23-ac-6",
+      "description": "Cross-browser testing",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "tests/e2e/"
+    ],
+    "components": [],
+    "services": []
+  },
+  "tags": [
+    "testing",
+    "e2e",
+    "quality"
+  ],
+  "labels": [],
+  "epic": "testing-quality",
+  "createdAt": "2025-08-17T22:10:20.445Z",
+  "updatedAt": "2025-08-17T22:10:20.445Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "543ad37ac269dd23-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.445Z"
+    }
+  ]
+}

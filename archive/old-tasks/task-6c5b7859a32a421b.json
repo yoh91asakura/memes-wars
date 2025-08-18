@@ -1,0 +1,84 @@
+{
+  "id": "6c5b7859a32a421b",
+  "title": "Write Unit Tests for Core Services",
+  "description": "",
+  "status": "backlog",
+  "priority": "medium",
+  "size": "L",
+  "dependencies": [],
+  "acceptanceCriteria": [
+    {
+      "id": "6c5b7859a32a421b-ac-0",
+      "description": "RollService 100% coverage",
+      "completed": false
+    },
+    {
+      "id": "6c5b7859a32a421b-ac-1",
+      "description": "CardService 100% coverage",
+      "completed": false
+    },
+    {
+      "id": "6c5b7859a32a421b-ac-2",
+      "description": "Store actions tested",
+      "completed": false
+    },
+    {
+      "id": "6c5b7859a32a421b-ac-3",
+      "description": "Utility functions tested",
+      "completed": false
+    },
+    {
+      "id": "6c5b7859a32a421b-ac-4",
+      "description": "Edge cases covered",
+      "completed": false
+    },
+    {
+      "id": "6c5b7859a32a421b-ac-5",
+      "description": "Tests run in under 10 seconds",
+      "completed": false
+    },
+    {
+      "id": "6c5b7859a32a421b-ac-6",
+      "description": "CI/CD integration ready",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "src/services/__tests__/"
+    ],
+    "components": [],
+    "services": [
+      "All services"
+    ]
+  },
+  "tags": [
+    "testing",
+    "quality",
+    "technical-debt"
+  ],
+  "labels": [],
+  "epic": "testing-quality",
+  "createdAt": "2025-08-17T22:10:20.438Z",
+  "updatedAt": "2025-08-17T22:10:20.438Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "6c5b7859a32a421b-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.438Z"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "id": "6c8c43ec02b33732",
+  "title": "Implement Collision Detection",
+  "description": "Create accurate and performant collision detection for projectiles",
+  "userStory": {
+    "persona": "player",
+    "want": "projectiles to hit targets and deal damage",
+    "reason": "combat has meaningful consequences"
+  },
+  "status": "backlog",
+  "priority": "high",
+  "size": "L",
+  "dependencies": [],
+  "acceptanceCriteria": [
+    {
+      "id": "6c8c43ec02b33732-ac-0",
+      "description": "Accurate AABB collision detection",
+      "completed": false
+    },
+    {
+      "id": "6c8c43ec02b33732-ac-1",
+      "description": "Pixel-perfect collision for special cases",
+      "completed": false
+    },
+    {
+      "id": "6c8c43ec02b33732-ac-2",
+      "description": "Spatial partitioning for performance",
+      "completed": false
+    },
+    {
+      "id": "6c8c43ec02b33732-ac-3",
+      "description": "Collision events properly fired",
+      "completed": false
+    },
+    {
+      "id": "6c8c43ec02b33732-ac-4",
+      "description": "No false positives or negatives",
+      "completed": false
+    },
+    {
+      "id": "6c8c43ec02b33732-ac-5",
+      "description": "Performance remains stable with many objects",
+      "completed": false
+    },
+    {
+      "id": "6c8c43ec02b33732-ac-6",
+      "description": "Collision shapes properly defined for all entities",
+      "completed": false
+    }
+  ],
+  "definitionOfDone": [
+    "Code implemented and tested",
+    "Tests written and passing",
+    "Documentation updated",
+    "Code reviewed",
+    "No console errors",
+    "Performance acceptable"
+  ],
+  "context": {
+    "files": [
+      "src/systems/CollisionSystem.ts",
+      "src/systems/PhysicsEngine.ts",
+      "src/utils/collision.ts"
+    ],
+    "components": [
+      "CombatArena"
+    ],
+    "services": [
+      "CollisionService",
+      "PhysicsEngine"
+    ],
+    "userImpact": "Combat mechanics work correctly",
+    "businessValue": "Core gameplay loop functional",
+    "risks": [
+      "Performance issues",
+      "Inaccurate collisions"
+    ],
+    "testScenarios": [
+      "Projectiles hit targets accurately",
+      "No tunneling at high speeds",
+      "Performance with 200+ collision checks/frame",
+      "Edge cases handled properly"
+    ],
+    "suggestedApproach": "Quadtree for spatial partitioning, AABB for broad phase"
+  },
+  "tags": [
+    "feature",
+    "combat",
+    "physics",
+    "performance"
+  ],
+  "labels": [],
+  "epic": "combat-system",
+  "createdAt": "2025-08-17T22:10:20.403Z",
+  "updatedAt": "2025-08-17T22:10:20.403Z",
+  "autoCreated": false,
+  "autoAssignable": true,
+  "comments": [],
+  "activity": [
+    {
+      "id": "6c8c43ec02b33732-activity-1",
+      "type": "status_change",
+      "actor": "system",
+      "details": "Task created",
+      "timestamp": "2025-08-17T22:10:20.403Z"
+    }
+  ]
+}
