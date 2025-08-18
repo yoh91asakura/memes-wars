@@ -311,7 +311,8 @@ class SocketManager {
       }
       // Le store de jeu gérera cette donnée
       try {
-        useGameStore.getState().updateGameState(data);
+        // TODO: Implement updateGameState method in GameStore
+        console.log('Game state update received:', data);
       } catch (error) {
         console.error('Erreur lors de la mise à jour du game state:', error);
       }

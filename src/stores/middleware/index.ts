@@ -59,7 +59,7 @@ export const createStorePersistence = (name: string, storage?: StateStorage) => 
     } = state;
     return persistableState;
   },
-  onRehydrateStorage: (name: string) => (state: any, error: any) => {
+  onRehydrateStorage: (name: string) => (_state: any, error: any) => {
     if (error) {
       console.error(`Failed to rehydrate ${name} store:`, error);
     } else {
