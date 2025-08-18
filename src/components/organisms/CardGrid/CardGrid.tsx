@@ -59,10 +59,11 @@ export const CardGrid: React.FC<CardGridProps> = ({
           return (rarityOrder[b.rarity as keyof typeof rarityOrder] || 0) - (rarityOrder[a.rarity as keyof typeof rarityOrder] || 0);
         }
         case 'recent':
-        default:
+        default: {
           const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
           const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
           return dateB - dateA;
+        }
       }
     });
 

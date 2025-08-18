@@ -229,6 +229,9 @@ export interface UnifiedCard {
   createdAt: string;
   updatedAt: string;
   
+  // Collection metadata
+  addedAt?: string;                               // When added to collection
+  
   // Legacy Compatibility (marked for deprecation)
   /** @deprecated Use emojis array instead */
   emojiProjectile?: EmojiProjectile;

@@ -24,7 +24,7 @@ export const Button = memo(forwardRef<HTMLButtonElement, ButtonProps>(({
   rightIcon,
   fullWidth = false,
   noAnimation = false,
-  motionProps = {},
+  motionProps: _motionProps = {},
   children,
   className = '',
   disabled,

@@ -189,7 +189,7 @@ function ErrorFallback({
 
         {/* Message */}
         <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Nous sommes désolés, quelque chose s'est mal passé. Veuillez réessayer.
+          Nous sommes désolés, quelque chose s&apos;est mal passé. Veuillez réessayer.
         </p>
 
         {/* Actions */}

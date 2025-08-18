@@ -103,9 +103,9 @@ export const RollPage: React.FC<RollPageProps> = ({
     return newCard;
   }, []);
 
-  const handleCardClick = (card: CardType) => {
-    console.log('Card clicked:', card);
-    // Here you could open a card detail modal or navigate to card details
+  const handleCardClick = (_card: CardType) => {
+    // Card clicked - could open modal or navigate to details
+    // Debug log removed
   };
 
   return (

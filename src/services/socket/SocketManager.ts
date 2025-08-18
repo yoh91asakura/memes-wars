@@ -80,7 +80,7 @@ class SocketManager {
   private heartbeatInterval: NodeJS.Timeout | null = null;
   
   // Event listeners registry
-  private eventListeners: Map<string, Function[]> = new Map();
+  private eventListeners: Map<string, ((...args: unknown[]) => void)[]> = new Map();
 
   /**
    * Se connecter au serveur WebSocket
@@ -173,7 +173,7 @@ class SocketManager {
       this.eventListeners.set(event as string, []);
     }
     
-    this.eventListeners.get(event as string)!.push(callback as Function);
+    this.eventListeners.get(event as string)!.push(callback as (...args: unknown[]) => void);
     
     if (this.socket) {
       this.socket.on(event as any, callback as any);
@@ -189,7 +189,7 @@ class SocketManager {
   ): void {
     if (callback) {
       const listeners = this.eventListeners.get(event as string) || [];
-      const index = listeners.indexOf(callback as Function);
+      const index = listeners.indexOf(callback as (...args: unknown[]) => void);
       if (index > -1) {
         listeners.splice(index, 1);
       }

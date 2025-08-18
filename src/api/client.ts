@@ -207,7 +207,7 @@ class ApiClient {
     try {
       const response = await this.client.get('/health');
       return response.data;
-    } catch (error) {
+    } catch {
       throw new Error('Backend non disponible');
     }
   }

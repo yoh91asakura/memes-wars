@@ -1,5 +1,5 @@
 import type { Card } from '../components/types';
-import { UnifiedCard, CardRarity } from '../models/unified/Card';
+import { UnifiedCard, CardRarity, MemeFamily } from '../models/unified/Card';
 import { commonCards } from '../data/cards/common';
 import { uncommonCards } from '../data/cards/uncommon';
 import { rareCards } from '../data/cards/rare';
@@ -7,6 +7,7 @@ import { epicCards } from '../data/cards/epic';
 import { legendaryCards } from '../data/cards/legendary';
 import { mythicCards } from '../data/cards/mythic';
 import { cosmicCards } from '../data/cards/cosmic';
+import { useCollectionStore } from '../stores/collectionStore';
 // Create a proper config object
 const rollConfig = {
   dropRates: {
@@ -136,8 +137,19 @@ export class RollService {
     const rarity = this.determineRarity(stats);
     const card = this.getRandomCardOfRarity(rarity);
     
+    // Generate unique instance with proper id
+    const cardInstance = { ...card, id: uuidv4() };
+    
+    // Add to collection store
+    try {
+      const collectionStore = useCollectionStore.getState();
+      collectionStore.addCard(this.convertToUnifiedCard(cardInstance));
+    } catch {
+      // Failed to add card to collection - error silenced
+    }
+    
     const result: RollResult = {
-      card: { ...card, id: uuidv4() }, // Generate unique instance
+      card: cardInstance,
       isGuaranteed: this.wasGuaranteed(rarity, stats),
       pityTriggered: this.checkPityTrigger(rarity, stats),
       rollNumber: stats.totalRolls + 1
@@ -531,5 +543,95 @@ export class RollService {
       }
     });
     return rarities;
+  }
+
+  /**
+   * Convert legacy Card to UnifiedCard for collection store
+   */
+  private convertToUnifiedCard(card: Card): UnifiedCard {
+    // Find original unified card from data
+    const allUnifiedCards = [...commonCards, ...uncommonCards, ...rareCards, ...epicCards, ...legendaryCards, ...mythicCards, ...cosmicCards];
+    const originalCard = allUnifiedCards.find(uc => uc.name === card.name);
+    
+    if (originalCard) {
+      // Return the original unified card with new instance ID
+      return {
+        ...originalCard,
+        id: card.id,
+        addedAt: new Date().toISOString()
+      };
+    }
+    
+    // Fallback conversion if original not found
+    return {
+      id: card.id,
+      name: card.name,
+      description: card.description,
+      emoji: card.emoji,
+      rarity: this.convertLegacyRarityToEnum(card.rarity),
+      type: card.type?.toUpperCase() as any || 'CREATURE',
+      cost: card.cost || 0,
+      attack: card.attack || 0,
+      defense: card.defense || 0,
+      health: card.stats?.health || 0,
+      attackSpeed: card.stats?.speed,
+      tags: card.tags || [],
+      flavor: card.flavor,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      addedAt: new Date().toISOString(),
+      isActive: true,
+      stackCount: 1,
+      goldReward: this.getCardValue(card),
+      dustValue: Math.floor(this.getCardValue(card) * 0.25),
+      tradeable: true,
+      craftable: false,
+      isLimited: false,
+      luck: 0,
+      rarityProbability: 2,
+      family: MemeFamily.INTERNET_CULTURE,
+      reference: card.name || 'Unknown reference',
+      emojis: [{
+        character: card.emoji,
+        damage: card.attack || 1,
+        speed: 2,
+        trajectory: 'straight' as const,
+        target: 'OPPONENT' as const
+      }],
+      cardEffects: [],
+      synergies: [MemeFamily.INTERNET_CULTURE],
+      goldGeneration: 1,
+      level: 1,
+      experience: 0,
+      maxStacks: 5,
+      stackBonus: {
+        luckMultiplier: 0.1,
+        goldMultiplier: 0.15,
+        bonusEmojis: []
+      },
+      visual: {
+        glow: '#9CA3AF',
+        borderColor: '#D1D5DB',
+        backgroundColor: '#F9FAFB',
+        textColor: '#374151'
+      },
+      releaseDate: new Date().toISOString()
+    };
+  }
+
+  /**
+   * Convert legacy rarity string to CardRarity enum
+   */
+  private convertLegacyRarityToEnum(rarity: string): CardRarity {
+    const rarityMap: Record<string, CardRarity> = {
+      common: CardRarity.COMMON,
+      uncommon: CardRarity.UNCOMMON,
+      rare: CardRarity.RARE,
+      epic: CardRarity.EPIC,
+      legendary: CardRarity.LEGENDARY,
+      mythic: CardRarity.MYTHIC,
+      cosmic: CardRarity.COSMIC
+    };
+    return rarityMap[rarity] || CardRarity.COMMON;
   }
 }
