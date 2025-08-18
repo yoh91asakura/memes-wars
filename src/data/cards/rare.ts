@@ -108,7 +108,7 @@ export const rareCards: UnifiedCard[] = [
       damage: 10,
       speed: 8,
       trajectory: 'homing',
-      effects: [EffectType.CRIT],
+      effects: [EffectType.PRECISION],
       target: 'OPPONENT',
       fireRate: 1.2,
       piercing: false,
@@ -135,7 +135,7 @@ export const rareCards: UnifiedCard[] = [
     isLimited: false,
     
     // Metadata
-    effects: [EffectType.BOOST, EffectType.CHAIN, EffectType.BURST, EffectType.CRIT],
+    effects: [EffectType.BOOST, EffectType.CHAIN, EffectType.BURST, EffectType.PRECISION],
     tags: ['galaxy', 'brain', 'intelligence', 'rare'],
     flavor: 'Ascended beyond mortal comprehension.',
     lore: 'When regular brain time isn\'t enough, you activate Galaxy Brain mode - the ultimate form of intellectual superiority.',

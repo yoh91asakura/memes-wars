@@ -176,7 +176,7 @@ export const uncommonCards: UnifiedCard[] = [
       damage: 4,
       speed: 4,
       trajectory: 'homing',
-      effects: [EffectType.CRIT],
+      effects: [EffectType.PRECISION],
       target: 'OPPONENT',
       fireRate: 1.0,
       piercing: false,

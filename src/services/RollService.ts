@@ -80,6 +80,17 @@ export class RollService {
     this.allCards.set('legendary', this.convertUnifiedCardsToUnified(legendaryCards));
     this.allCards.set('mythic', this.convertUnifiedCardsToUnified(mythicCards));
     this.allCards.set('cosmic', this.convertUnifiedCardsToUnified(cosmicCards));
+    
+    // Debug: Log card counts to verify loading (only in development)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎴 RollService: Card database initialized');
+      this.allCards.forEach((cards, rarity) => {
+        console.log(`  ${rarity}: ${cards.length} cards`);
+        if (cards.length > 0) {
+          console.log(`    Example: ${cards[0].name} (${cards[0].emoji})`);
+        }
+      });
+    }
   }
 
   /**

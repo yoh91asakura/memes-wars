@@ -286,7 +286,7 @@ export const useGameStore = create<GameStore>()(
           return state.activeDeck;
         },
         
-        canAddCardToDeck: (deckId: string, card: UnifiedCard) => {
+        canAddCardToDeck: (deckId: string, _card: UnifiedCard) => {
           const state = get();
           const deck = state.decks.find(d => d.id === deckId);
           return deck ? deck.cards.length < state.maxDeckSize : false;

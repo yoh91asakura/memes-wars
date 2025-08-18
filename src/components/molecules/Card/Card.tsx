@@ -25,6 +25,16 @@ export const Card: React.FC<CardProps> = ({
   className = '',
   testId,
 }) => {
+  // Debug: Log card data when component renders (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🎴 Card component rendering:', {
+      name: card.name,
+      emoji: card.emoji,
+      rarity: card.rarity,
+      stats: card.stats,
+      hasStats: !!card.stats
+    });
+  }
   const handleClick = () => {
     if (interactive && onClick) {
       onClick(card);

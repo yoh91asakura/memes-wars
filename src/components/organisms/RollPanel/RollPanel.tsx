@@ -32,19 +32,28 @@ export const RollPanel: React.FC<RollPanelProps> = ({
   const handleRoll = async () => {
     if (!onRoll || isRolling) return;
 
+    console.log('🎲 RollPanel: Starting roll...');
     try {
       setShowReveal(false);
       setRevealCard(null);
       
       const newCard = await onRoll();
+      console.log('🎲 RollPanel: Roll result:', {
+        name: newCard.name,
+        emoji: newCard.emoji,
+        rarity: newCard.rarity,
+        health: newCard.health,
+        attack: newCard.attack
+      });
       
       // Delay reveal for dramatic effect
       setTimeout(() => {
         setRevealCard(newCard);
         setShowReveal(true);
+        console.log('🎲 RollPanel: Card revealed!');
       }, 1000);
     } catch (error) {
-      console.error('Roll failed:', error);
+      console.error('🎲 RollPanel: Roll failed:', error);
     }
   };
 
