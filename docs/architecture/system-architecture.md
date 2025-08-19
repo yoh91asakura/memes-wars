@@ -249,3 +249,295 @@ Start Battle → CombatStore.initialize()
 - **PostgreSQL** - Database
 - **Redis** - Caching
 - **Socket.IO** - WebSockets
+
+---
+
+# 🌐 WEB DEVELOPMENT ARCHITECTURE PATTERNS
+
+## 🏢 Frontend Architecture Patterns
+```javascript
+// Component-based architecture
+components/
+├── atoms/          // Basic UI elements (Button, Input)
+├── molecules/      // Composite components (FormField, Card)
+├── organisms/      // Complex components (Header, Dashboard)
+├── templates/      // Page templates
+└── pages/          // Page components
+
+// State Management
+store/
+├── slices/         // Redux slices / Zustand stores
+├── actions/        // Action creators
+├── selectors/      // Memoized selectors
+└── middleware/     // Custom middleware
+```
+
+## 🏠 Backend Architecture (MVC Pattern)
+```javascript
+// Model-View-Controller structure
+server/
+├── models/         // Data models (User, Product)
+├── views/          // Response formatting
+├── controllers/    // Business logic
+├── routes/         // API endpoints
+├── middleware/     // Auth, validation, logging
+└── services/       // External integrations
+```
+
+## 📊 API Design Standards
+```javascript
+// RESTful endpoints
+GET    /api/users           // List users
+GET    /api/users/:id       // Get user
+POST   /api/users           // Create user
+PUT    /api/users/:id       // Update user
+DELETE /api/users/:id       // Delete user
+
+// Response format
+{
+  "success": true,
+  "data": { ... },
+  "message": "Operation successful",
+  "timestamp": "2024-01-15T10:00:00Z"
+}
+```
+
+# 🔒 WEB SECURITY CHECKLIST
+
+## 🔐 Authentication & Authorization
+```javascript
+// JWT avec httpOnly cookies
+const authConfig = {
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: '1h',
+    refreshExpiresIn: '7d'
+  },
+  cookies: {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'strict'
+  }
+};
+
+// RBAC (Role-Based Access Control)
+const roles = {
+  admin: ['read', 'write', 'delete'],
+  user: ['read', 'write'],
+  guest: ['read']
+};
+```
+
+## 🚪 Protection Patterns
+```javascript
+// XSS Protection
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'"],
+    styleSrc: ["'self'", "'unsafe-inline'"]
+  }
+}));
+
+// CSRF Protection
+app.use(csrf({ cookie: true }));
+
+// SQL Injection Prevention (avec ORM)
+const user = await User.findOne({
+  where: { email: sanitize(email) }
+});
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests
+});
+```
+
+# 🧪 WEB TESTING STRATEGY
+
+## 🔼 Testing Pyramid (Exécution Parallèle)
+```bash
+# TOUT exécuter en parallèle
+[BatchTool - Testing]:
+  # Unit Tests
+  Bash "npm run test:unit:frontend"
+  Bash "npm run test:unit:backend"
+
+  # Integration Tests
+  Bash "npm run test:integration:api"
+  Bash "npm run test:integration:db"
+
+  # E2E Tests
+  Bash "npm run test:e2e:chrome"
+  Bash "npm run test:e2e:firefox"
+
+  # Performance Tests
+  Bash "npm run test:lighthouse"
+  Bash "npm run test:load"
+```
+
+## 📋 Test Organization
+```javascript
+// Frontend Component Test
+describe('Dashboard Component', () => {
+  it('should render user data', async () => {
+    render(<Dashboard user={mockUser} />);
+    expect(screen.getByText(mockUser.name)).toBeInTheDocument();
+  });
+});
+
+// Backend API Test
+describe('POST /api/users', () => {
+  it('should create user with valid data', async () => {
+    const res = await request(app)
+      .post('/api/users')
+      .send(validUserData)
+      .expect(201);
+
+    expect(res.body.success).toBe(true);
+  });
+});
+```
+
+# ⚡ WEB PERFORMANCE OPTIMIZATION
+
+## 🌍 Frontend Optimization
+```javascript
+// Code Splitting
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+
+// Image Optimization
+<img
+  src="image.webp"
+  loading="lazy"
+  srcSet="image-320w.jpg 320w, image-640w.jpg 640w"
+/>
+
+// Bundle Optimization
+webpack: {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: 10
+        }
+      }
+    }
+  }
+}
+```
+
+## 🛠️ Backend Optimization
+```javascript
+// Database Connection Pooling
+const pool = new Pool({
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000
+});
+
+// Redis Caching
+const cachedData = await redis.get(key);
+if (cachedData) return JSON.parse(cachedData);
+
+// Response Compression
+app.use(compression({
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) return false;
+    return compression.filter(req, res);
+  }
+}));
+```
+
+# 📁 Organisation Fichiers Web Full-Stack
+
+## 🏡 Structure Standard 
+- `/src` → Code source frontend
+- `/server` → Code backend/API
+- `/tests` → Fichiers test
+- `/docs` → Documentation
+- `/config` → Configuration
+- `/scripts` → Scripts utilitaires
+- `/public` → Assets statiques
+
+## 🌐 Structure Web Full-Stack
+```
+project/
+├── src/                    # Frontend
+│   ├── components/         # UI Components
+│   ├── pages/             # Page components
+│   ├── hooks/             # Custom React hooks
+│   ├── services/          # API services
+│   ├── store/             # State management
+│   └── utils/             # Utilities
+├── server/                 # Backend
+│   ├── routes/            # API routes
+│   ├── controllers/       # Business logic
+│   ├── models/            # Database models
+│   ├── middleware/        # Custom middleware
+│   └── services/          # External services
+├── tests/                  # Tests
+│   ├── unit/              # Unit tests
+│   ├── integration/       # Integration tests
+│   └── e2e/               # End-to-end tests
+└── migrations/            # Database migrations
+```
+
+# ⚡ WEB DEVELOPMENT - PATTERN FULL-STACK PARALLÈLE
+
+```javascript
+// TOUJOURS développer Frontend + Backend simultanément
+[BatchTool]:
+  // Frontend Components (React/Vue/Angular)
+  Write "src/components/Header.tsx" [headerContent]
+  Write "src/components/Dashboard.tsx" [dashboardContent]
+  Write "src/components/UserProfile.tsx" [profileContent]
+  Write "src/hooks/useAuth.ts" [authHookContent]
+
+  // Backend API (Node/Express)
+  Write "server/routes/auth.js" [authRoutes]
+  Write "server/routes/users.js" [userRoutes]
+  Write "server/controllers/authController.js" [authController]
+  Write "server/models/User.js" [userModel]
+
+  // Database & Config
+  Write "server/config/database.js" [dbConfig]
+  Write "migrations/001_create_users.sql" [migration]
+
+  // Tests (Frontend + Backend)
+  Write "tests/frontend/components.test.tsx" [frontendTests]
+  Write "tests/backend/api.test.js" [backendTests]
+  Write "tests/e2e/userflow.test.js" [e2eTests]
+
+  // Configuration Files
+  Write "package.json" [packageConfig]
+  Write "docker-compose.yml" [dockerConfig]
+  Write ".env.example" [envExample]
+
+  // Execute ALL commands
+  Bash "npm install && npm run dev"
+  Bash "docker-compose up -d"
+  Bash "npm run test:all"
+```
+
+## 🌐 Web Development Commands
+```bash
+# Frontend Development
+npm run dev           # Start dev server
+npm run build        # Production build
+npm run lint         # Lint code
+npm run test         # Run tests
+
+# Backend Development
+npm run server       # Start API server
+npm run migrate      # Run migrations
+npm run seed         # Seed database
+
+# Full-Stack
+npm run dev:all      # Frontend + Backend
+npm run test:all     # All tests parallel
+npm run docker:up    # Docker environment
+```

@@ -279,3 +279,99 @@ interface CardEffect {
 - "Wow" moments per battle > 3
 - Screenshot share rate > 10%
 - Spectacle satisfaction > 90%
+
+---
+
+# 🎯 MODERN TASK WORKFLOW - SYSTÈME V2
+
+## 📊 Sources de Vérité (CRITICAL - À JOUR)
+```yaml
+Systèmes à consulter AVANT TOUTE ACTION:
+  1. taskmaster (MCP)           # État temps réel des tâches
+     mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+  2. .taskmaster/tasks.db       # Base de données SQLite des tâches
+  3. docs/ROADMAP.md           # Vision et phases
+  4. git branch --remote       # Qui travaille sur quoi
+```
+
+## 🔄 Workflow Synchronisé Multi-Agents
+```bash
+# DÉBUT DE SESSION (obligatoire)
+"Agent [name] - Session Start $(date)"
+
+# 1. Synchronisation état global
+mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+git fetch --all
+git branch -r | grep task/
+
+# 2. Identification travail
+mcp task-master-ai get_tasks --assignee "[agent-name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_tasks --filter "todo" --priority "critical" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+
+# 3. Verrouillage tâche
+git checkout -b task/[id]-[desc]
+mcp task-master-ai update_task --taskId [id] --status "in-progress" --assignee "[name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+
+# 4. Travail avec updates régulières (toutes les 2h)
+while working:
+  # Code...
+  mcp task-master-ai add_comment --taskId [id] --comment "[progress description]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+  git add . && git commit -m "wip: [id] - [progress description]"
+  git push origin task/[id]-[desc]
+
+# 5. Fin de session
+mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+git add .
+git commit -m "chore: session end - [agent] - task [id] at [%]%"
+git push
+```
+
+## Workflow Principal
+```bash
+# Mode Plan (nouvelles fonctionnalités)
+"Mode Plan : [Description fonctionnalité]"
+mcp task-master-ai add_task --epic "[epic-name]" --title "..." --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+
+# Mode Exécution (tâches modulaires)
+"Mode Exécution : taskmaster task [id]"
+mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+```
+
+## TASKMASTER Structure
+```
+.taskmaster/
+├── tasks.db                    # Base de données SQLite
+├── config.json                 # Configuration
+└── docs/
+    └── prd.txt                # Product Requirements Document
+
+# Les tâches sont gérées dans la DB avec :
+# - ID unique
+# - Titre, description, priorité
+# - Statut, assigné, epic
+# - Critères d'acceptation
+# - User stories
+# - Contexte complet
+# - Commentaires et activité
+```
+
+## 📋 Task Template
+```markdown
+# Task: [Module] - [Component]
+
+## Overview
+**Module:** [CARDS|SERVICES|UI]
+**Priority:** [HIGH|MEDIUM|LOW]
+**Status:** [Planning|In Progress|Complete]
+**Assignee:** [Name/Unassigned]
+
+## Implementation (ALL IN ONE MESSAGE)
+[CONCURRENT]:
+  TodoWrite { 5-10 tasks }
+  Create ALL files
+  Write ALL tests
+  Execute ALL commands
+  Update task status
+```
+
+# RÈGLE D'OR: Une branche = Une tâche = Un agent

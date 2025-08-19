@@ -346,6 +346,78 @@ Todo: 400
 
 ---
 
+# 📊 METRICS SPRINT ACTUEL
+
+## 📈 Dashboard Métriques Temps Réel
+```bash
+# Voir métriques temps réel via taskmaster
+npm run taskmaster:stats
+
+# Générer rapport complet
+task-master-ai generate_report --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+```
+
+## 🎯 HIÉRARCHIE DES TÂCHES ACTUELLES
+
+### Consulter taskmaster pour les priorités
+```bash
+# Voir toutes les tâches critiques
+npm run taskmaster:critical
+
+# Voir tâches en cours
+npm run taskmaster:active
+
+# Voir tâches haute priorité
+npm run taskmaster:high
+
+# Vue d'ensemble
+npm run taskmaster:stats
+```
+
+## 🏗️ Organisation Epic-Based
+```bash
+# Get current epics via taskmaster
+mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+
+# Epics définis pour le projet :
+# - refactoring-core
+# - ui-completion
+# - combat-system
+# - performance-optimization
+# - testing-quality
+# - user-system
+# - bug-fixes
+
+# Create task avec epic
+mcp task-master-ai add_task --epic "[epic-name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+```
+
+## 🔄 Lifecycle Feature Development
+1. **Feature Planning** → Définir scope, créer tasks liées
+2. **Feature Research** → Query patterns spécifiques feature
+3. **Feature Implementation** → Compléter toutes tasks du groupe
+4. **Feature Validation** → Utilisateur teste feature complète
+5. **Feature Completion** → Toutes tasks feature marquées "done"
+
+## ⚙️ Scénarios Projet
+
+### Nouveau Projet Local
+```bash
+# Initialiser taskmaster pour le projet
+mcp task-master-ai init --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+# Créer nouvelles tâches selon besoins
+mcp task-master-ai add_task --title "..." --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+```
+
+### Continuer Projet Existant
+```bash
+mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+# Reprendre où vous vous êtes arrêté
+```
+
+---
+
 **Last Updated**: 2025-08-18
 **Version**: 1.2.0
 **Status**: Active Development - Phase 1 ✅ COMPLETE - Moving to Phase 2 Combat Core
