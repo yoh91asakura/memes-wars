@@ -2,7 +2,7 @@
 
 .card {
   position: relative;
-  background: var(--card-bg, #ffffff);
+  background: var(--card-bg, #1a1a1a);
   border-radius: 16px;
   border: 2px solid var(--card-border, #e9ecef);
   overflow: hidden;
@@ -12,205 +12,72 @@
     0 0 0 0 var(--card-glow, transparent);
   display: flex;
   flex-direction: column;
+  color: var(--card-text, #ffffff);
 }
 
-/* Size variants */
-.card--sm {
-  width: 140px;
-  min-height: 200px;
-}
-
-.card--md {
-  width: 180px;
-  min-height: 260px;
-}
-
-.card--lg {
-  width: 220px;
-  min-height: 320px;
-}
-
-/* Variant: TCG Layout */
-.tcg {
-  padding: 0;
-}
-
-/* Variant: Simple Layout (Roblox-inspired) */
-.simple {
-  padding: 0;
-  border-width: 4px;
-  border-style: solid;
-  overflow: hidden;
+/* Roblox-inspired Layout */
+.robloxCardFrame {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-}
-
-.simple .cardArtwork {
-  width: 100%;
-  height: 60%; /* Adjust as needed */
-  border-radius: 8px 8px 0 0;
-}
-
-.simple .cardImage {
-  width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 8px 8px 0 0;
 }
 
-.robloxTopInfo {
+.robloxTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 0.5rem;
-  text-align: center;
+}
+
+.robloxPowerLevel {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .robloxName {
   font-size: 1.2rem;
   font-weight: bold;
-  color: var(--card-text);
 }
 
-.robloxBottomInfo {
+.robloxElement {
+  font-size: 1.5rem;
+}
+
+.robloxArtwork {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.robloxBottom {
   padding: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.robloxRarity {
-  text-align: center;
-}
-
 .robloxStats {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .robloxStat {
   display: flex;
-  gap: 0.25rem;
   align-items: center;
+  gap: 0.25rem;
 }
 
-.robloxEmojis {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 1.5rem;
-}
-
-.robloxPassive {
+.robloxDescription {
   font-size: 0.8rem;
   text-align: center;
-  color: var(--card-text);
 }
 
-
-/* TCG Artwork Section */
-.cardArtworkSection {
-  height: 60%;
-  position: relative;
-  overflow: hidden;
-}
-
-/* TCG Inventory Section */
-.cardInventorySection {
-  height: 15%;
-  padding: 0.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* TCG Stats Section */
-.cardStatsSection {
-  height: 10%;
-  padding: 0.25rem 0.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-
-/* TCG Ability Section */
-.cardAbilitySection {
-  height: 10%;
-  padding: 0.25rem 0.5rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-}
-
-/* TCG Rarity Section */
-.cardRaritySection {
-  height: 5%;
-  padding: 0.25rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  background: rgba(0, 0, 0, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cardRarity {
+.robloxRarity {
   text-align: center;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
-/* Compact layout for header */
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.5rem;
-  padding: 0.5rem;
-}
-
-.cardDescription {
-  padding: 0 0.5rem;
-  text-align: center;
-  min-height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Variant: Compact Layout */
-.compact {
-  padding: 1rem;
-  height: auto;
-  min-height: 180px;
-}
-
-/* Size variants with proper naming */
-.sm {
-  width: 200px;
-  height: 280px;
-}
-
-.md {
-  width: 250px;
-  height: 350px;
-}
-
-.lg {
-  width: 300px;
-  height: 420px;
-}
-
-/* Interactive state */
-.interactive {
-  cursor: pointer;
-}
-
-.interactive:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 20px var(--card-glow, transparent);
-}
 
 /* Rarity variants */
 .common {
@@ -268,65 +135,9 @@
   }
 }
 
-/* Card Artwork Styles */
-.cardArtwork {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border-radius: 12px 12px 0 0;
-}
-
-.cardImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px 12px 0 0;
-}
-
-.cardImageOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  opacity: 0.1;
-  pointer-events: none;
-}
-
-.cardNameOverlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-  padding: 1rem 0.5rem 0.5rem;
-}
-
-.cardNameText {
-  color: white;
-  font-weight: bold;
-  font-size: 0.875rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-  display: block;
-  text-align: center;
-}
-
-.cardArtworkGlow {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, var(--glow-color, #ffffff), transparent);
-  opacity: 0.2;
-  border-radius: 14px 14px 0 0;
-  z-index: -1;
-}
-
 /* Shimmer effect for mythic and cosmic cards */
-.mythic .cardArtwork::before,
-.cosmic .cardArtwork::before {
+.mythic .robloxArtwork::before,
+.cosmic .robloxArtwork::before {
   content: '';
   position: absolute;
   top: 0;

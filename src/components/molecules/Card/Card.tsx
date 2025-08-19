@@ -180,8 +180,8 @@ export const Card: React.FC<CardProps> = ({
         style={{
           '--card-glow': normalizedCard.visual?.glow || '#ffffff',
           '--card-border': normalizedCard.visual?.borderColor || '#e9ecef',
-          '--card-bg': normalizedCard.visual?.backgroundColor || '#ffffff',
-          '--card-text': normalizedCard.visual?.textColor || '#000000',
+          '--card-bg': normalizedCard.visual?.backgroundColor || '#1a1a1a', // Dark background
+          '--card-text': normalizedCard.visual?.textColor || '#ffffff', // Light text
           transformStyle: 'preserve-3d',
           rotateX,
           rotateY,
@@ -192,31 +192,26 @@ export const Card: React.FC<CardProps> = ({
         whileTap={interactive ? { scale: 0.98 } : undefined}
         transition={{ duration: 0.3 }}
       >
-        <div className={styles.robloxTopInfo}>
-          <Text className={styles.robloxName} weight="bold">{normalizedCard.name}</Text>
-        </div>
-        <CardArtwork card={normalizedCard} size={size} variant="simple" />
-        <div className={styles.robloxBottomInfo}>
-          <Badge className={styles.robloxRarity} variant={normalizedCard.rarity.toLowerCase() as any} size="sm" rounded>
-            {normalizedCard.rarity}
-          </Badge>
-          <div className={styles.robloxStats}>
-            <div className={styles.robloxStat}>
-              <Text weight="bold">HP:</Text>
-              <Text>{normalizedCard.health}</Text>
-            </div>
-            <div className={styles.robloxStat}>
-              <Text weight="bold">ATK:</Text>
-              <Text>{normalizedCard.attackSpeed}</Text>
-            </div>
+        <div className={styles.robloxCardFrame}>
+          <div className={styles.robloxTop}>
+            <div className={styles.robloxPowerLevel}>{normalizedCard.health}</div>
+            <div className={styles.robloxName}>{normalizedCard.name}</div>
+            <div className={styles.robloxElement}>{normalizedCard.emojis[0]?.emoji}</div>
           </div>
-          <div className={styles.robloxEmojis}>
-            {normalizedCard.emojis.map((emoji, index) => (
-              <span key={index}>{emoji.emoji}</span>
-            ))}
+          <div className={styles.robloxArtwork}>
+            <CardArtwork card={normalizedCard} size={size} variant="simple" />
           </div>
-          <div className={styles.robloxPassive}>
-            <Text>{normalizedCard.passiveAbility.description}</Text>
+          <div className={styles.robloxBottom}>
+            <div className={styles.robloxStats}>
+              <div className={styles.robloxStat}>
+                <span role="img" aria-label="Attack">⚔️</span>
+                <span>{normalizedCard.attackSpeed}</span>
+              </div>
+            </div>
+            <div className={styles.robloxDescription}>
+              {normalizedCard.passiveAbility.description}
+            </div>
+            <div className={styles.robloxRarity}>{normalizedCard.rarity}</div>
           </div>
         </div>
       </motion.div>
