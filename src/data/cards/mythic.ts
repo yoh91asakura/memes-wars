@@ -33,74 +33,92 @@ export const mythicCards: UnifiedCard[] = [
     health: 20,
     attackSpeed: 0.8,
     
-    // Enhanced Combat System
-    emojis: [{
-      character: '🧠',
-      damage: 12,
-      speed: 1,
-      trajectory: 'homing',
-      effects: [EffectType.CHAOS, EffectType.MULTIPLY, EffectType.PRECISION],
-      target: 'OPPONENT',
-      fireRate: 0.8,
-      piercing: true,
-      homing: true,
-      bounces: 0
-    }, {
-      character: '🌌',
-      damage: 8,
-      speed: 2,
-      trajectory: 'spiral',
-      effects: [EffectType.REFLECT, EffectType.BARRIER],
-      target: 'OPPONENT',
-      fireRate: 0.6,
-      piercing: false,
-      homing: false,
-      bounces: 5
-    }, {
-      character: '✨',
-      damage: 6,
-      speed: 4,
-      trajectory: 'wave',
-      effects: [EffectType.HEAL, EffectType.BOOST],
-      target: 'OPPONENT',
-      fireRate: 1.2,
-      piercing: false,
-      homing: false,
-      bounces: 2
-    }, {
-      character: '🔮',
-      damage: 10,
-      speed: 3,
-      trajectory: 'random',
-      effects: [EffectType.CHAOS, EffectType.STUN],
-      target: 'OPPONENT',
-      fireRate: 0.9,
-      piercing: true,
-      homing: false,
-      bounces: 3
-    }, {
-      character: '🌀',
-      damage: 15,
-      speed: 1,
-      trajectory: 'homing',
-      effects: [EffectType.DRAIN, EffectType.MULTIPLY],
-      target: 'OPPONENT',
-      fireRate: 0.4,
-      piercing: true,
-      homing: true,
-      bounces: 0
-    }, {
-      character: '💫',
-      damage: 4,
-      speed: 6,
-      trajectory: 'straight',
-      effects: [EffectType.PRECISION],
-      target: 'OPPONENT',
-      fireRate: 2.0,
-      piercing: false,
-      homing: false,
-      bounces: 1
-    }],
+    // Enhanced Combat System - Mythic cards have 6-8 emojis with ultimate synergies
+    emojis: [
+      {
+        character: '💥',  // Explosion - massive area damage
+        damage: 8,
+        speed: 2,
+        trajectory: 'arc',
+        effects: [EffectType.AREA],
+        target: 'OPPONENT',
+        fireRate: 0.8,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '⚡',  // Lightning - chain attacks
+        damage: 5,
+        speed: 5,
+        trajectory: 'homing',
+        effects: [EffectType.CHAIN],
+        target: 'OPPONENT',
+        fireRate: 1.2,
+        piercing: true,
+        homing: true,
+        bounces: 2
+      },
+      {
+        character: '💠',  // Skull - execution
+        damage: 6,
+        speed: 3,
+        trajectory: 'straight',
+        effects: [EffectType.EXECUTE],
+        target: 'OPPONENT',
+        fireRate: 0.5,
+        piercing: true,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '✨',  // Sparkles - buff attack
+        damage: 1,
+        speed: 4,
+        trajectory: 'wave',
+        effects: [EffectType.BOOST],
+        target: 'SELF',
+        fireRate: 1.5,
+        piercing: false,
+        homing: false,
+        bounces: 2
+      },
+      {
+        character: '🔋',  // Battery - energy generation
+        damage: 1,
+        speed: 2,
+        trajectory: 'arc',
+        effects: [EffectType.ENERGY],
+        target: 'SELF',
+        fireRate: 0.8,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '👑',  // Crown - majesty buff
+        damage: 4,
+        speed: 3,
+        trajectory: 'straight',
+        effects: [EffectType.BOOST],
+        target: 'SELF',
+        fireRate: 0.6,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '🎈',  // Chaos - random effects
+        damage: 3,
+        speed: 3,
+        trajectory: 'random',
+        effects: [EffectType.CHAOS],
+        target: 'OPPONENT',
+        fireRate: 1.0,
+        piercing: false,
+        homing: false,
+        bounces: 3
+      }],
     cardEffects: [{
       id: 'omniscience',
       name: 'Omniscience',

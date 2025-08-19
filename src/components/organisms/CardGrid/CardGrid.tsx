@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Card as CardType } from '../../types';
-import { Card } from '../../molecules/Card/Card';
+import { UnifiedCard } from '../../../models/unified/Card';
+import { TCGCard } from '../TCGCard';
 import { SearchBox } from '../../molecules/SearchBox/SearchBox';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
@@ -9,9 +9,9 @@ import { Icon } from '../../atoms/Icon';
 import './CardGrid.css';
 
 interface CardGridProps {
-  cards: CardType[];
+  cards: UnifiedCard[];
   loading?: boolean;
-  onCardClick?: (card: CardType) => void;
+  onCardClick?: (card: UnifiedCard) => void;
   onLoadMore?: () => void;
   hasMore?: boolean;
   searchable?: boolean;
@@ -19,6 +19,8 @@ interface CardGridProps {
   emptyMessage?: string;
   className?: string;
   testId?: string;
+  variant?: 'collection' | 'battle' | 'detail';
+  cardSize?: 'small' | 'medium' | 'large';
 }
 
 export const CardGrid: React.FC<CardGridProps> = ({
@@ -32,6 +34,8 @@ export const CardGrid: React.FC<CardGridProps> = ({
   emptyMessage = 'No cards found',
   className = '',
   testId,
+  variant = 'collection',
+  cardSize = 'medium',
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'rarity' | 'recent'>('recent');
@@ -70,7 +74,8 @@ export const CardGrid: React.FC<CardGridProps> = ({
     return filtered;
   }, [cards, searchQuery, sortBy]);
 
-  const handleCardClick = (card: CardType) => {
+
+  const handleCardClick = (card: UnifiedCard) => {
     if (onCardClick) {
       onCardClick(card);
     }
@@ -172,12 +177,14 @@ export const CardGrid: React.FC<CardGridProps> = ({
                   variants={cardVariants}
                   layout
                 >
-                  <Card
+                  <TCGCard
                     card={card}
-                    variant="tcg"
-                    size="md"
-                    interactive
-                    onClick={handleCardClick ? (clickedCard) => handleCardClick(clickedCard as CardType) : undefined}
+                    variant={variant}
+                    size={cardSize}
+                    animated
+                    onClick={handleCardClick}
+                    showStats={true}
+                    showEmojis={true}
                   />
                 </motion.div>
               ))}

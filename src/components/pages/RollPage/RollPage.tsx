@@ -1,7 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { UnifiedCard } from '../../../models/unified/Card';
-import { convertUnifiedCardsToLegacy } from '../../../utils/typeConversions';
-import { Card } from '../../../components/types';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
 import { Text } from '../../atoms/Text';
@@ -27,12 +25,7 @@ export const RollPage: React.FC<RollPageProps> = ({
 
   const handleRoll = useCallback(async (): Promise<UnifiedCard> => {
     try {
-      // Check if player has enough coins
-      const rollCost = 100; // Get from config
-      const success = await spendCoins(rollCost);
-      if (!success) {
-        throw new Error('Not enough coins to roll!');
-      }
+      // Rolls are free - no cost required
       
       // Perform the roll using the roll store
       const rollResult = await performSingleRoll();
@@ -46,9 +39,9 @@ export const RollPage: React.FC<RollPageProps> = ({
       console.error('Roll failed:', error);
       throw error;
     }
-  }, [performSingleRoll, spendCoins]);
+  }, [performSingleRoll]);
 
-  const handleCardClick = (_card: Card) => {
+  const handleCardClick = (_card: UnifiedCard) => {
     // Card clicked - could open modal or navigate to details
     // Debug log removed
   };
@@ -75,7 +68,7 @@ export const RollPage: React.FC<RollPageProps> = ({
           </div>
           
           <CardGrid
-            cards={convertUnifiedCardsToLegacy(rolledCards)}
+            cards={rolledCards}
             title=""
             searchable={true}
             onCardClick={handleCardClick}

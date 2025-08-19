@@ -1,14 +1,9 @@
+// DEPRECATED: This component is being replaced by TCGCard
+// Use TCGCard from organisms/TCGCard instead
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Card as LegacyCardType } from '../../types';
 import { UnifiedCard, CardRarity } from '../../../models/unified/Card';
-import { Text } from '../../atoms/Text';
-import { Badge } from '../../atoms/Badge';
-import { CardArtwork } from './CardArtwork';
-import { CardInventory } from './CardInventory';
-import { CardStats } from './CardStats';
-import { CardAbility } from './CardAbility';
-import styles from './Card.module.css';
+import { TCGCard } from '../../organisms/TCGCard';
 
 interface CardProps {
   card: UnifiedCard | LegacyCardType;
@@ -88,6 +83,10 @@ const normalizeLegacyCard = (card: LegacyCardType): UnifiedCard => {
   } as UnifiedCard;
 };
 
+/**
+ * @deprecated Use TCGCard from organisms/TCGCard instead
+ * This component is maintained for backward compatibility only
+ */
 export const Card: React.FC<CardProps> = ({
   card,
   size = 'md',
@@ -100,120 +99,26 @@ export const Card: React.FC<CardProps> = ({
   className = '',
   testId,
 }) => {
-  // Normalize card data
+  // Normalize card data for TCGCard compatibility
   const normalizedCard: UnifiedCard = isUnifiedCard(card) ? card : normalizeLegacyCard(card) as UnifiedCard;
   
-  const handleClick = () => {
-    if (interactive && onClick) {
-      onClick(card);
-    }
-  };
-
-  const cardClass = [
-    styles.card,
-    styles[variant], // tcg or compact
-    styles[size], // sm, md, lg
-    styles[normalizedCard.rarity.toLowerCase()], // rarity styling
-    interactive && styles.interactive,
-    className
-  ].filter(Boolean).join(' ');
-
-  // Get rarity probability for display
-  const getRarityProbability = (): string => {
-    if (!normalizedCard.rarityProbability) return '';
-    return `(1/${normalizedCard.rarityProbability})`;
-  };
-
-  if (variant === 'compact') {
-    // Legacy compact layout for backward compatibility
-    return (
-      <motion.div
-        className={cardClass}
-        onClick={handleClick}
-        data-testid={testId}
-        whileHover={interactive ? { scale: 1.05, y: -8 } : undefined}
-        whileTap={interactive ? { scale: 0.98 } : undefined}
-        transition={{ duration: 0.2 }}
-      >
-        <div className={styles.cardHeader}>
-          <Text variant="h6" weight="semibold" truncate>
-            {normalizedCard.name}
-          </Text>
-          <Badge variant={normalizedCard.rarity.toLowerCase() as any} size="sm" rounded>
-            {normalizedCard.rarity}
-          </Badge>
-        </div>
-        <div className={styles.cardDescription}>
-          <Text variant="caption" color="muted">
-            {normalizedCard.description}
-          </Text>
-        </div>
-        {showStats && <CardStats card={normalizedCard} />}
-      </motion.div>
-    );
-  }
-
-  // TCG Layout
+  // Convert legacy props to new TCGCard props
+  const tcgSize = size === 'sm' ? 'small' : size === 'lg' ? 'large' : 'medium';
+  const tcgVariant = variant === 'compact' ? 'collection' : 'collection';
+  
+  // Use new TCGCard component
   return (
-    <motion.div
-      className={cardClass}
-      onClick={handleClick}
-      data-testid={testId}
-      whileHover={interactive ? { scale: 1.02, y: -4 } : undefined}
-      whileTap={interactive ? { scale: 0.98 } : undefined}
-      transition={{ duration: 0.3 }}
-      style={{
-        '--card-glow': normalizedCard.visual?.glow || '#ffffff',
-        '--card-border': normalizedCard.visual?.borderColor || '#e9ecef',
-        '--card-bg': normalizedCard.visual?.backgroundColor || '#ffffff',
-        '--card-text': normalizedCard.visual?.textColor || '#000000'
-      } as React.CSSProperties}
-    >
-      {/* Card Artwork Section (60%) */}
-      <div className={styles.cardArtworkSection}>
-        <CardArtwork card={normalizedCard} size={size} />
-      </div>
-
-      {/* Card Inventory Section (15%) */}
-      {showInventory && normalizedCard.emojis && normalizedCard.emojis.length > 0 && (
-        <div className={styles.cardInventorySection}>
-          <CardInventory card={normalizedCard} />
-        </div>
-      )}
-
-      {/* Card Stats Section (10%) */}
-      {showStats && (
-        <div className={styles.cardStatsSection}>
-          <CardStats card={normalizedCard} />
-        </div>
-      )}
-
-      {/* Card Ability Section (10%) */}
-      {showAbility && (
-        <div className={styles.cardAbilitySection}>
-          <CardAbility card={normalizedCard} />
-        </div>
-      )}
-
-      {/* Card Rarity Section (5%) */}
-      <div className={styles.cardRaritySection}>
-        <div className={styles.cardRarity}>
-          <Text variant="caption" weight="bold" color="primary" align="center">
-            {normalizedCard.rarity} {getRarityProbability()}
-          </Text>
-        </div>
-      </div>
-
-      {/* Interactive overlay */}
-      {interactive && (
-        <div className="card__overlay">
-          <div className="card__overlay-content">
-            <Text variant="caption" color="primary" weight="medium">
-              Click to view
-            </Text>
-          </div>
-        </div>
-      )}
-    </motion.div>
+    <TCGCard
+      card={normalizedCard}
+      size={tcgSize}
+      variant={tcgVariant}
+      onClick={onClick ? () => onClick(card) : undefined}
+      selected={false}
+      animated={interactive}
+      showStats={showStats}
+      showEmojis={showInventory}
+      className={className}
+      testId={testId}
+    />
   );
 };

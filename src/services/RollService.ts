@@ -72,7 +72,7 @@ export class RollService {
 
   private initializeCardDatabase(): void {
     // Initialize with all available cards
-    // Convert UnifiedCard to legacy Card format for compatibility
+    // Map cards with lowercase keys for consistency
     this.allCards.set('common', this.convertUnifiedCardsToUnified(commonCards));
     this.allCards.set('uncommon', this.convertUnifiedCardsToUnified(uncommonCards));
     this.allCards.set('rare', this.convertUnifiedCardsToUnified(rareCards));
@@ -131,12 +131,13 @@ export class RollService {
       const result = this.rollSingle(currentStats);
       cards.push(result);
       
-      if (['rare', 'epic', 'legendary', 'mythic', 'cosmic'].includes(result.card.rarity)) {
+      const rarityLower = result.card.rarity.toLowerCase();
+      if (['rare', 'epic', 'legendary', 'mythic', 'cosmic'].includes(rarityLower)) {
         hasRareOrBetter = true;
       }
       
       // Update stats for next roll
-      currentStats = this.updateStatsAfterRoll(currentStats, result.card.rarity);
+      currentStats = this.updateStatsAfterRoll(currentStats, result.card.rarity.toLowerCase());
     }
 
     // 10th card: guarantee rare or better if none yet
@@ -327,7 +328,9 @@ export class RollService {
       cosmic: 10000
     };
     
-    return rarityValues[card.rarity as keyof typeof rarityValues] || 1;
+    // Handle both enum and string rarities
+    const rarityKey = (typeof card.rarity === 'string' ? card.rarity : String(card.rarity)).toLowerCase();
+    return rarityValues[rarityKey as keyof typeof rarityValues] || 1;
   }
 
   /**
@@ -472,11 +475,12 @@ export class RollService {
   /**
    * Calculate rarity breakdown for cards
    */
-  private calculateRarityBreakdown(cards: Card[]): Record<string, number> {
+  private calculateRarityBreakdown(cards: any[]): Record<string, number> {
     const breakdown: Record<string, number> = {};
     
     for (const card of cards) {
-      breakdown[card.rarity] = (breakdown[card.rarity] || 0) + 1;
+      const rarityKey = (typeof card.rarity === 'string' ? card.rarity : String(card.rarity)).toLowerCase();
+      breakdown[rarityKey] = (breakdown[rarityKey] || 0) + 1;
     }
     
     return breakdown;
@@ -485,11 +489,14 @@ export class RollService {
   /**
    * Get highlight cards (rare or better)
    */
-  private getHighlightCards(cards: Card[]): Card[] {
+  private getHighlightCards(cards: any[]): any[] {
     const highlightRarities = ['rare', 'epic', 'legendary', 'mythic', 'cosmic'];
-    return cards.filter(card => highlightRarities.includes(card.rarity))
-                .sort((a, b) => this.getCardValue(b as any) - this.getCardValue(a as any))
-                .slice(0, 5); // Top 5 best cards
+    return cards.filter(card => {
+      const rarityKey = (typeof card.rarity === 'string' ? card.rarity : String(card.rarity)).toLowerCase();
+      return highlightRarities.includes(rarityKey);
+    })
+    .sort((a, b) => this.getCardValue(b) - this.getCardValue(a))
+    .slice(0, 5); // Top 5 best cards
   }
 
   /**

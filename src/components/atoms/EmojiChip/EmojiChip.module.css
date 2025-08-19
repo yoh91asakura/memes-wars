@@ -1,0 +1,21 @@
+.emojiChip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: all 0.2s ease;
+  cursor: default;
+}
+
+.emojiChip:hover {
+  transform: scale(1.15);
+}
+
+.emoji {
+  line-height: 1;
+  user-select: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Simplified - no damage or effect indicators needed */

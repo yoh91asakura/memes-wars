@@ -9,9 +9,10 @@
   min-height: 400px;
   padding: 3rem;
   text-align: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 40, 0.4);
   border-radius: 16px;
-  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border: 2px dashed rgba(102, 126, 234, 0.3);
+  backdrop-filter: blur(10px);
 }
 
 /* Mobile optimizations */

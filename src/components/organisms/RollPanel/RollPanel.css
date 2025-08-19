@@ -20,9 +20,10 @@
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(30, 30, 40, 0.6);
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .roll-panel__stat-content {
@@ -77,10 +78,13 @@
   gap: 1rem;
   width: 220px;
   height: 320px;
-  background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 2px dashed #dee2e6;
+  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9) 0%, rgba(20, 20, 30, 0.95) 100%);
+  border: 2px dashed rgba(102, 126, 234, 0.4);
   border-radius: 16px;
   padding: 2rem;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    inset 0 0 40px rgba(102, 126, 234, 0.1);
 }
 
 .roll-panel__button {
@@ -90,9 +94,10 @@
 
 .roll-panel__tips {
   padding: 1rem;
-  background: rgba(102, 126, 234, 0.05);
+  background: rgba(102, 126, 234, 0.1);
   border-radius: 8px;
   border-left: 4px solid #667eea;
+  backdrop-filter: blur(10px);
 }
 
 /* Mobile optimizations */
