@@ -2,28 +2,6 @@
 
 ## 📈 DERNIÈRES AMÉLIORATIONS (v2.1)
 
-### ⚡ Task Management Simplifié
-- **NPM Scripts** : Remplacement des longues commandes MCP par des scripts npm simples
-- **Workflows Optimisés** : Suppression des timeouts et des commandes complexes
-- **Documentation Consolidée** : Sections dupliquées fusionnées pour plus de clarté
-
-### 🎯 Nouveaux Scripts NPM Disponibles
-```bash
-npm run taskmaster:list         # Lister toutes les tâches
-npm run taskmaster:stats        # Statistiques du projet
-npm run taskmaster:todo         # Tâches à faire
-npm run taskmaster:active       # Tâches en cours
-npm run taskmaster:critical     # Tâches critiques
-npm run taskmaster:high         # Tâches haute priorité
-npm run taskmaster:check        # Vérification santé système
-npm run taskmaster:init         # Initialisation taskmaster
-```
-
-### 🔧 Avantages
-- ✅ **Plus rapide** - Scripts npm vs commandes MCP longues
-- ✅ **Plus simple** - Commandes faciles à retenir
-- ✅ **Plus fiable** - Élimination des timeouts fréquents
-- ✅ **Meilleure UX** - Interface utilisateur améliorée
 
 ---
 
@@ -66,6 +44,22 @@ npm run taskmaster:high
 
 # 4. VOIR STATISTIQUES PROJET
 npm run taskmaster:stats
+```
+### ⚡ Task Management Simplifié
+- **NPM Scripts** : Remplacement des longues commandes MCP par des scripts npm simples
+- **Workflows Optimisés** : Suppression des timeouts et des commandes complexes
+- **Documentation Consolidée** : Sections dupliquées fusionnées pour plus de clarté
+
+### 🎯 Nouveaux Scripts NPM Disponibles
+```bash
+npm run taskmaster:list         # Lister toutes les tâches
+npm run taskmaster:stats        # Statistiques du projet
+npm run taskmaster:todo         # Tâches à faire
+npm run taskmaster:active       # Tâches en cours
+npm run taskmaster:critical     # Tâches critiques
+npm run taskmaster:high         # Tâches haute priorité
+npm run taskmaster:check        # Vérification santé système
+npm run taskmaster:init         # Initialisation taskmaster
 ```
 
 ## 🆕 PROTOCOLE DEMANDE UTILISATEUR
@@ -485,19 +479,19 @@ todo → in-progress → review → done
 ### États et Actions Requises:
 - **`todo`** ou **`backlog`** : Disponible pour assignation
   - Action: `mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
-  
+
 - **`in-progress`** : Agent travaille activement
   - Action: Update toutes les 2h via commentaires
   - Command: `mcp task-master-ai add_comment --taskId [id] --comment "[progress]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
-  
+
 - **`review`** : Code complet, PR créée
   - Action: Créer PR + update status
   - Command: `mcp task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
-  
+
 - **`done`** : APRÈS merge ET validation user
   - Action: Update + cleanup branch
   - Command: `mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
-  
+
 - **`blocked`** : Dépendance non résolue
   - Action: Documenter le blocage
   - Command: `mcp task-master-ai update_task --taskId [id] --status "blocked" --blockedReason "[why]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
@@ -567,27 +561,27 @@ Message 3: Create Card.ts
   Write "src/components/Dashboard.tsx" [dashboardContent]
   Write "src/components/UserProfile.tsx" [profileContent]
   Write "src/hooks/useAuth.ts" [authHookContent]
-  
+
   // Backend API (Node/Express)
   Write "server/routes/auth.js" [authRoutes]
   Write "server/routes/users.js" [userRoutes]
   Write "server/controllers/authController.js" [authController]
   Write "server/models/User.js" [userModel]
-  
+
   // Database & Config
   Write "server/config/database.js" [dbConfig]
   Write "migrations/001_create_users.sql" [migration]
-  
+
   // Tests (Frontend + Backend)
   Write "tests/frontend/components.test.tsx" [frontendTests]
   Write "tests/backend/api.test.js" [backendTests]
   Write "tests/e2e/userflow.test.js" [e2eTests]
-  
+
   // Configuration Files
   Write "package.json" [packageConfig]
   Write "docker-compose.yml" [dockerConfig]
   Write ".env.example" [envExample]
-  
+
   // Execute ALL commands
   Bash "npm install && npm run dev"
   Bash "docker-compose up -d"
@@ -667,7 +661,7 @@ Phase 1: Foundation (Semaines 1-4) ← NOUS SOMMES ICI
 
 Phase 2: Combat Core (Semaines 5-8)
   ├── Combat Arena
-  ├── Projectile System  
+  ├── Projectile System
   ├── Collision Detection
   └── HP/Damage System
 ```
@@ -1045,15 +1039,15 @@ const limiter = rateLimit({
   # Unit Tests
   Bash "npm run test:unit:frontend"
   Bash "npm run test:unit:backend"
-  
+
   # Integration Tests
   Bash "npm run test:integration:api"
   Bash "npm run test:integration:db"
-  
+
   # E2E Tests
   Bash "npm run test:e2e:chrome"
   Bash "npm run test:e2e:firefox"
-  
+
   # Performance Tests
   Bash "npm run test:lighthouse"
   Bash "npm run test:load"
@@ -1076,7 +1070,7 @@ describe('POST /api/users', () => {
       .post('/api/users')
       .send(validUserData)
       .expect(201);
-    
+
     expect(res.body.success).toBe(true);
   });
 });
@@ -1090,8 +1084,8 @@ describe('POST /api/users', () => {
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 // Image Optimization
-<img 
-  src="image.webp" 
+<img
+  src="image.webp"
   loading="lazy"
   srcSet="image-320w.jpg 320w, image-640w.jpg 640w"
 />
@@ -1141,7 +1135,7 @@ app.use(compression({
 Systèmes à consulter AVANT TOUTE ACTION:
   1. taskmaster (MCP)           # État temps réel des tâches
      mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
-  2. .taskmaster/tasks.db       # Base de données SQLite des tâches  
+  2. .taskmaster/tasks.db       # Base de données SQLite des tâches
   3. docs/ROADMAP.md           # Vision et phases
   4. git branch --remote       # Qui travaille sur quoi
 ```
@@ -1170,7 +1164,7 @@ while working:
   mcp task-master-ai add_comment --taskId [id] --comment "[progress description]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
   git add . && git commit -m "wip: [id] - [progress description]"
   git push origin task/[id]-[desc]
-  
+
 # 5. Fin de session
 mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 git add .
@@ -1314,8 +1308,8 @@ Chaque tâche contient OBLIGATOIREMENT :
 - **Sprint**: [Sprint Number]
 
 ## 🎯 User Story
-**As a** [persona]  
-**I want** [what]  
+**As a** [persona]
+**I want** [what]
 **So that** [why]
 
 ## 📝 Description
@@ -1536,13 +1530,13 @@ git push origin task/[task-id]-[description]
 
 ### 🎯 Avantages de TASKMASTER
 
-✅ **Base de données robuste** : SQLite pour persistance et requêtes  
-✅ **API MCP complète** : Interface standardisée et puissante  
-✅ **Métriques automatiques** : Statistiques et reporting intégrés  
-✅ **Gestion des dépendances** : Relations entre tâches  
-✅ **Historique complet** : Activité et commentaires trackés  
-✅ **Multi-projet** : Support de plusieurs projets  
-✅ **Recherche avancée** : Requêtes complexes possibles  
+✅ **Base de données robuste** : SQLite pour persistance et requêtes
+✅ **API MCP complète** : Interface standardisée et puissante
+✅ **Métriques automatiques** : Statistiques et reporting intégrés
+✅ **Gestion des dépendances** : Relations entre tâches
+✅ **Historique complet** : Activité et commentaires trackés
+✅ **Multi-projet** : Support de plusieurs projets
+✅ **Recherche avancée** : Requêtes complexes possibles
 ✅ **Intégration native** : Fonctionne avec MCP dans Claude
 
 ### 🔧 Migration Complétée
