@@ -31,57 +31,352 @@
 }
 
 /* Variant: TCG Layout */
-.card--tcg {
+.tcg {
   padding: 0;
 }
 
-.card--tcg .card__artwork-section {
+/* TCG Artwork Section */
+.cardArtworkSection {
   height: 60%;
   position: relative;
+  overflow: hidden;
 }
 
-.card--tcg .card__inventory-section {
+/* TCG Inventory Section */
+.cardInventorySection {
   height: 15%;
   padding: 0.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.card--tcg .card__stats-section {
+/* TCG Stats Section */
+.cardStatsSection {
   height: 10%;
   padding: 0.25rem 0.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
-.card--tcg .card__ability-section {
+/* TCG Ability Section */
+.cardAbilitySection {
   height: 10%;
   padding: 0.25rem 0.5rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
 }
 
-.card--tcg .card__rarity-section {
+/* TCG Rarity Section */
+.cardRaritySection {
   height: 5%;
   padding: 0.25rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   background: rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardRarity {
+  text-align: center;
+}
+
+/* Compact layout for header */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.cardDescription {
+  padding: 0 0.5rem;
+  text-align: center;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Variant: Compact Layout */
-.card--compact {
+.compact {
   padding: 1rem;
   height: auto;
   min-height: 180px;
 }
 
+/* Size variants with proper naming */
+.sm {
+  width: 140px;
+  min-height: 200px;
+}
+
+.md {
+  width: 180px;
+  min-height: 260px;
+}
+
+.lg {
+  width: 220px;
+  min-height: 320px;
+}
+
 /* Interactive state */
-.card--interactive {
+.interactive {
   cursor: pointer;
 }
 
-.card--interactive:hover {
+.interactive:hover {
   transform: translateY(-2px);
   box-shadow: 
     0 8px 25px rgba(0, 0, 0, 0.15),
     0 0 20px var(--card-glow, transparent);
+}
+
+/* Rarity variants */
+.common {
+  --card-border: #95a5a6;
+  --card-glow: #95a5a6;
+}
+
+.uncommon {
+  --card-border: #27ae60;
+  --card-glow: #27ae60;
+}
+
+.rare {
+  --card-border: #3498db;
+  --card-glow: #3498db;
+}
+
+.epic {
+  --card-border: #9b59b6;
+  --card-glow: #9b59b6;
+}
+
+.legendary {
+  --card-border: #f39c12;
+  --card-glow: #f39c12;
+}
+
+.mythic {
+  --card-border: #e67e22;
+  --card-glow: #e67e22;
+}
+
+.cosmic {
+  --card-border: #e74c3c;
+  --card-glow: #e74c3c;
+  animation: cosmic-pulse 2s ease-in-out infinite;
+}
+
+@keyframes cosmic-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5), 0 0 30px rgba(155, 89, 182, 0.2);
+  }
+}
+
+/* Card Artwork Styles */
+.cardArtwork {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px 12px 0 0;
+}
+
+.cardImageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.cardNameOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  padding: 1rem 0.5rem 0.5rem;
+}
+
+.cardNameText {
+  color: white;
+  font-weight: bold;
+  font-size: 0.875rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  display: block;
+  text-align: center;
+}
+
+.cardArtworkGlow {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--glow-color, #ffffff), transparent);
+  opacity: 0.2;
+  border-radius: 14px 14px 0 0;
+  z-index: -1;
+}
+
+/* Card Inventory Styles */
+.cardInventory {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardInventoryGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.25rem;
+}
+
+.cardInventoryItem {
+  position: relative;
+  aspect-ratio: 1;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.cardInventoryItemEmpty {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+}
+
+.cardInventoryDamage {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  background: rgba(255, 0, 0, 0.8);
+  color: white;
+  font-size: 0.6rem;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+.cardInventoryFirerate {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  background: rgba(0, 100, 255, 0.8);
+  color: white;
+  font-size: 0.5rem;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+
+.cardInventoryEmpty {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.cardInventoryEmptyText {
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.cardInventoryOverflow {
+  margin-top: 0.25rem;
+  font-size: 0.6rem;
+  color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+/* Card Stats Styles */
+.cardStats {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0.25rem;
+}
+
+.cardStatsPrimary {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.cardStatsSecondary {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.cardStatsReward {
+  margin-left: auto;
+}
+
+.cardStatItem {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.25rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.cardStatItemSmall {
+  font-size: 0.6rem;
+  padding: 0.0625rem 0.125rem;
+}
+
+.cardStatItemReward {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+/* Card Ability Styles */
+.cardAbility {
+  width: 100%;
+  height: 100%;
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cardAbilityEmpty {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
 }
 
 /* Card Artwork Styles */

@@ -2,6 +2,7 @@ import React from 'react';
 import { UnifiedCard } from '../../../models/unified/Card';
 import { Text } from '../../atoms/Text';
 import { Icon } from '../../atoms/Icon';
+import styles from './Card.module.css';
 
 interface CardAbilityProps {
   card: UnifiedCard;
@@ -17,7 +18,7 @@ export const CardAbility: React.FC<CardAbilityProps> = ({
 
   if (!hasPassiveAbility && !hasCardEffects) {
     return (
-      <div className="card__ability card__ability--empty">
+      <div className={`${styles.cardAbility} ${styles.cardAbilityEmpty}`}>
         <Text variant="caption" color="muted" align="center">
           No special abilities
         </Text>
@@ -26,7 +27,7 @@ export const CardAbility: React.FC<CardAbilityProps> = ({
   }
 
   return (
-    <div className="card__ability">
+    <div className={styles.cardAbility}>
       {/* Passive Ability */}
       {hasPassiveAbility && (
         <div className="card__ability-passive">

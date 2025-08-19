@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UnifiedCard } from '../../../models/unified/Card';
 import { getCardImageUrl, getPlaceholderImageUrl, generateCardPlaceholder } from '../../../utils/cardImageUtils';
+import styles from './Card.module.css';
 
 interface CardArtworkProps {
   card: UnifiedCard;
@@ -31,25 +32,31 @@ export const CardArtwork: React.FC<CardArtworkProps> = ({ card, size = 'md' }) =
   };
 
   return (
-    <div className={`card__artwork card__artwork--${size}`}>
+    <div className={`${styles.cardArtwork} ${styles[`cardArtwork--${size}`] || ''}`}>
       <img 
         src={getImageSrc()}
         alt={card.name}
         onError={handleImageError}
-        className="card__image"
+        className={styles.cardImage}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: '12px 12px 0 0'
+        }}
       />
       
       {/* Rarity overlay effect */}
-      <div className={`card__image-overlay card__image-overlay--${card.rarity.toLowerCase()}`} />
+      <div className={`${styles.cardImageOverlay} ${styles[`overlay--${card.rarity.toLowerCase()}`] || ''}`} />
       
       {/* Card name overlay */}
-      <div className="card__name-overlay">
-        <span className="card__name-text">{card.name}</span>
+      <div className={styles.cardNameOverlay}>
+        <span className={styles.cardNameText}>{card.name}</span>
       </div>
       
       {/* Visual glow effect using card's visual properties */}
       <div 
-        className="card__artwork-glow"
+        className={styles.cardArtworkGlow}
         style={{
           '--glow-color': card.visual?.glow || '#ffffff',
           '--border-color': card.visual?.borderColor || '#e9ecef'

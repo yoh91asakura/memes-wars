@@ -8,7 +8,7 @@ import { CardArtwork } from './CardArtwork';
 import { CardInventory } from './CardInventory';
 import { CardStats } from './CardStats';
 import { CardAbility } from './CardAbility';
-import './Card.css';
+import styles from './Card.module.css';
 
 interface CardProps {
   card: UnifiedCard | LegacyCardType;
@@ -110,11 +110,11 @@ export const Card: React.FC<CardProps> = ({
   };
 
   const cardClass = [
-    'card',
-    `card--${variant}`,
-    `card--${size}`,
-    `card--${normalizedCard.rarity.toLowerCase()}`,
-    interactive && 'card--interactive',
+    styles.card,
+    styles[variant], // tcg or compact
+    styles[size], // sm, md, lg
+    styles[normalizedCard.rarity.toLowerCase()], // rarity styling
+    interactive && styles.interactive,
     className
   ].filter(Boolean).join(' ');
 
@@ -135,7 +135,7 @@ export const Card: React.FC<CardProps> = ({
         whileTap={interactive ? { scale: 0.98 } : undefined}
         transition={{ duration: 0.2 }}
       >
-        <div className="card__header">
+        <div className={styles.cardHeader}>
           <Text variant="h6" weight="semibold" truncate>
             {normalizedCard.name}
           </Text>
@@ -143,7 +143,7 @@ export const Card: React.FC<CardProps> = ({
             {normalizedCard.rarity}
           </Badge>
         </div>
-        <div className="card__description">
+        <div className={styles.cardDescription}>
           <Text variant="caption" color="muted">
             {normalizedCard.description}
           </Text>
@@ -170,34 +170,34 @@ export const Card: React.FC<CardProps> = ({
       } as React.CSSProperties}
     >
       {/* Card Artwork Section (60%) */}
-      <div className="card__artwork-section">
+      <div className={styles.cardArtworkSection}>
         <CardArtwork card={normalizedCard} size={size} />
       </div>
 
       {/* Card Inventory Section (15%) */}
       {showInventory && normalizedCard.emojis && normalizedCard.emojis.length > 0 && (
-        <div className="card__inventory-section">
+        <div className={styles.cardInventorySection}>
           <CardInventory card={normalizedCard} />
         </div>
       )}
 
       {/* Card Stats Section (10%) */}
       {showStats && (
-        <div className="card__stats-section">
+        <div className={styles.cardStatsSection}>
           <CardStats card={normalizedCard} />
         </div>
       )}
 
       {/* Card Ability Section (10%) */}
       {showAbility && (
-        <div className="card__ability-section">
+        <div className={styles.cardAbilitySection}>
           <CardAbility card={normalizedCard} />
         </div>
       )}
 
       {/* Card Rarity Section (5%) */}
-      <div className="card__rarity-section">
-        <div className="card__rarity">
+      <div className={styles.cardRaritySection}>
+        <div className={styles.cardRarity}>
           <Text variant="caption" weight="bold" color="primary" align="center">
             {normalizedCard.rarity} {getRarityProbability()}
           </Text>

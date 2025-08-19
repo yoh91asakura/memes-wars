@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../Card/Card';
 import { Text } from '../../atoms/Text';
-import { Badge } from '../../atoms/Badge';
-import { Icon } from '../../atoms/Icon';
 import { Button } from '../../atoms/Button';
+import { Icon } from '../../atoms/Icon';
 import './CollectionCard.css';
 
 interface CollectionCardProps {
@@ -68,7 +68,6 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
     infinity: '#2c3e50'
   };
 
-  const cardPower = card.attack + card.defense + card.health;
   const addedDate = card.addedAt ? new Date(card.addedAt).toLocaleDateString() : 'Unknown';
 
   if (viewMode === 'list') {
@@ -92,9 +91,6 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
             <Text variant="h6" weight="semibold" truncate>
               {card.name}
             </Text>
-            <Badge variant={card.rarity?.toLowerCase() as any} size="sm">
-              {card.rarity}
-            </Badge>
           </div>
           
           <div className="collection-card__description">
@@ -105,20 +101,12 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
           
           <div className="collection-card__stats-row">
             <div className="collection-card__stat">
-              <Icon emoji="⚔️" size="sm" />
-              <Text variant="caption">{card.attack}</Text>
-            </div>
-            <div className="collection-card__stat">
-              <Icon emoji="🛡️" size="sm" />
-              <Text variant="caption">{card.defense}</Text>
-            </div>
-            <div className="collection-card__stat">
-              <Icon name="heart" size="sm" color="danger" />
+              <Icon emoji="❤️" size="sm" />
               <Text variant="caption">{card.health}</Text>
             </div>
             <div className="collection-card__stat">
-              <Icon emoji="⚡" size="sm" />
-              <Text variant="caption" weight="medium">{cardPower}</Text>
+              <Icon emoji="🍀" size="sm" />
+              <Text variant="caption">{card.luck}</Text>
             </div>
             <div className="collection-card__date">
               <Text variant="caption" color="muted">{addedDate}</Text>
@@ -152,78 +140,18 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
   }
 
   return (
-    <motion.div
-      className={cardClass}
-      onClick={handleSelect}
-      data-testid={testId}
-      whileHover={{ scale: 1.02, y: -4 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ duration: 0.2 }}
-      style={{
-        '--rarity-color': rarityColors[card.rarity?.toLowerCase() || 'common']
-      } as React.CSSProperties}
-    >
-      {/* Card Header */}
-      <div className="collection-card__header">
-        <Text variant="h6" weight="semibold" truncate>
-          {card.name}
-        </Text>
-        <Badge variant={card.rarity?.toLowerCase() as any} size="sm" rounded>
-          {card.rarity}
-        </Badge>
-      </div>
-
-      {/* Card Image/Emoji */}
-      <div className="collection-card__image">
-        <div className="collection-card__emoji">
-          <Icon emoji={card.emoji} size="2xl" />
-        </div>
-        <div className="collection-card__glow" />
-      </div>
-
-      {/* Card Description */}
-      <div className="collection-card__description">
-        <Text variant="caption" color="muted">
-          {card.description}
-        </Text>
-      </div>
-
-      {/* Card Stats */}
-      <div className="collection-card__stats">
-        <div className="collection-card__stat">
-          <Icon name="heart" size="sm" color="danger" />
-          <Text variant="caption" weight="medium">
-            {card.health}
-          </Text>
-        </div>
-        <div className="collection-card__stat">
-          <Icon emoji="⚔️" size="sm" />
-          <Text variant="caption" weight="medium">
-            {card.attack}
-          </Text>
-        </div>
-        <div className="collection-card__stat">
-          <Icon emoji="🛡️" size="sm" />
-          <Text variant="caption" weight="medium">
-            {card.defense}
-          </Text>
-        </div>
-        <div className="collection-card__stat">
-          <Icon emoji="⚡" size="sm" />
-          <Text variant="caption" weight="bold">
-            {cardPower}
-          </Text>
-        </div>
-      </div>
-
-      {/* Card Meta */}
-      <div className="collection-card__meta">
-        <Text variant="caption" color="muted">
-          Added: {addedDate}
-        </Text>
-      </div>
-
-      {/* Actions */}
+    <div className="collection-card__wrapper">
+      <Card
+        card={card}
+        variant="tcg"
+        size={size}
+        interactive={true}
+        onClick={onSelect ? (clickedCard) => onSelect(clickedCard as UnifiedCard) : undefined}
+        className={className}
+        testId={testId}
+      />
+      
+      {/* Collection-specific actions overlay */}
       {showActions && (
         <div className="collection-card__actions">
           <Button
@@ -235,8 +163,16 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
             <Icon name="plus" size="sm" />
             Add to Deck
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRemove}
+            testId={`${testId}-remove`}
+          >
+            <Icon name="trash" size="sm" />
+          </Button>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };

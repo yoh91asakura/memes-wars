@@ -102,6 +102,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
               >
                 <Card
                   card={convertUnifiedCardToLegacy(cardToShow)}
+                  variant="tcg"
                   size="lg"
                   interactive={false}
                   className={showReveal ? 'roll-panel__card--revealed' : ''}
