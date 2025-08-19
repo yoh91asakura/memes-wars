@@ -2,6 +2,7 @@
 // Consolidated from gameStore focusing only on player-specific state
 
 import { create } from 'zustand';
+import { CardUtils } from '../models/Card';
 import { persist } from 'zustand/middleware';
 // import { createStoreMiddleware } from './middleware'; // Removed for TypeScript compatibility
 import gameConfig from '../../config/game/game.config.json';
@@ -175,7 +176,7 @@ export const usePlayerStore = create<PlayerStore>()(
             const state = get();
             const newStats = { ...state.stats };
             
-            switch (rarity.toLowerCase()) {
+            switch (typeof rarity === 'string' ? rarity.toLowerCase() : CardUtils.getRarityName(rarity).toLowerCase()) {
               case 'rare':
                 newStats.rollsSinceRare = 0;
                 break;

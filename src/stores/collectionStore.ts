@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UnifiedCard, CardRarity } from '../models/unified/Card';
+import { Card } from '../models/Card';
 import { CardService } from '../services/CardService';
 
 interface CollectionFilters {
   search: string;
-  rarity: CardRarity | 'all';
+  rarity: string | 'all';
   sortBy: 'name' | 'rarity' | 'power' | 'dateAdded';
   sortOrder: 'asc' | 'desc';
 }
@@ -13,31 +13,31 @@ interface CollectionFilters {
 interface CollectionStats {
   totalCards: number;
   uniqueCards: number;
-  cardsByRarity: Record<CardRarity, number>;
+  cardsByRarity: Record<string, number>;
   completionPercentage: number;
-  mostRecentCard?: UnifiedCard;
+  mostRecentCard?: Card;
   totalValue: number;
 }
 
 interface CollectionStore {
   // State
-  collection: UnifiedCard[];
+  collection: Card[];
   filters: CollectionFilters;
   viewMode: 'grid' | 'list';
-  selectedCard: UnifiedCard | null;
+  selectedCard: Card | null;
   
   // Actions
-  addCard: (card: UnifiedCard) => void;
+  addCard: (card: Card) => void;
   removeCard: (cardId: string) => void;
   setFilters: (filters: Partial<CollectionFilters>) => void;
   setViewMode: (mode: 'grid' | 'list') => void;
-  setSelectedCard: (card: UnifiedCard | null) => void;
+  setSelectedCard: (card: Card | null) => void;
   clearCollection: () => void;
   
   // Computed values
-  getFilteredCards: () => UnifiedCard[];
+  getFilteredCards: () => Card[];
   getCollectionStats: () => CollectionStats;
-  getCardsByRarity: (rarity: CardRarity) => UnifiedCard[];
+  getCardsByRarity: (rarity: string) => Card[];
   hasCard: (cardId: string) => boolean;
   getCardCount: (cardId: string) => number;
 }
@@ -59,7 +59,7 @@ export const useCollectionStore = create<CollectionStore>()(
       selectedCard: null,
       
       // Add card to collection
-      addCard: (card: UnifiedCard) => {
+      addCard: (card: Card) => {
         set((state) => ({
           collection: [...state.collection, {
             ...card,
@@ -89,7 +89,7 @@ export const useCollectionStore = create<CollectionStore>()(
       },
       
       // Set selected card
-      setSelectedCard: (card: UnifiedCard | null) => {
+      setSelectedCard: (card: Card | null) => {
         set({ selectedCard: card });
       },
       
@@ -162,7 +162,7 @@ export const useCollectionStore = create<CollectionStore>()(
         const { collection } = get();
         const allCards = cardService.getAllCards();
         
-        const cardsByRarity: Record<CardRarity, number> = {
+        const cardsByRarity: Record<string, number> = {
           COMMON: 0,
           UNCOMMON: 0,
           RARE: 0,
@@ -177,7 +177,7 @@ export const useCollectionStore = create<CollectionStore>()(
         // Count cards by rarity
         collection.forEach(card => {
           if (card.rarity in cardsByRarity) {
-            cardsByRarity[card.rarity as CardRarity]++;
+            cardsByRarity[card.rarity]++;
           }
         });
         
@@ -197,7 +197,7 @@ export const useCollectionStore = create<CollectionStore>()(
       },
       
       // Get cards by rarity
-      getCardsByRarity: (rarity: CardRarity) => {
+      getCardsByRarity: (rarity: string) => {
         return get().collection.filter(card => card.rarity === rarity);
       },
       

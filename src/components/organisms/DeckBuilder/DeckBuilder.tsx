@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useGame } from '../../../hooks/useGame';
 import { Deck, DeckValidation } from '../../../models/Deck';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../models/Card';
 import { format } from '../../../utils/format';
 import { Button } from '../../atoms/Button';
 import { Input } from '../../atoms/Input';
@@ -41,8 +41,8 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
   // Deck builder state
   const [currentDeck, setCurrentDeck] = useState<Deck | null>(initialDeck || null);
   const [deckName, setDeckName] = useState(initialDeck?.name || 'New Deck');
-  const [availableCards, setAvailableCards] = useState<UnifiedCard[]>([]);
-  const [selectedCard, setSelectedCard] = useState<UnifiedCard | null>(null);
+  const [availableCards, setAvailableCards] = useState<Card[]>([]);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [validation, setValidation] = useState<DeckValidation | null>(null);
 
   // Filters and sorting
@@ -152,7 +152,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
   }, [availableCards, filters, sort]);
 
   // Deck management functions
-  const addCardToDeck = useCallback((card: UnifiedCard) => {
+  const addCardToDeck = useCallback((card: Card) => {
     if (!currentDeck || !deckService) return;
 
     const canAdd = deckService.validateDeck([...currentDeck.cards, card]);

@@ -2,92 +2,75 @@
 // Use TCGCard from organisms/TCGCard instead
 import React from 'react';
 import { Card as LegacyCardType } from '../../types';
-import { UnifiedCard, CardRarity } from '../../../models/unified/Card';
+import { Card as CardModel, CardUtils } from '../../../models/Card';
 import { TCGCard } from '../../organisms/TCGCard';
 
 interface CardProps {
-  card: UnifiedCard | LegacyCardType;
+  card: CardModel | LegacyCardType;
   size?: 'sm' | 'md' | 'lg';
   interactive?: boolean;
   variant?: 'tcg' | 'compact';
   showStats?: boolean;
   showInventory?: boolean;
   showAbility?: boolean;
-  onClick?: (card: UnifiedCard | LegacyCardType) => void;
+  onClick?: (card: CardModel | LegacyCardType) => void;
   className?: string;
   testId?: string;
 }
 
-// Type guard to check if card is UnifiedCard
-const isUnifiedCard = (card: UnifiedCard | LegacyCardType): card is UnifiedCard => {
-  return 'rarity' in card && typeof card.rarity === 'string' && Object.values(CardRarity).includes(card.rarity as CardRarity);
+// Type guard to check if card is CardModel
+const isCardModel = (card: CardModel | LegacyCardType): card is CardModel => {
+  return 'rarity' in card && typeof card.rarity === 'number';
 };
 
 // Convert legacy card to display format
-const normalizeLegacyCard = (card: LegacyCardType): UnifiedCard => {
+const normalizeLegacyCard = (card: LegacyCardType): CardModel => {
+  // Map string rarity to numeric probability
+  const rarityMap: Record<string, number> = {
+    'common': 2,
+    'uncommon': 4,
+    'rare': 10,
+    'epic': 50,
+    'legendary': 200,
+    'mythic': 1000,
+    'cosmic': 10000,
+    'divine': 100000,
+    'infinity': 1000000
+  };
+  
+  const rarityString = typeof card.rarity === 'string' ? card.rarity.toLowerCase() : 'common';
+  const rarityProbability = rarityMap[rarityString] || 2;
+  
   return {
     id: card.id,
     name: card.name,
-    description: card.description,
+    description: card.description || '',
     emoji: card.emoji,
-    rarity: card.rarity.toUpperCase() as CardRarity,
-    rarityProbability: 10, // Default probability
-    luck: 0, // Legacy cards don't have luck
+    rarity: rarityProbability,
+    luck: 10, // Default luck value
+    emojis: [{ // Required field - at least one emoji
+      character: card.emoji || '❓',
+      damage: 5,
+      speed: 3,
+      trajectory: 'straight' as const,
+      target: 'OPPONENT' as const
+    }],
     family: 'CLASSIC_INTERNET' as any, // Default family
+    stackLevel: 1, // Required field
     reference: card.flavor || 'Legacy card',
     goldReward: 10, // Default gold reward
-    type: 'CREATURE' as any, // Default type
-    cost: card.cost || 1,
-    attack: card.stats?.attack || 0,
-    defense: card.stats?.defense || 0,
-    health: card.stats?.health || 0,
-    attackSpeed: 1.0,
-    passiveAbility: {
-      name: 'No Ability',
-      description: 'This card has no special ability',
-      trigger: 'onPlay' as any,
-      effect: 'none'
-    },
-    goldGeneration: 1,
-    dustValue: 5,
-    tradeable: true,
-    level: 1,
-    experience: 0,
-    stackCount: 1,
-    maxStacks: 1,
-    stackBonus: {
-      luckMultiplier: 0,
-      goldMultiplier: 0,
-      bonusEmojis: [],
-      effectBonus: 0,
-      damageBonus: 0
-    },
-    visual: {
-      glow: '#ffffff',
-      borderColor: '#e9ecef',
-      backgroundColor: '#ffffff',
-      textColor: '#000000'
-    },
-    emojis: [], // Legacy cards don't have emoji inventory
-    cardEffects: [],
-    synergies: [],
-    craftable: false,
-    isActive: true,
-    isLimited: false,
-    effects: [],
-    tags: card.tags || [],
-    flavor: card.flavor,
-    releaseDate: new Date().toISOString(),
+    hp: card.stats?.health || 100, // Optional field
+    cardEffects: [], // Optional field
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
-  } as UnifiedCard;
+  } as CardModel;
 };
 
 /**
  * @deprecated Use TCGCard from organisms/TCGCard instead
  * This component is maintained for backward compatibility only
  */
-export const Card: React.FC<CardProps> = ({
+const CardComponent: React.FC<CardProps> = ({
   card,
   size = 'md',
   interactive = true,
@@ -100,7 +83,7 @@ export const Card: React.FC<CardProps> = ({
   testId,
 }) => {
   // Normalize card data for TCGCard compatibility
-  const normalizedCard: UnifiedCard = isUnifiedCard(card) ? card : normalizeLegacyCard(card) as UnifiedCard;
+  const normalizedCard: CardModel = isCardModel(card) ? card : normalizeLegacyCard(card) as CardModel;
   
   // Convert legacy props to new TCGCard props
   const tcgSize = size === 'sm' ? 'small' : size === 'lg' ? 'large' : 'medium';
@@ -122,3 +105,7 @@ export const Card: React.FC<CardProps> = ({
     />
   );
 };
+
+// Export with both names for backward compatibility
+export { CardComponent as Card };
+export { CardComponent };

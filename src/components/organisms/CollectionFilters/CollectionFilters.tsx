@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardRarity } from '../../../models/unified/Card';
+// CardRarity removed - using number rarity now;
 import { Button } from '../../atoms/Button';
 import { Input } from '../../atoms/Input';
 import { Text } from '../../atoms/Text';
@@ -8,12 +8,12 @@ import './CollectionFilters.css';
 
 interface CollectionFiltersProps {
   search: string;
-  rarity: CardRarity | 'all';
+  rarity: string | 'all';
   sortBy: 'name' | 'rarity' | 'power' | 'dateAdded';
   sortOrder: 'asc' | 'desc';
   viewMode: 'grid' | 'list';
   onSearchChange: (search: string) => void;
-  onRarityChange: (rarity: CardRarity | 'all') => void;
+  onRarityChange: (rarity: string | 'all') => void;
   onSortChange: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
   onViewModeChange: (mode: 'grid' | 'list') => void;
   onClearFilters: () => void;
@@ -23,15 +23,15 @@ interface CollectionFiltersProps {
 
 const rarityOptions = [
   { value: 'all', label: 'All Rarities', color: '#ffffff' },
-  { value: 'COMMON', label: 'Common', color: '#95a5a6' },
-  { value: 'UNCOMMON', label: 'Uncommon', color: '#27ae60' },
-  { value: 'RARE', label: 'Rare', color: '#3498db' },
-  { value: 'EPIC', label: 'Epic', color: '#9b59b6' },
-  { value: 'LEGENDARY', label: 'Legendary', color: '#f39c12' },
-  { value: 'MYTHIC', label: 'Mythic', color: '#e67e22' },
-  { value: 'COSMIC', label: 'Cosmic', color: '#e74c3c' },
-  { value: 'DIVINE', label: 'Divine', color: '#9b59b6' },
-  { value: 'INFINITY', label: 'Infinity', color: '#2c3e50' }
+  { value: 'common', label: 'Common', color: '#95a5a6' },
+  { value: 'uncommon', label: 'Uncommon', color: '#27ae60' },
+  { value: 'rare', label: 'Rare', color: '#3498db' },
+  { value: 'epic', label: 'Epic', color: '#9b59b6' },
+  { value: 'legendary', label: 'Legendary', color: '#f39c12' },
+  { value: 'mythic', label: 'Mythic', color: '#e67e22' },
+  { value: 'cosmic', label: 'Cosmic', color: '#e74c3c' },
+  { value: 'divine', label: 'Divine', color: '#9b59b6' },
+  { value: 'infinity', label: 'Infinity', color: '#2c3e50' }
 ];
 
 const sortOptions = [
@@ -118,7 +118,7 @@ export const CollectionFilters: React.FC<CollectionFiltersProps> = ({
               key={option.value}
               variant={rarity === option.value ? 'primary' : 'ghost'}
               size="sm"
-              onClick={() => onRarityChange(option.value as CardRarity | 'all')}
+              onClick={() => onRarityChange(option.value as string | 'all')}
               className="collection-filters__rarity-button"
               style={{
                 '--rarity-color': option.color

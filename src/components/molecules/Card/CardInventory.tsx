@@ -1,10 +1,10 @@
 import React from 'react';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../models/Card';
 import { Icon } from '../../atoms/Icon';
 import styles from './Card.module.css';
 
 interface CardInventoryProps {
-  card: UnifiedCard;
+  card: Card;
   maxEmojis?: number;
 }
 

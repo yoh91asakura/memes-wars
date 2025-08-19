@@ -1,20 +1,25 @@
 # 🗺️ ROADMAP - The Meme Wars TCG
 
-*Last Updated: 2025-08-17T22:10:20.460Z*
+*Last Updated: 2025-08-19T03:54:00.000Z*
 
 ## 📊 Current Status
 
 - **Total Tasks:** 17
 - **In Progress:** 0
-- **Completed:** 1
+- **Completed:** 2 ✅
 - **Blocked:** 0
 
 ## 🎯 Priority Tasks
 
 ### 🔴 CRITICAL
 
-- **Unify Card Data Models** (L)
+- ✅ **Unify Card Data Models** (L) - COMPLETED 19/08/2025
   - As a developer, I want a single, consistent card model so that I can maintain and extend the code without confusion
+  - ✨ Migration complète vers modèle unifié `src/models/Card.ts`
+  - ✨ Suppression de CardRarity enum, remplacé par système numérique
+  - ✨ 11 fichiers corrigés pour CardRarity
+  - ✨ 10 fichiers corrigés pour opérations rarity
+  - ✨ Conversion automatique des cartes legacy
 - **Consolidate Store Architecture** (M)
   - As a developer, I want a clear, modular store architecture so that state management is predictable and maintainable
 
@@ -39,9 +44,9 @@
 
 ## 📦 Development Epics
 
-### 🔧 Core Refactoring (0% complete)
+### 🔧 Core Refactoring (50% complete)
 
-- ⬜ Unify Card Data Models
+- ✅ Unify Card Data Models - COMPLETED
 - ⬜ Consolidate Store Architecture
 
 ### ⚔️ Combat System (0% complete)

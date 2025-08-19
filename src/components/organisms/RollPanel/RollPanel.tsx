@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../models/Card';
 import { usePlayerStore } from '../../../stores/playerStore';
 import { useCardsStore } from '../../../stores/cardsStore';
 import { RollButton } from '../../molecules/RollButton/RollButton';
@@ -10,7 +10,7 @@ import { Icon } from '../../atoms/Icon';
 import './RollPanel.css';
 
 interface RollPanelProps {
-  onRoll?: () => Promise<UnifiedCard>;
+  onRoll?: () => Promise<Card>;
   className?: string;
   testId?: string;
 }
@@ -20,7 +20,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
   className = '',
   testId,
 }) => {
-  const [revealCard, setRevealCard] = useState<UnifiedCard | null>(null);
+  const [revealCard, setRevealCard] = useState<Card | null>(null);
   const [showReveal, setShowReveal] = useState(false);
   
   // Store hooks

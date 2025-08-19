@@ -1,21 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
 import { commonCards } from '../data/cards/common';
 import { rareCards } from '../data/cards/rare';
-import {
-  UnifiedCard,
-  CardRarity,
-  CardType,
-  CardFilter,
-  CardUtils,
-  MemeFamily,
-  EffectType
-} from '../models/unified/Card';
+import { Card } from '../models/Card';
 // Enhanced card service with full game specification support
 export class CardService {
-  private allCards: UnifiedCard[];
-  private cardsByRarity: Map<CardRarity, UnifiedCard[]> = new Map();
-  private cardsByFamily: Map<MemeFamily, UnifiedCard[]> = new Map();
-  private cardsByType: Map<CardType, UnifiedCard[]> = new Map();
+  private allCards: Card[];
+  private cardsByRarity: Map<CardRarity, Card[]> = new Map();
+  private cardsByFamily: Map<MemeFamily, Card[]> = new Map();
+  private cardsByType: Map<CardType, Card[]> = new Map();
   
   constructor() {
     // Combine all card collections
@@ -66,39 +58,39 @@ export class CardService {
   }
   
   // Get all cards
-  getAllCards(): UnifiedCard[] {
+  getAllCards(): Card[] {
     return this.allCards;
   }
 
   // Get card by ID
-  getCardById(id: string): UnifiedCard | undefined {
+  getCardById(id: string): Card | undefined {
     return this.allCards.find(card => card.id === id);
   }
 
   // Get cards by rarity (optimized with lookup map)
-  getCardsByRarity(rarity: CardRarity): UnifiedCard[] {
+  getCardsByRarity(rarity: string): Card[] {
     return this.cardsByRarity.get(rarity) || [];
   }
   
   // Get cards by rarity (legacy string support)
-  getCardsByRarityString(rarity: string): UnifiedCard[] {
-    const normalizedRarity = rarity.toUpperCase() as keyof typeof CardRarity;
+  getCardsByRarityString(rarity: string): Card[] {
+    const normalizedRarity = typeof rarity === 'string' ? rarity.toUpperCase() : CardUtils.getRarityName(rarity).toUpperCase() as keyof typeof CardRarity;
     const rarityEnum = CardRarity[normalizedRarity];
     return rarityEnum ? this.getCardsByRarity(rarityEnum) : [];
   }
   
   // Get cards by meme family
-  getCardsByFamily(family: MemeFamily): UnifiedCard[] {
+  getCardsByFamily(family: MemeFamily): Card[] {
     return this.cardsByFamily.get(family) || [];
   }
   
   // Get cards by type
-  getCardsByType(type: CardType): UnifiedCard[] {
+  getCardsByType(type: CardType): Card[] {
     return this.cardsByType.get(type) || [];
   }
   
   // Get cards with specific effects
-  getCardsByEffect(effect: EffectType): UnifiedCard[] {
+  getCardsByEffect(effect: EffectType): Card[] {
     return this.allCards.filter(card => 
       card.effects?.includes(effect) ||
       card.cardEffects?.some(cardEffect => cardEffect.effect === effect) ||
@@ -107,7 +99,7 @@ export class CardService {
   }
 
   // Generate a random card based on rarity weights
-  async generateCard(targetRarity?: CardRarity): Promise<UnifiedCard> {
+  async generateCard(targetRarity?: string): Promise<Card> {
     let cardPool = this.allCards;
     
     if (targetRarity) {
@@ -123,31 +115,31 @@ export class CardService {
   }
   
   // Generate card with game specification probabilities (1/X format)
-  async generateCardWithProbabilities(): Promise<UnifiedCard> {
+  async generateCardWithProbabilities(): Promise<Card> {
     // Use actual game spec probabilities (1/X format)
     const rarityProbabilities = {
-      [CardRarity.COMMON]: 2,        // 1/2 = 50%
-      [CardRarity.UNCOMMON]: 4,      // 1/4 = 25%
-      [CardRarity.RARE]: 10,         // 1/10 = 10%
-      [CardRarity.EPIC]: 50,         // 1/50 = 2%
-      [CardRarity.LEGENDARY]: 200,   // 1/200 = 0.5%
-      [CardRarity.MYTHIC]: 1000,     // 1/1000 = 0.1%
-      [CardRarity.COSMIC]: 10000,    // 1/10000 = 0.01%
-      [CardRarity.DIVINE]: 100000,   // 1/100000 = 0.001%
-      [CardRarity.INFINITY]: 1000000 // 1/1000000 = 0.0001%
+      [2]: 2,        // 1/2 = 50%
+      [4]: 4,      // 1/4 = 25%
+      [10]: 10,         // 1/10 = 10%
+      [50]: 50,         // 1/50 = 2%
+      [200]: 200,   // 1/200 = 0.5%
+      [1000]: 1000,     // 1/1000 = 0.1%
+      [10000]: 10000,    // 1/10000 = 0.01%
+      [100000]: 100000,   // 1/100000 = 0.001%
+      [1000000]: 1000000 // 1/1000000 = 0.0001%
     };
     
     // Roll for each rarity starting from highest
     const rarityOrder = [
-      CardRarity.INFINITY,
-      CardRarity.DIVINE, 
-      CardRarity.COSMIC,
-      CardRarity.MYTHIC,
-      CardRarity.LEGENDARY,
-      CardRarity.EPIC,
-      CardRarity.RARE,
-      CardRarity.UNCOMMON,
-      CardRarity.COMMON
+      1000000,
+      100000, 
+      10000,
+      1000,
+      200,
+      50,
+      10,
+      4,
+      2
     ];
     
     for (const rarity of rarityOrder) {
@@ -163,29 +155,29 @@ export class CardService {
     }
     
     // Fallback to common
-    return this.generateCard(CardRarity.COMMON);
+    return this.generateCard(2);
   }
   
   // Roll with pity system (prevents long streaks of bad luck)
-  async rollCardWithPity(pityCounter: number = 0): Promise<{ card: UnifiedCard, newPityCounter: number, goldReward: number }> {
-    let targetRarity = CardRarity.COMMON;
+  async rollCardWithPity(pityCounter: number = 0): Promise<{ card: Card, newPityCounter: number, goldReward: number }> {
+    let targetRarity = 2;
     let newPityCounter = pityCounter + 1;
     
     // Pity system - guaranteed higher rarity after bad streaks
     if (pityCounter >= 50) {
-      targetRarity = CardRarity.RARE;
+      targetRarity = 10;
       newPityCounter = 0;
     } else if (pityCounter >= 20) {
-      targetRarity = CardRarity.UNCOMMON;
+      targetRarity = 4;
     }
     
-    const card = await (targetRarity === CardRarity.COMMON ? 
+    const card = await (targetRarity === 2 ? 
       this.generateCardWithProbabilities() : 
       this.generateCard(targetRarity)
     );
     
     // Reset pity counter if we got something good
-    if (card.rarity !== CardRarity.COMMON) {
+    if (card.rarity !== 2) {
       newPityCounter = 0;
     }
     
@@ -196,7 +188,7 @@ export class CardService {
   }
   
   // Calculate gold reward from rolling a card
-  private calculateRollGoldReward(card: UnifiedCard): number {
+  private calculateRollGoldReward(card: Card): number {
     const baseReward = card.goldReward || 10;
     const luckBonus = Math.floor((card.luck || 0) * 0.1);
     const rarityBonus = this.getRarityBonus(card.rarity);
@@ -205,7 +197,7 @@ export class CardService {
   }
 
   // Roll a card with unique instance
-  async rollCard(): Promise<UnifiedCard> {
+  async rollCard(): Promise<Card> {
     const card = await this.generateCardWithProbabilities();
     return {
       ...card,
@@ -225,7 +217,7 @@ export class CardService {
     isLimited?: boolean;
     minGoldReward?: number;
     maxGoldReward?: number;
-  }): UnifiedCard[] {
+  }): Card[] {
     return this.allCards.filter(card => {
       if (criteria.rarity && card.rarity !== criteria.rarity) return false;
       if (criteria.type && card.type !== criteria.type) return false;
@@ -255,7 +247,7 @@ export class CardService {
   }
   
   // Check if card has specific effect
-  private cardHasEffect(card: UnifiedCard, effect: EffectType): boolean {
+  private cardHasEffect(card: Card, effect: EffectType): boolean {
     return !!
       (card.effects?.includes(effect) ||
       card.cardEffects?.some(cardEffect => cardEffect.effect === effect) ||
@@ -263,13 +255,13 @@ export class CardService {
   }
 
   // Get random cards
-  getRandomCards(count: number): UnifiedCard[] {
+  getRandomCards(count: number): Card[] {
     const shuffled = [...this.allCards].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, count);
   }
 
   // Enhanced search with new properties
-  searchCards(query: string): UnifiedCard[] {
+  searchCards(query: string): Card[] {
     const lowercaseQuery = query.toLowerCase();
     return this.allCards.filter(card => 
       card.name.toLowerCase().includes(lowercaseQuery) ||
@@ -285,7 +277,7 @@ export class CardService {
   }
   
   // Enhanced card statistics with game spec properties
-  getCardStats(card: UnifiedCard): {
+  getCardStats(card: Card): {
     totalPower: number;
     isValid: boolean;
     rarityBonus: number;
@@ -318,33 +310,33 @@ export class CardService {
   }
   
   // Get rarity bonus multiplier
-  private getRarityBonus(rarity: CardRarity): number {
+  private getRarityBonus(rarity: string): number {
     const bonusMap = {
-      [CardRarity.COMMON]: 1.0,
-      [CardRarity.UNCOMMON]: 1.2,
-      [CardRarity.RARE]: 1.5,
-      [CardRarity.EPIC]: 2.0,
-      [CardRarity.LEGENDARY]: 3.0,
-      [CardRarity.MYTHIC]: 4.0,
-      [CardRarity.COSMIC]: 5.0,
-      [CardRarity.DIVINE]: 10.0,
-      [CardRarity.INFINITY]: 20.0
+      [2]: 1.0,
+      [4]: 1.2,
+      [10]: 1.5,
+      [50]: 2.0,
+      [200]: 3.0,
+      [1000]: 4.0,
+      [10000]: 5.0,
+      [100000]: 10.0,
+      [1000000]: 20.0
     };
     return bonusMap[rarity] || 1.0;
   }
   
   // Migrate legacy card to unified format
-  migrateLegacyCard(legacyCard: any): UnifiedCard {
+  migrateLegacyCard(legacyCard: any): Card {
     return CardUtils.migrateToUnified(legacyCard);
   }
   
   // Validate card data
-  validateCard(card: UnifiedCard): boolean {
+  validateCard(card: Card): boolean {
     return CardUtils.isValid(card);
   }
   
   // Get family synergies for deck building
-  getFamilySynergies(cards: UnifiedCard[]): Map<MemeFamily, number> {
+  getFamilySynergies(cards: Card[]): Map<MemeFamily, number> {
     const familyCounts = new Map<MemeFamily, number>();
     
     cards.forEach(card => {
@@ -357,7 +349,7 @@ export class CardService {
   }
   
   // Calculate deck power with synergies
-  calculateDeckPower(cards: UnifiedCard[]): {
+  calculateDeckPower(cards: Card[]): {
     totalPower: number;
     familyBonuses: Map<MemeFamily, number>;
     recommendedSynergies: MemeFamily[];
@@ -391,7 +383,7 @@ export class CardService {
   }
   
   // Get cards that would synergize with current deck
-  getRecommendedCards(currentDeck: UnifiedCard[], limit: number = 10): UnifiedCard[] {
+  getRecommendedCards(currentDeck: Card[], limit: number = 10): Card[] {
     const deckFamilies = this.getFamilySynergies(currentDeck);
     const deckTypes = new Map<CardType, number>();
     

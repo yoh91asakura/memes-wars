@@ -1,129 +1,68 @@
 import { 
-  UnifiedCard, 
-  CardRarity, 
-  CardType, 
+  Card, 
   MemeFamily, 
   EffectType, 
-  TriggerType 
-} from '../../models/unified/Card';
+  TriggerType,
+  CardUtils 
+} from '../../models/Card';
 
-// Common cards using the unified card model
-export const commonCards: UnifiedCard[] = [
+// Common cards (1/2 probability) - Everyday memes
+export const commonCards: Card[] = [
   {
     // Core Identity
     id: 'common-001',
     name: 'Fire Ember 🔥',
-    description: 'A blazing ember that burns with steady determination',
-    emoji: '🔥',
-    
-    // Game Specification Requirements
-    rarity: CardRarity.COMMON,
-    rarityProbability: 2,        // 1/2 chance
+    rarity: 2,                   // 1/2 probability
     luck: 5,                     // Low luck for common
-    family: MemeFamily.ABSTRACT_CONCEPTS,
-    reference: 'This is fine - the classic fire meme representing chaos',
-    goldReward: 15,              // Random value in 10-20 range
-    
-    // Game Mechanics
-    type: CardType.ATTACK,
-    cost: 1,
-    
-    // Combat Stats
-    attack: 2,
-    defense: 1,
-    health: 3,
-    attackSpeed: 1.2,
-    
-    // Enhanced Combat System - Common cards have 1-2 of the same emoji
     emojis: [
       {
         character: '🔥',
-        damage: 3,  // Base damage from spec
-        speed: 3,
-        trajectory: 'straight',
-        effects: [EffectType.BURN],  // 3s, 1 dmg/s from spec
-        target: 'OPPONENT',
-        fireRate: 1.2,
-        piercing: false,
-        homing: false,
-        bounces: 0
-      },
-      {
-        character: '🔥',  // Second identical fire emoji
         damage: 3,
         speed: 3,
         trajectory: 'straight',
-        effects: [EffectType.BURN],
-        target: 'OPPONENT',
-        fireRate: 1.2,
-        piercing: false,
-        homing: false,
-        bounces: 0
+        effect: EffectType.BURN,
+        target: 'OPPONENT'
+      },
+      {
+        character: '🔥',
+        damage: 3,
+        speed: 3,
+        trajectory: 'straight',
+        effect: EffectType.BURN,
+        target: 'OPPONENT'
       }
     ],
-    cardEffects: [{
-      id: 'burn_proc',
-      name: 'Ignite',
-      description: 'Chance to apply burn effect on hit',
-      trigger: TriggerType.ON_HIT,
-      chance: 0.25,               // 25% chance
-      effect: EffectType.BURN,
-      value: 1,
-      duration: 3,
-      cooldown: 2
-    }],
-    synergies: [MemeFamily.ABSTRACT_CONCEPTS],
+    family: MemeFamily.ABSTRACT_CONCEPTS,
+    reference: 'This is fine - the classic fire meme representing chaos',
     
-    // Economic System
-    goldGeneration: 1,
-    dustValue: 1,
-    tradeable: true,
-    
-    // Progression System
-    level: 1,
-    experience: 0,
-    stackCount: 1,
-    maxStacks: 10,
+    // Stacking
+    stackLevel: 1,
     stackBonus: {
-      luckMultiplier: 0.1,
-      goldMultiplier: 0.15,
-      bonusEmojis: ['💥', '🌶️'],
-      effectBonus: 0.05,
-      damageBonus: 0.1
+      luckMultiplier: 0,
+      goldMultiplier: 0,
+      bonusEmojis: []
     },
     
-    // Visual & UI
-    visual: {
-      glow: '#FF6B35',
-      borderColor: '#FF4500',
-      backgroundColor: '#FFF8DC',
-      textColor: '#8B0000',
-      animation: 'flame',
-      particles: true
-    },
+    // Rewards
+    goldReward: 15,
     
-    // Collection & Social
-    craftable: false,
-    isActive: true,
-    isLimited: false,
+    // Display
+    emoji: '🔥',
+    description: 'A blazing ember that burns with steady determination',
+    visual: CardUtils.getDefaultVisual(2, 1),
+    
+    // Optional Combat
+    hp: 105,  // 100 base + luck/10
+    cardEffects: [{
+      trigger: TriggerType.ON_HIT,
+      chance: 0.25,
+      effect: EffectType.BURN,
+      duration: 3
+    }],
     
     // Metadata
-    effects: [EffectType.BURN],
-    tags: ['fire', 'common', 'attack', 'burn'],
-    flavor: 'Even the smallest flame can ignite a great fire.',
-    lore: 'Born from the first spark of creation, fire embers are the foundation of all flame magic. In the meme wars, this represents the "This is Fine" dog sitting in a burning room, accepting chaos with determination.',
-    releaseDate: '2025-01-01T00:00:00Z',
     createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z',
-    
-    // Legacy Compatibility
-    passiveAbility: {
-      name: 'Burn',
-      description: 'Deals 1 damage per turn for 2 turns',
-      trigger: 'onAttack',
-      effect: 'burn',
-      value: 1
-    }
+    updatedAt: '2025-01-01T00:00:00Z'
   },
   {
     // Core Identity
@@ -133,7 +72,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '💧',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 8,
     family: MemeFamily.ABSTRACT_CONCEPTS,
@@ -141,8 +80,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 12,
     
     // Game Mechanics
-    type: CardType.HEALING,
-    cost: 1,
+        cost: 1,
     
     // Combat Stats
     attack: 1,
@@ -238,7 +176,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '🪨',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 6,
     family: MemeFamily.ABSTRACT_CONCEPTS,
@@ -246,8 +184,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 14,
     
     // Game Mechanics
-    type: CardType.DEFENSE,
-    cost: 2,
+        cost: 2,
     
     // Combat Stats
     attack: 1,
@@ -346,7 +283,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '💨',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 7,
     family: MemeFamily.ABSTRACT_CONCEPTS,
@@ -354,8 +291,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 13,
     
     // Game Mechanics
-    type: CardType.SUPPORT,
-    cost: 1,
+        cost: 1,
     
     // Combat Stats
     attack: 2,
@@ -454,7 +390,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '⚡',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 9,
     family: MemeFamily.ABSTRACT_CONCEPTS,
@@ -462,8 +398,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 16,
     
     // Game Mechanics
-    type: CardType.SPELL,
-    cost: 2,
+        cost: 2,
     
     // Combat Stats
     attack: 3,
@@ -562,7 +497,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '😈',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 7,
     family: MemeFamily.CLASSIC_INTERNET,
@@ -570,8 +505,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 18,
     
     // Game Mechanics
-    type: CardType.SPELL,
-    cost: 1,
+        cost: 1,
     
     // Combat Stats
     attack: 2,
@@ -653,7 +587,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '😾',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 6,
     family: MemeFamily.ANIMALS,
@@ -661,8 +595,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 14,
     
     // Game Mechanics
-    type: CardType.DEFENSE,
-    cost: 2,
+        cost: 2,
     
     // Combat Stats
     attack: 1,
@@ -744,7 +677,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '😡',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 4,
     family: MemeFamily.CLASSIC_INTERNET,
@@ -752,8 +685,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 16,
     
     // Game Mechanics
-    type: CardType.ATTACK,
-    cost: 1,
+        cost: 1,
     
     // Combat Stats
     attack: 3,
@@ -835,7 +767,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '😏',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 9,
     family: MemeFamily.CLASSIC_INTERNET,
@@ -843,8 +775,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 13,
     
     // Game Mechanics
-    type: CardType.SUPPORT,
-    cost: 1,
+        cost: 1,
     
     // Combat Stats
     attack: 2,
@@ -926,7 +857,7 @@ export const commonCards: UnifiedCard[] = [
     emoji: '😔',
     
     // Game Specification Requirements
-    rarity: CardRarity.COMMON,
+    rarity: 2,
     rarityProbability: 2,
     luck: 3,
     family: MemeFamily.EMOTIONS_REACTIONS,
@@ -934,8 +865,7 @@ export const commonCards: UnifiedCard[] = [
     goldReward: 11,
     
     // Game Mechanics
-    type: CardType.DEFENSE,
-    cost: 1,
+        cost: 1,
     
     // Combat Stats
     attack: 1,

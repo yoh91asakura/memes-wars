@@ -1,20 +1,20 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UnifiedCard } from '../../../models/unified/Card';
-import { Card } from '../Card/Card';
+import { Card, CardUtils } from '../../../models/Card';
+import { CardComponent } from '../Card/Card';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Icon } from '../../atoms/Icon';
 import './CollectionCard.css';
 
 interface CollectionCardProps {
-  card: UnifiedCard;
+  card: Card;
   size?: 'sm' | 'md' | 'lg';
   viewMode?: 'grid' | 'list';
   showActions?: boolean;
-  onSelect?: (card: UnifiedCard) => void;
-  onAddToDeck?: (card: UnifiedCard) => void;
-  onRemove?: (card: UnifiedCard) => void;
+  onSelect?: (card: Card) => void;
+  onAddToDeck?: (card: Card) => void;
+  onRemove?: (card: Card) => void;
   className?: string;
   testId?: string;
 }
@@ -48,11 +48,14 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
     }
   };
 
+  // Get rarity name from numeric value
+  const rarityName = card.rarity ? CardUtils.getRarityName(card.rarity).toLowerCase() : 'common';
+  
   const cardClass = [
     'collection-card',
     `collection-card--${size}`,
     `collection-card--${viewMode}`,
-    `collection-card--${card.rarity?.toLowerCase()}`,
+    `collection-card--${rarityName}`,
     className
   ].filter(Boolean).join(' ');
 
@@ -79,7 +82,7 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
         whileHover={{ backgroundColor: 'rgba(255,255,255,0.05)' }}
         transition={{ duration: 0.2 }}
         style={{
-          '--rarity-color': rarityColors[card.rarity?.toLowerCase() || 'common']
+          '--rarity-color': rarityColors[rarityName]
         } as React.CSSProperties}
       >
         <div className="collection-card__emoji">
@@ -102,11 +105,11 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
           <div className="collection-card__stats-row">
             <div className="collection-card__stat">
               <Icon emoji="❤️" size="sm" />
-              <Text variant="caption">{card.health}</Text>
+              <Text variant="caption">{card.hp || 100}</Text>
             </div>
             <div className="collection-card__stat">
               <Icon emoji="🍀" size="sm" />
-              <Text variant="caption">{card.luck}</Text>
+              <Text variant="caption">{card.luck || 0}</Text>
             </div>
             <div className="collection-card__date">
               <Text variant="caption" color="muted">{addedDate}</Text>
@@ -141,12 +144,12 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
 
   return (
     <div className="collection-card__wrapper">
-      <Card
+      <CardComponent
         card={card}
         variant="tcg"
         size={size}
         interactive={true}
-        onClick={onSelect ? (clickedCard) => onSelect(clickedCard as UnifiedCard) : undefined}
+        onClick={onSelect ? (clickedCard) => onSelect(clickedCard as Card) : undefined}
         className={className}
         testId={testId}
       />

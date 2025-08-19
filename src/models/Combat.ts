@@ -1,6 +1,6 @@
 // Combat Models - All combat-related data structures
 
-import { UnifiedCard } from './unified/Card';
+import { Card } from './unified/Card';
 
 export interface Position {
   x: number;
@@ -118,7 +118,7 @@ export interface CombatPlayer {
 
 export interface CombatDeck {
   id: string;
-  cards: UnifiedCard[];
+  cards: Card[];
   activeProjectiles: EmojiProjectile[];
   firePattern: FirePattern;
   totalDamage: number;
@@ -193,7 +193,7 @@ export interface CombatResult {
 export interface CombatReward {
   type: 'xp' | 'coins' | 'gems' | 'card' | 'achievement';
   amount: number;
-  item?: UnifiedCard;
+  item?: Card;
   reason: string;
 }
 

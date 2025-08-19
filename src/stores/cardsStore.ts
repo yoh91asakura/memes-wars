@@ -1,9 +1,9 @@
 // Cards Store - Manages card collections, rolling, and card-related state
-// Consolidates rollStore and collectionStore with proper UnifiedCard support
+// Consolidates rollStore and collectionStore with proper Card support
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UnifiedCard, CardRarity } from '../models/unified/Card';
+import { Card } from '../models/Card';
 import { RollService, RollResult, MultiRollResult } from '../services/RollService';
 
 // Roll configuration
@@ -25,7 +25,7 @@ export interface RollHistory {
 
 export interface CollectionFilters {
   search: string;
-  rarity: CardRarity | 'all';
+  rarity: string | 'all';
   sortBy: 'name' | 'rarity' | 'power' | 'dateAdded';
   sortOrder: 'asc' | 'desc';
 }
@@ -33,16 +33,16 @@ export interface CollectionFilters {
 export interface CollectionStats {
   totalCards: number;
   uniqueCards: number;
-  cardsByRarity: Record<CardRarity, number>;
+  cardsByRarity: Record<string, number>;
   completionPercentage: number;
-  mostRecentCard?: UnifiedCard;
+  mostRecentCard?: Card;
   totalValue: number;
 }
 
 export interface CardsStore {
   // Collection State
-  collection: UnifiedCard[];
-  selectedCard: UnifiedCard | null;
+  collection: Card[];
+  selectedCard: Card | null;
   filters: CollectionFilters;
   viewMode: 'grid' | 'list';
   
@@ -53,10 +53,10 @@ export interface CardsStore {
   maxHistorySize: number;
   
   // Collection Actions
-  addCard: (card: UnifiedCard) => void;
-  addMultipleCards: (cards: UnifiedCard[]) => void;
+  addCard: (card: Card) => void;
+  addMultipleCards: (cards: Card[]) => void;
   removeCard: (cardId: string) => void;
-  setSelectedCard: (card: UnifiedCard | null) => void;
+  setSelectedCard: (card: Card | null) => void;
   setFilters: (filters: Partial<CollectionFilters>) => void;
   setViewMode: (mode: 'grid' | 'list') => void;
   clearCollection: () => void;
@@ -69,12 +69,12 @@ export interface CardsStore {
   clearHistory: () => void;
   
   // Computed Getters
-  getFilteredCards: () => UnifiedCard[];
+  getFilteredCards: () => Card[];
   getCollectionStats: () => CollectionStats;
-  getCardsByRarity: (rarity: CardRarity) => UnifiedCard[];
+  getCardsByRarity: (rarity: string) => Card[];
   hasCard: (cardId: string) => boolean;
   getCardCount: (cardId: string) => number;
-  getDuplicateCards: () => UnifiedCard[];
+  getDuplicateCards: () => Card[];
   getUniqueCardCount: () => number;
   getRollCost: (type: 'single' | 'ten' | 'hundred') => number;
   
@@ -103,7 +103,7 @@ export const useCardsStore = create<CardsStore>()(
           maxHistorySize: 50,
           
           // Collection Actions
-          addCard: (card: UnifiedCard) => {
+          addCard: (card: Card) => {
             const state = get();
             const newCard = {
               ...card,
@@ -117,7 +117,7 @@ export const useCardsStore = create<CardsStore>()(
             });
           },
           
-          addMultipleCards: (cards: UnifiedCard[]) => {
+          addMultipleCards: (cards: Card[]) => {
             const state = get();
             const newCards = cards.map(card => ({
               ...card,
@@ -138,7 +138,7 @@ export const useCardsStore = create<CardsStore>()(
             });
           },
           
-          setSelectedCard: (card: UnifiedCard | null) => {
+          setSelectedCard: (card: Card | null) => {
             set({ selectedCard: card });
           },
           
@@ -379,7 +379,7 @@ export const useCardsStore = create<CardsStore>()(
             return stats;
           },
           
-          getCardsByRarity: (rarity: CardRarity) => {
+          getCardsByRarity: (rarity: string) => {
             const state = get();
             return state.collection.filter(card => card.rarity === rarity);
           },

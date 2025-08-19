@@ -1,11 +1,11 @@
 import React from 'react';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../../../models/Card';
 import { Icon } from '../../atoms/Icon';
 import { Text } from '../../atoms/Text';
 import styles from './Card.module.css';
 
 interface CardStatsProps {
-  card: UnifiedCard;
+  card: Card;
   showAdditionalStats?: boolean;
 }
 
@@ -15,45 +15,38 @@ export const CardStats: React.FC<CardStatsProps> = ({
 }) => {
   return (
     <div className={styles.cardStats}>
-      {/* Primary stats: Health and Luck */}
+      {/* Primary stats: HP and Luck */}
       <div className={styles.cardStatsPrimary}>
         <div className={styles.cardStatItem}>
           <Icon name="heart" size="sm" color="danger" />
           <Text variant="caption" weight="bold">
-            {card.health}
+            {card.hp || 100}
           </Text>
         </div>
         
         <div className={styles.cardStatItem}>
           <Icon emoji="🍀" size="sm" />
           <Text variant="caption" weight="bold" color="success">
-            {card.luck}
+            {card.luck || 10}
           </Text>
         </div>
       </div>
       
-      {/* Additional stats if requested */}
+      {/* Additional stats if requested - Stack Level */}
       {showAdditionalStats && (
         <div className={styles.cardStatsSecondary}>
           <div className={`${styles.cardStatItem} ${styles.cardStatItemSmall}`}>
-            <Icon emoji="⚔️" size="xs" />
+            <Icon emoji="🔥" size="xs" />
             <Text variant="caption" weight="medium">
-              {card.attack}
+              Stack: {card.stackLevel || 1}
             </Text>
           </div>
           
-          <div className={`${styles.cardStatItem} ${styles.cardStatItemSmall}`}>
-            <Icon emoji="🛡️" size="xs" />
-            <Text variant="caption" weight="medium">
-              {card.defense}
-            </Text>
-          </div>
-          
-          {card.attackSpeed && (
+          {card.emojis && card.emojis.length > 0 && (
             <div className={`${styles.cardStatItem} ${styles.cardStatItemSmall}`}>
-              <Icon emoji="💨" size="xs" />
+              <Icon emoji="🎯" size="xs" />
               <Text variant="caption" weight="medium">
-                {card.attackSpeed.toFixed(1)}
+                {card.emojis.length} emojis
               </Text>
             </div>
           )}

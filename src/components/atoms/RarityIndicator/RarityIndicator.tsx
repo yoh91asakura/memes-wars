@@ -1,10 +1,11 @@
 import React from 'react';
-import { CardRarity } from '../../../models/unified/Card';
+import { CardUtils } from '../../../models/Card';
+// CardRarity removed - using number rarity now;
 import { RARITY_THEMES } from '../../../constants/rarityThemes';
 import styles from './RarityIndicator.module.css';
 
 export interface RarityIndicatorProps {
-  rarity: CardRarity;
+  rarity: string;
   showLabel?: boolean;
   size?: 'small' | 'medium' | 'large';
   variant?: 'badge' | 'border' | 'glow';
@@ -24,21 +25,21 @@ export const RarityIndicator: React.FC<RarityIndicatorProps> = ({
     styles.rarityIndicator,
     styles[variant],
     styles[size],
-    styles[rarity.toLowerCase()],
+    styles[typeof rarity === 'string' ? rarity.toLowerCase() : CardUtils.getRarityName(rarity).toLowerCase()],
     className
   ].filter(Boolean).join(' ');
 
   const getRarityIcon = (): string => {
     switch (rarity) {
-      case CardRarity.COMMON: return '⚪';
-      case CardRarity.UNCOMMON: return '🟢';
-      case CardRarity.RARE: return '🔵';
-      case CardRarity.EPIC: return '🟣';
-      case CardRarity.LEGENDARY: return '🟡';
-      case CardRarity.MYTHIC: return '🔴';
-      case CardRarity.COSMIC: return '🌸';
-      case CardRarity.DIVINE: return '⭐';
-      case CardRarity.INFINITY: return '♾️';
+      case 2: return '⚪';
+      case 4: return '🟢';
+      case 10: return '🔵';
+      case 50: return '🟣';
+      case 200: return '🟡';
+      case 1000: return '🔴';
+      case 10000: return '🌸';
+      case 100000: return '⭐';
+      case 1000000: return '♾️';
       default: return '⚪';
     }
   };

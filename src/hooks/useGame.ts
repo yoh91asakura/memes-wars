@@ -6,7 +6,7 @@ import { useCombatStore, useCombatActions } from '../stores/combatStore';
 import { GameStateService } from '../services/GameState';
 import { DeckService } from '../services/DeckService';
 import { Deck } from '../models/Deck';
-import { UnifiedCard } from '../models/unified/Card';
+import { Card } from '../models/Card';
 import { CombatArena } from '../models/Combat';
 
 // Game State Hook
@@ -47,7 +47,7 @@ export function useGame() {
   } = useGameStore();
 
   // Deck management functions
-  const createNewDeck = useCallback(async (name: string, cards: UnifiedCard[] = []) => {
+  const createNewDeck = useCallback(async (name: string, cards: Card[] = []) => {
     if (!deckService.current) return null;
 
     try {
@@ -134,7 +134,7 @@ export function useGame() {
 
     // This would typically fetch from a pool of AI decks
     // For now, create a simple default deck
-    const defaultCards: UnifiedCard[] = []; // Would be populated with actual cards
+    const defaultCards: Card[] = []; // Would be populated with actual cards
 
     return deckService.current.createDeck('AI Opponent', defaultCards);
   }, []);

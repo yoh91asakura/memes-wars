@@ -1,12 +1,12 @@
 import React from 'react';
-import { CardRarity } from '../../../models/unified/Card';
-import { RARITY_THEMES } from '../../../constants/rarityThemes';
+import { CardUtils } from '../../../models/Card';
+import { getRarityThemeByName } from '../../../constants/rarityThemes';
 import styles from './CardImage.module.css';
 
 export interface CardImageProps {
   src?: string;
   alt: string;
-  rarity: CardRarity;
+  rarity: string;
   size?: 'small' | 'medium' | 'large';
   className?: string;
 }
@@ -18,7 +18,7 @@ export const CardImage: React.FC<CardImageProps> = ({
   size = 'medium',
   className = ''
 }) => {
-  const theme = RARITY_THEMES[rarity];
+  const theme = getRarityThemeByName(rarity);
   
   const imageClass = [
     styles.cardImage,
@@ -28,7 +28,7 @@ export const CardImage: React.FC<CardImageProps> = ({
 
   const placeholderClass = [
     styles.placeholder,
-    styles[rarity.toLowerCase()]
+    styles[typeof rarity === 'string' ? rarity.toLowerCase() : CardUtils.getRarityName(rarity).toLowerCase()]
   ].join(' ');
 
   return (

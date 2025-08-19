@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card, CardUtils } from '../../../models/Card';
 import { getCardImageUrl, getPlaceholderImageUrl, generateCardPlaceholder } from '../../../utils/cardImageUtils';
 import styles from './Card.module.css';
 
 interface CardArtworkProps {
-  card: UnifiedCard;
+  card: Card;
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -47,7 +47,7 @@ export const CardArtwork: React.FC<CardArtworkProps> = ({ card, size = 'md' }) =
       />
       
       {/* Rarity overlay effect */}
-      <div className={`${styles.cardImageOverlay} ${styles[`overlay--${card.rarity.toLowerCase()}`] || ''}`} />
+      <div className={`${styles.cardImageOverlay} ${styles[`overlay--${CardUtils.getRarityName(card.rarity).toLowerCase()}`] || ''}`} />
       
       {/* Card name overlay */}
       <div className={styles.cardNameOverlay}>

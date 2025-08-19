@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card, CardUtils } from '../../../models/Card';
 import { TCGCard } from '../TCGCard';
 import { SearchBox } from '../../molecules/SearchBox/SearchBox';
 import { Text } from '../../atoms/Text';
@@ -9,9 +9,9 @@ import { Icon } from '../../atoms/Icon';
 import './CardGrid.css';
 
 interface CardGridProps {
-  cards: UnifiedCard[];
+  cards: Card[];
   loading?: boolean;
-  onCardClick?: (card: UnifiedCard) => void;
+  onCardClick?: (card: Card) => void;
   onLoadMore?: () => void;
   hasMore?: boolean;
   searchable?: boolean;
@@ -48,8 +48,8 @@ export const CardGrid: React.FC<CardGridProps> = ({
     if (searchQuery) {
       filtered = filtered.filter(card =>
         card.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        card.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        card.rarity.toLowerCase().includes(searchQuery.toLowerCase())
+        (card.description?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+        CardUtils.getRarityName(card.rarity).toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -59,8 +59,8 @@ export const CardGrid: React.FC<CardGridProps> = ({
         case 'name':
           return a.name.localeCompare(b.name);
         case 'rarity': {
-          const rarityOrder = { cosmic: 6, mythic: 5, legendary: 4, epic: 3, rare: 2, uncommon: 1, common: 0 };
-          return (rarityOrder[b.rarity as keyof typeof rarityOrder] || 0) - (rarityOrder[a.rarity as keyof typeof rarityOrder] || 0);
+          // Higher rarity (lower probability) should come first
+          return b.rarity - a.rarity;
         }
         case 'recent':
         default: {
@@ -75,7 +75,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
   }, [cards, searchQuery, sortBy]);
 
 
-  const handleCardClick = (card: UnifiedCard) => {
+  const handleCardClick = (card: Card) => {
     if (onCardClick) {
       onCardClick(card);
     }

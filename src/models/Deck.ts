@@ -1,13 +1,13 @@
 // Deck Models - All deck and deck building related data structures
 
-import { UnifiedCard } from './unified/Card';
+import { Card } from './unified/Card';
 import { ProjectileEffect, FirePattern, SpecialAbility } from './Combat';
 
 export interface Deck {
   id: string;
   name: string;
   description?: string;
-  cards: UnifiedCard[];
+  cards: Card[];
   isActive: boolean;
   isValid: boolean;
   
@@ -163,7 +163,7 @@ export type PlayStyle =
 
 export interface DeckBuilder {
   currentDeck: Deck;
-  availableCards: UnifiedCard[];
+  availableCards: Card[];
   filters: DeckBuilderFilters;
   sortBy: DeckBuilderSort;
   viewMode: 'grid' | 'list' | 'compact';
@@ -238,7 +238,7 @@ export interface DeckAnalyzer {
   analyzeDeck: (deck: Deck) => DeckAnalysis;
   suggestImprovements: (deck: Deck) => DeckSuggestion[];
   compareDecks: (deck1: Deck, deck2: Deck) => DeckComparison;
-  calculateSynergies: (cards: UnifiedCard[]) => SynergyAnalysis;
+  calculateSynergies: (cards: Card[]) => SynergyAnalysis;
   predictWinRate: (deck: Deck, format: DeckFormat) => number;
 }
 
@@ -310,9 +310,9 @@ export interface DeckComparison {
   }[];
   
   // Card Overlap
-  sharedCards: UnifiedCard[];
-  uniqueToDeck1: UnifiedCard[];
-  uniqueToDeck2: UnifiedCard[];
+  sharedCards: Card[];
+  uniqueToDeck1: Card[];
+  uniqueToDeck2: Card[];
   overlapPercentage: number;
 }
 

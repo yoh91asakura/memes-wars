@@ -1,7 +1,7 @@
 import { Card, CardRarity, CardType } from '../../Card';
 
 export interface CommonCard extends Card {
-  rarity: CardRarity.COMMON;
+  rarity: 2;
   cost: 1 | 2;
 }
 
@@ -39,7 +39,7 @@ export interface CommonCardData {
   id: string;
   name: string;
   emoji: string;
-  rarity: CardRarity.COMMON;
+  rarity: 2;
   type: CardType.CREATURE | CardType.SPELL;
   cost: number;
   attack: number;

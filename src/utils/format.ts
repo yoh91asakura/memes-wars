@@ -322,7 +322,7 @@ export class GameFormat {
       infinity: { color: '#000000', emoji: '♾️' }
     };
 
-    const data = rarityData[rarity.toLowerCase()] || rarityData.common;
+    const data = rarityData[typeof rarity === 'string' ? rarity.toLowerCase() : CardUtils.getRarityName(rarity).toLowerCase()] || rarityData.common;
     return {
       text: StringFormat.titleCase(rarity),
       color: data.color,

@@ -1,11 +1,11 @@
 import React from 'react';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../models/Card';
 import { Text } from '../../atoms/Text';
 import { Icon } from '../../atoms/Icon';
 import styles from './Card.module.css';
 
 interface CardAbilityProps {
-  card: UnifiedCard;
+  card: Card;
   showEffects?: boolean;
 }
 

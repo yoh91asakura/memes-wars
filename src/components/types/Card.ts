@@ -30,7 +30,7 @@ export interface Card {
   name: string;
   description?: string;
   emoji: string;
-  rarity: CardRarity;
+  rarity: string;
   type: CardType;
   cost: number;
   attack: number;

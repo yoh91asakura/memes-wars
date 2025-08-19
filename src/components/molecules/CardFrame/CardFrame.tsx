@@ -1,10 +1,9 @@
 import React from 'react';
-import { CardRarity } from '../../../models/unified/Card';
-import { RARITY_THEMES } from '../../../constants/rarityThemes';
+import { getRarityThemeByName } from '../../../constants/rarityThemes';
 import styles from './CardFrame.module.css';
 
 export interface CardFrameProps {
-  rarity: CardRarity;
+  rarity: string;  // Rarity name as string (e.g. 'common', 'rare', etc.)
   children: React.ReactNode;
   animated?: boolean;
   size?: 'small' | 'medium' | 'large';
@@ -28,7 +27,7 @@ export const CardFrame: React.FC<CardFrameProps> = ({
   }
   
   // Fallback to COMMON if rarity not found
-  const theme = RARITY_THEMES[rarity] || RARITY_THEMES[CardRarity.COMMON];
+  const theme = getRarityThemeByName(rarity);
   
   const frameClass = [
     styles.cardFrame,

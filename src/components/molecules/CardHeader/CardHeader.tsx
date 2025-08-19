@@ -1,12 +1,11 @@
 import React from 'react';
-import { CardRarity } from '../../../models/unified/Card';
 import { Text } from '../../atoms/Text';
 import { RarityIndicator } from '../../atoms/RarityIndicator';
 import styles from './CardHeader.module.css';
 
 export interface CardHeaderProps {
   name: string;
-  rarity: CardRarity;
+  rarity: string;  // Rarity name as string
   compact?: boolean;
   alignment?: 'left' | 'center' | 'right';
   className?: string;

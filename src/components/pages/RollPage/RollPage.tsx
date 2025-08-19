@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../models/Card';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
 import { Text } from '../../atoms/Text';
@@ -17,13 +17,13 @@ export const RollPage: React.FC<RollPageProps> = ({
   className = '',
   testId,
 }) => {
-  const [rolledCards, setRolledCards] = useState<UnifiedCard[]>([]);
+  const [rolledCards, setRolledCards] = useState<Card[]>([]);
   
   // Store hooks - using new consolidated stores
   const { performSingleRoll, isRolling } = useCardsStore();
   const { spendCoins } = usePlayerStore();
 
-  const handleRoll = useCallback(async (): Promise<UnifiedCard> => {
+  const handleRoll = useCallback(async (): Promise<Card> => {
     try {
       // Rolls are free - no cost required
       
@@ -41,7 +41,7 @@ export const RollPage: React.FC<RollPageProps> = ({
     }
   }, [performSingleRoll]);
 
-  const handleCardClick = (_card: UnifiedCard) => {
+  const handleCardClick = (_card: Card) => {
     // Card clicked - could open modal or navigate to details
     // Debug log removed
   };

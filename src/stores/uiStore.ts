@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { UnifiedCard } from '../models/unified/Card';
+import { Card } from '../models/Card';
 
 export interface Notification {
   id: string;
@@ -52,7 +52,7 @@ export interface UIStore {
   fullscreen: boolean;
   
   // Component States
-  cardDetailCard: UnifiedCard | null;
+  cardDetailCard: Card | null;
   searchQuery: string;
   activeTab: string;
   
@@ -84,7 +84,7 @@ export interface UIStore {
   toggleFullscreen: () => void;
   
   // Component Actions
-  setCardDetail: (card: UnifiedCard | null) => void;
+  setCardDetail: (card: Card | null) => void;
   setSearchQuery: (query: string) => void;
   setActiveTab: (tab: string) => void;
   
@@ -294,7 +294,7 @@ export const useUIStore = create<UIStore>()(
           },
           
           // Component Actions
-          setCardDetail: (card: UnifiedCard | null) => {
+          setCardDetail: (card: Card | null) => {
             set({ cardDetailCard: card });
           },
           

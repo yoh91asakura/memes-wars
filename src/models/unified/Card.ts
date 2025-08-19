@@ -1,30 +1,6 @@
-import { CardEmojiData } from '../../components/types/emoji';
-
-// Unified Card Model - Single Source of Truth
-// This model consolidates all card properties and ensures consistency
-// Updated to match game specification requirements
-
-export enum CardRarity {
-  COMMON = 'COMMON',
-  UNCOMMON = 'UNCOMMON',
-  RARE = 'RARE',
-  EPIC = 'EPIC',
-  LEGENDARY = 'LEGENDARY',
-  MYTHIC = 'MYTHIC',
-  COSMIC = 'COSMIC',
-  DIVINE = 'DIVINE',
-  INFINITY = 'INFINITY',
-}
-
-export enum CardType {
-  CREATURE = 'CREATURE',
-  SPELL = 'SPELL',
-  ARTIFACT = 'ARTIFACT',
-  ATTACK = 'ATTACK',
-  DEFENSE = 'DEFENSE',
-  HEALING = 'HEALING',
-  SUPPORT = 'SUPPORT',
-}
+// Card Model - Single Source of Truth
+// Aligned with game-specification.md
+// Simple, focused on core gameplay mechanics
 
 // Meme families for thematic groupings and synergies
 export enum MemeFamily {
@@ -136,7 +112,7 @@ export interface StackBonus {
 
 // Rarity configuration with game spec probabilities
 export interface RarityConfig {
-  name: CardRarity;
+  name: string;
   probability: number;                            // 1/X format (2, 4, 10, 50, etc.)
   goldReward: [number, number];                   // [min, max] gold range
   luckRange: [number, number];                    // [min, max] luck range
@@ -167,7 +143,7 @@ export interface VisualProperties {
 }
 
 // UNIFIED CARD INTERFACE - Full Game Specification Compliance
-export interface UnifiedCard {
+export interface Card {
   // Core Identity
   id: string;
   name: string;
@@ -175,7 +151,7 @@ export interface UnifiedCard {
   emoji: string;                                  // Primary display emoji
   
   // Game Specification Requirements
-  rarity: CardRarity;
+  rarity: string;
   rarityProbability: number;                      // 1/X format (2, 4, 10, 50, 200, etc.)
   luck: number;                                   // 1-2000+ range based on rarity
   family: MemeFamily;                             // Thematic family for synergies
@@ -250,12 +226,12 @@ export interface UnifiedCard {
 }
 
 // Type alias for backward compatibility
-export type Card = UnifiedCard;
+export type Card = Card;
 
 // Utility functions for card management
 export class CardUtils {
   // Convert legacy card format to unified format with game spec requirements
-  static migrateToUnified(legacyCard: any): UnifiedCard {
+  static migrateToUnified(legacyCard: any): Card {
     const now = new Date().toISOString();
     const rarity = this.normalizeRarity(legacyCard.rarity);
     const rarityConfig = this.getRarityConfig(rarity);
@@ -332,83 +308,83 @@ export class CardUtils {
   }
   
   // Normalize rarity from string to enum
-  private static normalizeRarity(rarity: any): CardRarity {
+  private static normalizeRarity(rarity: any): string {
     if (typeof rarity === 'string') {
       const upperRarity = rarity.toUpperCase();
-      return CardRarity[upperRarity as keyof typeof CardRarity] || CardRarity.COMMON;
+      return CardRarity[upperRarity as keyof typeof CardRarity] || 2;
     }
-    return rarity || CardRarity.COMMON;
+    return rarity || 2;
   }
   
   // Get rarity configuration based on game specification
-  private static getRarityConfig(rarity: CardRarity): RarityConfig {
-    const configs: Record<CardRarity, RarityConfig> = {
-      [CardRarity.COMMON]: {
-        name: CardRarity.COMMON,
+  private static getRarityConfig(rarity: string): RarityConfig {
+    const configs: Record<string, RarityConfig> = {
+      [2]: {
+        name: 2,
         probability: 2,
         goldReward: [10, 20],
         luckRange: [1, 10],
         emojiCount: [1, 2],
         dustValue: 1
       },
-      [CardRarity.UNCOMMON]: {
-        name: CardRarity.UNCOMMON,
+      [4]: {
+        name: 4,
         probability: 4,
         goldReward: [25, 50],
         luckRange: [10, 25],
         emojiCount: [2, 3],
         dustValue: 5
       },
-      [CardRarity.RARE]: {
-        name: CardRarity.RARE,
+      [10]: {
+        name: 10,
         probability: 10,
         goldReward: [75, 150],
         luckRange: [25, 50],
         emojiCount: [3, 4],
         dustValue: 20
       },
-      [CardRarity.EPIC]: {
-        name: CardRarity.EPIC,
+      [50]: {
+        name: 50,
         probability: 50,
         goldReward: [200, 400],
         luckRange: [50, 100],
         emojiCount: [4, 5],
         dustValue: 100
       },
-      [CardRarity.LEGENDARY]: {
-        name: CardRarity.LEGENDARY,
+      [200]: {
+        name: 200,
         probability: 200,
         goldReward: [500, 1000],
         luckRange: [100, 200],
         emojiCount: [5, 6],
         dustValue: 400
       },
-      [CardRarity.MYTHIC]: {
-        name: CardRarity.MYTHIC,
+      [1000]: {
+        name: 1000,
         probability: 1000,
         goldReward: [1500, 3000],
         luckRange: [200, 500],
         emojiCount: [6, 8],
         dustValue: 1600
       },
-      [CardRarity.COSMIC]: {
-        name: CardRarity.COSMIC,
+      [10000]: {
+        name: 10000,
         probability: 10000,
         goldReward: [5000, 10000],
         luckRange: [500, 1000],
         emojiCount: [8, 10],
         dustValue: 8000
       },
-      [CardRarity.DIVINE]: {
-        name: CardRarity.DIVINE,
+      [100000]: {
+        name: 100000,
         probability: 100000,
         goldReward: [15000, 25000],
         luckRange: [1000, 2000],
         emojiCount: [10, 12],
         dustValue: 40000
       },
-      [CardRarity.INFINITY]: {
-        name: CardRarity.INFINITY,
+      [1000000]: {
+        name: 1000000,
         probability: 1000000,
         goldReward: [50000, 100000],
         luckRange: [2000, 5000],
@@ -416,71 +392,71 @@ export class CardUtils {
         dustValue: 200000
       }
     };
-    return configs[rarity] || configs[CardRarity.COMMON];
+    return configs[rarity] || configs[2];
   }
 
   // Get max stacks based on rarity
-  private static getMaxStacksByRarity(rarity: CardRarity): number {
+  private static getMaxStacksByRarity(rarity: string): number {
     const stackMap = {
-      [CardRarity.COMMON]: 10,
-      [CardRarity.UNCOMMON]: 8,
-      [CardRarity.RARE]: 6,
-      [CardRarity.EPIC]: 4,
-      [CardRarity.LEGENDARY]: 3,
-      [CardRarity.MYTHIC]: 2,
-      [CardRarity.COSMIC]: 1,
-      [CardRarity.DIVINE]: 1,
-      [CardRarity.INFINITY]: 1,
+      [2]: 10,
+      [4]: 8,
+      [10]: 6,
+      [50]: 4,
+      [200]: 3,
+      [1000]: 2,
+      [10000]: 1,
+      [100000]: 1,
+      [1000000]: 1,
     };
     return stackMap[rarity] || 5;
   }
   
   // Get default visual properties by rarity
-  private static getDefaultVisualByRarity(rarity: CardRarity): VisualProperties {
+  private static getDefaultVisualByRarity(rarity: string): VisualProperties {
     const visualMap = {
-      [CardRarity.COMMON]: {
+      [2]: {
         glow: '#9CA3AF',
         borderColor: '#D1D5DB',
         backgroundColor: '#F9FAFB',
         textColor: '#374151',
       },
-      [CardRarity.UNCOMMON]: {
+      [4]: {
         glow: '#10B981',
         borderColor: '#059669',
         backgroundColor: '#ECFDF5',
         textColor: '#065F46',
       },
-      [CardRarity.RARE]: {
+      [10]: {
         glow: '#3B82F6',
         borderColor: '#2563EB',
         backgroundColor: '#EFF6FF',
         textColor: '#1E3A8A',
       },
-      [CardRarity.EPIC]: {
+      [50]: {
         glow: '#8B5CF6',
         borderColor: '#7C3AED',
         backgroundColor: '#F5F3FF',
         textColor: '#4C1D95',
       },
-      [CardRarity.LEGENDARY]: {
+      [200]: {
         glow: '#F59E0B',
         borderColor: '#D97706',
         backgroundColor: '#FFFBEB',
         textColor: '#92400E',
       },
-      [CardRarity.MYTHIC]: {
+      [1000]: {
         glow: '#EF4444',
         borderColor: '#DC2626',
         backgroundColor: '#FEF2F2',
         textColor: '#991B1B',
       },
-      [CardRarity.COSMIC]: {
+      [10000]: {
         glow: '#EC4899',
         borderColor: '#DB2777',
         backgroundColor: '#FDF2F8',
         textColor: '#831843',
       },
-      [CardRarity.DIVINE]: {
+      [100000]: {
         glow: '#FFD700',
         borderColor: '#FFC700',
         backgroundColor: '#FFFEF0',
@@ -488,7 +464,7 @@ export class CardUtils {
         animation: 'sparkle' as const,
         particles: true,
       },
-      [CardRarity.INFINITY]: {
+      [1000000]: {
         glow: '#9400D3',
         borderColor: '#8B008B',
         backgroundColor: '#FFF0F5',
@@ -497,18 +473,18 @@ export class CardUtils {
         particles: true,
       },
     };
-    return visualMap[rarity as keyof typeof visualMap] || visualMap[CardRarity.COMMON];
+    return visualMap[rarity as keyof typeof visualMap] || visualMap[2];
   }
   
   // Generate luck stat based on rarity
-  private static generateLuckStat(rarity: CardRarity): number {
+  private static generateLuckStat(rarity: string): number {
     const config = this.getRarityConfig(rarity);
     const [min, max] = config.luckRange;
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   // Calculate gold reward based on rarity
-  private static calculateGoldReward(rarity: CardRarity): number {
+  private static calculateGoldReward(rarity: string): number {
     const config = this.getRarityConfig(rarity);
     const [min, max] = config.goldReward;
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -597,18 +573,18 @@ export class CardUtils {
   }
 
   // Generate default effects based on rarity
-  private static generateDefaultEffects(rarity: CardRarity): CardEffect[] {
+  private static generateDefaultEffects(rarity: string): CardEffect[] {
     const effects: CardEffect[] = [];
     
     // Higher rarity cards get more effects
-    const effectCount = rarity === CardRarity.COMMON ? 0 : 
-                       rarity === CardRarity.UNCOMMON ? 1 :
-                       rarity === CardRarity.RARE ? 1 :
-                       rarity === CardRarity.EPIC ? 2 :
-                       rarity === CardRarity.LEGENDARY ? 2 :
-                       rarity === CardRarity.MYTHIC ? 3 :
-                       rarity === CardRarity.COSMIC ? 3 :
-                       rarity === CardRarity.DIVINE ? 4 : 5;
+    const effectCount = rarity === 2 ? 0 : 
+                       rarity === 4 ? 1 :
+                       rarity === 10 ? 1 :
+                       rarity === 50 ? 2 :
+                       rarity === 200 ? 2 :
+                       rarity === 1000 ? 3 :
+                       rarity === 10000 ? 3 :
+                       rarity === 100000 ? 4 : 5;
     
     const availableEffects = Object.values(EffectType);
     
@@ -642,7 +618,7 @@ export class CardUtils {
   }
 
   // Calculate total card power based on stats (enhanced)
-  static calculatePower(card: UnifiedCard): number {
+  static calculatePower(card: Card): number {
     const basePower = card.attack + card.defense + card.health + (card.cost * 2);
     const luckBonus = (card.luck || 0) * 0.01; // Luck contributes to power
     const stackBonus = (card.stackCount - 1) * 10; // Each stack adds 10 power
@@ -651,7 +627,7 @@ export class CardUtils {
   }
   
   // Check if card is valid
-  static isValid(card: UnifiedCard): boolean {
+  static isValid(card: Card): boolean {
     return (
       !!card.id &&
       !!card.name &&
@@ -668,7 +644,7 @@ export class CardUtils {
 
 // Filter interface for card queries
 export interface CardFilter {
-  rarity?: CardRarity;
+  rarity?: string;
   type?: CardType;
   cost?: number;
   minAttack?: number;

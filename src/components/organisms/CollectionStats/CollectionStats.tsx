@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardRarity } from '../../../models/unified/Card';
+// CardRarity removed - using number rarity now;
 import { Text } from '../../atoms/Text';
 import { Badge } from '../../atoms/Badge';
 import { Icon } from '../../atoms/Icon';
@@ -8,7 +8,7 @@ import './CollectionStats.css';
 interface CollectionStatsProps {
   totalCards: number;
   uniqueCards: number;
-  cardsByRarity: Record<CardRarity, number>;
+  cardsByRarity: Record<string, number>;
   completionPercentage: number;
   totalValue: number;
   className?: string;
@@ -16,15 +16,15 @@ interface CollectionStatsProps {
 }
 
 const rarityDisplay = [
-  { key: 'COMMON' as CardRarity, label: 'Common', color: '#95a5a6', icon: '⚪' },
-  { key: 'UNCOMMON' as CardRarity, label: 'Uncommon', color: '#27ae60', icon: '🟢' },
-  { key: 'RARE' as CardRarity, label: 'Rare', color: '#3498db', icon: '🔵' },
-  { key: 'EPIC' as CardRarity, label: 'Epic', color: '#9b59b6', icon: '🟣' },
-  { key: 'LEGENDARY' as CardRarity, label: 'Legendary', color: '#f39c12', icon: '🟠' },
-  { key: 'MYTHIC' as CardRarity, label: 'Mythic', color: '#e67e22', icon: '🔴' },
-  { key: 'COSMIC' as CardRarity, label: 'Cosmic', color: '#e74c3c', icon: '✨' },
-  { key: 'DIVINE' as CardRarity, label: 'Divine', color: '#9b59b6', icon: '👑' },
-  { key: 'INFINITY' as CardRarity, label: 'Infinity', color: '#2c3e50', icon: '♾️' }
+  { key: 'common' as string, label: 'Common', color: '#95a5a6', icon: '⚪' },
+  { key: 'uncommon' as string, label: 'Uncommon', color: '#27ae60', icon: '🟢' },
+  { key: 'rare' as string, label: 'Rare', color: '#3498db', icon: '🔵' },
+  { key: 'epic' as string, label: 'Epic', color: '#9b59b6', icon: '🟣' },
+  { key: 'legendary' as string, label: 'Legendary', color: '#f39c12', icon: '🟠' },
+  { key: 'mythic' as string, label: 'Mythic', color: '#e67e22', icon: '🔴' },
+  { key: 'cosmic' as string, label: 'Cosmic', color: '#e74c3c', icon: '✨' },
+  { key: 'divine' as string, label: 'Divine', color: '#9b59b6', icon: '👑' },
+  { key: 'infinity' as string, label: 'Infinity', color: '#2c3e50', icon: '♾️' }
 ];
 
 export const CollectionStats: React.FC<CollectionStatsProps> = ({

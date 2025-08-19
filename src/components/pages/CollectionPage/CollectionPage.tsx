@@ -8,7 +8,7 @@ import { CollectionCard } from '../../molecules/CollectionCard';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Icon } from '../../atoms/Icon';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card } from '../models/Card';
 import './CollectionPage.css';
 
 interface CollectionPageProps {
@@ -72,11 +72,11 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     });
   };
   
-  const handleCardSelect = (card: UnifiedCard) => {
+  const handleCardSelect = (card: Card) => {
     setSelectedCard(selectedCard?.id === card.id ? null : card);
   };
   
-  const handleAddToDeck = (card: UnifiedCard) => {
+  const handleAddToDeck = (card: Card) => {
     // For now, we'll need an active deck to add to. TODO: implement proper deck selection
     const deckId = activeDeck?.id;
     if (!deckId) return false;
@@ -90,14 +90,14 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     }
   };
   
-  const handleRemoveCard = (card: UnifiedCard) => {
+  const handleRemoveCard = (card: Card) => {
     removeCard(card.id);
   };
   
   const handleBulkActions = (action: 'addToDeck' | 'remove') => {
     const cardsToProcess = Array.from(selectedCards)
       .map(id => collection.find(card => card.id === id))
-      .filter(Boolean) as UnifiedCard[];
+      .filter(Boolean) as Card[];
     
     cardsToProcess.forEach(card => {
       if (action === 'addToDeck') {

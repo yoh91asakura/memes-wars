@@ -6,7 +6,7 @@ import { epicCards } from './epic';
 import { legendaryCards } from './legendary';
 import { mythicCards } from './mythic';
 import { cosmicCards } from './cosmic';
-import { UnifiedCard, CardRarity } from '../../models/unified/Card';
+import { Card } from '../../models/Card';
 
 // Export all card arrays
 export {
@@ -20,7 +20,7 @@ export {
 };
 
 // Combine all cards into a single array
-export const allCards: UnifiedCard[] = [
+export const allCards: Card[] = [
   ...commonCards,
   ...uncommonCards,
   ...rareCards,
@@ -32,30 +32,30 @@ export const allCards: UnifiedCard[] = [
 
 // Card count by rarity (for verification)
 export const cardCounts = {
-  [CardRarity.COMMON]: commonCards.length,
-  [CardRarity.UNCOMMON]: uncommonCards.length,
-  [CardRarity.RARE]: rareCards.length,
-  [CardRarity.EPIC]: epicCards.length,
-  [CardRarity.LEGENDARY]: legendaryCards.length,
-  [CardRarity.MYTHIC]: mythicCards.length,
-  [CardRarity.COSMIC]: cosmicCards.length,
+  common: commonCards.length,
+  uncommon: uncommonCards.length,
+  rare: rareCards.length,
+  epic: epicCards.length,
+  legendary: legendaryCards.length,
+  mythic: mythicCards.length,
+  cosmic: cosmicCards.length,
   total: allCards.length
 };
 
 // Helper functions for card retrieval
 export class CardCollection {
   // Get cards by rarity
-  static getByRarity(rarity: CardRarity): UnifiedCard[] {
-    return allCards.filter(card => card.rarity === rarity);
+  static getByRarity(rarityProbability: number): Card[] {
+    return allCards.filter(card => card.rarity === rarityProbability);
   }
 
   // Get random card by rarity probabilities
-  static getRandomCard(): UnifiedCard {
-    const totalWeight = allCards.reduce((sum, card) => sum + (1 / card.rarityProbability), 0);
+  static getRandomCard(): Card {
+    const totalWeight = allCards.reduce((sum, card) => sum + (1 / card.rarity), 0);
     let random = Math.random() * totalWeight;
     
     for (const card of allCards) {
-      random -= (1 / card.rarityProbability);
+      random -= (1 / card.rarity);
       if (random <= 0) return card;
     }
     
@@ -63,22 +63,21 @@ export class CardCollection {
   }
 
   // Get card by ID
-  static getById(id: string): UnifiedCard | undefined {
+  static getById(id: string): Card | undefined {
     return allCards.find(card => card.id === id);
   }
 
   // Get cards by family
-  static getByFamily(family: string): UnifiedCard[] {
+  static getByFamily(family: string): Card[] {
     return allCards.filter(card => card.family === family);
   }
 
-  // Search cards by name or tags
-  static search(query: string): UnifiedCard[] {
+  // Search cards by name
+  static search(query: string): Card[] {
     const lowerQuery = query.toLowerCase();
     return allCards.filter(card => 
       card.name.toLowerCase().includes(lowerQuery) ||
-      card.tags?.some(tag => tag.toLowerCase().includes(lowerQuery)) ||
-      card.description.toLowerCase().includes(lowerQuery)
+      card.description?.toLowerCase().includes(lowerQuery)
     );
   }
 
@@ -103,13 +102,13 @@ export class CardCollection {
 export function validateCardCollection(): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
   const expectedCounts = {
-    [CardRarity.COMMON]: 10,
-    [CardRarity.UNCOMMON]: 10,
-    [CardRarity.RARE]: 10,
-    [CardRarity.EPIC]: 8,
-    [CardRarity.LEGENDARY]: 6,
-    [CardRarity.MYTHIC]: 4,
-    [CardRarity.COSMIC]: 1,
+    2: 10,      // Common
+    4: 10,      // Uncommon
+    10: 10,     // Rare
+    50: 8,      // Epic
+    200: 6,     // Legendary
+    1000: 4,    // Mythic
+    10000: 1,   // Cosmic
   };
 
   // Check card counts

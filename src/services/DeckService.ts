@@ -1,11 +1,11 @@
 // Deck Service - Deck validation and management operations
 
 import { Deck, DeckStats, DeckValidation, DeckValidationError, DeckValidationWarning } from '../models/Deck';
-import { UnifiedCard } from '../models/unified/Card';
+import { Card } from '../models/Card';
 import { EmojiProjectile } from '../models/Combat';
 
 export interface IDeckService {
-  validateDeck(cards: UnifiedCard[]): boolean;
+  validateDeck(cards: Card[]): boolean;
   calculateTotalHP(deck: Deck): number;
   getActiveEmojis(deck: Deck): EmojiProjectile[];
   saveDeck(deck: Deck): void;
@@ -17,12 +17,12 @@ export class DeckService implements IDeckService {
   private readonly MAX_DECK_SIZE = 30;
   private readonly MAX_COPIES_PER_CARD = 3;
 
-  public validateDeck(cards: UnifiedCard[]): boolean {
+  public validateDeck(cards: Card[]): boolean {
     const validation = this.getDetailedValidation(cards);
     return validation.isValid;
   }
 
-  public getDetailedValidation(cards: UnifiedCard[]): DeckValidation {
+  public getDetailedValidation(cards: Card[]): DeckValidation {
     const errors: DeckValidationError[] = [];
     const warnings: DeckValidationWarning[] = [];
 
@@ -108,7 +108,7 @@ export class DeckService implements IDeckService {
     }, 0);
   }
 
-  public calculateDeckStats(cards: UnifiedCard[]): DeckStats {
+  public calculateDeckStats(cards: Card[]): DeckStats {
     const totalCards = cards.length;
     const totalHealth = cards.reduce((sum, card) => sum + (card.health || 0), 0);
     const totalDamage = cards.reduce((sum, card) => sum + (card.damage || 0), 0);
@@ -243,7 +243,7 @@ export class DeckService implements IDeckService {
     }
   }
 
-  public createDeck(name: string, cards: UnifiedCard[] = []): Deck {
+  public createDeck(name: string, cards: Card[] = []): Deck {
     const now = new Date().toISOString();
     const deck: Deck = {
       id: `deck_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -369,7 +369,7 @@ export class DeckService implements IDeckService {
     }
   }
 
-  private getCardCounts(cards: UnifiedCard[]): Map<string, number> {
+  private getCardCounts(cards: Card[]): Map<string, number> {
     const counts = new Map<string, number>();
     cards.forEach(card => {
       counts.set(card.id, (counts.get(card.id) || 0) + 1);
@@ -377,7 +377,7 @@ export class DeckService implements IDeckService {
     return counts;
   }
 
-  private calculateFireRate(cards: UnifiedCard[]): number {
+  private calculateFireRate(cards: Card[]): number {
     // Base fire rate calculation based on card properties
     const baseRate = 2.0; // projectiles per second
     const speedModifiers = cards.reduce((sum, card) => {
@@ -389,7 +389,7 @@ export class DeckService implements IDeckService {
     return baseRate + (speedModifiers / cards.length);
   }
 
-  private calculateShieldValue(cards: UnifiedCard[]): number {
+  private calculateShieldValue(cards: Card[]): number {
     return cards.reduce((sum, card) => {
       // Cards with defensive properties contribute to shield
       if (card.type === 'defense' || card.abilities?.some(a => a.includes('shield'))) {
@@ -399,7 +399,7 @@ export class DeckService implements IDeckService {
     }, 0);
   }
 
-  private calculateUtilityRating(cards: UnifiedCard[]): number {
+  private calculateUtilityRating(cards: Card[]): number {
     let utilityScore = 0;
     
     cards.forEach(card => {
@@ -417,7 +417,7 @@ export class DeckService implements IDeckService {
     return Math.min(10, utilityScore / Math.max(1, cards.length) * 10);
   }
 
-  private calculateSynergyScore(cards: UnifiedCard[]): number {
+  private calculateSynergyScore(cards: Card[]): number {
     const typeGroups = new Map<string, number>();
     
     cards.forEach(card => {

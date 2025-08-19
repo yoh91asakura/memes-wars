@@ -1,6 +1,6 @@
 // Player Models - All player-related data structures
 
-import { UnifiedCard } from './unified/Card';
+import { Card } from './unified/Card';
 import { CombatStats } from './Combat';
 
 export interface Player {
@@ -17,7 +17,7 @@ export interface Player {
   gems: number;
   
   // Collections
-  cards: UnifiedCard[];
+  cards: Card[];
   achievements: Achievement[];
   
   // Statistics
@@ -301,7 +301,7 @@ export interface QuestReward {
 export interface PlayerProfile {
   player: Player;
   recentMatches: MatchHistory[];
-  favoriteCards: UnifiedCard[];
+  favoriteCards: Card[];
   achievements: Achievement[];
   currentRank: PlayerRank;
   isPublic: boolean;

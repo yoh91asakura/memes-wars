@@ -2,12 +2,12 @@
 // Focused only on active game state, separated from player progression
 
 import { create } from 'zustand';
-import { UnifiedCard } from '../models/unified/Card';
+import { Card } from '../models/Card';
 
 export interface Deck {
   id: string;
   name: string;
-  cards: UnifiedCard[];
+  cards: Card[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -57,11 +57,11 @@ export interface GameStore {
   updatePlayerHealth: (playerId: string, health: number) => void;
   
   // Deck Actions
-  createDeck: (name: string, cards?: UnifiedCard[]) => Deck;
+  createDeck: (name: string, cards?: Card[]) => Deck;
   updateDeck: (deckId: string, updates: Partial<Deck>) => void;
   deleteDeck: (deckId: string) => void;
   setActiveDeck: (deckId: string) => void;
-  addCardToDeck: (deckId: string, card: UnifiedCard) => boolean;
+  addCardToDeck: (deckId: string, card: Card) => boolean;
   removeCardFromDeck: (deckId: string, cardId: string) => void;
   duplicateDeck: (deckId: string, newName: string) => Deck;
   
@@ -75,7 +75,7 @@ export interface GameStore {
   getValidDecks: () => Deck[];
   getDeckById: (deckId: string) => Deck | undefined;
   getActiveDeck: () => Deck | null;
-  canAddCardToDeck: (deckId: string, card: UnifiedCard) => boolean;
+  canAddCardToDeck: (deckId: string, card: Card) => boolean;
   
   // Utilities
   reset: () => void;
@@ -161,7 +161,7 @@ export const useGameStore = create<GameStore>()(
         },
         
         // Deck Actions
-        createDeck: (name: string, cards: UnifiedCard[] = []) => {
+        createDeck: (name: string, cards: Card[] = []) => {
           const newDeck: Deck = {
             id: `deck-${Date.now()}`,
             name,
@@ -216,7 +216,7 @@ export const useGameStore = create<GameStore>()(
           }
         },
         
-        addCardToDeck: (deckId: string, card: UnifiedCard) => {
+        addCardToDeck: (deckId: string, card: Card) => {
           const state = get();
           const deck = state.decks.find(d => d.id === deckId);
           
@@ -286,7 +286,7 @@ export const useGameStore = create<GameStore>()(
           return state.activeDeck;
         },
         
-        canAddCardToDeck: (deckId: string, _card: UnifiedCard) => {
+        canAddCardToDeck: (deckId: string, _card: Card) => {
           const state = get();
           const deck = state.decks.find(d => d.id === deckId);
           return deck ? deck.cards.length < state.maxDeckSize : false;

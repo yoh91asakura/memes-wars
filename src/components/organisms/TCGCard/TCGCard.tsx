@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { UnifiedCard } from '../../../models/unified/Card';
+import { Card, CardUtils } from '../../../models/Card';
 import { CardFrame } from '../../molecules/CardFrame';
 import { CardHeader } from '../../molecules/CardHeader';
 import { CardFooter } from '../../molecules/CardFooter';
@@ -9,10 +9,10 @@ import { CardImage } from '../../atoms/CardImage';
 import styles from './TCGCard.module.css';
 
 export interface TCGCardProps {
-  card: UnifiedCard;
+  card: Card;
   size?: 'small' | 'medium' | 'large';
   variant?: 'collection' | 'battle' | 'detail';
-  onClick?: (card: UnifiedCard) => void;
+  onClick?: (card: Card) => void;
   selected?: boolean;
   animated?: boolean;
   showStats?: boolean;
@@ -92,14 +92,14 @@ export const TCGCard: React.FC<TCGCardProps> = ({
       data-testid={testId}
       {...getAnimationProps()}
     >
-      <CardFrame
-        rarity={card.rarity}
-        animated={animated}
-        size={size}
-        variant={variant}
-        selected={selected}
-        className={styles.cardFrame}
-      >
+        <CardFrame
+          rarity={CardUtils.getRarityName(card.rarity).toLowerCase()}
+          animated={animated}
+          size={size}
+          variant={variant}
+          selected={selected}
+          className={styles.cardFrame}
+        >
         {/* Header Section - Name & Rarity */}
         <div 
           className={styles.headerSection}
@@ -107,7 +107,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
         >
           <CardHeader
             name={card.name}
-            rarity={card.rarity}
+            rarity={CardUtils.getRarityName(card.rarity).toLowerCase()}
             compact={size === 'small'}
             alignment="center"
           />
@@ -126,7 +126,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
             <CardImage
               src={imageUrl}
               alt={`${card.name} artwork`}
-              rarity={card.rarity}
+              rarity={CardUtils.getRarityName(card.rarity).toLowerCase()}
               size={size}
               className={styles.cardImage}
             />
@@ -156,7 +156,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
             style={{ minHeight: `${ratios.footer}%` }}
           >
             <CardFooter
-              health={card.health || 0}
+              health={card.hp || 100}
               luck={card.luck || 0}
               layout="horizontal"
               size={size}

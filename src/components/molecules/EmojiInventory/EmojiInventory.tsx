@@ -1,10 +1,10 @@
 import React from 'react';
-import { EmojiProjectile } from '../../../models/unified/Card';
+import { Emoji } from '../../../models/Card';
 import { EmojiChip } from '../../atoms/EmojiChip';
 import styles from './EmojiInventory.module.css';
 
 export interface EmojiInventoryProps {
-  emojis: EmojiProjectile[];
+  emojis: Emoji[];
   maxDisplay?: number;
   layout?: 'grid' | 'list';
   size?: 'small' | 'medium' | 'large';
@@ -54,7 +54,7 @@ export const EmojiInventory: React.FC<EmojiInventoryProps> = ({
             key={index}
             emoji={emoji.character}
             size={getChipSize()}
-            effect={emoji.effects?.[0]}
+            effect={emoji.effect}
             damage={emoji.damage}
             showTooltip={showTooltips}
             className={styles.emojiItem}
