@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MainLayout } from './components/templates/MainLayout/MainLayout';
 import { RollPage } from './components/pages/RollPage/RollPage';
 import { CollectionPage } from './components/pages/CollectionPage/CollectionPage';
+// import { CardDebug } from './components/molecules/Card/CardDebug';
 import { Text } from './components/atoms/Text';
 import './App.css';
 
@@ -31,6 +32,8 @@ function App() {
             </Text>
           </div>
         );
+      // case 'debug':
+        // return <CardDebug />;
       default:
         return <RollPage testId="roll-page" />;
     }

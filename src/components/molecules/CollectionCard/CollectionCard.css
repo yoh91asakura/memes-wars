@@ -1,3 +1,8 @@
+/* Wrapper for the TCG card with collection-specific styling */
+.collection-card__wrapper {
+  position: relative;
+}
+
 .collection-card {
   position: relative;
   background: linear-gradient(135deg, 
@@ -29,6 +34,23 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
               0 0 20px var(--rarity-color, rgba(255, 255, 255, 0.2));
   transform: translateY(-4px);
+}
+
+/* Collection Actions Overlay */
+.collection-card__actions {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.collection-card__wrapper:hover .collection-card__actions {
+  opacity: 1;
 }
 
 /* Grid View Styles */
