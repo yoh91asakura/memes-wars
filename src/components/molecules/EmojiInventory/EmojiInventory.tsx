@@ -29,9 +29,9 @@ export const EmojiInventory: React.FC<EmojiInventoryProps> = ({
 
   const getChipSize = (): number => {
     switch (size) {
-      case 'small': return 20;
-      case 'large': return 32;
-      default: return 24;
+      case 'small': return 24;
+      case 'large': return 40;
+      default: return 32;
     }
   };
 

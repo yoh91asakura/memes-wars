@@ -34,19 +34,33 @@ export const commonCards: UnifiedCard[] = [
     health: 3,
     attackSpeed: 1.2,
     
-    // Enhanced Combat System
-    emojis: [{
-      character: '🔥',
-      damage: 2,
-      speed: 3,
-      trajectory: 'straight',
-      effects: [EffectType.BURN],
-      target: 'OPPONENT',
-      fireRate: 1.2,
-      piercing: false,
-      homing: false,
-      bounces: 0
-    }],
+    // Enhanced Combat System - Common cards have 1-2 of the same emoji
+    emojis: [
+      {
+        character: '🔥',
+        damage: 3,  // Base damage from spec
+        speed: 3,
+        trajectory: 'straight',
+        effects: [EffectType.BURN],  // 3s, 1 dmg/s from spec
+        target: 'OPPONENT',
+        fireRate: 1.2,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '🔥',  // Second identical fire emoji
+        damage: 3,
+        speed: 3,
+        trajectory: 'straight',
+        effects: [EffectType.BURN],
+        target: 'OPPONENT',
+        fireRate: 1.2,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      }
+    ],
     cardEffects: [{
       id: 'burn_proc',
       name: 'Ignite',
@@ -136,19 +150,33 @@ export const commonCards: UnifiedCard[] = [
     health: 3,
     attackSpeed: 0.8,
     
-    // Enhanced Combat System
-    emojis: [{
-      character: '💧',
-      damage: 1,
-      speed: 2,
-      trajectory: 'arc',
-      effects: [EffectType.HEAL],
-      target: 'OPPONENT',
-      fireRate: 0.8,
-      piercing: false,
-      homing: false,
-      bounces: 0
-    }],
+    // Enhanced Combat System - Support emoji for healing
+    emojis: [
+      {
+        character: '💚',  // Green Heart from spec
+        damage: 0,  // Healing emoji, no damage
+        speed: 2,
+        trajectory: 'arc',
+        effects: [EffectType.HEAL],  // Heal 5 HP from spec
+        target: 'SELF',  // Heals self
+        fireRate: 0.8,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '💚',  // Second identical healing emoji
+        damage: 0,
+        speed: 2,
+        trajectory: 'arc',
+        effects: [EffectType.HEAL],
+        target: 'SELF',
+        fireRate: 0.8,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      }
+    ],
     cardEffects: [{
       id: 'refresh_proc',
       name: 'Refresh',

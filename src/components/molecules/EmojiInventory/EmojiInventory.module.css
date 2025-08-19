@@ -1,22 +1,25 @@
 .emojiInventory {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 0.25rem;
-  padding: 0.25rem;
   background: transparent;
+  flex-wrap: nowrap;
 }
 
 .emojiInventory.grid {
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .emojiInventory.list {
-  flex-direction: column;
-  overflow-y: auto;
+  flex-direction: row;
+  overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  max-height: 200px;
+  max-width: 100%;
 }
 
 .emojiInventory.list::-webkit-scrollbar {
@@ -35,9 +38,11 @@
 
 .emojiList {
   display: flex;
-  gap: inherit;
-  flex-wrap: inherit;
+  flex-direction: row;
+  gap: 0.25rem;
   align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
 }
 
 .emojiInventory.grid .emojiList {

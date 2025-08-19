@@ -27,13 +27,18 @@ export const CardFooter: React.FC<CardFooterProps> = ({
   ].filter(Boolean).join(' ');
 
   const badgeSize = size === 'large' ? 'medium' : size === 'small' ? 'small' : 'medium';
-  const badgeVariant = variant === 'compact' ? 'compact' : 'default';
+  // Always use compact variant to hide labels
+  const badgeVariant = 'compact';
+
+  // Default values if undefined
+  const safeHealth = health !== undefined && health !== null ? health : 0;
+  const safeLuck = luck !== undefined && luck !== null ? luck : 0;
 
   return (
     <div className={footerClass}>
       <StatBadge 
         icon="❤️"
-        value={health}
+        value={safeHealth}
         label="HP"
         color="#ef4444"
         size={badgeSize}
@@ -41,7 +46,7 @@ export const CardFooter: React.FC<CardFooterProps> = ({
       />
       <StatBadge 
         icon="🍀"
-        value={luck}
+        value={safeLuck}
         label="Luck"
         color="#10b981"
         size={badgeSize}

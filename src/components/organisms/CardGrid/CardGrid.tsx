@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Card as CardType } from '../../types';
 import { UnifiedCard } from '../../../models/unified/Card';
 import { TCGCard } from '../TCGCard';
 import { SearchBox } from '../../molecules/SearchBox/SearchBox';
@@ -10,9 +9,9 @@ import { Icon } from '../../atoms/Icon';
 import './CardGrid.css';
 
 interface CardGridProps {
-  cards: (CardType | UnifiedCard)[];
+  cards: UnifiedCard[];
   loading?: boolean;
-  onCardClick?: (card: CardType | UnifiedCard) => void;
+  onCardClick?: (card: UnifiedCard) => void;
   onLoadMore?: () => void;
   hasMore?: boolean;
   searchable?: boolean;
@@ -75,64 +74,6 @@ export const CardGrid: React.FC<CardGridProps> = ({
     return filtered;
   }, [cards, searchQuery, sortBy]);
 
-  // Convert legacy card to UnifiedCard if needed
-  const normalizeCard = (card: CardType | UnifiedCard): UnifiedCard => {
-    if ('rarity' in card && typeof card.rarity === 'string') {
-      return card as UnifiedCard;
-    }
-    
-    const legacyCard = card as CardType;
-    return {
-      id: legacyCard.id,
-      name: legacyCard.name,
-      description: legacyCard.description,
-      emoji: legacyCard.emoji,
-      rarity: (legacyCard.rarity?.toUpperCase() || 'COMMON') as any,
-      rarityProbability: 10,
-      luck: 0,
-      family: 'CLASSIC_INTERNET' as any,
-      reference: legacyCard.flavor || 'Legacy card',
-      goldReward: 10,
-      type: 'CREATURE' as any,
-      cost: legacyCard.cost || 1,
-      attack: legacyCard.stats?.attack || 0,
-      defense: legacyCard.stats?.defense || 0,
-      health: legacyCard.stats?.health || 0,
-      attackSpeed: 1.0,
-      emojis: [],
-      cardEffects: [],
-      synergies: [],
-      goldGeneration: 1,
-      dustValue: 5,
-      tradeable: true,
-      level: 1,
-      experience: 0,
-      stackCount: 1,
-      maxStacks: 1,
-      stackBonus: {
-        luckMultiplier: 0,
-        goldMultiplier: 0,
-        bonusEmojis: [],
-        effectBonus: 0,
-        damageBonus: 0
-      },
-      visual: {
-        glow: '#ffffff',
-        borderColor: '#e9ecef',
-        backgroundColor: '#ffffff',
-        textColor: '#000000'
-      },
-      craftable: false,
-      isActive: true,
-      isLimited: false,
-      effects: [],
-      tags: legacyCard.tags || [],
-      flavor: legacyCard.flavor,
-      releaseDate: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    } as UnifiedCard;
-  };
 
   const handleCardClick = (card: UnifiedCard) => {
     if (onCardClick) {
@@ -237,7 +178,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
                   layout
                 >
                   <TCGCard
-                    card={normalizeCard(card)}
+                    card={card}
                     variant={variant}
                     size={cardSize}
                     animated

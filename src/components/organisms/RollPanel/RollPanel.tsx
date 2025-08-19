@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UnifiedCard } from '../../../models/unified/Card';
-import { convertUnifiedCardToLegacy, rarityEnumToString } from '../../../utils/typeConversions';
 import { usePlayerStore } from '../../../stores/playerStore';
 import { useCardsStore } from '../../../stores/cardsStore';
 import { RollButton } from '../../molecules/RollButton/RollButton';
-import { Card } from '../../molecules/Card/Card';
+import { TCGCard } from '../TCGCard';
 import { Text } from '../../atoms/Text';
 import { Icon } from '../../atoms/Icon';
-import { Badge } from '../../atoms/Badge';
 import './RollPanel.css';
 
 interface RollPanelProps {
@@ -100,27 +98,16 @@ export const RollPanel: React.FC<RollPanelProps> = ({
                   stiffness: 100
                 }}
               >
-                <Card
-                  card={convertUnifiedCardToLegacy(cardToShow)}
-                  variant="tcg"
-                  size="lg"
-                  interactive={false}
+                <TCGCard
+                  card={cardToShow}
+                  variant="collection"
+                  size="large"
+                  animated={false}
+                  showStats={true}
+                  showEmojis={true}
                   className={showReveal ? 'roll-panel__card--revealed' : ''}
                 />
-                {showReveal && (
-                  <motion.div
-                    className="roll-panel__rarity-burst"
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                  >
-                    <Badge variant="primary" size="lg" rounded>
-                      <Icon name="star" size="sm" />
-                      {rarityEnumToString(cardToShow.rarity).toUpperCase()}
-                      <Icon name="star" size="sm" />
-                    </Badge>
-                  </motion.div>
-                )}
+                {/* Rarity badge removed - rarity is shown in the card itself */}
               </motion.div>
             ) : (
               <motion.div

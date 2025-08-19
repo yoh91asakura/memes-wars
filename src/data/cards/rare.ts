@@ -69,19 +69,57 @@ export const rareCards: UnifiedCard[] = [
       textColor: '#00008B'
     },
     
-    // Enhanced Combat System
-    emojis: [{
-      character: '🔥',
-      damage: 6,
-      speed: 2,
-      trajectory: 'straight',
-      effects: [EffectType.BURN, EffectType.AREA, EffectType.INTIMIDATE],
-      target: 'OPPONENT',
-      fireRate: 0.8,
-      piercing: false,
-      homing: false,
-      bounces: 0
-    }],
+    // Enhanced Combat System - Rare cards have 3-4 emojis with variety
+    emojis: [
+      {
+        character: '🔥',  // Fire - main attack
+        damage: 3,
+        speed: 3,
+        trajectory: 'straight',
+        effects: [EffectType.BURN],
+        target: 'OPPONENT',
+        fireRate: 0.8,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '🔥',  // Fire - second attack
+        damage: 3,
+        speed: 3,
+        trajectory: 'straight',
+        effects: [EffectType.BURN],
+        target: 'OPPONENT',
+        fireRate: 0.8,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '⚡',  // Lightning - chain damage
+        damage: 5,
+        speed: 5,
+        trajectory: 'homing',
+        effects: [EffectType.CHAIN],
+        target: 'OPPONENT',
+        fireRate: 1.0,
+        piercing: true,
+        homing: true,
+        bounces: 2
+      },
+      {
+        character: '💥',  // Explosion - area damage
+        damage: 8,
+        speed: 2,
+        trajectory: 'arc',
+        effects: [EffectType.AREA],
+        target: 'OPPONENT',
+        fireRate: 0.5,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      }
+    ],
     cardEffects: [{
       id: 'dragon_fury',
       name: 'Dragon Fury',
@@ -178,19 +216,57 @@ export const rareCards: UnifiedCard[] = [
       textColor: '#B22222'
     },
     
-    // Enhanced Combat System
-    emojis: [{
-      character: '🔥',
-      damage: 5,
-      speed: 3,
-      trajectory: 'spiral',
-      effects: [EffectType.BURN, EffectType.HEAL_SELF],
-      target: 'OPPONENT',
-      fireRate: 1.0,
-      piercing: false,
-      homing: false,
-      bounces: 0
-    }],
+    // Enhanced Combat System - Phoenix with rebirth theme
+    emojis: [
+      {
+        character: '🔥',  // Fire - main damage
+        damage: 3,
+        speed: 3,
+        trajectory: 'spiral',
+        effects: [EffectType.BURN],
+        target: 'OPPONENT',
+        fireRate: 1.0,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '🔥',  // Fire - second damage
+        damage: 3,
+        speed: 3,
+        trajectory: 'spiral',
+        effects: [EffectType.BURN],
+        target: 'OPPONENT',
+        fireRate: 1.0,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '💚',  // Green Heart - self healing
+        damage: 0,
+        speed: 2,
+        trajectory: 'arc',
+        effects: [EffectType.HEAL_SELF],
+        target: 'SELF',
+        fireRate: 0.5,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      },
+      {
+        character: '✨',  // Sparkles - buff attack
+        damage: 1,
+        speed: 4,
+        trajectory: 'wave',
+        effects: [EffectType.BOOST],
+        target: 'SELF',
+        fireRate: 0.8,
+        piercing: false,
+        homing: false,
+        bounces: 0
+      }
+    ],
     cardEffects: [{
       id: 'rebirth_proc',
       name: 'Eternal Flame',

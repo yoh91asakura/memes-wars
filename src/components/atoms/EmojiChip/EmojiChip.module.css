@@ -3,88 +3,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.125rem;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
   transition: all 0.2s ease;
   cursor: default;
 }
 
 .emojiChip:hover {
-  background: rgba(255, 255, 255, 0.95);
-  transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: scale(1.15);
 }
 
 .emoji {
   line-height: 1;
   user-select: none;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-.damage {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  font-size: 0.6em;
-  font-weight: 600;
-  color: white;
-  background: #ef4444;
-  border-radius: 50%;
-  width: 1.2em;
-  height: 1.2em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  min-width: 12px;
-  min-height: 12px;
-  font-size: 10px;
-}
-
-.effectIndicator {
-  position: absolute;
-  bottom: -1px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--effect-color, #6b7280);
-  box-shadow: 0 0 4px var(--effect-color, #6b7280);
-}
-
-/* Effect-specific styles */
-.emojiChip.effect-fire,
-.emojiChip.effect-burn {
-  border-color: #ef444440;
-  background: rgba(254, 242, 242, 0.8);
-}
-
-.emojiChip.effect-freeze,
-.emojiChip.effect-stun {
-  border-color: #3b82f640;
-  background: rgba(239, 246, 255, 0.8);
-}
-
-.emojiChip.effect-heal,
-.emojiChip.effect-heal_self {
-  border-color: #10b98140;
-  background: rgba(236, 253, 245, 0.8);
-}
-
-.emojiChip.effect-poison {
-  border-color: #8b5cf640;
-  background: rgba(245, 243, 255, 0.8);
-}
-
-.emojiChip.effect-lightning {
-  border-color: #f59e0b40;
-  background: rgba(255, 251, 235, 0.8);
-  animation: lightning 2s infinite;
-}
-
-@keyframes lightning {
-  0%, 90%, 100% { opacity: 1; }
-  95% { opacity: 0.5; }
-}
+/* Simplified - no damage or effect indicators needed */

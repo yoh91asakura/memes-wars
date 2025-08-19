@@ -59,14 +59,15 @@
 
 .emojiSection {
   position: absolute;
-  top: 50%;
-  right: 0.5rem;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  border-radius: 8px;
-  padding: 0.25rem;
+  bottom: 3.5rem; /* Just above stats */
+  left: 50%;
+  transform: translateX(-50%);
+  /* No background or frame - just emojis */
   z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .footerSection {
@@ -74,9 +75,9 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.4));
-  backdrop-filter: blur(8px);
+  /* Removed dark gradient background */
   z-index: 2;
+  padding: 0.5rem;
 }
 
 .cardImage {
@@ -91,7 +92,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, rgba(30, 30, 40, 0.9), rgba(20, 20, 30, 0.95));
+  /* Removed dark background to make emoji stand out */
 }
 
 .mainEmoji {

@@ -28,7 +28,9 @@ export const StatBadge: React.FC<StatBadgeProps> = ({
     className
   ].filter(Boolean).join(' ');
 
-  const formattedValue = formatStatValue(value);
+  // Ensure value is a valid number, default to 0 if undefined
+  const safeValue = value !== undefined && value !== null ? value : 0;
+  const formattedValue = formatStatValue(safeValue);
 
   return (
     <div 

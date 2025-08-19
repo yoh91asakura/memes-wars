@@ -1,7 +1,5 @@
 import React, { useState, useCallback } from 'react';
 import { UnifiedCard } from '../../../models/unified/Card';
-import { convertUnifiedCardsToLegacy } from '../../../utils/typeConversions';
-import { Card } from '../../../components/types';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
 import { Text } from '../../atoms/Text';
@@ -43,7 +41,7 @@ export const RollPage: React.FC<RollPageProps> = ({
     }
   }, [performSingleRoll]);
 
-  const handleCardClick = (_card: Card) => {
+  const handleCardClick = (_card: UnifiedCard) => {
     // Card clicked - could open modal or navigate to details
     // Debug log removed
   };
@@ -70,7 +68,7 @@ export const RollPage: React.FC<RollPageProps> = ({
           </div>
           
           <CardGrid
-            cards={convertUnifiedCardsToLegacy(rolledCards)}
+            cards={rolledCards}
             title=""
             searchable={true}
             onCardClick={handleCardClick}

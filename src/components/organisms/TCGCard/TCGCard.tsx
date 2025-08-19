@@ -156,8 +156,8 @@ export const TCGCard: React.FC<TCGCardProps> = ({
             style={{ minHeight: `${ratios.footer}%` }}
           >
             <CardFooter
-              health={card.health}
-              luck={card.luck}
+              health={card.health || 0}
+              luck={card.luck || 0}
               layout="horizontal"
               size={size}
               variant={size === 'small' ? 'compact' : 'default'}
