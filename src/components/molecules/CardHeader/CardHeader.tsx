@@ -38,14 +38,6 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           {name}
         </Text>
       </div>
-      <div className={styles.raritySection}>
-        <RarityIndicator 
-          rarity={rarity}
-          size={compact ? 'small' : 'medium'}
-          variant="badge"
-          showLabel={!compact}
-        />
-      </div>
     </div>
   );
 };

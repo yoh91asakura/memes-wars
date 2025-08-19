@@ -118,13 +118,19 @@ export const TCGCard: React.FC<TCGCardProps> = ({
           className={styles.imageSection}
           style={{ minHeight: `${ratios.image}%` }}
         >
-          <CardImage
-            src={imageUrl}
-            alt={`${card.name} artwork`}
-            rarity={card.rarity}
-            size={size}
-            className={styles.cardImage}
-          />
+          {!imageUrl && card.emoji ? (
+            <div className={styles.emojiDisplay}>
+              <span className={styles.mainEmoji}>{card.emoji}</span>
+            </div>
+          ) : (
+            <CardImage
+              src={imageUrl}
+              alt={`${card.name} artwork`}
+              rarity={card.rarity}
+              size={size}
+              className={styles.cardImage}
+            />
+          )}
         </div>
 
         {/* Emoji Inventory Section */}
