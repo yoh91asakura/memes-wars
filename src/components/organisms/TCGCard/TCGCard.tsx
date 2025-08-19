@@ -5,6 +5,7 @@ import { CardFrame } from '../../molecules/CardFrame';
 import { CardHeader } from '../../molecules/CardHeader';
 import { CardFooter } from '../../molecules/CardFooter';
 import { EmojiInventory } from '../../molecules/EmojiInventory';
+import { PassiveAbilities } from '../../molecules/PassiveAbilities';
 import { CardImage } from '../../atoms/CardImage';
 import styles from './TCGCard.module.css';
 
@@ -73,13 +74,20 @@ export const TCGCard: React.FC<TCGCardProps> = ({
   };
 
   const getLayoutRatios = () => {
+    const hasPassives = card.cardEffects && card.cardEffects.length > 0;
     switch (variant) {
       case 'battle':
-        return { header: 12, image: 75, emojis: 8, footer: 5 };
+        return hasPassives 
+          ? { header: 10, image: 68, emojis: 7, passives: 10, footer: 5 }
+          : { header: 12, image: 75, emojis: 8, footer: 5 };
       case 'detail':
-        return { header: 10, image: 80, emojis: 6, footer: 4 };
+        return hasPassives 
+          ? { header: 8, image: 70, emojis: 6, passives: 12, footer: 4 }
+          : { header: 10, image: 80, emojis: 6, footer: 4 };
       default: // collection
-        return { header: 10, image: 78, emojis: 7, footer: 5 };
+        return hasPassives 
+          ? { header: 8, image: 70, emojis: 6, passives: 12, footer: 4 }
+          : { header: 10, image: 78, emojis: 7, footer: 5 };
     }
   };
 
@@ -145,6 +153,20 @@ export const TCGCard: React.FC<TCGCardProps> = ({
               layout="list"
               size={size}
               showTooltips={variant === 'detail'}
+            />
+          </div>
+        )}
+
+        {/* Passive Abilities Section */}
+        {card.cardEffects && card.cardEffects.length > 0 && (
+          <div 
+            className={styles.passivesSection}
+            style={{ minHeight: `${ratios.passives || 0}%` }}
+          >
+            <PassiveAbilities
+              cardEffects={card.cardEffects}
+              size={size}
+              showDetails={variant === 'detail'}
             />
           </div>
         )}

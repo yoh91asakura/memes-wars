@@ -37,6 +37,13 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
           {name}
         </Text>
       </div>
+      <div className={styles.raritySection}>
+        <RarityIndicator 
+          rarity={rarity}
+          size={compact ? 'sm' : 'md'}
+          className={styles.rarityIndicator}
+        />
+      </div>
     </div>
   );
 };

@@ -1,0 +1,172 @@
+.passiveAbilities {
+  width: 100%;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.passiveAbilities.small {
+  padding: 0.375rem;
+}
+
+.passiveAbilities.large {
+  padding: 0.75rem;
+}
+
+.passiveAbilities.detailed {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.header {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.headerText {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.effectsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.effectItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+.effectItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.effectIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.small .effectIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.large .effectIcon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.iconEmoji {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.small .iconEmoji {
+  font-size: 0.875rem;
+}
+
+.large .iconEmoji {
+  font-size: 1.125rem;
+}
+
+.effectContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.effectName {
+  line-height: 1.2;
+}
+
+.effectNameText {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.effectDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.triggerText,
+.durationText {
+  color: #a0a0a0;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.chanceIndicator {
+  flex-shrink: 0;
+  padding: 0.125rem 0.375rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.small .chanceIndicator {
+  padding: 0.0625rem 0.25rem;
+  min-width: 1.75rem;
+}
+
+.large .chanceIndicator {
+  padding: 0.1875rem 0.5rem;
+  min-width: 2.25rem;
+}
+
+.chanceText {
+  color: #ffffff;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .passiveAbilities {
+    padding: 0.375rem;
+  }
+  
+  .effectItem {
+    gap: 0.375rem;
+    padding: 0.1875rem;
+  }
+  
+  .effectIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .iconEmoji {
+    font-size: 0.875rem;
+  }
+  
+  .effectNameText {
+    font-size: 0.75rem;
+  }
+  
+  .triggerText,
+  .durationText {
+    font-size: 0.6875rem;
+  }
+  
+  .chanceIndicator {
+    padding: 0.0625rem 0.25rem;
+    min-width: 1.5rem;
+  }
+}

@@ -59,7 +59,7 @@
 
 .emojiSection {
   position: absolute;
-  bottom: 3.5rem; /* Just above stats */
+  bottom: 7rem; /* Above passives section */
   left: 50%;
   transform: translateX(-50%);
   /* No background or frame - just emojis */
@@ -68,6 +68,17 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+}
+
+.passivesSection {
+  position: absolute;
+  bottom: 3.5rem; /* Just above stats */
+  left: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .footerSection {
