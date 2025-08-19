@@ -14,7 +14,7 @@ interface CardProps {
   card: UnifiedCard | LegacyCardType;
   size?: 'sm' | 'md' | 'lg';
   interactive?: boolean;
-  variant?: 'tcg' | 'compact';
+  variant?: 'tcg' | 'compact' | 'simple';
   showStats?: boolean;
   showInventory?: boolean;
   showAbility?: boolean;
@@ -149,6 +149,28 @@ export const Card: React.FC<CardProps> = ({
           </Text>
         </div>
         {showStats && <CardStats card={normalizedCard} />}
+      </motion.div>
+    );
+  }
+
+  if (variant === 'simple') {
+    // Simple layout - image only with rarity border
+    return (
+      <motion.div
+        className={cardClass}
+        onClick={handleClick}
+        data-testid={testId}
+        whileHover={interactive ? { scale: 1.05 } : undefined}
+        whileTap={interactive ? { scale: 0.98 } : undefined}
+        transition={{ duration: 0.3 }}
+        style={{
+          '--card-glow': normalizedCard.visual?.glow || '#ffffff',
+          '--card-border': normalizedCard.visual?.borderColor || '#e9ecef',
+          '--card-bg': normalizedCard.visual?.backgroundColor || '#ffffff',
+          '--card-text': normalizedCard.visual?.textColor || '#000000'
+        } as React.CSSProperties}
+      >
+        <CardArtwork card={normalizedCard} size={size} variant="simple" />
       </motion.div>
     );
   }
