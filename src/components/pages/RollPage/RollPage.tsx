@@ -27,12 +27,7 @@ export const RollPage: React.FC<RollPageProps> = ({
 
   const handleRoll = useCallback(async (): Promise<UnifiedCard> => {
     try {
-      // Check if player has enough coins
-      const rollCost = 100; // Get from config
-      const success = await spendCoins(rollCost);
-      if (!success) {
-        throw new Error('Not enough coins to roll!');
-      }
+      // Rolls are free - no cost required
       
       // Perform the roll using the roll store
       const rollResult = await performSingleRoll();
@@ -46,7 +41,7 @@ export const RollPage: React.FC<RollPageProps> = ({
       console.error('Roll failed:', error);
       throw error;
     }
-  }, [performSingleRoll, spendCoins]);
+  }, [performSingleRoll]);
 
   const handleCardClick = (_card: Card) => {
     // Card clicked - could open modal or navigate to details

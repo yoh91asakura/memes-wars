@@ -67,13 +67,13 @@ export const RollPanel: React.FC<RollPanelProps> = ({
         </div>
 
         <div className="roll-panel__stat-item">
-          <Icon emoji="💰" size="md" />
+          <Icon emoji="🎯" size="md" />
           <div className="roll-panel__stat-content">
-            <Text variant="h4" weight="bold" color="warning">
-              {coins}
+            <Text variant="h4" weight="bold" color="primary">
+              {stats?.cardsCollected || 0}
             </Text>
             <Text variant="caption" color="muted">
-              Coins
+              Cards Collected
             </Text>
           </div>
         </div>
@@ -146,7 +146,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
             onRoll={handleRoll}
             loading={isRolling}
             rollCount={stats?.totalRolls || 0}
-            disabled={coins < 100}
+            disabled={false}
           />
         </div>
       </div>
@@ -154,7 +154,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
       {/* Tips */}
       <div className="roll-panel__tips">
         <Text variant="caption" color="muted" align="center">
-          💡 Tip: Higher rarity cards have special visual effects!
+          🎲 Free rolls! Collect all the meme cards and build your deck!
         </Text>
       </div>
     </div>
