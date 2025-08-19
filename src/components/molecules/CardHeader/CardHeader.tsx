@@ -5,7 +5,7 @@ import styles from './CardHeader.module.css';
 
 export interface CardHeaderProps {
   name: string;
-  rarity: string;  // Rarity name as string
+  rarity: number | string;  // Accept both numeric and string rarity
   compact?: boolean;
   alignment?: 'left' | 'center' | 'right';
   className?: string;
@@ -40,7 +40,9 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
       <div className={styles.raritySection}>
         <RarityIndicator 
           rarity={rarity}
-          size={compact ? 'sm' : 'md'}
+          displayFormat="probability"
+          variant="text"
+          size={compact ? 'small' : 'medium'}
           className={styles.rarityIndicator}
         />
       </div>

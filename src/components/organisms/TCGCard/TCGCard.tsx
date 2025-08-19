@@ -115,7 +115,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
         >
           <CardHeader
             name={card.name}
-            rarity={CardUtils.getRarityName(card.rarity).toLowerCase()}
+            rarity={card.rarity}
             compact={size === 'small'}
             alignment="center"
           />

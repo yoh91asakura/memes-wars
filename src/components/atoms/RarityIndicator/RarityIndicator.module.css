@@ -7,6 +7,13 @@
   transition: all 0.3s ease;
 }
 
+.rarityText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #9CA3AF;
+  line-height: 1;
+}
+
 .rarityIndicator.badge {
   padding: 0.25rem 0.5rem;
   background: var(--rarity-bg, #f3f4f6);

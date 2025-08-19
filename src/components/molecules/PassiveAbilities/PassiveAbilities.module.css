@@ -1,9 +1,7 @@
 .passiveAbilities {
   width: 100%;
   padding: 0.5rem;
-  background: rgba(0, 0, 0, 0.2);
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .passiveAbilities.small {
@@ -15,8 +13,7 @@
 }
 
 .passiveAbilities.detailed {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  /* No background styling for detailed variant */
 }
 
 .header {
