@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useTransform } from 'framer-motion';
 import { Card as LegacyCardType } from '../../types';
 import { UnifiedCard, CardRarity } from '../../../models/unified/Card';
 import { Text } from '../../atoms/Text';
@@ -14,7 +14,7 @@ interface CardProps {
   card: UnifiedCard | LegacyCardType;
   size?: 'sm' | 'md' | 'lg';
   interactive?: boolean;
-  variant?: 'tcg' | 'compact';
+  variant?: 'tcg' | 'compact' | 'simple';
   showStats?: boolean;
   showInventory?: boolean;
   showAbility?: boolean;
@@ -102,6 +102,23 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   // Normalize card data
   const normalizedCard: UnifiedCard = isUnifiedCard(card) ? card : normalizeLegacyCard(card) as UnifiedCard;
+
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const rotateX = useTransform(y, [-100, 100], [30, -30]);
+  const rotateY = useTransform(x, [-100, 100], [-30, 30]);
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set(event.clientX - rect.left - rect.width / 2);
+    y.set(event.clientY - rect.top - rect.height / 2);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
   
   const handleClick = () => {
     if (interactive && onClick) {
@@ -149,6 +166,54 @@ export const Card: React.FC<CardProps> = ({
           </Text>
         </div>
         {showStats && <CardStats card={normalizedCard} />}
+      </motion.div>
+    );
+  }
+
+  if (variant === 'simple') {
+    // Roblox-inspired layout
+    return (
+      <motion.div
+        className={cardClass}
+        onClick={handleClick}
+        data-testid={testId}
+        style={{
+          '--card-glow': normalizedCard.visual?.glow || '#ffffff',
+          '--card-border': normalizedCard.visual?.borderColor || '#e9ecef',
+          '--card-bg': normalizedCard.visual?.backgroundColor || '#1a1a1a', // Dark background
+          '--card-text': normalizedCard.visual?.textColor || '#ffffff', // Light text
+          transformStyle: 'preserve-3d',
+          rotateX,
+          rotateY,
+        } as React.CSSProperties}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        whileHover={interactive ? { scale: 1.05 } : undefined}
+        whileTap={interactive ? { scale: 0.98 } : undefined}
+        transition={{ duration: 0.3 }}
+      >
+        <div className={styles.robloxCardFrame}>
+          <div className={styles.robloxTop}>
+            <div className={styles.robloxPowerLevel}>{normalizedCard.health}</div>
+            <div className={styles.robloxName}>{normalizedCard.name}</div>
+            <div className={styles.robloxElement}>{normalizedCard.emojis[0]?.emoji}</div>
+          </div>
+          <div className={styles.robloxArtwork}>
+            <CardArtwork card={normalizedCard} size={size} variant="simple" />
+          </div>
+          <div className={styles.robloxBottom}>
+            <div className={styles.robloxStats}>
+              <div className={styles.robloxStat}>
+                <span role="img" aria-label="Attack">⚔️</span>
+                <span>{normalizedCard.attackSpeed}</span>
+              </div>
+            </div>
+            <div className={styles.robloxDescription}>
+              {normalizedCard.passiveAbility.description}
+            </div>
+            <div className={styles.robloxRarity}>{normalizedCard.rarity}</div>
+          </div>
+        </div>
       </motion.div>
     );
   }

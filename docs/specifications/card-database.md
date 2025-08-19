@@ -1,4 +1,4 @@
-# 🃏 Card Database
+en # 🃏 Card Database
 
 ## Card Definitions by Rarity
 

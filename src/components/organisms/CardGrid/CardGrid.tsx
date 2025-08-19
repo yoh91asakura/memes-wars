@@ -174,7 +174,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
                 >
                   <Card
                     card={card}
-                    variant="tcg"
+                    variant="simple"
                     size="md"
                     interactive
                     onClick={handleCardClick ? (clickedCard) => handleCardClick(clickedCard as CardType) : undefined}
