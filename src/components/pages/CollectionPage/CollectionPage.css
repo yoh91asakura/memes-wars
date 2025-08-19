@@ -41,7 +41,52 @@
   position: relative;
 }
 
-/* Cards Grid Layout */
+/* New Compact Collection Grid */
+.collection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+  padding: 16px 0;
+  justify-items: center;
+}
+
+/* Responsive grid breakpoints */
+@media (min-width: 480px) {
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (min-width: 768px) {
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(105px, 1fr));
+    gap: 18px;
+  }
+}
+
+/* Legacy styles - can be removed after migration */
 .collection-page__cards--grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -49,7 +94,6 @@
   padding: 16px 0;
 }
 
-/* Cards List Layout */
 .collection-page__cards--list {
   display: flex;
   flex-direction: column;
@@ -99,182 +143,50 @@
   margin-bottom: 8px;
 }
 
-.collection-page__empty-description {
-  max-width: 400px;
-  line-height: 1.6;
-}
-
-.collection-page__empty-actions {
-  margin-top: 8px;
-}
-
-/* Detail Panel */
-.collection-page__detail-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 400px;
-  height: 100vh;
-  background: rgba(20, 20, 30, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.collection-page__detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: sticky;
-  top: 0;
-  background: rgba(20, 20, 30, 0.95);
-  backdrop-filter: blur(20px);
-  z-index: 10;
-}
-
-.collection-page__detail-content {
-  flex: 1;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.collection-page__detail-info {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.collection-page__detail-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.collection-page__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.collection-page__tag {
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.collection-page__detail-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Selected Card Highlight */
-.collection-card--selected {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5),
-              0 8px 32px rgba(0, 0, 0, 0.3);
-  transform: scale(1.02);
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .collection-page__detail-panel {
-    width: 350px;
-  }
-  
-  .collection-page__cards--grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-}
-
-@media (max-width: 968px) {
+/* Mobile responsiveness */
+@media (max-width: 768px) {
   .collection-page {
     padding: 16px;
-  }
-  
-  .collection-page__detail-panel {
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-  
-  .collection-page__cards--grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
   }
   
   .collection-page__header {
     flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .collection-page__header-actions {
-    justify-content: space-between;
-  }
-  
-  .collection-page__bulk-actions {
-    flex-wrap: wrap;
-  }
-}
-
-@media (max-width: 640px) {
-  .collection-page {
-    padding: 12px;
-  }
-  
-  .collection-page__cards--grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    align-items: flex-start;
     gap: 12px;
   }
   
-  .collection-page__detail-content {
-    padding: 16px;
-  }
-  
-  .collection-page__empty-state {
-    padding: 20px;
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 6px;
   }
 }
 
-/* Loading and Animation States */
-.collection-page__cards {
-  animation: fadeIn 0.6s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (max-width: 480px) {
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 4px;
   }
 }
 
-/* Scroll Performance */
-.collection-page__detail-panel {
-  will-change: transform;
-  contain: layout style paint;
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .collection-grid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 8px;
+  }
 }
 
-.collection-page__cards {
-  contain: layout;
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .collection-grid {
+    gap: 10px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .collection-grid {
+    grid-template-columns: repeat(10, 1fr);
+    gap: 5px;
+  }
 }

@@ -50,19 +50,19 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   const handleSearchChange = (search: string) => {
     setFilters({ search });
   };
-  
+
   const handleRarityChange = (rarity: any) => {
     setFilters({ rarity });
   };
-  
+
   const handleSortChange = (sortBy: string, sortOrder: 'asc' | 'desc') => {
     setFilters({ sortBy: sortBy as any, sortOrder });
   };
-  
+
   const handleViewModeChange = (mode: 'grid' | 'list') => {
     setViewMode(mode);
   };
-  
+
   const handleClearFilters = () => {
     setFilters({
       search: '',
@@ -71,29 +71,21 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       sortOrder: 'desc'
     });
   };
-  
+
   const handleCardSelect = (card: UnifiedCard) => {
     setSelectedCard(selectedCard?.id === card.id ? null : card);
   };
-  
+
   const handleAddToDeck = (card: UnifiedCard) => {
-    // For now, we'll need an active deck to add to. TODO: implement proper deck selection
     const deckId = activeDeck?.id;
     if (!deckId) return false;
-    const success = addCardToDeck(deckId, card);
-    if (success) {
-      // Show success feedback
-        // Success feedback removed - could integrate with toast notifications
-    } else {
-      // Show error feedback
-        // Error feedback removed - could integrate with toast notifications
-    }
+    return addCardToDeck(deckId, card);
   };
-  
+
   const handleRemoveCard = (card: UnifiedCard) => {
     removeCard(card.id);
   };
-  
+
   const handleBulkActions = (action: 'addToDeck' | 'remove') => {
     const cardsToProcess = Array.from(selectedCards)
       .map(id => collection.find(card => card.id === id))
@@ -109,9 +101,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     
     setSelectedCards(new Set());
   };
-  
-  // Unused function - removed
-  
+
   // Empty state
   if (collection.length === 0) {
     return (
@@ -136,7 +126,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       </div>
     );
   }
-  
+
   return (
     <div className={`collection-page ${className}`} data-testid={testId}>
       {/* Page Header */}
