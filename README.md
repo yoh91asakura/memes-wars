@@ -43,6 +43,20 @@ This repository contains **ONLY the application code**. All development tools an
 - Development databases
 - Python scripts
 
+## ⚠️ Known Development Issues
+
+### "Lockdown failed" Console Error
+If you see `Lockdown failed: TypeError: Cannot delete property 'dispose'` in the console:
+- **Cause**: Browser security extensions (e.g., MetaMask, crypto wallets) implementing JavaScript hardening
+- **Impact**: Does NOT affect application functionality - purely cosmetic console error
+- **Solution**: 
+  - Use incognito/private mode during development (disables extensions)
+  - Or temporarily disable security extensions while developing
+  - The application includes detection utilities that will warn you about this
+
+### Browser Extension Detection
+The app automatically detects browser extensions that may cause lockdown errors and displays informational messages in the development console to help developers understand these non-critical warnings.
+
 ## 🛠️ Project Structure
 
 ```
