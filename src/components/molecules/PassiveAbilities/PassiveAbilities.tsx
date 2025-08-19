@@ -12,7 +12,24 @@ export interface PassiveAbilitiesProps {
 }
 
 // Map effect types to their visual representation
-const getEffectIcon = (effect: EffectType): string => {
+const getEffectIcon = (effect: EffectType | undefined, name?: string): string => {
+  if (!effect) {
+    // Fallback icons for named effects
+    if (name) {
+      const lowerName = name.toLowerCase();
+      if (lowerName.includes('heal') || lowerName.includes('refresh')) return '💚';
+      if (lowerName.includes('shield') || lowerName.includes('wall')) return '🛡️';
+      if (lowerName.includes('boost') || lowerName.includes('tailwind')) return '⚡';
+      if (lowerName.includes('burn') || lowerName.includes('fire')) return '🔥';
+      if (lowerName.includes('lightning') || lowerName.includes('storm')) return '⚡';
+      if (lowerName.includes('troll')) return '😈';
+      if (lowerName.includes('grump')) return '😠';
+      if (lowerName.includes('anger') || lowerName.includes('rage')) return '😡';
+      if (lowerName.includes('alone') || lowerName.includes('barrier')) return '🔮';
+    }
+    return '⭐';
+  }
+
   const effectIcons: Record<EffectType, string> = {
     [EffectType.FREEZE]: '❄️',
     [EffectType.BURN]: '🔥',
@@ -34,7 +51,11 @@ const getEffectIcon = (effect: EffectType): string => {
 };
 
 // Get friendly names for effect types
-const getEffectName = (effect: EffectType): string => {
+const getEffectName = (effect: EffectType | undefined, name?: string): string => {
+  // Use name field if available (fallback for legacy cards)
+  if (name) return name;
+  // Handle missing effect property
+  if (!effect) return 'Unknown Effect';
   return effect.charAt(0).toUpperCase() + effect.slice(1).toLowerCase();
 };
 
@@ -87,11 +108,13 @@ export const PassiveAbilities: React.FC<PassiveAbilitiesProps> = ({
       )}
       
       <div className={styles.effectsList}>
-        {cardEffects.map((cardEffect, index) => (
+        {cardEffects
+          .filter(cardEffect => cardEffect.effect || (cardEffect as any).name) // Filter out invalid effects
+          .map((cardEffect, index) => (
           <div key={index} className={styles.effectItem}>
             <div className={styles.effectIcon}>
               <span className={styles.iconEmoji}>
-                {getEffectIcon(cardEffect.effect)}
+                {getEffectIcon(cardEffect.effect, (cardEffect as any).name)}
               </span>
             </div>
             
@@ -102,7 +125,7 @@ export const PassiveAbilities: React.FC<PassiveAbilitiesProps> = ({
                   weight="medium"
                   className={styles.effectNameText}
                 >
-                  {getEffectName(cardEffect.effect)}
+                  {getEffectName(cardEffect.effect, (cardEffect as any).name)}
                 </Text>
               </div>
               
