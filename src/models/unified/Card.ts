@@ -70,6 +70,22 @@ export enum EffectType {
   BARRIER = 'BARRIER',                           // Temporary invincibility
   CHAOS = 'CHAOS',                               // Random effect
   PRECISION = 'PRECISION',                       // Guaranteed critical hit
+  // Additional effects from card data
+  KNOCKBACK = 'KNOCKBACK',                       // Push enemy back
+  DEFENSE = 'DEFENSE',                           // Increase defense
+  PUSH = 'PUSH',                                 // Push effect
+  SPEED_BOOST = 'SPEED_BOOST',                   // Increase speed
+  SPEED = 'SPEED',                               // Speed modifier
+  SUPPORT = 'SUPPORT',                           // Support buff
+  CHAIN = 'CHAIN',                               // Chain lightning effect
+  PARALYZE = 'PARALYZE',                         // Paralyze enemy
+  LIGHTNING = 'LIGHTNING',                       // Lightning damage
+  AREA = 'AREA',                                 // Area of effect
+  INTIMIDATE = 'INTIMIDATE',                     // Intimidation effect
+  FIRE = 'FIRE',                                 // Fire damage
+  FLYING = 'FLYING',                             // Flying ability
+  HEAL_SELF = 'HEAL_SELF',                       // Self healing
+  RESURRECT = 'RESURRECT',                       // Resurrection ability
 }
 
 // Passive abilities that cards can have
@@ -146,7 +162,7 @@ export interface VisualProperties {
   backgroundColor?: string;
   textColor?: string;
   shadowColor?: string;
-  animation?: 'pulse' | 'glow' | 'sparkle' | 'flame' | 'electric';
+  animation?: 'pulse' | 'glow' | 'sparkle' | 'flame' | 'electric' | 'none' | 'spin' | 'float' | 'shake' | 'rainbow' | 'divine';
   particles?: boolean;                            // Particle effects around card
 }
 
@@ -212,6 +228,9 @@ export interface UnifiedCard {
   releaseDate: string;
   createdAt: string;
   updatedAt: string;
+  
+  // Collection metadata
+  addedAt?: string;                               // When added to collection
   
   // Legacy Compatibility (marked for deprecation)
   /** @deprecated Use emojis array instead */
@@ -461,8 +480,24 @@ export class CardUtils {
         backgroundColor: '#FDF2F8',
         textColor: '#831843',
       },
+      [CardRarity.DIVINE]: {
+        glow: '#FFD700',
+        borderColor: '#FFC700',
+        backgroundColor: '#FFFEF0',
+        textColor: '#FFB300',
+        animation: 'sparkle' as const,
+        particles: true,
+      },
+      [CardRarity.INFINITY]: {
+        glow: '#9400D3',
+        borderColor: '#8B008B',
+        backgroundColor: '#FFF0F5',
+        textColor: '#4B0082',
+        animation: 'electric' as const,
+        particles: true,
+      },
     };
-    return visualMap[rarity] || visualMap[CardRarity.COMMON];
+    return visualMap[rarity as keyof typeof visualMap] || visualMap[CardRarity.COMMON];
   }
   
   // Generate luck stat based on rarity

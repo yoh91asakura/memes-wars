@@ -65,11 +65,11 @@ export const useAuthStore = create<AuthStore>()(
     (set) => ({
       ...initialState,
 
-      login: async (email: string) => {
+      login: async (_email: string) => {
         set({ isLoading: true });
         try {
           // TODO: Implement actual login
-          console.log('Login:', { email });
+          // Debug removed - login logic placeholder
           set({ isLoading: false });
         } catch (error) {
           set({ isLoading: false });
@@ -77,11 +77,11 @@ export const useAuthStore = create<AuthStore>()(
         }
       },
 
-      register: async (userData: RegisterData) => {
+      register: async (_userData: RegisterData) => {
         set({ isLoading: true });
         try {
-          // TODO: Implement actual register
-          console.log('Register:', userData);
+          // TODO: Implement actual register  
+          // Debug removed - register logic placeholder
           set({ isLoading: false });
         } catch (error) {
           set({ isLoading: false });

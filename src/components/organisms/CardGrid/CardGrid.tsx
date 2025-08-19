@@ -3,7 +3,9 @@ import { motion } from 'framer-motion';
 import { Card as CardType } from '../../types';
 import { Card } from '../../molecules/Card/Card';
 import { SearchBox } from '../../molecules/SearchBox/SearchBox';
-import { Text, Button, Icon } from '../../atoms';
+import { Text } from '../../atoms/Text';
+import { Button } from '../../atoms/Button';
+import { Icon } from '../../atoms/Icon';
 import './CardGrid.css';
 
 interface CardGridProps {
@@ -57,10 +59,11 @@ export const CardGrid: React.FC<CardGridProps> = ({
           return (rarityOrder[b.rarity as keyof typeof rarityOrder] || 0) - (rarityOrder[a.rarity as keyof typeof rarityOrder] || 0);
         }
         case 'recent':
-        default:
+        default: {
           const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
           const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
           return dateB - dateA;
+        }
       }
     });
 
@@ -171,9 +174,10 @@ export const CardGrid: React.FC<CardGridProps> = ({
                 >
                   <Card
                     card={card}
+                    variant="tcg"
                     size="md"
                     interactive
-                    onClick={handleCardClick}
+                    onClick={handleCardClick ? (clickedCard) => handleCardClick(clickedCard as CardType) : undefined}
                   />
                 </motion.div>
               ))}

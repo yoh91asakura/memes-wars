@@ -1,23 +1,21 @@
 import { v4 as uuidv4 } from 'uuid';
 import { commonCards } from '../data/cards/common';
 import { rareCards } from '../data/cards/rare';
-import { 
-  UnifiedCard, 
-  CardRarity, 
+import {
+  UnifiedCard,
+  CardRarity,
   CardType,
-  MemeFamily,
-  EffectType,
-  CardFilter, 
+  CardFilter,
   CardUtils,
-  RarityConfig 
+  MemeFamily,
+  EffectType
 } from '../models/unified/Card';
-
 // Enhanced card service with full game specification support
 export class CardService {
   private allCards: UnifiedCard[];
-  private cardsByRarity: Map<CardRarity, UnifiedCard[]>;
-  private cardsByFamily: Map<MemeFamily, UnifiedCard[]>;
-  private cardsByType: Map<CardType, UnifiedCard[]>;
+  private cardsByRarity: Map<CardRarity, UnifiedCard[]> = new Map();
+  private cardsByFamily: Map<MemeFamily, UnifiedCard[]> = new Map();
+  private cardsByType: Map<CardType, UnifiedCard[]> = new Map();
   
   constructor() {
     // Combine all card collections
@@ -329,6 +327,8 @@ export class CardService {
       [CardRarity.LEGENDARY]: 3.0,
       [CardRarity.MYTHIC]: 4.0,
       [CardRarity.COSMIC]: 5.0,
+      [CardRarity.DIVINE]: 10.0,
+      [CardRarity.INFINITY]: 20.0
     };
     return bonusMap[rarity] || 1.0;
   }

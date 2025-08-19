@@ -1,4 +1,6 @@
-import type { Card } from '../components/types';
+// Import both Card types and conversion utilities
+import { UnifiedCard } from '../models/unified/Card';
+import { Card } from '../components/types';
 import { commonCards } from '../data/cards/common';
 import { uncommonCards } from '../data/cards/uncommon';
 import { rareCards } from '../data/cards/rare';
@@ -28,7 +30,7 @@ const rollConfig = {
 import { v4 as uuidv4 } from 'uuid';
 
 export interface RollResult {
-  card: Card;
+  card: UnifiedCard;
   isGuaranteed: boolean;
   pityTriggered: boolean;
   rollNumber: number;
@@ -47,15 +49,15 @@ export interface RollStats {
 export interface MultiRollResult {
   cards: RollResult[];
   guaranteedTriggered: boolean;
-  bonusCards: Card[];
+  bonusCards: UnifiedCard[];
   totalValue: number;
   rarityBreakdown?: Record<string, number>;
-  highlights?: Card[];
+  highlights?: UnifiedCard[];
 }
 
 export class RollService {
   private static instance: RollService;
-  private allCards: Map<string, Card[]> = new Map();
+  private allCards: Map<string, UnifiedCard[]> = new Map();
   
   private constructor() {
     this.initializeCardDatabase();
@@ -70,25 +72,28 @@ export class RollService {
 
   private initializeCardDatabase(): void {
     // Initialize with all available cards
-    // Note: We normalize rarity values to lowercase for consistency
-    this.allCards.set('common', this.normalizeCardRarities(commonCards));
-    this.allCards.set('uncommon', this.normalizeCardRarities(uncommonCards));
-    this.allCards.set('rare', this.normalizeCardRarities(rareCards));
-    this.allCards.set('epic', this.normalizeCardRarities(epicCards));
-    this.allCards.set('legendary', this.normalizeCardRarities(legendaryCards));
-    this.allCards.set('mythic', this.normalizeCardRarities(mythicCards));
-    this.allCards.set('cosmic', this.normalizeCardRarities(cosmicCards));
+    // Convert UnifiedCard to legacy Card format for compatibility
+    this.allCards.set('common', this.convertUnifiedCardsToUnified(commonCards));
+    this.allCards.set('uncommon', this.convertUnifiedCardsToUnified(uncommonCards));
+    this.allCards.set('rare', this.convertUnifiedCardsToUnified(rareCards));
+    this.allCards.set('epic', this.convertUnifiedCardsToUnified(epicCards));
+    this.allCards.set('legendary', this.convertUnifiedCardsToUnified(legendaryCards));
+    this.allCards.set('mythic', this.convertUnifiedCardsToUnified(mythicCards));
+    this.allCards.set('cosmic', this.convertUnifiedCardsToUnified(cosmicCards));
   }
 
   /**
-   * Normalize card rarities to lowercase for consistency
+   * Convert UnifiedCard to legacy Card format for compatibility
    */
-  private normalizeCardRarities(cards: Card[]): Card[] {
+  private convertUnifiedCardsToUnified(cards: UnifiedCard[]): UnifiedCard[] {
     return cards.map(card => ({
       ...card,
-      rarity: card.rarity.toLowerCase() as any
+      id: card.id || uuidv4(),
+      addedAt: card.addedAt || new Date().toISOString()
     }));
   }
+
+  
 
   /**
    * Perform a single roll with pity system
@@ -97,8 +102,14 @@ export class RollService {
     const rarity = this.determineRarity(stats);
     const card = this.getRandomCardOfRarity(rarity);
     
+    // Generate unique instance with proper id
+    const cardInstance = { ...card, id: uuidv4() };
+    
+    // Card is already UnifiedCard
+    const unifiedCard = { ...cardInstance, id: uuidv4(), addedAt: new Date().toISOString() };
+    
     const result: RollResult = {
-      card: { ...card, id: uuidv4() }, // Generate unique instance
+      card: unifiedCard,
       isGuaranteed: this.wasGuaranteed(rarity, stats),
       pityTriggered: this.checkPityTrigger(rarity, stats),
       rollNumber: stats.totalRolls + 1
@@ -145,16 +156,16 @@ export class RollService {
     }
 
     // Calculate rarity breakdown
-    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card));
-    const highlights = this.getHighlightCards(cards.map(r => r.card));
+    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card as any));
+    const highlights = this.getHighlightCards(cards.map(r => r.card as any));
 
     return {
       cards,
       guaranteedTriggered: !hasRareOrBetter,
       bonusCards: [],
-      totalValue: cards.reduce((sum, result) => sum + this.getCardValue(result.card), 0),
+      totalValue: cards.reduce((sum, result) => sum + this.getCardValue(result.card as any), 0),
       rarityBreakdown,
-      highlights
+      highlights: highlights as unknown as UnifiedCard[]
     };
   }
 
@@ -204,7 +215,7 @@ export class RollService {
   /**
    * Get random card of specific rarity
    */
-  public getRandomCardOfRarity(rarity: string): Card {
+  public getRandomCardOfRarity(rarity: string): UnifiedCard {
     const cardsOfRarity = this.allCards.get(rarity) || [];
     
     if (cardsOfRarity.length === 0) {
@@ -305,7 +316,7 @@ export class RollService {
   /**
    * Get card value for calculating roll worth
    */
-  private getCardValue(card: Card): number {
+  private getCardValue(card: any): number {
     const rarityValues = {
       common: 1,
       uncommon: 5,
@@ -362,7 +373,7 @@ export class RollService {
   /**
    * Add cards to the database (for when new rarities are created)
    */
-  addCardsToDatabase(rarity: string, cards: Card[]): void {
+  addCardsToDatabase(rarity: string, cards: UnifiedCard[]): void {
     this.allCards.set(rarity, cards);
   }
 
@@ -372,7 +383,7 @@ export class RollService {
   rollHundred(stats: RollStats): MultiRollResult {
     const cards: RollResult[] = [];
     let currentStats = { ...stats };
-    const bonusCards: Card[] = [];
+    const bonusCards: UnifiedCard[] = [];
     
     // Track rarities obtained
     const rarityCount = {
@@ -390,7 +401,7 @@ export class RollService {
       const result = this.rollSingle(currentStats);
       cards.push(result);
       
-      const rarity = result.card.rarity;
+      const rarity = result.card.rarity as unknown as string;
       rarityCount[rarity as keyof typeof rarityCount]++;
       
       currentStats = this.updateStatsAfterRoll(currentStats, rarity);
@@ -415,17 +426,17 @@ export class RollService {
     } else {
       const result = this.rollSingle(currentStats);
       cards.push(result);
-      rarityCount[result.card.rarity as keyof typeof rarityCount]++;
+      rarityCount[result.card.rarity as unknown as keyof typeof rarityCount]++;
     }
 
     // Bonus rewards based on total value
-    const totalValue = cards.reduce((sum, result) => sum + this.getCardValue(result.card), 0);
+    const totalValue = cards.reduce((sum, result) => sum + this.getCardValue(result.card as any), 0);
     
     // Bonus epic card if total value > 5000
     if (totalValue > 5000) {
       const bonusEpic = this.getRandomCardOfRarity('epic');
       if (bonusEpic) {
-        bonusCards.push({ ...bonusEpic, id: uuidv4() });
+        bonusCards.push({ ...bonusEpic, id: uuidv4(), addedAt: new Date().toISOString() });
       }
     }
     
@@ -433,7 +444,7 @@ export class RollService {
     if (totalValue > 10000) {
       const bonusLegendary = this.getRandomCardOfRarity('legendary');
       if (bonusLegendary) {
-        bonusCards.push({ ...bonusLegendary, id: uuidv4() });
+        bonusCards.push({ ...bonusLegendary, id: uuidv4(), addedAt: new Date().toISOString() });
       }
     }
 
@@ -441,20 +452,20 @@ export class RollService {
     if (rarityCount.legendary >= 5) {
       const bonusMythic = this.getRandomCardOfRarity('mythic');
       if (bonusMythic) {
-        bonusCards.push({ ...bonusMythic, id: uuidv4() });
+        bonusCards.push({ ...bonusMythic, id: uuidv4(), addedAt: new Date().toISOString() });
       }
     }
 
-    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card));
-    const highlights = this.getHighlightCards(cards.map(r => r.card));
+    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card as any));
+    const highlights = this.getHighlightCards(cards.map(r => r.card as any));
 
     return {
       cards,
       guaranteedTriggered: !hasEpicOrBetter,
-      bonusCards,
+      bonusCards: bonusCards,
       totalValue,
       rarityBreakdown,
-      highlights
+      highlights: highlights as unknown as UnifiedCard[]
     };
   }
 
@@ -477,7 +488,7 @@ export class RollService {
   private getHighlightCards(cards: Card[]): Card[] {
     const highlightRarities = ['rare', 'epic', 'legendary', 'mythic', 'cosmic'];
     return cards.filter(card => highlightRarities.includes(card.rarity))
-                .sort((a, b) => this.getCardValue(b) - this.getCardValue(a))
+                .sort((a, b) => this.getCardValue(b as any) - this.getCardValue(a as any))
                 .slice(0, 5); // Top 5 best cards
   }
 
@@ -493,4 +504,6 @@ export class RollService {
     });
     return rarities;
   }
+
+
 }

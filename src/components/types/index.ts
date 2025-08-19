@@ -2,9 +2,6 @@
 export * from '../../models/unified/Card';
 export * from './emoji';
 
-// Legacy type aliases for backward compatibility
-export type { UnifiedCard as Card } from '../../models/unified/Card';
-
 // Global type definitions for The Meme Wars
 
 export interface User {
@@ -15,6 +12,8 @@ export interface User {
   createdAt: Date;
 }
 
+// Legacy Card interface - for backward compatibility with components
+// Using the simplified version that matches current component usage
 export interface Card {
   id: string;
   name: string;
@@ -80,14 +79,8 @@ export interface BaseComponentProps {
   testId?: string;
 }
 
-export interface ButtonProps extends BaseComponentProps {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
-  disabled?: boolean;
-  loading?: boolean;
-  onClick?: () => void;
-  type?: 'button' | 'submit' | 'reset';
-}
+// Re-export Button types from atoms
+export type { ButtonProps, ButtonVariant, ButtonSize, ButtonShape } from '../atoms/Button';
 
 export interface InputProps extends BaseComponentProps {
   type?: 'text' | 'email' | 'password' | 'search' | 'number';

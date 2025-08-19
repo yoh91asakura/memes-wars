@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { MainLayout } from './components/templates/MainLayout/MainLayout';
 import { RollPage } from './components/pages/RollPage/RollPage';
-import { Text } from './components/atoms';
+import { CollectionPage } from './components/pages/CollectionPage/CollectionPage';
+// import { CardDebug } from './components/molecules/Card/CardDebug';
+import { Text } from './components/atoms/Text';
 import './App.css';
 
 type Page = 'roll' | 'collection' | 'battle';
@@ -18,16 +20,7 @@ function App() {
       case 'roll':
         return <RollPage testId="roll-page" />;
       case 'collection':
-        return (
-          <div className="page-placeholder">
-            <Text variant="h3" color="inherit" align="center">
-              📦 Card Collection
-            </Text>
-            <Text variant="body" color="muted" align="center">
-              View and manage your collected cards (Coming Soon)
-            </Text>
-          </div>
-        );
+        return <CollectionPage testId="collection-page" />;
       case 'battle':
         return (
           <div className="page-placeholder">
@@ -39,6 +32,8 @@ function App() {
             </Text>
           </div>
         );
+      // case 'debug':
+        // return <CardDebug />;
       default:
         return <RollPage testId="roll-page" />;
     }

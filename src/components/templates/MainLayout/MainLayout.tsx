@@ -1,6 +1,9 @@
 import React from 'react';
 import { Navigation } from '../../organisms/Navigation/Navigation';
-import { Text, Icon } from '../../atoms';
+import { Text } from '../../atoms/Text';
+import { Icon } from '../../atoms/Icon';
+import { Badge } from '../../atoms/Badge';
+import { usePlayerStore, useCardsStore } from '../../../stores';
 import './MainLayout.css';
 
 interface MainLayoutProps {
@@ -18,6 +21,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   className = '',
   testId,
 }) => {
+  const { coins, gems, level } = usePlayerStore();
+  const { collection } = useCardsStore();
   const navigationItems = [
     {
       id: 'roll',
@@ -28,7 +33,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     },
     {
       id: 'collection',
-      label: 'Collection',
+      label: `Collection (${collection.length})`,
       icon: 'cards',
       active: currentPage === 'collection',
       onClick: () => onNavigate('collection'),
@@ -55,10 +60,25 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           </div>
           
           <div className="main-layout__status">
-            <Icon name="online" size="sm" />
-            <Text variant="caption" color="success">
-              Online
-            </Text>
+            <div className="main-layout__stats">
+              <div className="main-layout__stat">
+                <Icon emoji="💰" size="sm" />
+                <Text variant="caption" weight="medium">
+                  {coins}
+                </Text>
+              </div>
+              <div className="main-layout__stat">
+                <Icon emoji="💎" size="sm" />
+                <Text variant="caption" weight="medium">
+                  {gems}
+                </Text>
+              </div>
+              <div className="main-layout__stat">
+                <Badge variant="primary" size="sm">
+                  Lv. {level}
+                </Badge>
+              </div>
+            </div>
           </div>
         </div>
       </header>

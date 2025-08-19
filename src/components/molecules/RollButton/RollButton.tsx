@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button, Icon, Text } from '../../atoms';
+import { Button } from '../../atoms/Button';
+import { Icon } from '../../atoms/Icon';
+import { Text } from '../../atoms/Text';
 import './RollButton.css';
 
 interface RollButtonProps {

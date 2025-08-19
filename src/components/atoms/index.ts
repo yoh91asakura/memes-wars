@@ -1,10 +1,18 @@
-// Atoms - Basic UI building blocks
-export { Button } from './Button/Button';
-export { Input } from './Input/Input';
-export { Text } from './Text/Text';
-export { Badge } from './Badge/Badge';
-export { Icon } from './Icon/Icon';
-export { Spinner } from './Spinner/Spinner';
+// Atomic components - Basic building blocks of the UI
+export { Badge } from './Badge';
+export { Button } from './Button';
+export { Icon } from './Icon';
+export { Input } from './Input';
+export { Spinner } from './Spinner';
+export { Text } from './Text';
 
-// Re-export types for convenience
-export type { ButtonProps, InputProps } from '../types';
+// Types
+export type { ButtonProps, ButtonVariant, ButtonSize, ButtonShape } from './Button';
+export type { TextProps, TextVariant, TextWeight, TextAlign, TextColor } from './Text';
+
+// Base component props interface
+export interface BaseComponentProps {
+  className?: string;
+  children?: React.ReactNode;
+  testId?: string;
+}

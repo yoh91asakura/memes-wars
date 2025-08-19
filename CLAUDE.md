@@ -1,5 +1,32 @@
 # 🚀 CLAUDE.MD - Guide de Développement TASKS + SPARC + GITHUB
 
+## 📈 DERNIÈRES AMÉLIORATIONS (v2.1)
+
+### ⚡ Task Management Simplifié
+- **NPM Scripts** : Remplacement des longues commandes MCP par des scripts npm simples
+- **Workflows Optimisés** : Suppression des timeouts et des commandes complexes
+- **Documentation Consolidée** : Sections dupliquées fusionnées pour plus de clarté
+
+### 🎯 Nouveaux Scripts NPM Disponibles
+```bash
+npm run taskmaster:list         # Lister toutes les tâches
+npm run taskmaster:stats        # Statistiques du projet
+npm run taskmaster:todo         # Tâches à faire
+npm run taskmaster:active       # Tâches en cours
+npm run taskmaster:critical     # Tâches critiques
+npm run taskmaster:high         # Tâches haute priorité
+npm run taskmaster:check        # Vérification santé système
+npm run taskmaster:init         # Initialisation taskmaster
+```
+
+### 🔧 Avantages
+- ✅ **Plus rapide** - Scripts npm vs commandes MCP longues
+- ✅ **Plus simple** - Commandes faciles à retenir
+- ✅ **Plus fiable** - Élimination des timeouts fréquents
+- ✅ **Meilleure UX** - Interface utilisateur améliorée
+
+---
+
 ## 📋 Table des Matières
 1. [🔴 RÈGLES CRITIQUES](#1-règles-critiques)
 2. [⚙️ CONFIGURATION PROJET](#2-configuration-projet)
@@ -28,16 +55,17 @@
 ### ⚠️ WORKFLOW CHECK - SYNCHRONISATION CRITIQUE
 ```bash
 # 1. LIRE L'ÉTAT ACTUEL (obligatoire avant toute action)
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:list
 
 # 2. VÉRIFIER LES TÂCHES ACTIVES
-mcp task-master-ai get_tasks --filter in-progress --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:active
 
-# 3. IDENTIFIER SA TÂCHE
-mcp task-master-ai get_tasks --assignee "[agent-name]" --projectRoot /Users/felixgirardin/memes-wars
+# 3. VOIR TÂCHES PRIORITAIRES
+npm run taskmaster:critical
+npm run taskmaster:high
 
-# 4. SI NOUVELLE SESSION, RESTAURER CONTEXTE
-mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/memes-wars
+# 4. VOIR STATISTIQUES PROJET
+npm run taskmaster:stats
 ```
 
 ## 🆕 PROTOCOLE DEMANDE UTILISATEUR
@@ -46,25 +74,21 @@ mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirar
 
 **1. VÉRIFIER D'ABORD** → Lister les tâches existantes
 ```bash
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter todo --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter high --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:list
+npm run taskmaster:todo
+npm run taskmaster:high
 ```
 
 **2. SI TÂCHE N'EXISTE PAS** → L'agent crée nouvelle tâche
 ```bash
-# L'agent utilise taskmaster pour créer une tâche complète :
-mcp task-master-ai add_task \
+# L'agent utilise npm script pour créer une tâche :
+npm run taskmaster:add -- \
   --title "[Task Title]" \
   --description "[Detailed description]" \
   --priority "[critical|high|medium|low]" \
   --size "[XS|S|M|L|XL]" \
   --epic "[epic-name]" \
-  --tags "[tag1,tag2,tag3]" \
-  --acceptanceCriteria "[criteria1,criteria2,criteria3]" \
-  --userStory '{"persona":"...","want":"...","reason":"..."}' \
-  --context '{"files":[...],"components":[...],"risks":[...]}' \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --tags "[tag1,tag2,tag3]"
 
 # Résultat: tâche créée dans taskmaster avec ID unique
 ```
@@ -72,12 +96,12 @@ mcp task-master-ai add_task \
 **3. ORGANISER LE TRAVAIL** → L'agent assigne et priorise
 ```bash
 # L'agent met à jour via taskmaster:
-mcp task-master-ai update_task \
+task-master-ai update_task \
   --taskId [task-id] \
   --status "in-progress" \
   --assignee "[Agent Name]" \
   --priority "high" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # L'agent commit les changements:
 git add .
@@ -103,7 +127,7 @@ git push origin task/[task-id]-[description]
 mcp task-master-ai update_task \
   --taskId [task-id] \
   --status "review" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ### 🔄 Tags Disponibles pour Organisation
@@ -132,7 +156,7 @@ git checkout main
 git pull origin main
 
 # 2. Vérifier que tâche est disponible
-mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:list
 # Si status != "todo" et != "backlog" → STOP, choisir autre tâche
 
 # 3. Créer branche pour la tâche
@@ -140,7 +164,7 @@ git checkout -b task/[task-id]-[short-description]
 # Exemple: git checkout -b task/1-roll-service
 
 # 4. Verrouiller dans le système de tâches
-mcp task-master-ai update_task --taskId [id] --status "in-progress" --assignee "[agent-name]" --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai update_task --taskId [id] --status "in-progress" --assignee "[agent-name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 5. Pousser branche et changement de statut
 git add . && git commit -m "chore: starting task [task-id] - [task-title]"
@@ -208,37 +232,37 @@ docs/
 #### AVANT TOUTE ACTION - Lire l'état actuel:
 ```bash
 # 1. TOUJOURS commencer par vérifier l'état global avec taskmaster
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:list
 
 # 2. Voir les statistiques du projet
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:stats
 
 # 3. Filtrer les tâches spécifiques
-mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "high" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:todo
+npm run taskmaster:high
+npm run taskmaster:critical
 ```
 
 #### PENDANT LE TRAVAIL - Mise à jour temps réel:
 ```bash
 # Mettre à jour le statut via taskmaster
-mcp task-master-ai update_task \
+task-master-ai update_task \
   --taskId [task-id] \
   --status "in-progress" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Ajouter des commentaires de progression
-mcp task-master-ai add_comment \
+task-master-ai add_comment \
   --taskId [task-id] \
   --comment "[progress notes]" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Marquer des critères d'acceptation comme complétés
-mcp task-master-ai update_acceptance_criteria \
+task-master-ai update_acceptance_criteria \
   --taskId [task-id] \
   --criteriaId [criteria-id] \
   --completed true \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 #### APRÈS CHAQUE MILESTONE - Synchroniser:
@@ -249,44 +273,34 @@ git commit -m "chore: update task [task-id] progress"
 git push origin task/[task-id]
 
 # Si tâche terminée, marquer comme done
-mcp task-master-ai update_task \
+task-master-ai update_task \
   --taskId [task-id] \
   --status "done" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Voir les statistiques mises à jour
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:stats
 ```
 
-## 🚀 TASKMASTER - Commandes Essentielles MCP
+## 🚀 TASKMASTER - Commandes Essentielles NPM
 ```bash
 # === COMMANDES PRINCIPALES TASKMASTER ===
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai add_task --title "..." --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai update_task --taskId [id] --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:list          # Toutes les tâches
+npm run taskmaster:stats         # Statistiques du projet
+npm run taskmaster:add           # Ajouter nouvelle tâche
+npm run taskmaster:check         # Vérifier santé du système
 
-# === FILTRAGE ET RECHERCHE ===
-# Par statut
-mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "done" --projectRoot /Users/felixgirardin/memes-wars
+# === FILTRAGE RAPIDE ===
+npm run taskmaster:todo          # Tâches à faire
+npm run taskmaster:active        # Tâches en cours
+npm run taskmaster:critical      # Tâches critiques
+npm run taskmaster:high          # Tâches haute priorité
 
-# Par priorité
-mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "high" --projectRoot /Users/felixgirardin/memes-wars
-
-# Par assigné
-mcp task-master-ai get_tasks --assignee "Claude" --projectRoot /Users/felixgirardin/memes-wars
-
-# === GESTION DES ÉTATS ===
-mcp task-master-ai update_task --taskId [id] --status "in-progress" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/memes-wars
-
-# === REPORTING ===
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai generate_report --projectRoot /Users/felixgirardin/memes-wars
+# === GESTION DÉTAILLÉE (si nécessaire) ===
+# Pour opérations avancées, utiliser directement :
+task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+task-master-ai update_task --taskId [id] --status "in-progress" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+task-master-ai add_comment --taskId [id] --comment "[note]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ## 🎯 Claude Code vs MCP Tools
@@ -380,24 +394,25 @@ mcp status
 ```bash
 # 1. CRITICAL - Lire l'état global du projet
 echo "=== PROJECT STATUS ==="
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:stats
 echo "=== ACTIVE TASKS ==="
-mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:active
 
 # 2. Synchroniser avec main
 git checkout main
 git pull origin main
 
 # 3. Identifier la tâche à prendre
-mcp task-master-ai get_tasks --filter "todo" --priority "critical" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "todo" --priority "high" --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:critical
+npm run taskmaster:high
+npm run taskmaster:todo
 
 # 4. VERROUILLER IMMÉDIATEMENT (anti-conflit)
 git checkout -b task/[task-id]-[short-description]
-mcp task-master-ai update_task --taskId [id] --status "in-progress" --assignee "[agent-name]" --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai update_task --taskId [id] --status "in-progress" --assignee "[agent-name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 5. Documenter le début de tâche
-mcp task-master-ai add_comment --taskId [id] --comment "Agent [name] starting implementation" --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai add_comment --taskId [id] --comment "Agent [name] starting implementation" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 6. Push état verrouillé
 git add .
@@ -437,7 +452,7 @@ npm run test && npm run typecheck
 # Base: main ← Compare: task/[task-id]-[description]
 
 # Mettre à jour statut de la tâche
-mcp task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # NOTIFY: "Task [title] ready for review - PR #[number] created"
 ```
@@ -454,7 +469,7 @@ git pull origin main
 git branch -d task/[task-id]-[description]
 
 # 3. Marquer tâche comme terminée
-mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 4. Optionnel: supprimer branche distante si pas fait automatiquement
 git push origin --delete task/[task-id]-[description]
@@ -469,31 +484,31 @@ todo → in-progress → review → done
 
 ### États et Actions Requises:
 - **`todo`** ou **`backlog`** : Disponible pour assignation
-  - Action: `mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/memes-wars`
+  - Action: `mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
   
 - **`in-progress`** : Agent travaille activement
   - Action: Update toutes les 2h via commentaires
-  - Command: `mcp task-master-ai add_comment --taskId [id] --comment "[progress]" --projectRoot /Users/felixgirardin/memes-wars`
+  - Command: `mcp task-master-ai add_comment --taskId [id] --comment "[progress]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
   
 - **`review`** : Code complet, PR créée
   - Action: Créer PR + update status
-  - Command: `mcp task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/memes-wars`
+  - Command: `mcp task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
   
 - **`done`** : APRÈS merge ET validation user
   - Action: Update + cleanup branch
-  - Command: `mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/memes-wars`
+  - Command: `mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
   
 - **`blocked`** : Dépendance non résolue
   - Action: Documenter le blocage
-  - Command: `mcp task-master-ai update_task --taskId [id] --status "blocked" --blockedReason "[why]" --projectRoot /Users/felixgirardin/memes-wars`
+  - Command: `mcp task-master-ai update_task --taskId [id] --status "blocked" --blockedReason "[why]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars`
 
 ### 📊 Tracking Obligatoire:
 ```bash
 # Toutes les 2 heures si in-progress
-mcp task-master-ai add_comment --taskId [id] --comment "[what was done]" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai add_comment --taskId [id] --comment "[what was done]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Voir les statistiques mises à jour
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 git add . && git commit -m "chore: progress update [id]"
 ```
 
@@ -630,13 +645,16 @@ project/
 ### Consulter taskmaster pour les priorités
 ```bash
 # Voir toutes les tâches critiques
-mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:critical
 
 # Voir tâches en cours
-mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:active
 
-# Voir tâches bloquées
-mcp task-master-ai get_tasks --filter "blocked" --projectRoot /Users/felixgirardin/memes-wars
+# Voir tâches haute priorité
+npm run taskmaster:high
+
+# Vue d'ensemble
+npm run taskmaster:stats
 ```
 
 ### Roadmap Actuelle (voir docs/ROADMAP.md)
@@ -657,10 +675,10 @@ Phase 2: Combat Core (Semaines 5-8)
 ## 📊 METRICS SPRINT ACTUEL
 ```bash
 # Voir métriques temps réel via taskmaster
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:stats
 
 # Générer rapport complet
-mcp task-master-ai generate_report --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai generate_report --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ## 🔴 RÈGLE ABSOLUE : Feature-Task Linking
@@ -674,7 +692,7 @@ mcp task-master-ai generate_report --projectRoot /Users/felixgirardin/memes-wars
 ## 🏗️ Organisation Epic-Based
 ```bash
 # Get current epics via taskmaster
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Epics définis pour le projet :
 # - refactoring-core
@@ -686,7 +704,7 @@ mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
 # - bug-fixes
 
 # Create task avec epic
-mcp task-master-ai add_task --epic "[epic-name]" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai add_task --epic "[epic-name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ## 🔄 Lifecycle Feature Development
@@ -701,15 +719,15 @@ mcp task-master-ai add_task --epic "[epic-name]" --projectRoot /Users/felixgirar
 ### Nouveau Projet Local
 ```bash
 # Initialiser taskmaster pour le projet
-mcp task-master-ai init --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai init --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 # Créer nouvelles tâches selon besoins
-mcp task-master-ai add_task --title "..." --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai add_task --title "..." --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ### Continuer Projet Existant
 ```bash
-mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 # Reprendre où vous vous êtes arrêté
 ```
 
@@ -717,33 +735,34 @@ mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/
 
 # 6. 🛠️ OUTILS & COMMANDES
 
-## 🔧 TASKMASTER Tools - MCP SYSTEM
+## 🔧 TASKMASTER Tools - NPM SCRIPTS
 ```bash
 # 📊 ÉTAT DU PROJET (à vérifier toutes les heures)
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:stats
+npm run taskmaster:critical
 
 # 🎯 GESTION DES TÂCHES
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars                    # Toutes les tâches
-mcp task-master-ai get_tasks --assignee "Claude" --projectRoot /Users/felixgirardin/memes-wars # Mes tâches
-mcp task-master-ai get_tasks --filter "blocked" --projectRoot /Users/felixgirardin/memes-wars  # Tâches bloquées
-mcp task-master-ai add_task --title "..." --projectRoot /Users/felixgirardin/memes-wars       # Créer tâche
+npm run taskmaster:list            # Toutes les tâches
+npm run taskmaster:active          # Tâches en cours
+npm run taskmaster:todo            # Tâches à faire
+npm run taskmaster:high            # Tâches prioritaires
+npm run taskmaster:add             # Créer nouvelle tâche
 
 # 📝 MISE À JOUR (obligatoire toutes les 2h)
-mcp task-master-ai add_comment --taskId [id] --comment "progress note" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai update_acceptance_criteria --taskId [id] --criteriaId [cid] --completed true --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai add_comment --taskId [id] --comment "progress note" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+task-master-ai update_acceptance_criteria --taskId [id] --criteriaId [cid] --completed true --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # ✅ COMPLÉTION
-mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 📈 REPORTING
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai generate_report --projectRoot /Users/felixgirardin/memes-wars
+npm run taskmaster:stats
+task-master-ai generate_report --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 🔍 RECHERCHE & ANALYSE
 grep -r "pattern" src/ docs/          # Recherche dans le code
-mcp task-master-ai search_tasks --query "keyword" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/memes-wars
+task-master-ai search_tasks --query "keyword" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ## ⚡ Claude-Flow/SPARC Commands
@@ -1121,7 +1140,7 @@ app.use(compression({
 ```yaml
 Systèmes à consulter AVANT TOUTE ACTION:
   1. taskmaster (MCP)           # État temps réel des tâches
-     mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
+     mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
   2. .taskmaster/tasks.db       # Base de données SQLite des tâches  
   3. docs/ROADMAP.md           # Vision et phases
   4. git branch --remote       # Qui travaille sur quoi
@@ -1133,27 +1152,27 @@ Systèmes à consulter AVANT TOUTE ACTION:
 "Agent [name] - Session Start $(date)"
 
 # 1. Synchronisation état global
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 git fetch --all
 git branch -r | grep task/
 
 # 2. Identification travail
-mcp task-master-ai get_tasks --assignee "[agent-name]" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "todo" --priority "critical" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --assignee "[agent-name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_tasks --filter "todo" --priority "critical" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 3. Verrouillage tâche
 git checkout -b task/[id]-[desc]
-mcp task-master-ai update_task --taskId [id] --status "in-progress" --assignee "[name]" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai update_task --taskId [id] --status "in-progress" --assignee "[name]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 4. Travail avec updates régulières (toutes les 2h)
 while working:
   # Code...
-  mcp task-master-ai add_comment --taskId [id] --comment "[progress description]" --projectRoot /Users/felixgirardin/memes-wars
+  mcp task-master-ai add_comment --taskId [id] --comment "[progress description]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
   git add . && git commit -m "wip: [id] - [progress description]"
   git push origin task/[id]-[desc]
   
 # 5. Fin de session
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 git add .
 git commit -m "chore: session end - [agent] - task [id] at [%]%"
 git push
@@ -1163,11 +1182,11 @@ git push
 ```bash
 # Mode Plan (nouvelles fonctionnalités)
 "Mode Plan : [Description fonctionnalité]"
-mcp task-master-ai add_task --epic "[epic-name]" --title "..." --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai add_task --epic "[epic-name]" --title "..." --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Mode Exécution (tâches modulaires)
 "Mode Exécution : taskmaster task [id]"
-mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ### TASKMASTER Structure
@@ -1204,7 +1223,7 @@ mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirar
 git checkout main && git pull origin main
 git checkout -b task/[task-id]-[description]
 # Update task status → in progress
-mcp task-master-ai update_task --taskId [id] --status "in-progress" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai update_task --taskId [id] --status "in-progress" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 git add . && git commit -m "chore: starting task [id]"
 git push -u origin task/[task-id]-[description]
 
@@ -1218,12 +1237,12 @@ git fetch origin && git rebase origin/main
 git add . && git commit -m "feat: completed [task-id]"
 git push origin task/[task-id]-[description]
 # Créer PR via GitHub/GitLab
-mcp task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai update_task --taskId [id] --status "review" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # 4. Après merge - Nettoyage
 git checkout main && git pull origin main
 git branch -d task/[task-id]-[description]
-mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 # RÈGLE D'OR: Une branche = Une tâche = Un agent
@@ -1249,9 +1268,9 @@ mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /User
 
 ---
 
-# 10. 🗂️ TASKMASTER SYSTEM - MCP-BASED MODERNE
+# 10. 🚀 TASKMASTER REFERENCE - STRUCTURE & TEMPLATES
 
-## 🚀 TASKMASTER - SYSTÈME MCP MODERNE
+## 🎯 TASKMASTER Quick Reference
 
 Chaque tâche dans **taskmaster** contient :
 - ✅ Documentation complète intégrée
@@ -1360,7 +1379,7 @@ mcp task-master-ai add_task \
   --size "S" \
   --epic "ui-completion" \
   --tags "ui,layout,cards" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Résultat: Tâche créée avec ID unique dans taskmaster
 ```
@@ -1368,10 +1387,10 @@ mcp task-master-ai add_task \
 #### Lister toutes les tâches :
 ```bash
 # Via taskmaster MCP
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Voir le détail d'une tâche spécifique
-mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_task_detail --taskId [id] --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 #### Mettre à jour une tâche :
@@ -1381,13 +1400,13 @@ mcp task-master-ai update_task \
   --taskId [id] \
   --status "in-progress" \
   --assignee "Claude" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Ajouter un commentaire de progression
 mcp task-master-ai add_comment \
   --taskId [id] \
   --comment "Implementation progress: 50%" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ### 🔍 Navigation et Recherche
@@ -1395,18 +1414,18 @@ mcp task-master-ai add_comment \
 #### Recherche et filtrage :
 ```bash
 # Tâches par priorité
-mcp task-master-ai get_tasks --filter "high" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --filter "high" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Tâches par statut
-mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_tasks --filter "in-progress" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Tâches par assigné
-mcp task-master-ai get_tasks --assignee "Claude" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --assignee "Claude" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Recherche par mot-clé
-mcp task-master-ai search_tasks --query "card" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai search_tasks --query "card" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 #### Mise à jour des critères :
@@ -1416,13 +1435,13 @@ mcp task-master-ai update_acceptance_criteria \
   --taskId [id] \
   --criteriaId [criteria-id] \
   --completed true \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Ajouter un commentaire de progression
 mcp task-master-ai add_comment \
   --taskId [id] \
   --comment "Completed CSS implementation" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ### 📊 Reporting et Statistiques
@@ -1430,19 +1449,19 @@ mcp task-master-ai add_comment \
 #### Statistiques du projet :
 ```bash
 # Obtenir les statistiques complètes
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Générer un rapport détaillé
-mcp task-master-ai generate_report --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai generate_report --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 #### Tâches critiques :
 ```bash
 # Lister les tâches critiques
-mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --filter "critical" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Voir le détail d'une tâche critique spécifique
-mcp task-master-ai get_task_detail --taskId [critical-task-id] --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_task_detail --taskId [critical-task-id] --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ### ⚡ Workflow avec le Nouveau Système
@@ -1453,12 +1472,12 @@ mcp task-master-ai get_task_detail --taskId [critical-task-id] --projectRoot /Us
 git checkout main && git pull origin main
 
 # État des tâches via taskmaster
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Identifier sa tâche
-mcp task-master-ai get_tasks --assignee "[MonNom]" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --assignee "[MonNom]" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
+mcp task-master-ai get_tasks --filter "todo" --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 #### 2. Prendre une Tâche
@@ -1468,7 +1487,7 @@ mcp task-master-ai update_task \
   --taskId [id] \
   --status "in-progress" \
   --assignee "Claude" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Créer branche Git
 git checkout -b task/[task-id]-[description]
@@ -1486,13 +1505,13 @@ mcp task-master-ai update_acceptance_criteria \
   --taskId [id] \
   --criteriaId [criteria-id] \
   --completed true \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Ajouter des commentaires de progression
 mcp task-master-ai add_comment \
   --taskId [id] \
   --comment "Implemented CSS flexbox centering. Tested on Chrome/Firefox." \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Commits réguliers
 git add .
@@ -1506,7 +1525,7 @@ git push origin task/[task-id]-[description]
 mcp task-master-ai update_task \
   --taskId [id] \
   --status "done" \
-  --projectRoot /Users/felixgirardin/memes-wars
+  --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 
 # Créer Pull Request
 git add .
@@ -1537,7 +1556,7 @@ archive/old-tasks/
 .taskmaster/tasks.db
 
 # Pour voir toutes les tâches migrées :
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
+mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/Documents/meme-war-reloaded/memes-wars
 ```
 
 ---
@@ -1552,11 +1571,15 @@ npm run build            # Build production
 npm run test             # Run tests
 npm run typecheck        # TypeScript check
 
-# Task Management - TASKMASTER
-mcp task-master-ai get_tasks --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai add_task --title "..." --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai update_task --taskId [id] --status "done" --projectRoot /Users/felixgirardin/memes-wars
-mcp task-master-ai get_task_stats --projectRoot /Users/felixgirardin/memes-wars
+# Task Management - TASKMASTER NPM SCRIPTS
+npm run taskmaster:list         # List all tasks
+npm run taskmaster:stats        # Project statistics
+npm run taskmaster:add          # Add new task
+npm run taskmaster:todo         # Todo tasks
+npm run taskmaster:active       # Active tasks
+npm run taskmaster:critical     # Critical tasks
+npm run taskmaster:high         # High priority tasks
+npm run taskmaster:check        # Health check
 
 # Git Branch Management
 git checkout main && git pull    # Update main

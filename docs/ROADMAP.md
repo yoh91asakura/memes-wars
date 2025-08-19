@@ -103,17 +103,17 @@ server/
 - [x] Backend integration with real card data
 - [x] **CRITIQUE** Backend Card Models Implementation
 - [x] **CRITIQUE** Real Card Roll System with Probabilities
-- [ ] **CRITIQUE** Fix Frontend TypeScript Compatibility (60%)
-- [ ] **HIGH** Update Legacy Card Data Files
-- [ ] **HIGH** Migrate Frontend Components to Backend Types
+- [x] **CRITIQUE** Fix Frontend TypeScript Compatibility ✅ COMPLETED
+- [x] **HIGH** Update Legacy Card Data Files ✅ COMPLETED
+- [x] **HIGH** Migrate Frontend Components to Backend Types ✅ COMPLETED
 
 #### Semaine 3-4: State Management
-- [ ] **CRITIQUE** Consolidate Store Architecture (#199e14eb6453d09e)
-- [ ] Implement proper state persistence
-- [ ] Add state middleware for debugging
-- [ ] Create store documentation
+- [x] **CRITIQUE** Consolidate Store Architecture (#199e14eb6453d09e) ✅ COMPLETED
+- [x] Implement proper state persistence ✅ COMPLETED  
+- [x] Add state middleware for debugging ✅ COMPLETED
+- [x] Create store documentation ✅ COMPLETED
 
-**Livrable**: Application stable avec architecture unifiée
+**Livrable**: Application stable avec architecture unifiée ✅ COMPLETED
 
 ### 🟢 Phase 2: Combat Core (Sprint 3-4)
 **Objectif**: Implémenter le système de combat complet
@@ -213,7 +213,7 @@ server/
 | Milestone | Date Cible | Description | Critères de Succès |
 |-----------|------------|-------------|-------------------|
 | **✅ M0: Backend MVP** | Semaine 1 | Backend complet & intégration | - API REST fonctionnelle<br>- 14 cartes meme en DB<br>- Frontend connecté<br>- Roll system intelligent |
-| **🔄 M1: Frontend Unity** | Semaine 2 | Types unifiés frontend | - Compatibilité TypeScript<br>- Migration legacy code<br>- 0 erreur de compilation |
+| **✅ M1: Frontend Unity** | Semaine 2 | Types unifiés frontend | - Compatibilité TypeScript<br>- Migration legacy code<br>- 0 erreur de compilation |
 | **M2: Combat Alpha** | Semaine 8 | Combat local jouable | - Combat fluide à 60 FPS<br>- Projectiles fonctionnels<br>- Collisions précises |
 | **M3: UI Complete** | Semaine 12 | Interface complète | - Toutes les écrans<br>- Animations fluides<br>- Mobile responsive |
 | **M4: Multiplayer Beta** | Semaine 16 | Combat en ligne | - Matchmaking fonctionnel<br>- Latence < 100ms<br>- Synchronisation stable |
@@ -346,5 +346,5 @@ Todo: 400
 ---
 
 **Last Updated**: 2025-08-18
-**Version**: 1.1.0
-**Status**: Active Development - Phase 1 (Backend MVP ✅ Complete)
+**Version**: 1.2.0
+**Status**: Active Development - Phase 1 ✅ COMPLETE - Moving to Phase 2 Combat Core

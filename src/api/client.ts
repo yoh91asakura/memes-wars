@@ -3,7 +3,7 @@
  * Gère toutes les requêtes HTTP avec authentification et gestion d'erreurs
  */
 
-import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosError, AxiosResponse, InternalAxiosRequestConfig, AxiosProgressEvent } from 'axios';
 
 // Types pour les réponses API
 export interface ApiResponse<T = any> {
@@ -63,7 +63,7 @@ class ApiClient {
 
     // Response interceptor pour gérer les erreurs et refresh tokens
     this.client.interceptors.response.use(
-      (response) => {
+      (response: AxiosResponse) => {
         // Log des réponses en mode debug
         if (import.meta.env.VITE_DEBUG) {
           console.log(`🟢 API Response: ${response.status}`, response.data);
@@ -191,7 +191,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      onUploadProgress: (progressEvent) => {
+      onUploadProgress: (progressEvent: AxiosProgressEvent) => {
         if (onProgress && progressEvent.total) {
           const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           onProgress(progress);
@@ -207,7 +207,7 @@ class ApiClient {
     try {
       const response = await this.client.get('/health');
       return response.data;
-    } catch (error) {
+    } catch {
       throw new Error('Backend non disponible');
     }
   }

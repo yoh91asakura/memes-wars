@@ -1,0 +1,279 @@
+/* Wrapper for the TCG card with collection-specific styling */
+.collection-card__wrapper {
+  position: relative;
+}
+
+.collection-card {
+  position: relative;
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.1) 0%, 
+    rgba(255, 255, 255, 0.05) 100%);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.collection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--rarity-color), transparent);
+  opacity: 0.1;
+  z-index: -1;
+}
+
+.collection-card:hover {
+  border-color: var(--rarity-color);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+              0 0 20px var(--rarity-color, rgba(255, 255, 255, 0.2));
+  transform: translateY(-4px);
+}
+
+/* Collection Actions Overlay */
+.collection-card__actions {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.collection-card__wrapper:hover .collection-card__actions {
+  opacity: 1;
+}
+
+/* Grid View Styles */
+.collection-card--grid {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 320px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.collection-card--grid .collection-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.collection-card--grid .collection-card__image {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120px;
+  margin: 8px 0;
+}
+
+.collection-card--grid .collection-card__emoji {
+  font-size: 4rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  z-index: 2;
+}
+
+.collection-card--grid .collection-card__glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, var(--rarity-color), transparent);
+  opacity: 0.3;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.collection-card--grid .collection-card__description {
+  text-align: center;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.collection-card--grid .collection-card__stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.collection-card--grid .collection-card__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.collection-card--grid .collection-card__meta {
+  text-align: center;
+  margin-top: auto;
+}
+
+.collection-card--grid .collection-card__actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* List View Styles */
+.collection-card--list {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 80px;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.collection-card--list .collection-card__emoji {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  width: 60px;
+  text-align: center;
+}
+
+.collection-card--list .collection-card__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.collection-card--list .collection-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.collection-card--list .collection-card__description {
+  max-width: 300px;
+}
+
+.collection-card--list .collection-card__stats-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.collection-card--list .collection-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 40px;
+}
+
+.collection-card--list .collection-card__date {
+  margin-left: auto;
+}
+
+.collection-card--list .collection-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Size Variations */
+.collection-card--sm {
+  transform: scale(0.9);
+}
+
+.collection-card--lg {
+  transform: scale(1.1);
+}
+
+/* Rarity-specific styles */
+.collection-card--common {
+  --rarity-color: #95a5a6;
+}
+
+.collection-card--uncommon {
+  --rarity-color: #27ae60;
+}
+
+.collection-card--rare {
+  --rarity-color: #3498db;
+}
+
+.collection-card--epic {
+  --rarity-color: #9b59b6;
+}
+
+.collection-card--legendary {
+  --rarity-color: #f39c12;
+}
+
+.collection-card--mythic {
+  --rarity-color: #e67e22;
+}
+
+.collection-card--cosmic {
+  --rarity-color: #e74c3c;
+}
+
+.collection-card--divine {
+  --rarity-color: #9b59b6;
+}
+
+.collection-card--infinity {
+  --rarity-color: #2c3e50;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .collection-card--grid {
+    max-width: 240px;
+    min-height: 280px;
+    padding: 12px;
+  }
+  
+  .collection-card--list {
+    padding: 8px 12px;
+    min-height: 70px;
+  }
+  
+  .collection-card--list .collection-card__stats-row {
+    gap: 12px;
+  }
+  
+  .collection-card--list .collection-card__description {
+    max-width: 200px;
+  }
+}
+
+/* Animation for new cards */
+.collection-card--new {
+  animation: cardAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes cardAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

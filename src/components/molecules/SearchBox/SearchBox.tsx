@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Icon, Button } from '../../atoms';
+import { Input } from '../../atoms/Input';
+import { Icon } from '../../atoms/Icon';
+import { Button } from '../../atoms/Button';
 import './SearchBox.css';
 
 interface SearchBoxProps {
@@ -110,7 +112,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
       {hasValue && (
         <div className="search-box__results-count" role="status" aria-live="polite">
           <Icon name="search" size="xs" color="muted" />
-          <span>Searching for "{internalValue}"</span>
+          <span>Searching for &quot;{internalValue}&quot;</span>
         </div>
       )}
     </div>
