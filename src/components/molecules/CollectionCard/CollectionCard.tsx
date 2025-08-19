@@ -1,26 +1,29 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardUtils } from '../../../models/Card';
-import { CardComponent } from '../Card/Card';
+import { StackedCard } from '../../../types/StackedCard';
+import { TCGCard } from '../../organisms/TCGCard';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Icon } from '../../atoms/Icon';
 import './CollectionCard.css';
 
 interface CollectionCardProps {
-  card: Card;
+  card: StackedCard;
+  stackCount?: number;
   size?: 'sm' | 'md' | 'lg';
   viewMode?: 'grid' | 'list';
   showActions?: boolean;
-  onSelect?: (card: Card) => void;
-  onAddToDeck?: (card: Card) => void;
-  onRemove?: (card: Card) => void;
+  onSelect?: (card: StackedCard) => void;
+  onAddToDeck?: (card: StackedCard) => void;
+  onRemove?: (card: StackedCard) => void;
   className?: string;
   testId?: string;
 }
 
 export const CollectionCard: React.FC<CollectionCardProps> = ({
   card,
+  stackCount,
   size = 'md',
   viewMode = 'grid',
   showActions = true,
@@ -30,6 +33,7 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
   className = '',
   testId
 }) => {
+  const actualStackCount = stackCount || card.stackCount || 1;
   const handleSelect = () => {
     if (onSelect) {
       onSelect(card);
@@ -111,6 +115,13 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
               <Icon emoji="🍀" size="sm" />
               <Text variant="caption">{card.luck || 0}</Text>
             </div>
+            {actualStackCount > 1 && (
+              <div className="collection-card__stack-badge--list">
+                <Text variant="caption" weight="bold">
+                  x{actualStackCount}
+                </Text>
+              </div>
+            )}
             <div className="collection-card__date">
               <Text variant="caption" color="muted">{addedDate}</Text>
             </div>
@@ -142,40 +153,65 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
     );
   }
 
+  // Grid mode - show mini TCG card with stack count
   return (
-    <div className="collection-card__wrapper">
-      <CardComponent
-        card={card}
-        variant="tcg"
-        size={size}
-        interactive={true}
-        onClick={onSelect ? (clickedCard) => onSelect(clickedCard as Card) : undefined}
-        className={className}
-        testId={testId}
-      />
+    <motion.div
+      className={cardClass}
+      onClick={handleSelect}
+      data-testid={testId}
+      whileHover={{ scale: 1.05 }}
+      transition={{ duration: 0.2 }}
+      style={{
+        '--rarity-color': rarityColors[rarityName],
+        position: 'relative'
+      } as React.CSSProperties}
+    >
+      <div className="collection-card__tcg-wrapper">
+        <TCGCard
+          card={card}
+          size="small"
+          variant="collection"
+          animated={false}
+          showStats={false}
+          showEmojis={false}
+        />
+        
+        {/* Stack Count Badge */}
+        {actualStackCount > 1 && (
+          <div className="collection-card__stack-badge">
+            <Text variant="caption" weight="bold">
+              {actualStackCount}
+            </Text>
+          </div>
+        )}
+      </div>
       
-      {/* Collection-specific actions overlay */}
       {showActions && (
         <div className="collection-card__actions">
           <Button
-            variant="primary"
-            size="sm"
-            onClick={handleAddToDeck}
-            testId={`${testId}-add-deck`}
+            variant="ghost"
+            size="xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddToDeck();
+            }}
+            testId="add-to-deck"
           >
-            <Icon name="plus" size="sm" />
-            Add to Deck
+            <Icon name="plus" size="xs" />
           </Button>
           <Button
             variant="ghost"
-            size="sm"
-            onClick={handleRemove}
-            testId={`${testId}-remove`}
+            size="xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleRemove();
+            }}
+            testId="remove-card"
           >
-            <Icon name="trash" size="sm" />
+            <Icon name="trash" size="xs" />
           </Button>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };

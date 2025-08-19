@@ -1,14 +1,16 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCardsStore } from '../../../stores';
 import { useGameStore } from '../../../stores/gameStore';
 import { CollectionFilters } from '../../organisms/CollectionFilters';
 import { CollectionStats } from '../../organisms/CollectionStats';
 import { CollectionCard } from '../../molecules/CollectionCard';
+import { CardHoverPreview } from '../../molecules/CardHoverPreview';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Icon } from '../../atoms/Icon';
 import { Card } from '../../../models/Card';
+import { StackedCard } from '../../../types/StackedCard';
 import './CollectionPage.css';
 
 interface CollectionPageProps {
@@ -41,6 +43,8 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   // Local state
   const [showStats, setShowStats] = useState(true);
   const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
+  const [hoveredCard, setHoveredCard] = useState<Card | null>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
   // Computed values
   const filteredCards = useMemo(() => getFilteredCards(), [collection, filters]);
@@ -72,11 +76,20 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     });
   };
   
-  const handleCardSelect = (card: Card) => {
-    setSelectedCard(selectedCard?.id === card.id ? null : card);
-  };
+  const handleCardHover = useCallback((card: StackedCard | null, event?: React.MouseEvent) => {
+    setHoveredCard(card);
+    if (event) {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    }
+  }, []);
   
-  const handleAddToDeck = (card: Card) => {
+  const handleMouseMove = useCallback((event: React.MouseEvent) => {
+    if (hoveredCard) {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    }
+  }, [hoveredCard]);
+  
+  const handleAddToDeck = (card: StackedCard) => {
     // For now, we'll need an active deck to add to. TODO: implement proper deck selection
     const deckId = activeDeck?.id;
     if (!deckId) return false;
@@ -90,7 +103,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     }
   };
   
-  const handleRemoveCard = (card: Card) => {
+  const handleRemoveCard = (card: StackedCard) => {
     removeCard(card.id);
   };
   
@@ -258,6 +271,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           <motion.div 
             className={`collection-page__cards collection-page__cards--${viewMode}`}
             layout
+            onMouseMove={handleMouseMove}
           >
             <AnimatePresence mode="popLayout">
               {filteredCards.map((card, index) => (
@@ -271,14 +285,16 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                     duration: 0.3,
                     delay: index * 0.02
                   }}
+                  onMouseEnter={(e) => handleCardHover(card, e)}
+                  onMouseLeave={() => handleCardHover(null)}
                 >
                   <CollectionCard
                     card={card}
+                    stackCount={card.stackCount}
                     viewMode={viewMode}
-                    onSelect={handleCardSelect}
+                    size="sm"
                     onAddToDeck={handleAddToDeck}
                     onRemove={handleRemoveCard}
-                    className={selectedCard?.id === card.id ? 'collection-card--selected' : ''}
                     testId={`collection-card-${index}`}
                   />
                 </motion.div>
@@ -288,89 +304,12 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
         )}
       </div>
       
-      {/* Selected Card Detail Panel */}
-      <AnimatePresence>
-        {selectedCard && (
-          <motion.div
-            className="collection-page__detail-panel"
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 300 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="collection-page__detail-header">
-              <Text variant="h5" weight="semibold">
-                Card Details
-              </Text>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedCard(null)}
-                testId="close-detail"
-              >
-                <Icon name="x" size="sm" />
-              </Button>
-            </div>
-            
-            <div className="collection-page__detail-content">
-              <CollectionCard
-                card={selectedCard}
-                viewMode="grid"
-                size="lg"
-                showActions={false}
-                testId="detail-card"
-              />
-              
-              <div className="collection-page__detail-info">
-                <div className="collection-page__detail-section">
-                  <Text variant="caption" weight="medium" color="muted">
-                    GOLD VALUE
-                  </Text>
-                  <Text variant="h4" weight="bold">
-                    {selectedCard.goldReward}
-                  </Text>
-                </div>
-                
-                <div className="collection-page__detail-section">
-                  <Text variant="caption" weight="medium" color="muted">
-                    LUCK STAT
-                  </Text>
-                  <Text variant="h4" weight="bold">
-                    {selectedCard.luck}
-                  </Text>
-                </div>
-                
-                <div className="collection-page__detail-actions">
-                  <Button
-                    variant="primary"
-                    onClick={() => handleAddToDeck(selectedCard)}
-                    disabled={currentDeck.some((card: any) => card.id === selectedCard.id)}
-                    testId="detail-add-deck"
-                  >
-                    <Icon name="plus" size="sm" />
-                    {currentDeck.some((card: any) => card.id === selectedCard.id) 
-                      ? 'Already in Deck' 
-                      : 'Add to Deck'
-                    }
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      handleRemoveCard(selectedCard);
-                      setSelectedCard(null);
-                    }}
-                    testId="detail-remove"
-                  >
-                    <Icon name="trash" size="sm" />
-                    Remove from Collection
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Card Hover Preview */}
+      <CardHoverPreview
+        card={hoveredCard}
+        mousePosition={mousePosition}
+        isVisible={!!hoveredCard}
+      />
     </div>
   );
 };

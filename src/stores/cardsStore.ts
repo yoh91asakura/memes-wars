@@ -4,6 +4,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Card } from '../models/Card';
+import { StackedCard, StackedCardUtils } from '../types/StackedCard';
 import { RollService, RollResult, MultiRollResult } from '../services/RollService';
 
 // Roll configuration
@@ -69,7 +70,7 @@ export interface CardsStore {
   clearHistory: () => void;
   
   // Computed Getters
-  getFilteredCards: () => Card[];
+  getFilteredCards: () => StackedCard[];
   getCollectionStats: () => CollectionStats;
   getCardsByRarity: (rarity: string) => Card[];
   hasCard: (cardId: string) => boolean;
@@ -298,24 +299,37 @@ export const useCardsStore = create<CardsStore>()(
           // Computed Getters
           getFilteredCards: () => {
             const state = get();
-            let filtered = [...state.collection];
+            
+            // Create stacked cards from collection
+            let stackedCards = StackedCardUtils.createCardStacks(state.collection);
             
             // Apply search filter
             if (state.filters.search) {
               const searchLower = state.filters.search.toLowerCase();
-              filtered = filtered.filter(card =>
+              stackedCards = stackedCards.filter(card =>
                 card.name.toLowerCase().includes(searchLower) ||
-                card.description.toLowerCase().includes(searchLower)
+                (card.description && card.description.toLowerCase().includes(searchLower))
               );
             }
             
             // Apply rarity filter
             if (state.filters.rarity !== 'all') {
-              filtered = filtered.filter(card => card.rarity === state.filters.rarity);
+              stackedCards = stackedCards.filter(card => {
+                // Convert numeric rarity to string for filtering
+                const rarityString = card.rarity <= 2 ? 'common' :
+                  card.rarity <= 4 ? 'uncommon' :
+                  card.rarity <= 10 ? 'rare' :
+                  card.rarity <= 50 ? 'epic' :
+                  card.rarity <= 200 ? 'legendary' :
+                  card.rarity <= 1000 ? 'mythic' :
+                  card.rarity <= 10000 ? 'cosmic' :
+                  card.rarity <= 100000 ? 'divine' : 'infinity';
+                return rarityString === state.filters.rarity;
+              });
             }
             
-            // Apply sorting
-            filtered.sort((a, b) => {
+            // Apply sorting - default to rarity descending for best cards first
+            stackedCards.sort((a, b) => {
               let comparison = 0;
               
               switch (state.filters.sortBy) {
@@ -323,11 +337,12 @@ export const useCardsStore = create<CardsStore>()(
                   comparison = a.name.localeCompare(b.name);
                   break;
                 case 'rarity':
-                  const rarityOrder = ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC', 'COSMIC', 'DIVINE', 'INFINITY'];
-                  comparison = rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+                default:
+                  // Sort by rarity descending (higher rarity number = rarer = first)
+                  comparison = b.rarity - a.rarity;
                   break;
                 case 'power':
-                  comparison = (a.attack + a.defense + a.health) - (b.attack + b.defense + b.health);
+                  comparison = (a.luck + (a.hp || 100)) - (b.luck + (b.hp || 100));
                   break;
                 case 'dateAdded':
                   comparison = new Date(a.addedAt || 0).getTime() - new Date(b.addedAt || 0).getTime();
@@ -337,7 +352,7 @@ export const useCardsStore = create<CardsStore>()(
               return state.filters.sortOrder === 'asc' ? comparison : -comparison;
             });
             
-            return filtered;
+            return stackedCards;
           },
           
           getCollectionStats: () => {
