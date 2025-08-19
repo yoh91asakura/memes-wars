@@ -3,16 +3,10 @@
 .roll-page {
   width: 100%;
   min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .roll-page__roll-section {
   margin-bottom: 3rem;
-  width: 100%;
-  display: flex;
-  justify-content: center;
 }
 
 .roll-page__recent-section {
@@ -21,8 +15,6 @@
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
-  width: 100%;
-  max-width: 1200px;
 }
 
 .roll-page__section-header {
@@ -32,16 +24,6 @@
 
 .roll-page__recent-cards {
   padding: 0;
-}
-
-.roll-page__collection-section {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  width: 100%;
-  max-width: 1200px;
 }
 
 .roll-page__empty-section {
