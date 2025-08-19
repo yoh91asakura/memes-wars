@@ -8,7 +8,7 @@ import { CollectionCard } from '../../molecules/CollectionCard';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Icon } from '../../atoms/Icon';
-import { Card } from '../models/Card';
+import { Card } from '../../../models/Card';
 import './CollectionPage.css';
 
 interface CollectionPageProps {
@@ -324,27 +324,21 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
               <div className="collection-page__detail-info">
                 <div className="collection-page__detail-section">
                   <Text variant="caption" weight="medium" color="muted">
-                    CARD POWER
+                    GOLD VALUE
                   </Text>
                   <Text variant="h4" weight="bold">
-                    {selectedCard.attack + selectedCard.defense + selectedCard.health}
+                    {selectedCard.goldReward}
                   </Text>
                 </div>
                 
-                {selectedCard.tags && selectedCard.tags.length > 0 && (
-                  <div className="collection-page__detail-section">
-                    <Text variant="caption" weight="medium" color="muted">
-                      TAGS
-                    </Text>
-                    <div className="collection-page__tags">
-                      {selectedCard.tags.map((tag, index) => (
-                        <span key={index} className="collection-page__tag">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <div className="collection-page__detail-section">
+                  <Text variant="caption" weight="medium" color="muted">
+                    LUCK STAT
+                  </Text>
+                  <Text variant="h4" weight="bold">
+                    {selectedCard.luck}
+                  </Text>
+                </div>
                 
                 <div className="collection-page__detail-actions">
                   <Button
