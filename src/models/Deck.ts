@@ -1,7 +1,6 @@
 // Deck Models - All deck and deck building related data structures
 
 import { UnifiedCard } from './unified/Card';
-import { ProjectileEffect, FirePattern, SpecialAbility } from './Combat';
 
 export interface Deck {
   id: string;

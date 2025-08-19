@@ -100,7 +100,8 @@ export interface CombatStore {
   isPlayerAlive: (playerId: string) => boolean;
 }
 
-const createInitialArena = (): CombatArena => ({
+// Arena creation helper (used in initialization)
+export const createInitialArena = (): CombatArena => ({
   id: 'default_arena',
   width: 1200,
   height: 800,
@@ -305,14 +306,13 @@ export const useCombatStore = create<CombatStore>()(
       });
     },
 
-    fireProjectile: (playerId: string, target: { x: number; y: number }) => {
+    fireProjectile: (_playerId: string, target: { x: number; y: number }) => {
       // This would be handled by the combat engine
       // Just emit an event for UI feedback
       get().addEvent({
         id: `manual_fire_${Date.now()}`,
         type: 'projectile_fired',
         timestamp: Date.now(),
-        playerId,
         data: { target, manual: true }
       });
     },
@@ -329,7 +329,7 @@ export const useCombatStore = create<CombatStore>()(
       }
     },
 
-    addEffect: (playerId: string, effect: ActiveEffect) => {
+    addEffect: (_playerId: string, effect: ActiveEffect) => {
       set(state => ({
         activeEffects: [...state.activeEffects, effect]
       }));

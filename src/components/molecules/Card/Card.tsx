@@ -196,7 +196,7 @@ export const Card: React.FC<CardProps> = ({
           <div className={styles.robloxTop}>
             <div className={styles.robloxPowerLevel}>{normalizedCard.health}</div>
             <div className={styles.robloxName}>{normalizedCard.name}</div>
-            <div className={styles.robloxElement}>{normalizedCard.emojis[0]?.emoji}</div>
+            <div className={styles.robloxElement}>{(normalizedCard.emojis as any)?.[0]?.emoji || '🎮'}</div>
           </div>
           <div className={styles.robloxArtwork}>
             <CardArtwork card={normalizedCard} size={size} variant="simple" />
@@ -209,7 +209,7 @@ export const Card: React.FC<CardProps> = ({
               </div>
             </div>
             <div className={styles.robloxDescription}>
-              {normalizedCard.passiveAbility.description}
+              {normalizedCard.passiveAbility?.description || 'No description available'}
             </div>
             <div className={styles.robloxRarity}>{normalizedCard.rarity}</div>
           </div>

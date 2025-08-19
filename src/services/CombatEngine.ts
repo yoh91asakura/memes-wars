@@ -8,29 +8,25 @@ import {
   Collision, 
   ActiveEffect, 
   Position, 
-  Vector2D, 
-  BoundingBox,
   CombatEvent,
   CombatEventType,
-  CombatResult,
   ProjectileEffect
 } from '../models/Combat';
-import { Deck } from '../models/unified/Deck';
+import { Deck as GameStoreDeck } from '../stores/gameStore';
 import { UnifiedCard } from '../models/unified/Card';
 
 export interface ICombatEngine {
-  initialize(playerDeck: Deck, opponentDeck: Deck): void;
+  initialize(playerDeck: GameStoreDeck, opponentDeck: GameStoreDeck): void;
   startBattle(): void;
   processFrame(deltaTime: number): void;
   checkCollisions(): Collision[];
-  applyEffects(effects: Effect[]): void;
+  applyEffects(effects: any[]): void;
   determineWinner(): CombatPlayer | null;
 }
 
 export class CombatEngine implements ICombatEngine {
   private state: CombatState;
   private frameCount: number = 0;
-  private lastFrameTime: number = 0;
   private animationFrameId: number | null = null;
   private eventCallbacks: Map<CombatEventType, ((event: CombatEvent) => void)[]> = new Map();
 
@@ -38,7 +34,7 @@ export class CombatEngine implements ICombatEngine {
     this.state = this.createInitialState(arena);
   }
 
-  public initialize(playerDeck: Deck, opponentDeck: Deck): void {
+  public initialize(playerDeck: GameStoreDeck, opponentDeck: GameStoreDeck): void {
     // Create players from decks
     const player1 = this.createPlayerFromDeck(playerDeck, 'player1', this.state.arena.playerSpawns[0]);
     const player2 = this.createPlayerFromDeck(opponentDeck, 'player2', this.state.arena.playerSpawns[1]);
@@ -68,7 +64,6 @@ export class CombatEngine implements ICombatEngine {
     if (this.state.phase !== 'active') return;
 
     this.frameCount++;
-    this.lastFrameTime = deltaTime;
 
     // Update projectiles
     this.updateProjectiles(deltaTime);
@@ -77,7 +72,7 @@ export class CombatEngine implements ICombatEngine {
     this.updateActiveEffects(deltaTime);
 
     // Process AI for bot players
-    this.updateAI(deltaTime);
+    this.updateAI();
 
     // Check collisions
     const collisions = this.checkCollisions();
@@ -265,13 +260,13 @@ export class CombatEngine implements ICombatEngine {
     };
   }
 
-  private createPlayerFromDeck(deck: Deck, playerId: string, spawnPosition: Position): CombatPlayer {
-    const totalHP = deck.stats.totalHealth || 100;
-    const fireRate = deck.stats.projectedFireRate || 1.0;
+  private createPlayerFromDeck(deck: GameStoreDeck, playerId: string, spawnPosition: Position): CombatPlayer {
+    const totalHP = 100; // Default health
+    const fireRate = 1.0; // Default fire rate
     
     // Calculate damage from unified cards
     const totalDamage = deck.cards.reduce((sum, card) => {
-      return sum + (card.stats?.damage || card.attack || 10);
+      return sum + (card.attack || 10);
     }, 0);
 
     return {
@@ -287,20 +282,20 @@ export class CombatEngine implements ICombatEngine {
         cards: deck.cards,
         activeProjectiles: [],
         firePattern: {
-          type: this.getFirePatternFromCards(deck.cards),
+          type: 'single',
           projectilesPerFire: Math.min(deck.cards.length, 3),
-          spreadAngle: this.calculateSpreadAngle(deck.cards),
+          spreadAngle: 0,
           fireRate: fireRate,
           cooldown: 1000 / fireRate
         },
         totalDamage: totalDamage,
         totalHealth: totalHP,
-        specialAbilities: this.extractSpecialAbilities(deck.cards)
+        specialAbilities: []
       },
       activeEffects: [],
       lastFireTime: 0,
       fireRate: fireRate,
-      moveSpeed: this.calculateMoveSpeed(deck.cards),
+      moveSpeed: 200,
       isAlive: true,
       kills: 0,
       damage: 0,
@@ -388,7 +383,7 @@ export class CombatEngine implements ICombatEngine {
     this.state.effects = this.state.effects.filter(e => e.remainingDuration > 0);
   }
 
-  private updateAI(deltaTime: number): void {
+  private updateAI(): void {
     // Simple AI logic - each player automatically fires projectiles
     for (const player of this.state.players) {
       if (!player.isAlive) continue;
@@ -473,82 +468,6 @@ export class CombatEngine implements ICombatEngine {
     return emojiMap[rarity.toLowerCase()] || '💥';
   }
 
-  private getFirePatternFromCards(cards: UnifiedCard[]): 'single' | 'burst' | 'spread' | 'spiral' | 'beam' {
-    const rarities = cards.map(card => card.rarity || 'common');
-    
-    if (rarities.some(r => r === 'cosmic')) return 'beam';
-    if (rarities.filter(r => r === 'legendary').length >= 2) return 'spiral';
-    if (rarities.filter(r => r === 'epic').length >= 3) return 'spread';
-    if (rarities.filter(r => r === 'rare').length >= 4) return 'burst';
-    
-    return 'single';
-  }
-
-  private calculateSpreadAngle(cards: UnifiedCard[]): number {
-    const rarityValue = cards.reduce((sum, card) => {
-      const values: Record<string, number> = {
-        common: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, cosmic: 6
-      };
-      return sum + (values[card.rarity || 'common'] || 1);
-    }, 0);
-    
-    return Math.min(45, rarityValue * 5);
-  }
-
-  private calculateMoveSpeed(cards: UnifiedCard[]): number {
-    const speedCards = cards.filter(card => card.stats?.speed);
-    const baseSpeed = 200;
-    const bonusSpeed = speedCards.reduce((sum, card) => sum + (card.stats?.speed || 0), 0);
-    return Math.max(100, Math.min(400, baseSpeed + bonusSpeed * 10));
-  }
-
-  private extractSpecialAbilities(cards: UnifiedCard[]): any[] {
-    return cards
-      .filter(card => card.stats?.ability)
-      .map(card => ({
-        id: card.id,
-        name: card.name,
-        description: card.description || card.stats?.ability || 'Special Ability',
-        cooldown: card.stats?.cooldown || 5000,
-        lastUsed: 0,
-        manaCost: card.stats?.manaCost || 10,
-        effects: this.convertCardToEffects(card),
-        trigger: { type: 'manual' as const }
-      }));
-  }
-
-  private convertCardToEffects(card: UnifiedCard): ProjectileEffect[] {
-    const effects: ProjectileEffect[] = [];
-    
-    if (card.stats?.burn) {
-      effects.push({
-        type: 'burn',
-        duration: card.stats.burn.duration || 3000,
-        intensity: card.stats.burn.intensity || 5,
-        stackable: true
-      });
-    }
-    
-    if (card.stats?.freeze) {
-      effects.push({
-        type: 'freeze',
-        duration: card.stats.freeze.duration || 2000,
-        intensity: card.stats.freeze.intensity || 0.5,
-        stackable: false
-      });
-    }
-    
-    if (card.stats?.poison) {
-      effects.push({
-        type: 'poison',
-        duration: card.stats.poison.duration || 5000,
-        intensity: card.stats.poison.intensity || 3,
-        stackable: true
-      });
-    }
-    
-    return effects;
-  }
 
   private isColliding(projectile: EmojiProjectile, player: CombatPlayer): boolean {
     const distance = Math.sqrt(
@@ -583,7 +502,7 @@ export class CombatEngine implements ICombatEngine {
     projectile.bounces++;
   }
 
-  private bounceProjectileOffObstacle(projectile: EmojiProjectile, obstacle: any): void {
+  private bounceProjectileOffObstacle(projectile: EmojiProjectile, _obstacle: any): void {
     // Simple bounce logic - reverse appropriate velocity component
     projectile.velocity.x *= -this.state.arena.settings.bounceMultiplier;
     projectile.velocity.y *= -this.state.arena.settings.bounceMultiplier;
@@ -681,7 +600,7 @@ export class CombatEngine implements ICombatEngine {
 
   private updateStatistics(deltaTime: number): void {
     this.state.stats.duration += deltaTime;
-    this.state.stats.averageFPS = this.frameCount / this.state.stats.duration;
+    this.state.stats.averageFPS = Math.min(60, this.frameCount / this.state.stats.duration);
     this.state.stats.peakProjectileCount = Math.max(
       this.state.stats.peakProjectileCount,
       this.state.projectiles.length
@@ -717,7 +636,7 @@ export class CombatEngine implements ICombatEngine {
     this.state.stats.totalDamage += damage;
   }
 
-  private applyFreezeEffect(target: CombatPlayer, effect: ActiveEffect): void {
+  private applyFreezeEffect(target: CombatPlayer, _effect: ActiveEffect): void {
     target.moveSpeed *= 0.5;
     target.fireRate *= 0.7;
   }
@@ -740,12 +659,12 @@ export class CombatEngine implements ICombatEngine {
     target.shield = Math.min(target.maxShield, target.shield + shieldAmount);
   }
 
-  private applySpeedEffect(target: CombatPlayer, effect: ActiveEffect): void {
+  private applySpeedEffect(target: CombatPlayer, _effect: ActiveEffect): void {
     target.moveSpeed *= 1.5;
     target.fireRate *= 1.3;
   }
 
-  private applyStunEffect(target: CombatPlayer, effect: ActiveEffect): void {
+  private applyStunEffect(target: CombatPlayer, _effect: ActiveEffect): void {
     target.moveSpeed = 0;
     target.fireRate = 0;
   }

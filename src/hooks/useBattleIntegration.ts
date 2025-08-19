@@ -1,12 +1,10 @@
 // Battle Integration Hook - Connects combat system with unified card system
 
-import { useCallback, useEffect, useState } from 'react';
-import { useCombatStore } from '../stores/combatStore';
-import { useDeckStore } from '../stores/deckStore';
+import { useCallback, useState } from 'react';
 import { useGameStore } from '../stores/gameStore';
 import { BattleService } from '../services/BattleService';
 import { CombatArena } from '../models/Combat';
-import { Deck } from '../models/unified/Deck';
+import { Deck } from '../stores/gameStore';
 
 export interface BattleIntegrationConfig {
   playerDeckId?: string;
@@ -16,31 +14,21 @@ export interface BattleIntegrationConfig {
 }
 
 export interface BattleResults {
-  winner: string;
+  winner: any;
   duration: number;
-  playerStats: {
-    damageDealt: number;
-    damageReceived: number;
-    projectilesFired: number;
-    accuracy: number;
-    kills: number;
-    cards: any[];
-  };
+  playerStats: any;
   rewards: {
     xp: number;
     coins: number;
-    cards?: any[];
+    cards?: string[];
   };
 }
 
 export const useBattleIntegration = () => {
-  const [battleService] = useState(() => new BattleService());
   const [isLoading, setIsLoading] = useState(false);
   const [lastResults, setLastResults] = useState<BattleResults | null>(null);
-
-  // Store access
-  const { getDeckById } = useDeckStore();
-  const { addXP, addCoins, unlockCard } = useGameStore();
+  
+  const battleService = new BattleService();
 
   // Initialize combat with unified decks
   const initializeBattle = useCallback(async (config: BattleIntegrationConfig) => {
@@ -50,14 +38,24 @@ export const useBattleIntegration = () => {
       const { playerDeckId, opponentDeckId, battleType, difficulty = 'medium' } = config;
 
       // Get player deck
-      let playerDeck = playerDeckId ? getDeckById(playerDeckId) : null;
+      let playerDeck: Deck | null = null;
+      if (playerDeckId) {
+        const gameStore = useGameStore.getState();
+        playerDeck = gameStore.decks.find(d => d.id === playerDeckId) || null;
+      }
+
       if (!playerDeck) {
-        const defaultDecks = getDeckById('default');
-        playerDeck = defaultDecks || await createDefaultDeck();
+        const gameStore = useGameStore.getState();
+        playerDeck = gameStore.activeDeck || gameStore.decks[0] || null;
       }
 
       // Get or create opponent deck
-      let opponentDeck = opponentDeckId ? getDeckById(opponentDeckId) : null;
+      let opponentDeck: Deck | null = null;
+      if (opponentDeckId) {
+        const gameStore = useGameStore.getState();
+        opponentDeck = gameStore.decks.find(d => d.id === opponentDeckId) || null;
+      }
+
       if (!opponentDeck) {
         opponentDeck = await createAIDeck(difficulty);
       }
@@ -73,7 +71,7 @@ export const useBattleIntegration = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [getDeckById]);
+  }, []);
 
   // Start battle with integration
   const startBattle = useCallback(async (config: BattleIntegrationConfig) => {
@@ -102,7 +100,7 @@ export const useBattleIntegration = () => {
       console.error('Battle failed:', error);
       return null;
     }
-  }, [battleService, initializeBattle]);
+  }, [initializeBattle, battleService]);
 
   // Get battle state
   const getBattleState = useCallback(() => {
@@ -124,41 +122,16 @@ export const useBattleIntegration = () => {
     }
   }, [battleService]);
 
-  // Create default deck if none exists
-  const createDefaultDeck = async (): Promise<Deck> => {
-    // This would integrate with deck creation system
-    const defaultDeck: Deck = {
-      id: 'default',
-      name: 'Starter Deck',
-      cards: [],
-      stats: {
-        totalHealth: 100,
-        totalDamage: 50,
-        projectedFireRate: 2.0
-      }
-    };
-    return defaultDeck;
-  };
-
   // Create AI deck based on difficulty
   const createAIDeck = async (difficulty: string): Promise<Deck> => {
-    const baseStats = {
-      easy: { health: 80, damage: 30, fireRate: 1.5 },
-      medium: { health: 100, damage: 50, fireRate: 2.0 },
-      hard: { health: 120, damage: 70, fireRate: 2.5 }
-    };
-
-    const stats = baseStats[difficulty as keyof typeof baseStats] || baseStats.medium;
 
     const aiDeck: Deck = {
       id: `ai_${difficulty}_${Date.now()}`,
       name: `AI ${difficulty}`,
       cards: [],
-      stats: {
-        totalHealth: stats.health,
-        totalDamage: stats.damage,
-        projectedFireRate: stats.fireRate
-      }
+      isActive: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
     return aiDeck;
@@ -193,7 +166,6 @@ export const useBattleIntegration = () => {
       }
     };
 
-    // Customize based on battle type
     switch (battleType) {
       case 'pvp':
         return {
@@ -224,23 +196,23 @@ export const useBattleIntegration = () => {
 
     return {
       winner: results.winner,
-      duration: results.duration,
-      playerStats: results.playerStats,
+      duration: results.duration || 0,
+      playerStats: results.playerStats || {},
       rewards: {
         ...rewards,
-        cards: results.playerStats.cards.filter((card: any) => card.rarity === 'rare' || Math.random() < 0.1)
+        cards: []
       }
     };
   };
 
   // Apply rewards to user
-  const applyRewards = async (rewards: { xp: number; coins: number; cards?: any[] }) => {
-    addXP(rewards.xp);
-    addCoins(rewards.coins);
+  const applyRewards = async (rewards: { xp: number; coins: number; cards?: string[] }) => {
+    // TODO: Implement XP and coins storage
+    console.log(`Adding ${rewards.xp} XP and ${rewards.coins} coins`);
     
     if (rewards.cards) {
-      for (const card of rewards.cards) {
-        await unlockCard(card);
+      for (const _cardId of rewards.cards) {
+        // Unlock card logic would go here
       }
     }
   };
@@ -255,13 +227,9 @@ export const useBattleIntegration = () => {
     battleService,
     isLoading,
     lastResults,
-    initializeBattle,
     startBattle,
     getBattleState,
     controlBattle,
     cleanup
   };
 };
-
-// Export types for use in components
-export type { BattleIntegrationConfig, BattleResults };

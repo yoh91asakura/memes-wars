@@ -1,6 +1,6 @@
 import { CombatEngine } from './CombatEngine';
 import { UnifiedCard } from '../models/unified/Card';
-import { Deck } from '../models/unified/Deck';
+import { Deck } from '../stores/gameStore';
 import { CombatArena } from '../models/Combat';
 
 export interface BattleSetup {
@@ -171,7 +171,6 @@ export class BattleService {
     }
 
     const players = state.players;
-    const winner = players.find(p => p.id === winnerId);
     
     return {
       winner: winnerId,

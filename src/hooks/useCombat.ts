@@ -2,10 +2,8 @@
 
 import { useEffect, useCallback, useRef, useState } from 'react';
 import { useCombatStore, useCombatActions, useCombatPlayers, useCombatProjectiles } from '../stores/combatStore';
-import { CombatEngine } from '../services/CombatEngine';
-import { CombatArena, CombatPlayer, EmojiProjectile, Position } from '../models/Combat';
+import { CombatArena, CombatPlayer, Position } from '../models/Combat';
 import { Deck } from '../models/Deck';
-import { gameRandom } from '../utils/random';
 
 // Main combat hook
 export function useCombat() {
@@ -352,8 +350,8 @@ export function useCombatAI(playerId: string) {
             if (target) {
               // Add some randomness to targeting
               const targetPos = {
-                x: target.position.x + gameRandom.float(-20, 20),
-                y: target.position.y + gameRandom.float(-20, 20)
+                x: target.position.x + (Math.random() * 40 - 20),
+                y: target.position.y + (Math.random() * 40 - 20)
               };
               fireProjectile(playerId, targetPos);
               aiState.current.lastAction = now;

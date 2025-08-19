@@ -6,10 +6,10 @@ import { EmojiProjectile } from '../models/Combat';
 
 export interface IDeckService {
   validateDeck(cards: UnifiedCard[]): boolean;
-  calculateTotalHP(deck: Deck): number;
-  getActiveEmojis(deck: Deck): EmojiProjectile[];
-  saveDeck(deck: Deck): void;
-  loadDeck(id: string): Deck;
+  calculateTotalHP(deck: any): number;
+  getActiveEmojis(deck: any): EmojiProjectile[];
+  saveDeck(deck: any): void;
+  loadDeck(id: string): any;
 }
 
 export class DeckService implements IDeckService {
@@ -96,14 +96,14 @@ export class DeckService implements IDeckService {
     };
   }
 
-  public calculateTotalHP(deck: Deck): number {
-    return deck.cards.reduce((total, card) => {
+  public calculateTotalHP(deck: any): number {
+    return deck.cards.reduce((total: number, card: UnifiedCard) => {
       return total + (card.health || 0);
     }, 0);
   }
 
-  public calculateTotalDamage(deck: Deck): number {
-    return deck.cards.reduce((total, card) => {
+  public calculateTotalDamage(deck: any): number {
+    return deck.cards.reduce((total: number, card: UnifiedCard) => {
       return total + (card.damage || 0);
     }, 0);
   }
@@ -128,7 +128,7 @@ export class DeckService implements IDeckService {
 
     cards.forEach(card => {
       if (card.rarity in rarityDistribution) {
-        rarityDistribution[card.rarity as keyof typeof rarityDistribution]++;
+        rarityDistribution[card.rarity as unknown as keyof typeof rarityDistribution]++;
       }
     });
 
@@ -166,9 +166,9 @@ export class DeckService implements IDeckService {
     };
   }
 
-  public getActiveEmojis(deck: Deck): EmojiProjectile[] {
+  public getActiveEmojis(deck: any): EmojiProjectile[] {
     // Extract emoji projectiles from deck cards
-    return deck.cards.map(card => ({
+    return deck.cards.map((card: UnifiedCard) => ({
       id: `emoji_${card.id}`,
       emoji: card.emoji,
       position: { x: 0, y: 0 },
@@ -392,7 +392,8 @@ export class DeckService implements IDeckService {
   private calculateShieldValue(cards: UnifiedCard[]): number {
     return cards.reduce((sum, card) => {
       // Cards with defensive properties contribute to shield
-      if (card.type === 'defense' || card.abilities?.some(a => a.includes('shield'))) {
+      const cardType = card.type as string;
+      if (cardType === 'defense' || ((card as any).abilities && (card as any).abilities?.some((a: string) => a.toLowerCase().includes('shield')))) {
         return sum + (card.health || 0) * 0.5;
       }
       return sum;
@@ -404,12 +405,12 @@ export class DeckService implements IDeckService {
     
     cards.forEach(card => {
       // Cards with special abilities get utility points
-      if (card.abilities && card.abilities.length > 0) {
-        utilityScore += card.abilities.length;
+      if ((card as any).abilities && (card as any).abilities?.length > 0) {
+        utilityScore += (card as any).abilities.length;
       }
       
       // Cards with effects get utility points
-      if (card.effect) {
+      if ((card as any).effect) {
         utilityScore += 1;
       }
     });
@@ -464,8 +465,7 @@ export class DeckService implements IDeckService {
 
   private textFormatToDeck(text: string): Deck {
     // Parse text format back to deck
-    const lines = text.split('\n').filter(line => line.trim());
-    const name = lines[0].replace('# ', '').trim();
+    text.split('\n').filter(line => line.trim());
     
     // This would need more sophisticated parsing in a real implementation
     throw new Error('Text format import not fully implemented');
@@ -474,7 +474,7 @@ export class DeckService implements IDeckService {
   private urlFormatToDeck(url: string): Deck {
     try {
       const encoded = url.split('/').pop()!;
-      const decoded = JSON.parse(atob(encoded));
+      JSON.parse(atob(encoded));
       
       // This would need to reconstruct the full deck from the encoded data
       throw new Error('URL format import not fully implemented');

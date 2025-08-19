@@ -4,7 +4,7 @@ import { UnifiedCard } from '../../../models/unified/Card';
 import { Text } from '../../atoms/Text';
 import './CompactCollectionCard.css';
 
-interface CompactCollectionCardProps {
+export interface CompactCollectionCardProps {
   card: UnifiedCard;
   onMouseEnter?: (card: UnifiedCard, event: React.MouseEvent) => void;
   onMouseLeave?: () => void;

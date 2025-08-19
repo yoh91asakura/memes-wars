@@ -36,7 +36,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
   className = ''
 }) => {
   // Game state
-  const { deckService, validateDeck, saveDeck } = useGame();
+  const { deckService, saveDeck } = useGame();
   
   // Deck builder state
   const [currentDeck, setCurrentDeck] = useState<Deck | null>(initialDeck || null);
@@ -59,7 +59,6 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
   });
 
   // UI state
-  const [activeTab, setActiveTab] = useState<'collection' | 'deck'>('collection');
   const [isLoading, setIsLoading] = useState(false);
   const [showStats, setShowStats] = useState(true);
 
@@ -244,10 +243,9 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
         <div className="deck-info">
           <Input
             value={deckName}
-            onChange={(e) => setDeckName(e.target.value)}
+            onChange={(e) => setDeckName(e)}
             placeholder="Deck Name"
             className="deck-name-input"
-            maxLength={50}
           />
           <div className="deck-stats">
             {currentDeck && (
@@ -266,10 +264,10 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </div>
 
         <div className="deck-actions">
-          <Button onClick={clearDeck} variant="secondary" size="small">
+          <Button onClick={clearDeck} variant="secondary" size="md">
             Clear Deck
           </Button>
-          <Button onClick={() => optimizeDeck('balance')} variant="secondary" size="small">
+          <Button onClick={() => optimizeDeck('balance')} variant="secondary" size="md">
             Optimize
           </Button>
           <Button
@@ -280,7 +278,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
             Save Deck
           </Button>
           {onDeckCancel && (
-            <Button onClick={onDeckCancel} variant="danger" size="small">
+            <Button onClick={onDeckCancel} variant="danger" size="md">
               Cancel
             </Button>
           )}
@@ -307,8 +305,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
               <div key={`${card.id}-${index}`} className="deck-card">
                 <CollectionCard
                   card={card}
-                  compact
-                  onClick={() => setSelectedCard(card)}
+                  onSelect={() => setSelectedCard(card)}
                 />
                 <button
                   onClick={() => removeCardFromDeck(index)}
@@ -382,7 +379,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
             <div className="filter-row">
               <Input
                 value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                onChange={(e) => setFilters(prev => ({ ...prev, search: e }))}
                 placeholder="Search cards..."
                 className="search-input"
                 type="search"
@@ -423,14 +420,14 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
                 {filteredAndSortedCards.map(card => {
                   const countInDeck = getCardCountInDeck(card.id);
                   const canAdd = currentDeck && deckService 
-                    ? deckService.canAddCardToDeck(currentDeck.id, card)
+                    ? deckService.validateDeck([...currentDeck.cards, card])
                     : false;
 
                   return (
                     <div key={card.id} className="collection-card-container">
                       <CollectionCard
                         card={card}
-                        onClick={() => setSelectedCard(card)}
+                        onSelect={() => setSelectedCard(card)}
                         className={countInDeck > 0 ? 'in-deck' : ''}
                       />
                       
@@ -470,7 +467,6 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
             
             <CollectionCard
               card={selectedCard}
-              showDetails
               className="detail-card"
             />
             
@@ -481,7 +477,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
                   setSelectedCard(null);
                 }}
                 variant="primary"
-                disabled={!currentDeck || !deckService?.canAddCardToDeck(currentDeck.id, selectedCard)}
+                disabled={!currentDeck || !deckService?.validateDeck([...currentDeck.cards, selectedCard])}
               >
                 Add to Deck
               </Button>

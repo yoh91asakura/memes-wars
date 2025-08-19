@@ -13,6 +13,7 @@ interface CollectionCardProps {
   viewMode?: 'grid' | 'list';
   showActions?: boolean;
   onSelect?: (card: UnifiedCard) => void;
+  onClick?: (card: UnifiedCard) => void;
   onAddToDeck?: (card: UnifiedCard) => void;
   onRemove?: (card: UnifiedCard) => void;
   className?: string;

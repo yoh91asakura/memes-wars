@@ -99,11 +99,7 @@ export class SeededRandom {
 
 // Noise functions for procedural generation
 export class NoiseGenerator {
-  private rng: SeededRandom;
-
-  constructor(seed?: number) {
-    this.rng = new SeededRandom(seed);
-  }
+  constructor(_seed?: number) {}
 
   // Simple 1D noise
   noise1D(x: number, frequency: number = 1, amplitude: number = 1): number {

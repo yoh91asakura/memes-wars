@@ -4,7 +4,7 @@ import { UnifiedCard } from '../../../models/unified/Card';
 import { Card } from '../Card/Card';
 import './HoverCardPreview.css';
 
-interface HoverCardPreviewProps {
+export interface HoverCardPreviewProps {
   card: UnifiedCard | null;
   position: { x: number; y: number } | null;
   isVisible: boolean;

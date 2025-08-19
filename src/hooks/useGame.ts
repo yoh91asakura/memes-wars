@@ -2,12 +2,10 @@
 
 import { useEffect, useCallback, useRef } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import { useCombatStore, useCombatActions } from '../stores/combatStore';
 import { GameStateService } from '../services/GameState';
 import { DeckService } from '../services/DeckService';
-import { Deck } from '../models/Deck';
+import { Deck as GameStoreDeck } from '../stores/gameStore';
 import { UnifiedCard } from '../models/unified/Card';
-import { CombatArena } from '../models/Combat';
 
 // Game State Hook
 export function useGame() {
@@ -40,7 +38,6 @@ export function useGame() {
   const {
     startMatch,
     endMatch,
-    updateMatchStatus,
     createDeck,
     setActiveDeck,
     updateSettings
@@ -62,12 +59,12 @@ export function useGame() {
     }
   }, [createDeck]);
 
-  const validateDeck = useCallback((deck: Deck): boolean => {
+  const validateDeck = useCallback((deck: GameStoreDeck): boolean => {
     if (!deckService.current) return false;
     return deckService.current.validateDeck(deck.cards);
   }, []);
 
-  const loadDeck = useCallback(async (deckId: string): Promise<Deck | null> => {
+  const loadDeck = useCallback(async (deckId: string): Promise<GameStoreDeck | null> => {
     if (!deckService.current) return null;
 
     try {
@@ -78,11 +75,11 @@ export function useGame() {
     }
   }, []);
 
-  const saveDeck = useCallback(async (deck: Deck): Promise<boolean> => {
+  const saveDeck = useCallback(async (deck: GameStoreDeck): Promise<boolean> => {
     if (!deckService.current) return false;
 
     try {
-      deckService.current.saveDeck(deck);
+      deckService.current.saveDeck(deck as any);
       return true;
     } catch (error) {
       console.error('Failed to save deck:', error);
@@ -91,7 +88,7 @@ export function useGame() {
   }, []);
 
   // Game state transitions
-  const startPracticeMatch = useCallback(async (playerDeck: Deck, opponentDeck?: Deck) => {
+  const startPracticeMatch = useCallback(async (playerDeck: GameStoreDeck, opponentDeck?: GameStoreDeck) => {
     if (!gameStateService.current || !validateDeck(playerDeck)) return false;
 
     // Use a default opponent deck if none provided
@@ -129,7 +126,7 @@ export function useGame() {
   }, [endMatch]);
 
   // Helper function to create default opponent deck
-  const createDefaultOpponentDeck = useCallback(async (): Promise<Deck | null> => {
+  const createDefaultOpponentDeck = useCallback(async (): Promise<GameStoreDeck | null> => {
     if (!deckService.current) return null;
 
     // This would typically fetch from a pool of AI decks
@@ -338,7 +335,7 @@ export function useGameAudio() {
 
     source.buffer = audioBuffer;
     source.loop = loop;
-    gainNode.gain.value = volume * (settings.sfxVolume || 1);
+    gainNode.gain.value = volume * (settings.soundEnabled ? 0.8 : 0);
 
     source.connect(gainNode);
     gainNode.connect(audioContext.current.destination);
@@ -354,7 +351,7 @@ export function useGameAudio() {
     };
 
     return soundId;
-  }, [settings.soundEnabled, settings.sfxVolume]);
+  }, [settings.soundEnabled]);
 
   const stopSound = useCallback((soundId: string) => {
     const sound = activeSounds.current.get(soundId);
@@ -375,7 +372,7 @@ export function useGameAudio() {
     if (audioContext.current) {
       // This would typically be handled by a master gain node
       // For now, we'll update the settings
-      useGameStore.getState().updateSettings({ sfxVolume: volume });
+      useGameStore.getState().updateSettings({ soundEnabled: volume > 0 });
     }
   }, []);
 
@@ -386,7 +383,7 @@ export function useGameAudio() {
     stopAllSounds,
     setMasterVolume,
     isAudioEnabled: settings.soundEnabled,
-    volume: settings.sfxVolume || 1
+    volume: settings.soundEnabled ? 0.8 : 0
   };
 }
 
@@ -448,7 +445,7 @@ export function useGameTutorial() {
     completedTutorials: new Set<string>()
   });
 
-  const startTutorial = useCallback((tutorialId: string, steps: string[]) => {
+  const startTutorial = useCallback((_tutorialId: string) => {
     tutorialState.current = {
       currentStep: 0,
       isActive: true,
@@ -460,8 +457,7 @@ export function useGameTutorial() {
     tutorialState.current.currentStep++;
   }, []);
 
-  const completeTutorial = useCallback((tutorialId: string) => {
-    tutorialState.current.completedTutorials.add(tutorialId);
+  const completeTutorial = useCallback(() => {
     tutorialState.current.isActive = false;
   }, []);
 
@@ -469,8 +465,8 @@ export function useGameTutorial() {
     tutorialState.current.isActive = false;
   }, []);
 
-  const isTutorialCompleted = useCallback((tutorialId: string) => {
-    return tutorialState.current.completedTutorials.has(tutorialId);
+  const isTutorialCompleted = useCallback(() => {
+    return tutorialState.current.completedTutorials.size > 0;
   }, []);
 
   return {

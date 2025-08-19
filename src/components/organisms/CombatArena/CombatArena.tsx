@@ -2,9 +2,8 @@
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useCombat, useCombatEngine, useProjectiles, useCombatCamera, useCombatEffects } from '../../../hooks/useCombat';
-import { useAnimation, useParticles } from '../../../hooks/useAnimation';
+import { useParticles } from '../../../hooks/useAnimation';
 import { Position, EmojiProjectile, CombatPlayer } from '../../../models/Combat';
-import { UnifiedCard } from '../../../models/unified/Card';
 import { format } from '../../../utils/format';
 import './CombatArena.css';
 
@@ -37,19 +36,18 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
   const { startGameLoop, stopGameLoop, isRunning } = useCombatEngine();
   
   // Projectiles
-  const { projectiles, getActiveProjectiles } = useProjectiles();
+  const { getActiveProjectiles } = useProjectiles();
   
   // Camera
   const { cameraPosition, panCamera, zoomCamera, centerOnAction } = useCombatCamera();
   
   // Effects
-  const { screenShake, flashEffect, triggerScreenShake } = useCombatEffects();
+  const { screenShake, flashEffect } = useCombatEffects();
   
   // Particles
-  const { setCanvas, createExplosion, startRenderLoop, stopRenderLoop } = useParticles();
+  const { setCanvas, startRenderLoop, stopRenderLoop } = useParticles();
 
   // Mouse interaction state
-  const [mousePos, setMousePos] = useState<Position>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
 
@@ -116,7 +114,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     getActiveProjectiles().forEach(projectile => drawProjectile(ctx, projectile));
 
     // Draw effects
-    drawEffects(ctx);
+    // drawEffects(ctx);
 
     // Restore transform
     ctx.restore();
@@ -183,15 +181,12 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 
     const { x, y } = player.position;
     
-    // Player circle with card-based colors
+    // Player circle with team-based colors
     const playerColor = player.id === 'player' ? '#3b82f6' : '#ef4444';
-    const glowColor = this.getGlowColorForDeck(player.deck?.cards || []);
     
-    // Draw glow effect based on deck rarity
-    if (glowColor) {
-      ctx.shadowColor = glowColor;
-      ctx.shadowBlur = 10;
-    }
+    // Enhanced glow effect based on team
+    ctx.shadowColor = playerColor;
+    ctx.shadowBlur = 8;
     
     ctx.fillStyle = playerColor;
     ctx.beginPath();
@@ -225,13 +220,10 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     ctx.textAlign = 'center';
     ctx.fillText(player.username, x, y - 55);
     
-    // Deck power indicator
-    if (player.deck?.cards) {
-      const powerLevel = this.calculateDeckPower(player.deck.cards);
-      ctx.fillStyle = this.getPowerColor(powerLevel);
-      ctx.font = '12px Arial';
-      ctx.fillText(`Power: ${powerLevel}`, x, y - 70);
-    }
+    // Player identifier
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px Arial';
+    ctx.fillText(player.username, x, y - 70);
 
     // Debug info
     if (showDebugInfo) {
@@ -248,10 +240,9 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 
     const { x, y } = projectile.position;
 
-    // Enhanced trail with effects
+    // Enhanced trail effect
     if (projectile.trail.length > 1) {
-      const trailColor = this.getTrailColor(projectile.emoji);
-      ctx.strokeStyle = trailColor;
+      ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(projectile.trail[0].x, projectile.trail[0].y);
@@ -270,12 +261,9 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     ctx.translate(x, y);
     ctx.rotate(projectile.rotation);
     
-    // Projectile glow based on damage
-    const glowIntensity = Math.min(20, projectile.damage / 10);
-    if (glowIntensity > 5) {
-      ctx.shadowColor = this.getDamageColor(projectile.damage);
-      ctx.shadowBlur = glowIntensity;
-    }
+    // Projectile glow effect
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 5;
     
     ctx.font = `${projectile.size}px Arial`;
     ctx.textAlign = 'center';
@@ -301,10 +289,6 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     }
   }
 
-  const drawEffects = (ctx: CanvasRenderingContext2D) => {
-    // This would draw visual effects like explosions, power-ups, etc.
-    // For now, just a placeholder
-  };
 
   const drawUI = (ctx: CanvasRenderingContext2D) => {
     // Combat timer
@@ -358,7 +342,6 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 
     if (e.button === 0) { // Left click - fire projectile
       if (isActive && phase === 'active') {
-        const worldPos = screenToWorld({ x, y });
         // Fire projectile at mouse position
         // This would be handled by the combat system
       }
@@ -374,7 +357,6 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    setMousePos({ x, y });
 
     if (isDragging) {
       const deltaX = (x - dragStart.x) / cameraPosition.zoom;
@@ -398,73 +380,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     e.preventDefault(); // Prevent context menu
   };
 
-  // Helper functions for enhanced rendering
-  const getGlowColorForDeck = (cards: UnifiedCard[]): string | null => {
-    if (!cards || cards.length === 0) return null;
-    
-    const rarityCounts = cards.reduce((acc, card) => {
-      const rarity = card.rarity || 'common';
-      acc[rarity] = (acc[rarity] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
 
-    if (rarityCounts.cosmic) return '#ff00ff';
-    if (rarityCounts.legendary >= 2) return '#ffd700';
-    if (rarityCounts.epic >= 3) return '#ff6b00';
-    if (rarityCounts.rare >= 5) return '#00ff00';
-    
-    return null;
-  };
-
-  const calculateDeckPower = (cards: UnifiedCard[]): number => {
-    if (!cards) return 0;
-    
-    return cards.reduce((power, card) => {
-      const rarityValues = {
-        common: 1, rare: 3, epic: 6, legendary: 12, mythic: 25, cosmic: 50
-      };
-      const rarityValue = rarityValues[card.rarity || 'common'] || 1;
-      const statsValue = (card.stats?.damage || 0) + (card.stats?.health || 0) + (card.stats?.speed || 0);
-      return power + rarityValue + statsValue;
-    }, 0);
-  };
-
-  const getPowerColor = (power: number): string => {
-    if (power >= 100) return '#ff00ff';
-    if (power >= 75) return '#ffd700';
-    if (power >= 50) return '#ff6b00';
-    if (power >= 25) return '#00ff00';
-    return '#ffffff';
-  };
-
-  const getTrailColor = (emoji: string): string => {
-    const colorMap: Record<string, string> = {
-      '💥': '#ff4444',
-      '🔥': '#ff6600',
-      '⚡': '#ffff00',
-      '💨': '#00ccff',
-      '🌟': '#ffffff',
-      '💯': '#ff00ff',
-      '🎯': '#00ff00',
-      '💢': '#ff0000'
-    };
-    return colorMap[emoji] || '#ffffff';
-  };
-
-  const getDamageColor = (damage: number): string => {
-    if (damage >= 50) return '#ff0000';
-    if (damage >= 30) return '#ff6600';
-    if (damage >= 15) return '#ffff00';
-    return '#ffffff';
-  };
-
-  // Convert screen coordinates to world coordinates
-  const screenToWorld = (screenPos: Position): Position => {
-    return {
-      x: (screenPos.x - width / 2) / cameraPosition.zoom + cameraPosition.x,
-      y: (screenPos.y - height / 2) / cameraPosition.zoom + cameraPosition.y
-    };
-  };
 
   return (
     <div className={`combat-arena ${className}`}>
@@ -489,19 +405,6 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
         <button onClick={centerOnAction} className="control-btn" title="Center camera on action">
           📍 Center
         </button>
-        <button onClick={() => useCombatStore.getState().toggleDebugInfo()} className="control-btn" title="Toggle debug overlay">
-          🔍 Debug
-        </button>
-        {phase === 'active' && (
-          <button onClick={() => useCombatStore.getState().pauseCombat()} className="control-btn pause-btn" title="Pause combat">
-            ⏸️ Pause
-          </button>
-        )}
-        {phase === 'paused' && (
-          <button onClick={() => useCombatStore.getState().resumeCombat()} className="control-btn resume-btn" title="Resume combat">
-            ▶️ Resume
-          </button>
-        )}
       </div>
       
       {/* Card info overlay */}

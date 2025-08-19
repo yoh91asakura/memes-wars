@@ -189,9 +189,6 @@ export function useSpring(config?: { stiffness?: number; damping?: number; mass?
   const velocityRef = useRef(0);
 
   const animate = useCallback(() => {
-    const omega = Math.sqrt(stiffness / mass);
-    const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass));
-    
     setValue(currentValue => {
       const displacement = currentValue - target;
       const springForce = -stiffness * displacement;

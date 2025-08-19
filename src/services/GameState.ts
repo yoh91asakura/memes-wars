@@ -1,6 +1,6 @@
 // Game State Service - Centralized game state coordination
 
-import { CombatState, CombatArena, CombatPlayer } from '../models/Combat';
+import { CombatArena, CombatPlayer } from '../models/Combat';
 import { Player, PlayerSession } from '../models/Player';
 import { Deck } from '../models/Deck';
 import { CombatEngine } from './CombatEngine';

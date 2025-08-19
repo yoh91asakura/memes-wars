@@ -4,7 +4,6 @@ import { RollPage } from './components/pages/RollPage/RollPage';
 import { CollectionPage } from './components/pages/CollectionPage/CollectionPage';
 import { CombatPage } from './components/pages/CombatPage/CombatPage';
 // import { CardDebug } from './components/molecules/Card/CardDebug';
-import { Text } from './components/atoms/Text';
 import './App.css';
 
 type Page = 'roll' | 'collection' | 'battle';
@@ -23,7 +22,7 @@ function App() {
       case 'collection':
         return <CollectionPage testId="collection-page" />;
       case 'battle':
-        return <CombatPage testId="combat-page" />;
+        return <CombatPage />;
       // case 'debug':
         // return <CardDebug />;
       default:
