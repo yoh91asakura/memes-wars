@@ -177,15 +177,15 @@ export const CardGrid: React.FC<CardGridProps> = ({
                   variants={cardVariants}
                   layout
                 >
-                  <TCGCard
-                    card={card}
-                    variant={variant}
-                    size={cardSize}
-                    animated
-                    onClick={handleCardClick}
-                    showStats={true}
-                    showEmojis={true}
-                  />
+                <TCGCard
+                  card={card}
+                  variant={variant}
+                  size={cardSize}
+                  animated
+                  onClick={handleCardClick}
+                  showStats={true}
+                  showEmojis={true}
+                />
                 </motion.div>
               ))}
             </motion.div>
