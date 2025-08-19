@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useCombat, useCombatEngine, useProjectiles, useCombatCamera, useCombatEffects } from '../../../hooks/useCombat';
 import { useAnimation, useParticles } from '../../../hooks/useAnimation';
 import { Position, EmojiProjectile, CombatPlayer } from '../../../models/Combat';
+import { UnifiedCard } from '../../../models/unified/Card';
 import { format } from '../../../utils/format';
 import './CombatArena.css';
 
@@ -182,16 +183,27 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 
     const { x, y } = player.position;
     
-    // Player circle
-    ctx.fillStyle = player.id === 'player' ? '#3b82f6' : '#ef4444';
+    // Player circle with card-based colors
+    const playerColor = player.id === 'player' ? '#3b82f6' : '#ef4444';
+    const glowColor = this.getGlowColorForDeck(player.deck?.cards || []);
+    
+    // Draw glow effect based on deck rarity
+    if (glowColor) {
+      ctx.shadowColor = glowColor;
+      ctx.shadowBlur = 10;
+    }
+    
+    ctx.fillStyle = playerColor;
     ctx.beginPath();
     ctx.arc(x, y, 25, 0, Math.PI * 2);
     ctx.fill();
+    
+    ctx.shadowBlur = 0; // Reset shadow
 
     // Health bar
-    const barWidth = 60;
-    const barHeight = 8;
-    const barY = y - 40;
+    const barWidth = 80;
+    const barHeight = 10;
+    const barY = y - 45;
     
     ctx.fillStyle = '#333';
     ctx.fillRect(x - barWidth / 2, barY, barWidth, barHeight);
@@ -199,50 +211,78 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     const healthPercent = player.health / player.maxHealth;
     ctx.fillStyle = healthPercent > 0.5 ? '#10b981' : healthPercent > 0.25 ? '#f59e0b' : '#ef4444';
     ctx.fillRect(x - barWidth / 2, barY, barWidth * healthPercent, barHeight);
+    
+    // Shield bar
+    if (player.shield > 0) {
+      const shieldPercent = player.shield / player.maxShield;
+      ctx.fillStyle = '#00bcd4';
+      ctx.fillRect(x - barWidth / 2, barY - 12, barWidth * shieldPercent, 4);
+    }
 
-    // Player name
+    // Player name and deck info
     ctx.fillStyle = '#fff';
-    ctx.font = '14px Arial';
+    ctx.font = 'bold 14px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText(player.username, x, y - 50);
+    ctx.fillText(player.username, x, y - 55);
+    
+    // Deck power indicator
+    if (player.deck?.cards) {
+      const powerLevel = this.calculateDeckPower(player.deck.cards);
+      ctx.fillStyle = this.getPowerColor(powerLevel);
+      ctx.font = '12px Arial';
+      ctx.fillText(`Power: ${powerLevel}`, x, y - 70);
+    }
 
     // Debug info
     if (showDebugInfo) {
       ctx.fillStyle = '#fff';
       ctx.font = '10px Arial';
       ctx.fillText(`HP: ${Math.floor(player.health)}/${Math.floor(player.maxHealth)}`, x, y + 45);
-      ctx.fillText(`Pos: ${Math.floor(x)}, ${Math.floor(y)}`, x, y + 55);
+      ctx.fillText(`Shield: ${Math.floor(player.shield)}`, x, y + 55);
+      ctx.fillText(`Cards: ${player.deck?.cards?.length || 0}`, x, y + 65);
     }
-  };
+  }
 
   const drawProjectile = (ctx: CanvasRenderingContext2D, projectile: EmojiProjectile) => {
     if (!projectile.isActive) return;
 
     const { x, y } = projectile.position;
 
-    // Draw trail
+    // Enhanced trail with effects
     if (projectile.trail.length > 1) {
-      ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`;
-      ctx.lineWidth = 2;
+      const trailColor = this.getTrailColor(projectile.emoji);
+      ctx.strokeStyle = trailColor;
+      ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(projectile.trail[0].x, projectile.trail[0].y);
       
       for (let i = 1; i < projectile.trail.length; i++) {
+        const alpha = (i / projectile.trail.length) * 0.7;
+        ctx.globalAlpha = alpha;
         ctx.lineTo(projectile.trail[i].x, projectile.trail[i].y);
       }
       ctx.stroke();
+      ctx.globalAlpha = 1;
     }
 
-    // Draw projectile
+    // Enhanced projectile with glow effects
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(projectile.rotation);
+    
+    // Projectile glow based on damage
+    const glowIntensity = Math.min(20, projectile.damage / 10);
+    if (glowIntensity > 5) {
+      ctx.shadowColor = this.getDamageColor(projectile.damage);
+      ctx.shadowBlur = glowIntensity;
+    }
     
     ctx.font = `${projectile.size}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(projectile.emoji, 0, 0);
     
+    ctx.shadowBlur = 0;
     ctx.restore();
 
     // Debug info
@@ -252,8 +292,14 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
       ctx.textAlign = 'left';
       ctx.fillText(`${Math.floor(projectile.damage)}dmg`, x + 20, y);
       ctx.fillText(`${projectile.bounces}/${projectile.maxBounces}`, x + 20, y + 10);
+      
+      // Show effects
+      if (projectile.effects.length > 0) {
+        const effectNames = projectile.effects.map(e => e.type).join(',');
+        ctx.fillText(effectNames, x + 20, y + 20);
+      }
     }
-  };
+  }
 
   const drawEffects = (ctx: CanvasRenderingContext2D) => {
     // This would draw visual effects like explosions, power-ups, etc.
@@ -352,6 +398,66 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     e.preventDefault(); // Prevent context menu
   };
 
+  // Helper functions for enhanced rendering
+  const getGlowColorForDeck = (cards: UnifiedCard[]): string | null => {
+    if (!cards || cards.length === 0) return null;
+    
+    const rarityCounts = cards.reduce((acc, card) => {
+      const rarity = card.rarity || 'common';
+      acc[rarity] = (acc[rarity] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    if (rarityCounts.cosmic) return '#ff00ff';
+    if (rarityCounts.legendary >= 2) return '#ffd700';
+    if (rarityCounts.epic >= 3) return '#ff6b00';
+    if (rarityCounts.rare >= 5) return '#00ff00';
+    
+    return null;
+  };
+
+  const calculateDeckPower = (cards: UnifiedCard[]): number => {
+    if (!cards) return 0;
+    
+    return cards.reduce((power, card) => {
+      const rarityValues = {
+        common: 1, rare: 3, epic: 6, legendary: 12, mythic: 25, cosmic: 50
+      };
+      const rarityValue = rarityValues[card.rarity || 'common'] || 1;
+      const statsValue = (card.stats?.damage || 0) + (card.stats?.health || 0) + (card.stats?.speed || 0);
+      return power + rarityValue + statsValue;
+    }, 0);
+  };
+
+  const getPowerColor = (power: number): string => {
+    if (power >= 100) return '#ff00ff';
+    if (power >= 75) return '#ffd700';
+    if (power >= 50) return '#ff6b00';
+    if (power >= 25) return '#00ff00';
+    return '#ffffff';
+  };
+
+  const getTrailColor = (emoji: string): string => {
+    const colorMap: Record<string, string> = {
+      '💥': '#ff4444',
+      '🔥': '#ff6600',
+      '⚡': '#ffff00',
+      '💨': '#00ccff',
+      '🌟': '#ffffff',
+      '💯': '#ff00ff',
+      '🎯': '#00ff00',
+      '💢': '#ff0000'
+    };
+    return colorMap[emoji] || '#ffffff';
+  };
+
+  const getDamageColor = (damage: number): string => {
+    if (damage >= 50) return '#ff0000';
+    if (damage >= 30) return '#ff6600';
+    if (damage >= 15) return '#ffff00';
+    return '#ffffff';
+  };
+
   // Convert screen coordinates to world coordinates
   const screenToWorld = (screenPos: Position): Position => {
     return {
@@ -373,23 +479,44 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
         onContextMenu={handleContextMenu}
         style={{ 
           cursor: isDragging ? 'grabbing' : 'crosshair',
-          border: '2px solid #333'
+          border: '2px solid #333',
+          borderRadius: '8px'
         }}
       />
       
-      {/* Combat controls overlay */}
+      {/* Enhanced combat controls overlay */}
       <div className="combat-controls">
-        <button onClick={centerOnAction} className="control-btn">
-          Center Camera
+        <button onClick={centerOnAction} className="control-btn" title="Center camera on action">
+          📍 Center
         </button>
-        <button onClick={() => useCombatStore.getState().toggleDebugInfo()} className="control-btn">
-          Debug Info
+        <button onClick={() => useCombatStore.getState().toggleDebugInfo()} className="control-btn" title="Toggle debug overlay">
+          🔍 Debug
         </button>
         {phase === 'active' && (
-          <button onClick={() => useCombatStore.getState().pauseCombat()} className="control-btn">
-            Pause
+          <button onClick={() => useCombatStore.getState().pauseCombat()} className="control-btn pause-btn" title="Pause combat">
+            ⏸️ Pause
           </button>
         )}
+        {phase === 'paused' && (
+          <button onClick={() => useCombatStore.getState().resumeCombat()} className="control-btn resume-btn" title="Resume combat">
+            ▶️ Resume
+          </button>
+        )}
+      </div>
+      
+      {/* Card info overlay */}
+      <div className="card-info-overlay">
+        <div className="deck-info">
+          <h4>Active Cards</h4>
+          <div className="card-count">
+            {players.map(player => (
+              <div key={player.id} className="player-cards">
+                <span className="player-name">{player.username}</span>
+                <span className="card-count">{player.deck?.cards?.length || 0} cards</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

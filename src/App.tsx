@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MainLayout } from './components/templates/MainLayout/MainLayout';
 import { RollPage } from './components/pages/RollPage/RollPage';
 import { CollectionPage } from './components/pages/CollectionPage/CollectionPage';
+import { CombatPage } from './components/pages/CombatPage/CombatPage';
 // import { CardDebug } from './components/molecules/Card/CardDebug';
 import { Text } from './components/atoms/Text';
 import './App.css';
@@ -22,16 +23,7 @@ function App() {
       case 'collection':
         return <CollectionPage testId="collection-page" />;
       case 'battle':
-        return (
-          <div className="page-placeholder">
-            <Text variant="h3" color="inherit" align="center">
-              ⚔️ Battle Arena
-            </Text>
-            <Text variant="body" color="muted" align="center">
-              Epic meme card battles await! (Coming Soon)
-            </Text>
-          </div>
-        );
+        return <CombatPage testId="combat-page" />;
       // case 'debug':
         // return <CardDebug />;
       default:

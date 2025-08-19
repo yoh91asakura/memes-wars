@@ -1,6 +1,7 @@
 // Combat Models - All combat-related data structures
 
 import { UnifiedCard } from './unified/Card';
+import { Deck } from './unified/Deck';
 
 export interface Position {
   x: number;

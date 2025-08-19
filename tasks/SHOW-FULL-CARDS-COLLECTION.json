@@ -1,0 +1,29 @@
+{
+  "id": "SHOW-FULL-CARDS-COLLECTION",
+  "title": "Show Full Cards in Collection",
+  "description": "Enable viewing full card details in collection instead of compact view - implement proper card display mode",
+  "status": "in-progress",
+  "priority": "high",
+  "size": "medium",
+  "assignee": "Claude",
+  "epic": "ui-completion",
+  "tags": ["ui", "collection", "cards", "display"],
+  "created": "2024-08-19",
+  "updated": "2024-08-19",
+  "userStory": "As a player, I want to see full card details in my collection so I can understand each card's abilities and stats",
+  "acceptanceCriteria": [
+    "Collection displays full card information (stats, abilities, effects)",
+    "Cards are properly sized and readable",
+    "Layout is responsive across screen sizes",
+    "Hover/click interactions work smoothly",
+    "No loss of existing functionality (filters, sorting, etc.)"
+  ],
+  "technicalDetails": {
+    "filesToModify": [
+      "src/components/pages/CollectionPage/CollectionPage.tsx",
+      "src/components/pages/CollectionPage/CollectionPage.css"
+    ],
+    "approach": "Revert compact view and use full Card component in grid layout",
+    "testing": "Verify responsive behavior and card interactions"
+  }
+}

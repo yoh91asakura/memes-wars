@@ -15,7 +15,8 @@ import {
   CombatResult,
   ProjectileEffect
 } from '../models/Combat';
-import { Deck } from '../models/Deck';
+import { Deck } from '../models/unified/Deck';
+import { UnifiedCard } from '../models/unified/Card';
 
 export interface ICombatEngine {
   initialize(playerDeck: Deck, opponentDeck: Deck): void;
@@ -265,12 +266,17 @@ export class CombatEngine implements ICombatEngine {
   }
 
   private createPlayerFromDeck(deck: Deck, playerId: string, spawnPosition: Position): CombatPlayer {
-    const totalHP = deck.stats.totalHealth;
-    const fireRate = deck.stats.projectedFireRate;
+    const totalHP = deck.stats.totalHealth || 100;
+    const fireRate = deck.stats.projectedFireRate || 1.0;
+    
+    // Calculate damage from unified cards
+    const totalDamage = deck.cards.reduce((sum, card) => {
+      return sum + (card.stats?.damage || card.attack || 10);
+    }, 0);
 
     return {
       id: playerId,
-      username: `Player ${playerId}`,
+      username: deck.name || `Player ${playerId}`,
       position: { ...spawnPosition },
       health: totalHP,
       maxHealth: totalHP,
@@ -281,20 +287,20 @@ export class CombatEngine implements ICombatEngine {
         cards: deck.cards,
         activeProjectiles: [],
         firePattern: {
-          type: 'single',
-          projectilesPerFire: 1,
-          spreadAngle: 0,
+          type: this.getFirePatternFromCards(deck.cards),
+          projectilesPerFire: Math.min(deck.cards.length, 3),
+          spreadAngle: this.calculateSpreadAngle(deck.cards),
           fireRate: fireRate,
           cooldown: 1000 / fireRate
         },
-        totalDamage: deck.stats.totalDamage,
+        totalDamage: totalDamage,
         totalHealth: totalHP,
-        specialAbilities: []
+        specialAbilities: this.extractSpecialAbilities(deck.cards)
       },
       activeEffects: [],
       lastFireTime: 0,
       fireRate: fireRate,
-      moveSpeed: 200,
+      moveSpeed: this.calculateMoveSpeed(deck.cards),
       isAlive: true,
       kills: 0,
       damage: 0,
@@ -444,9 +450,104 @@ export class CombatEngine implements ICombatEngine {
     });
   }
 
-  private getRandomEmoji(cards: any[]): string {
+  private getRandomEmoji(cards: UnifiedCard[]): string {
+    // Use card emoji or default to random
+    if (cards.length > 0) {
+      const card = cards[Math.floor(Math.random() * cards.length)];
+      return card.emoji || this.getEmojiForCardType(card.rarity || 'common');
+    }
+    
     const emojis = ['💥', '🔥', '⚡', '💨', '🌟', '💯', '🎯', '💢'];
     return emojis[Math.floor(Math.random() * emojis.length)];
+  }
+
+  private getEmojiForCardType(rarity: string): string {
+    const emojiMap: Record<string, string> = {
+      common: '💥',
+      rare: '🔥',
+      epic: '⚡',
+      legendary: '🌟',
+      mythic: '💎',
+      cosmic: '🌌'
+    };
+    return emojiMap[rarity.toLowerCase()] || '💥';
+  }
+
+  private getFirePatternFromCards(cards: UnifiedCard[]): 'single' | 'burst' | 'spread' | 'spiral' | 'beam' {
+    const rarities = cards.map(card => card.rarity || 'common');
+    
+    if (rarities.some(r => r === 'cosmic')) return 'beam';
+    if (rarities.filter(r => r === 'legendary').length >= 2) return 'spiral';
+    if (rarities.filter(r => r === 'epic').length >= 3) return 'spread';
+    if (rarities.filter(r => r === 'rare').length >= 4) return 'burst';
+    
+    return 'single';
+  }
+
+  private calculateSpreadAngle(cards: UnifiedCard[]): number {
+    const rarityValue = cards.reduce((sum, card) => {
+      const values: Record<string, number> = {
+        common: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, cosmic: 6
+      };
+      return sum + (values[card.rarity || 'common'] || 1);
+    }, 0);
+    
+    return Math.min(45, rarityValue * 5);
+  }
+
+  private calculateMoveSpeed(cards: UnifiedCard[]): number {
+    const speedCards = cards.filter(card => card.stats?.speed);
+    const baseSpeed = 200;
+    const bonusSpeed = speedCards.reduce((sum, card) => sum + (card.stats?.speed || 0), 0);
+    return Math.max(100, Math.min(400, baseSpeed + bonusSpeed * 10));
+  }
+
+  private extractSpecialAbilities(cards: UnifiedCard[]): any[] {
+    return cards
+      .filter(card => card.stats?.ability)
+      .map(card => ({
+        id: card.id,
+        name: card.name,
+        description: card.description || card.stats?.ability || 'Special Ability',
+        cooldown: card.stats?.cooldown || 5000,
+        lastUsed: 0,
+        manaCost: card.stats?.manaCost || 10,
+        effects: this.convertCardToEffects(card),
+        trigger: { type: 'manual' as const }
+      }));
+  }
+
+  private convertCardToEffects(card: UnifiedCard): ProjectileEffect[] {
+    const effects: ProjectileEffect[] = [];
+    
+    if (card.stats?.burn) {
+      effects.push({
+        type: 'burn',
+        duration: card.stats.burn.duration || 3000,
+        intensity: card.stats.burn.intensity || 5,
+        stackable: true
+      });
+    }
+    
+    if (card.stats?.freeze) {
+      effects.push({
+        type: 'freeze',
+        duration: card.stats.freeze.duration || 2000,
+        intensity: card.stats.freeze.intensity || 0.5,
+        stackable: false
+      });
+    }
+    
+    if (card.stats?.poison) {
+      effects.push({
+        type: 'poison',
+        duration: card.stats.poison.duration || 5000,
+        intensity: card.stats.poison.intensity || 3,
+        stackable: true
+      });
+    }
+    
+    return effects;
   }
 
   private isColliding(projectile: EmojiProjectile, player: CombatPlayer): boolean {

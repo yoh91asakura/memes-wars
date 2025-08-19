@@ -434,6 +434,19 @@ export const useCombatStore = create<CombatStore>()(
       });
     },
 
+    saveMatchResults: (state: CombatState) => {
+      // Save match results to unified storage
+      const results = {
+        players: state.players,
+        duration: state.stats.duration,
+        winner: state.winner,
+        rewards: state.stats
+      };
+      
+      // This would integrate with the unified game store
+      console.log('Combat results saved:', results);
+    },
+
     // Utilities
     getPlayer: (playerId: string) => {
       return get().players.find(p => p.id === playerId) || null;

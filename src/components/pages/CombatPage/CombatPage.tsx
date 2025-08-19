@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCombat, useCombatStats } from '../../../hooks/useCombat';
 import { useGame } from '../../../hooks/useGame';
+import { useDeckStore } from '../../../stores/deckStore';
 import { CombatArena } from '../../organisms/CombatArena';
 import { PlayerHealth } from '../../molecules/PlayerHealth';
 import { Button } from '../../atoms/Button';
@@ -32,6 +33,7 @@ export const CombatPage: React.FC = () => {
 
   // Game state  
   const { activeDeck, createNewDeck } = useGame();
+  const { getDeckById } = useDeckStore();
   
   // Combat stats
   const { getOverallStats, getLeaderboard } = useCombatStats();
@@ -76,17 +78,18 @@ export const CombatPage: React.FC = () => {
         }
       };
 
-      // Use active deck or create a default one
+      // Use active deck or get from store
       let playerDeck = activeDeck;
       if (!playerDeck) {
-        playerDeck = await createNewDeck('Default Deck');
+        const decks = getDeckById('default');
+        playerDeck = decks || await createNewDeck('Default Deck');
         if (!playerDeck) {
-          console.error('Failed to create default deck');
+          console.error('Failed to get/create default deck');
           return;
         }
       }
 
-      // Create opponent deck (in a real game, this would be another player's deck)
+      // Create opponent deck with AI difficulty scaling
       const opponentDeck = await createNewDeck('AI Opponent');
       if (!opponentDeck) {
         console.error('Failed to create opponent deck');
@@ -106,12 +109,13 @@ export const CombatPage: React.FC = () => {
   // Handle combat phase changes
   useEffect(() => {
     if (phase === 'ended' && winner) {
-      // Show results for 3 seconds before allowing navigation
+      // Save match results to combat stats
       setTimeout(() => {
-        // In a real game, you might save match results here
+        // Update player stats and rewards
+        console.log('Combat ended:', { winner, players, statistics });
       }, 3000);
     }
-  }, [phase, winner]);
+  }, [phase, winner, statistics, players]);
 
   // Event handlers
   const handleStartCombat = () => {

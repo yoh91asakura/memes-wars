@@ -1,0 +1,154 @@
+.compact-collection-card {
+  position: relative;
+  width: 80px;
+  height: 100px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.compact-collection-card:hover {
+  border-color: var(--rarity-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2),
+              0 0 12px var(--rarity-color, rgba(255, 255, 255, 0.2));
+  transform: translateY(-2px);
+}
+
+.compact-collection-card__emoji {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+}
+
+.compact-collection-card__emoji-text {
+  font-size: 2rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  z-index: 2;
+  transition: transform 0.2s ease;
+}
+
+.compact-collection-card:hover .compact-collection-card__emoji-text {
+  transform: scale(1.1);
+}
+
+.compact-collection-card__stack-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  z-index: 3;
+}
+
+.compact-collection-card__rarity-indicator {
+  height: 2px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compact-collection-card__rarity-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rarity-color);
+  box-shadow: 0 0 4px var(--rarity-color);
+}
+
+.compact-collection-card__name {
+  height: 16px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+}
+
+.compact-collection-card__name-text {
+  font-size: 9px;
+  line-height: 1.2;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.compact-collection-card__glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, var(--rarity-color), transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.compact-collection-card:hover .compact-collection-card__glow {
+  opacity: 0.2;
+}
+
+/* Rarity-specific styles */
+.compact-collection-card--common { --rarity-color: #95a5a6; }
+.compact-collection-card--uncommon { --rarity-color: #27ae60; }
+.compact-collection-card--rare { --rarity-color: #3498db; }
+.compact-collection-card--epic { --rarity-color: #9b59b6; }
+.compact-collection-card--legendary { --rarity-color: #f39c12; }
+.compact-collection-card--mythic { --rarity-color: #e67e22; }
+.compact-collection-card--cosmic { --rarity-color: #e74c3c; }
+.compact-collection-card--divine { --rarity-color: #9b59b6; }
+.compact-collection-card--infinity { --rarity-color: #2c3e50; }
+
+/* Responsive sizing */
+@media (max-width: 480px) {
+  .compact-collection-card {
+    width: 70px;
+    height: 88px;
+  }
+  
+  .compact-collection-card__emoji-text {
+    font-size: 1.75rem;
+  }
+  
+  .compact-collection-card__name-text {
+    font-size: 8px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .compact-collection-card {
+    width: 90px;
+    height: 110px;
+  }
+  
+  .compact-collection-card__emoji-text {
+    font-size: 2.25rem;
+  }
+  
+  .compact-collection-card__name-text {
+    font-size: 10px;
+  }
+}
