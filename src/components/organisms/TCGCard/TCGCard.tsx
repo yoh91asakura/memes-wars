@@ -75,11 +75,11 @@ export const TCGCard: React.FC<TCGCardProps> = ({
   const getLayoutRatios = () => {
     switch (variant) {
       case 'battle':
-        return { header: 15, image: 60, emojis: 10, footer: 15 };
+        return { header: 12, image: 75, emojis: 8, footer: 5 };
       case 'detail':
-        return { header: 12, image: 68, emojis: 8, footer: 12 };
+        return { header: 10, image: 80, emojis: 6, footer: 4 };
       default: // collection
-        return { header: 12, image: 65, emojis: 10, footer: 13 };
+        return { header: 10, image: 78, emojis: 7, footer: 5 };
     }
   };
 

@@ -2,9 +2,7 @@
   display: flex;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  background: linear-gradient(to top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
-  backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: transparent;
 }
 
 .cardFooter.horizontal {

@@ -1,12 +1,10 @@
 .emojiInventory {
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.5rem 0.75rem;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.25rem;
+  background: transparent;
 }
 
 .emojiInventory.grid {
@@ -14,10 +12,11 @@
 }
 
 .emojiInventory.list {
-  flex-wrap: nowrap;
-  overflow-x: auto;
+  flex-direction: column;
+  overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  max-height: 200px;
 }
 
 .emojiInventory.list::-webkit-scrollbar {

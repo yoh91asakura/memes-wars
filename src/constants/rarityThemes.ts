@@ -53,34 +53,34 @@ export const RARITY_THEMES: Record<CardRarity, RarityTheme> = {
     gradientEnd: '#EDE9FE'
   },
   [CardRarity.LEGENDARY]: {
-    borderColor: '#F59E0B',
-    glowColor: '#F59E0B60',
-    backgroundColor: '#FFFBEB',
-    textColor: '#92400E',
+    borderColor: '#FFD700',
+    glowColor: '#FFD70080',
+    backgroundColor: '#1a1600',
+    textColor: '#FFD700',
     animation: 'shimmer',
-    shadowColor: '#F59E0B60',
-    gradientStart: '#FFFBEB',
-    gradientEnd: '#FEF3C7'
+    shadowColor: '#FFD70080',
+    gradientStart: '#1a1600',
+    gradientEnd: '#2a2200'
   },
   [CardRarity.MYTHIC]: {
     borderColor: '#EF4444',
     glowColor: '#EF444470',
-    backgroundColor: '#FEF2F2',
-    textColor: '#991B1B',
+    backgroundColor: '#1a0606',
+    textColor: '#EF4444',
     animation: 'flame',
     shadowColor: '#EF444470',
-    gradientStart: '#FEF2F2',
-    gradientEnd: '#FEE2E2'
+    gradientStart: '#1a0606',
+    gradientEnd: '#2a0808'
   },
   [CardRarity.COSMIC]: {
     borderColor: '#EC4899',
     glowColor: '#EC489980',
-    backgroundColor: '#FDF2F8',
-    textColor: '#831843',
+    backgroundColor: '#1a0a1a',
+    textColor: '#EC4899',
     animation: 'cosmic',
     shadowColor: '#EC489980',
-    gradientStart: '#FDF2F8',
-    gradientEnd: '#FCE7F3'
+    gradientStart: '#1a0a1a',
+    gradientEnd: '#2a1a2a'
   },
   [CardRarity.DIVINE]: {
     borderColor: '#FFD700',

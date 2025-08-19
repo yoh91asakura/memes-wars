@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Card as CardType } from '../../types';
-import { Card } from '../../molecules/Card/Card';
+import { UnifiedCard } from '../../../models/unified/Card';
+import { TCGCard } from '../TCGCard';
 import { SearchBox } from '../../molecules/SearchBox/SearchBox';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
@@ -9,9 +10,9 @@ import { Icon } from '../../atoms/Icon';
 import './CardGrid.css';
 
 interface CardGridProps {
-  cards: CardType[];
+  cards: (CardType | UnifiedCard)[];
   loading?: boolean;
-  onCardClick?: (card: CardType) => void;
+  onCardClick?: (card: CardType | UnifiedCard) => void;
   onLoadMore?: () => void;
   hasMore?: boolean;
   searchable?: boolean;
@@ -19,6 +20,8 @@ interface CardGridProps {
   emptyMessage?: string;
   className?: string;
   testId?: string;
+  variant?: 'collection' | 'battle' | 'detail';
+  cardSize?: 'small' | 'medium' | 'large';
 }
 
 export const CardGrid: React.FC<CardGridProps> = ({
@@ -32,6 +35,8 @@ export const CardGrid: React.FC<CardGridProps> = ({
   emptyMessage = 'No cards found',
   className = '',
   testId,
+  variant = 'collection',
+  cardSize = 'medium',
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'rarity' | 'recent'>('recent');
@@ -70,7 +75,66 @@ export const CardGrid: React.FC<CardGridProps> = ({
     return filtered;
   }, [cards, searchQuery, sortBy]);
 
-  const handleCardClick = (card: CardType) => {
+  // Convert legacy card to UnifiedCard if needed
+  const normalizeCard = (card: CardType | UnifiedCard): UnifiedCard => {
+    if ('rarity' in card && typeof card.rarity === 'string') {
+      return card as UnifiedCard;
+    }
+    
+    const legacyCard = card as CardType;
+    return {
+      id: legacyCard.id,
+      name: legacyCard.name,
+      description: legacyCard.description,
+      emoji: legacyCard.emoji,
+      rarity: (legacyCard.rarity?.toUpperCase() || 'COMMON') as any,
+      rarityProbability: 10,
+      luck: 0,
+      family: 'CLASSIC_INTERNET' as any,
+      reference: legacyCard.flavor || 'Legacy card',
+      goldReward: 10,
+      type: 'CREATURE' as any,
+      cost: legacyCard.cost || 1,
+      attack: legacyCard.stats?.attack || 0,
+      defense: legacyCard.stats?.defense || 0,
+      health: legacyCard.stats?.health || 0,
+      attackSpeed: 1.0,
+      emojis: [],
+      cardEffects: [],
+      synergies: [],
+      goldGeneration: 1,
+      dustValue: 5,
+      tradeable: true,
+      level: 1,
+      experience: 0,
+      stackCount: 1,
+      maxStacks: 1,
+      stackBonus: {
+        luckMultiplier: 0,
+        goldMultiplier: 0,
+        bonusEmojis: [],
+        effectBonus: 0,
+        damageBonus: 0
+      },
+      visual: {
+        glow: '#ffffff',
+        borderColor: '#e9ecef',
+        backgroundColor: '#ffffff',
+        textColor: '#000000'
+      },
+      craftable: false,
+      isActive: true,
+      isLimited: false,
+      effects: [],
+      tags: legacyCard.tags || [],
+      flavor: legacyCard.flavor,
+      releaseDate: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    } as UnifiedCard;
+  };
+
+  const handleCardClick = (card: UnifiedCard) => {
     if (onCardClick) {
       onCardClick(card);
     }
@@ -172,12 +236,14 @@ export const CardGrid: React.FC<CardGridProps> = ({
                   variants={cardVariants}
                   layout
                 >
-                  <Card
-                    card={card}
-                    variant="tcg"
-                    size="md"
-                    interactive
-                    onClick={handleCardClick ? (clickedCard) => handleCardClick(clickedCard as CardType) : undefined}
+                  <TCGCard
+                    card={normalizeCard(card)}
+                    variant={variant}
+                    size={cardSize}
+                    animated
+                    onClick={handleCardClick}
+                    showStats={true}
+                    showEmojis={true}
                   />
                 </motion.div>
               ))}
