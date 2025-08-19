@@ -22,13 +22,19 @@ export const CardFrame: React.FC<CardFrameProps> = ({
   selected = false,
   className = ''
 }) => {
-  const theme = RARITY_THEMES[rarity];
+  // Handle undefined or invalid rarity
+  if (!rarity) {
+    console.warn('CardFrame: rarity is undefined, using COMMON as fallback');
+  }
+  
+  // Fallback to COMMON if rarity not found
+  const theme = RARITY_THEMES[rarity] || RARITY_THEMES[CardRarity.COMMON];
   
   const frameClass = [
     styles.cardFrame,
     styles[size],
     styles[variant],
-    styles[rarity.toLowerCase()],
+    styles[rarity?.toLowerCase() || 'common'],
     animated && styles.animated,
     selected && styles.selected,
     className
