@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { createStoreMiddleware } from './middleware';
+// import { createStoreMiddleware } from './middleware'; // Removed for TypeScript compatibility
 import gameConfig from '../../config/game/game.config.json';
 
 export interface PlayerStats {
@@ -60,11 +60,7 @@ export interface PlayerStore {
   reset: () => void;
 }
 
-const middleware = createStoreMiddleware('player', {
-  enableLogger: true,
-  enableDebugger: true,
-  enablePersistence: true
-});
+// Middleware removed for TypeScript compatibility
 
 const calculateExpForLevel = (level: number): number => {
   return Math.floor(100 * Math.pow(1.2, level - 1));
@@ -72,9 +68,7 @@ const calculateExpForLevel = (level: number): number => {
 
 export const usePlayerStore = create<PlayerStore>()(
   persist(
-    middleware.debugger ? middleware.debugger(
-      middleware.logger ? middleware.logger(
-        (set, get) => ({
+    (set, get) => ({
           // Initial state
           coins: gameConfig.game?.startingCoins || 1000,
           gems: gameConfig.game?.startingGems || 10,
@@ -262,9 +256,7 @@ export const usePlayerStore = create<PlayerStore>()(
               lastActive: new Date().toISOString()
             });
           }
-        })
-      ) : (set, get) => ({}) // Fallback if logger is disabled
-    ) : (set, get) => ({}), // Fallback if debugger is disabled
-    middleware.persistence || {}
+        }),
+    { name: 'player-store' }
   )
 );
