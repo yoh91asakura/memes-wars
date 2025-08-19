@@ -1,0 +1,214 @@
+.cardFrame {
+  position: relative;
+  background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+  border: 2px solid var(--rarity-border, #e5e7eb);
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 6px var(--rarity-shadow, rgba(0, 0, 0, 0.1)),
+    0 0 0 1px var(--rarity-glow, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.cardFrame:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 15px var(--rarity-shadow, rgba(0, 0, 0, 0.15)),
+    0 0 30px var(--rarity-glow, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.cardFrame.selected {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 12px 20px var(--rarity-shadow, rgba(0, 0, 0, 0.2)),
+    0 0 40px var(--rarity-glow, transparent),
+    0 0 0 3px var(--rarity-border, #e5e7eb),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.cardFrame.small {
+  border-radius: 12px;
+  border-width: 1.5px;
+}
+
+.cardFrame.large {
+  border-radius: 20px;
+  border-width: 3px;
+}
+
+.cardFrame.battle {
+  border-width: 3px;
+  border-radius: 20px;
+}
+
+.cardFrame.battle:hover {
+  transform: translateY(-6px) scale(1.02);
+}
+
+.cardFrame.collection {
+  border-radius: 12px;
+}
+
+.cardFrame.collection:hover {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.frameContent {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.effectOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  opacity: 0.1;
+  z-index: 0;
+}
+
+/* Animation specific styles */
+.cardFrame.animated.rare,
+.cardFrame.animated.epic {
+  animation: cardPulse 2s ease-in-out infinite;
+}
+
+.cardFrame.animated.legendary {
+  animation: cardShimmer 3s ease-in-out infinite;
+}
+
+.cardFrame.animated.mythic {
+  animation: cardFlame 2s ease-in-out infinite;
+}
+
+.cardFrame.animated.cosmic,
+.cardFrame.animated.divine,
+.cardFrame.animated.infinity {
+  animation: cardCosmic 4s ease-in-out infinite;
+}
+
+/* Effect overlay animations */
+.effectOverlay.pulse {
+  background: radial-gradient(circle, var(--rarity-glow, transparent) 0%, transparent 70%);
+  animation: pulseOverlay 2s ease-in-out infinite;
+}
+
+.effectOverlay.shimmer {
+  background: linear-gradient(45deg, transparent 30%, var(--rarity-glow, transparent) 50%, transparent 70%);
+  animation: shimmerOverlay 3s ease-in-out infinite;
+}
+
+.effectOverlay.flame {
+  background: radial-gradient(ellipse at bottom, var(--rarity-glow, transparent) 0%, transparent 60%);
+  animation: flameOverlay 2s ease-in-out infinite;
+}
+
+.effectOverlay.cosmic {
+  background: conic-gradient(var(--rarity-glow, transparent), transparent, var(--rarity-glow, transparent));
+  animation: cosmicOverlay 4s linear infinite;
+}
+
+/* Card animations */
+@keyframes cardPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 4px 6px var(--rarity-shadow, rgba(0, 0, 0, 0.1)),
+      0 0 0 1px var(--rarity-glow, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  50% { 
+    box-shadow: 
+      0 4px 6px var(--rarity-shadow, rgba(0, 0, 0, 0.1)),
+      0 0 20px var(--rarity-glow, transparent),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+@keyframes cardShimmer {
+  0% { filter: brightness(1) saturate(1); }
+  50% { filter: brightness(1.1) saturate(1.2); }
+  100% { filter: brightness(1) saturate(1); }
+}
+
+@keyframes cardFlame {
+  0%, 100% { 
+    filter: brightness(1) hue-rotate(0deg);
+    transform: scale(1);
+  }
+  25% { 
+    filter: brightness(1.05) hue-rotate(2deg);
+    transform: scale(1.005);
+  }
+  50% { 
+    filter: brightness(0.95) hue-rotate(-2deg);
+    transform: scale(0.995);
+  }
+  75% { 
+    filter: brightness(1.02) hue-rotate(1deg);
+    transform: scale(1.002);
+  }
+}
+
+@keyframes cardCosmic {
+  0% { 
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  25% { 
+    filter: hue-rotate(90deg) brightness(1.05);
+  }
+  50% { 
+    filter: hue-rotate(180deg) brightness(0.95);
+  }
+  75% { 
+    filter: hue-rotate(270deg) brightness(1.05);
+  }
+  100% { 
+    filter: hue-rotate(360deg) brightness(1);
+  }
+}
+
+/* Overlay animations */
+@keyframes pulseOverlay {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.15; }
+}
+
+@keyframes shimmerOverlay {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes flameOverlay {
+  0%, 100% { 
+    opacity: 0.08;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.12;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes cosmicOverlay {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Disable animations on reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .cardFrame.animated,
+  .effectOverlay {
+    animation: none;
+  }
+  
+  .cardFrame:hover {
+    transform: none;
+  }
+}
