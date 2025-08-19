@@ -171,7 +171,7 @@ export const Card: React.FC<CardProps> = ({
   }
 
   if (variant === 'simple') {
-    // Simple layout - image only with rarity border
+    // Roblox-inspired layout
     return (
       <motion.div
         className={cardClass}
@@ -192,12 +192,32 @@ export const Card: React.FC<CardProps> = ({
         whileTap={interactive ? { scale: 0.98 } : undefined}
         transition={{ duration: 0.3 }}
       >
+        <div className={styles.robloxTopInfo}>
+          <Text className={styles.robloxName} weight="bold">{normalizedCard.name}</Text>
+        </div>
         <CardArtwork card={normalizedCard} size={size} variant="simple" />
-        <div className={styles.simpleOverlay}>
-          <Text className={styles.simpleName} weight="bold">{normalizedCard.name}</Text>
-          <Badge className={styles.simpleRarity} variant={normalizedCard.rarity.toLowerCase() as any} size="sm" rounded>
+        <div className={styles.robloxBottomInfo}>
+          <Badge className={styles.robloxRarity} variant={normalizedCard.rarity.toLowerCase() as any} size="sm" rounded>
             {normalizedCard.rarity}
           </Badge>
+          <div className={styles.robloxStats}>
+            <div className={styles.robloxStat}>
+              <Text weight="bold">HP:</Text>
+              <Text>{normalizedCard.health}</Text>
+            </div>
+            <div className={styles.robloxStat}>
+              <Text weight="bold">ATK:</Text>
+              <Text>{normalizedCard.attackSpeed}</Text>
+            </div>
+          </div>
+          <div className={styles.robloxEmojis}>
+            {normalizedCard.emojis.map((emoji, index) => (
+              <span key={index}>{emoji.emoji}</span>
+            ))}
+          </div>
+          <div className={styles.robloxPassive}>
+            <Text>{normalizedCard.passiveAbility.description}</Text>
+          </div>
         </div>
       </motion.div>
     );
