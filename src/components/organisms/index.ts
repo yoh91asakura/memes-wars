@@ -2,4 +2,3 @@
 export { CardGrid } from './CardGrid/CardGrid';
 export { Navigation } from './Navigation/Navigation';
 export { RollPanel } from './RollPanel/RollPanel';
-export { RecentRollsList } from './RecentRollsList/RecentRollsList';

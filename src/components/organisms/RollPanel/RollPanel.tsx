@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UnifiedCard } from '../../../models/unified/Card';
 import { convertUnifiedCardToLegacy, rarityEnumToString } from '../../../utils/typeConversions';
@@ -24,44 +24,24 @@ export const RollPanel: React.FC<RollPanelProps> = ({
 }) => {
   const [revealCard, setRevealCard] = useState<UnifiedCard | null>(null);
   const [showReveal, setShowReveal] = useState(false);
-
-  
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Cleanup timeout on unmount to prevent memory leak
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
   
   // Store hooks
   const { coins, stats } = usePlayerStore();
   const { isRolling, lastRollResult } = useCardsStore();
 
-
   const handleRoll = async () => {
     if (!onRoll || isRolling) return;
 
     try {
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      
       setShowReveal(false);
       setRevealCard(null);
       
       const newCard = await onRoll();
       
-      // Delay reveal for dramatic effect with cleanup
-      timeoutRef.current = setTimeout(() => {
+      // Delay reveal for dramatic effect
+      setTimeout(() => {
         setRevealCard(newCard);
         setShowReveal(true);
-        timeoutRef.current = null;
       }, 1000);
     } catch (error) {
       console.error('Roll failed:', error);
