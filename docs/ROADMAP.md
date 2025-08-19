@@ -138,6 +138,7 @@ server/
 **Objectif**: Interface utilisateur complète et polished
 
 #### Semaine 9-10: Core UI
+- [x] **HIGH** Redesign Card Component with Roblox-inspired aesthetic
 - [ ] **MEDIUM** Create Main Menu Interface (#7a4bfdad11a2e5de)
 - [ ] **MEDIUM** Implement Card Collection View (#a677e76104d451d9)
 - [ ] **MEDIUM** Create Basic Deck Builder (#e71ac67cc12e1523)
