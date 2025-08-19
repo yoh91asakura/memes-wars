@@ -1,0 +1,224 @@
+/* Mini Collection Card - Minimalist card display for collection */
+.mini-collection-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100px;
+  height: 130px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  user-select: none;
+}
+
+.mini-collection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--rarity-color), transparent);
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.mini-collection-card:hover {
+  border-color: var(--rarity-color);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 15px var(--rarity-color, rgba(255, 255, 255, 0.2));
+}
+
+/* Size variants */
+.mini-collection-card--sm {
+  width: 80px;
+  height: 110px;
+}
+
+/* Card content */
+.mini-collection-card__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 8px 6px;
+}
+
+/* Main emoji */
+.mini-collection-card__emoji {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  margin-bottom: 4px;
+}
+
+.mini-collection-card--sm .mini-collection-card__emoji {
+  font-size: 2rem;
+}
+
+/* Card name */
+.mini-collection-card__name {
+  text-align: center;
+  max-width: 100%;
+  margin-bottom: 4px;
+}
+
+/* Rarity indicator */
+.mini-collection-card__rarity {
+  margin-top: auto;
+}
+
+/* Count badge for owned cards */
+.mini-collection-card__count-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  font-size: 10px;
+  font-weight: bold;
+  min-width: 22px;
+  padding: 0 2px;
+}
+
+.mini-collection-card--sm .mini-collection-card__count-badge {
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
+  min-width: 18px;
+}
+
+/* Unowned card styling */
+.mini-collection-card--unowned {
+  opacity: 0.4;
+  filter: grayscale(0.8);
+}
+
+.mini-collection-card--unowned:hover {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
+
+/* Unowned overlay */
+.mini-collection-card__unowned-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  border-radius: 10px;
+}
+
+.mini-collection-card__unowned-text {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Rarity-specific colors */
+.mini-collection-card--common {
+  --rarity-color: #95a5a6;
+}
+
+.mini-collection-card--uncommon {
+  --rarity-color: #27ae60;
+}
+
+.mini-collection-card--rare {
+  --rarity-color: #3498db;
+}
+
+.mini-collection-card--epic {
+  --rarity-color: #9b59b6;
+}
+
+.mini-collection-card--legendary {
+  --rarity-color: #f39c12;
+}
+
+.mini-collection-card--mythic {
+  --rarity-color: #e67e22;
+}
+
+.mini-collection-card--cosmic {
+  --rarity-color: #e74c3c;
+}
+
+.mini-collection-card--divine {
+  --rarity-color: #9b59b6;
+}
+
+.mini-collection-card--infinity {
+  --rarity-color: #2c3e50;
+}
+
+/* Animation for new acquisitions */
+.mini-collection-card--newly-acquired {
+  animation: cardAcquired 1s ease-out;
+}
+
+@keyframes cardAcquired {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mini-collection-card {
+    width: 90px;
+    height: 120px;
+  }
+  
+  .mini-collection-card--sm {
+    width: 75px;
+    height: 105px;
+  }
+  
+  .mini-collection-card__emoji {
+    font-size: 2.2rem;
+  }
+  
+  .mini-collection-card--sm .mini-collection-card__emoji {
+    font-size: 1.8rem;
+  }
+}

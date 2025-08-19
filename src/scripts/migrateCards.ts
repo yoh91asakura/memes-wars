@@ -134,7 +134,7 @@ function migrateCardFile(filePath: string): void {
     const description = cardMatch.match(/description:\s*'([^']+)'/)?.[1] || '';
     
     // Extract rarity and convert to number
-    const rarityMatch = cardMatch.match(/rarity:\s*(CardRarity\.\w+)/)?.[1] || ''common'';
+    const rarityMatch = cardMatch.match(/rarity:\s*(CardRarity\.\w+)/)?.[1] || 'common';
     const rarityNum = convertRarityToNumber(rarityMatch);
     
     // Extract other required fields

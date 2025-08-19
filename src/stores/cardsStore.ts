@@ -5,6 +5,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Card } from '../models/Card';
 import { StackedCard, StackedCardUtils } from '../types/StackedCard';
+import { CollectionCard, CollectionCardUtils } from '../types/CollectionCard';
+import { allCards } from '../data/cards';
 import { RollService, RollResult, MultiRollResult } from '../services/RollService';
 
 // Roll configuration
@@ -71,6 +73,7 @@ export interface CardsStore {
   
   // Computed Getters
   getFilteredCards: () => StackedCard[];
+  getCollectionCards: () => CollectionCard[]; // New method for collection view
   getCollectionStats: () => CollectionStats;
   getCardsByRarity: (rarity: string) => Card[];
   hasCard: (cardId: string) => boolean;
@@ -94,7 +97,7 @@ export const useCardsStore = create<CardsStore>()(
           filters: {
             search: '',
             rarity: 'all',
-            sortBy: 'dateAdded',
+            sortBy: 'rarity',
             sortOrder: 'desc'
           },
           viewMode: 'grid',
@@ -342,17 +345,78 @@ export const useCardsStore = create<CardsStore>()(
                   comparison = b.rarity - a.rarity;
                   break;
                 case 'power':
-                  comparison = (a.luck + (a.hp || 100)) - (b.luck + (b.hp || 100));
+                  comparison = (b.luck + (b.hp || 100)) - (a.luck + (a.hp || 100));
                   break;
                 case 'dateAdded':
-                  comparison = new Date(a.addedAt || 0).getTime() - new Date(b.addedAt || 0).getTime();
+                  comparison = new Date(b.addedAt || 0).getTime() - new Date(a.addedAt || 0).getTime();
                   break;
               }
               
-              return state.filters.sortOrder === 'asc' ? comparison : -comparison;
+              // Only flip comparison if user explicitly wants ascending order
+              return state.filters.sortOrder === 'asc' ? -comparison : comparison;
             });
             
             return stackedCards;
+          },
+          
+          // New method for collection view showing all cards with ownership
+          getCollectionCards: () => {
+            const state = get();
+            
+            // Create collection cards from all available cards
+            let collectionCards = CollectionCardUtils.createCollectionCards(allCards, state.collection);
+            
+            // Apply search filter
+            if (state.filters.search) {
+              collectionCards = CollectionCardUtils.filterBySearch(collectionCards, state.filters.search);
+            }
+            
+            // Apply rarity filter
+            if (state.filters.rarity !== 'all') {
+              collectionCards = collectionCards.filter(card => {
+                const rarityString = card.rarity <= 2 ? 'common' :
+                  card.rarity <= 4 ? 'uncommon' :
+                  card.rarity <= 10 ? 'rare' :
+                  card.rarity <= 50 ? 'epic' :
+                  card.rarity <= 200 ? 'legendary' :
+                  card.rarity <= 1000 ? 'mythic' :
+                  card.rarity <= 10000 ? 'cosmic' :
+                  card.rarity <= 100000 ? 'divine' : 'infinity';
+                return rarityString === state.filters.rarity;
+              });
+            }
+            
+            // Apply sorting - default to rarity descending
+            collectionCards.sort((a, b) => {
+              let comparison = 0;
+              
+              switch (state.filters.sortBy) {
+                case 'name':
+                  comparison = a.name.localeCompare(b.name);
+                  break;
+                case 'rarity':
+                default:
+                  comparison = b.rarity - a.rarity;
+                  break;
+                case 'power':
+                  comparison = (b.luck + (b.hp || 100)) - (a.luck + (a.hp || 100));
+                  break;
+                case 'dateAdded':
+                  // Sort owned cards first, then by owned count, then by rarity
+                  if (a.isOwned !== b.isOwned) {
+                    return b.isOwned ? 1 : -1;
+                  }
+                  if (a.ownedCount !== b.ownedCount) {
+                    return b.ownedCount - a.ownedCount;
+                  }
+                  comparison = b.rarity - a.rarity;
+                  break;
+              }
+              
+              return state.filters.sortOrder === 'asc' ? -comparison : comparison;
+            });
+            
+            return collectionCards;
           },
           
           getCollectionStats: () => {
@@ -378,7 +442,16 @@ export const useCardsStore = create<CardsStore>()(
             };
             
             collection.forEach(card => {
-              stats.cardsByRarity[card.rarity]++;
+              // Map numeric rarity to string key
+              const rarityKey = card.rarity <= 2 ? 'COMMON' :
+                card.rarity <= 4 ? 'UNCOMMON' :
+                card.rarity <= 10 ? 'RARE' :
+                card.rarity <= 50 ? 'EPIC' :
+                card.rarity <= 200 ? 'LEGENDARY' :
+                card.rarity <= 1000 ? 'MYTHIC' :
+                card.rarity <= 10000 ? 'COSMIC' :
+                card.rarity <= 100000 ? 'DIVINE' : 'INFINITY';
+              stats.cardsByRarity[rarityKey]++;
               stats.totalValue += card.goldReward || 0;
             });
             

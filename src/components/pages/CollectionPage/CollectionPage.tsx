@@ -4,13 +4,13 @@ import { useCardsStore } from '../../../stores';
 import { useGameStore } from '../../../stores/gameStore';
 import { CollectionFilters } from '../../organisms/CollectionFilters';
 import { CollectionStats } from '../../organisms/CollectionStats';
-import { CollectionCard } from '../../molecules/CollectionCard';
+import { MiniCollectionCard } from '../../molecules/MiniCollectionCard';
 import { CardHoverPreview } from '../../molecules/CardHoverPreview';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Icon } from '../../atoms/Icon';
 import { Card } from '../../../models/Card';
-import { StackedCard } from '../../../types/StackedCard';
+import { CollectionCard } from '../../../types/CollectionCard';
 import './CollectionPage.css';
 
 interface CollectionPageProps {
@@ -31,7 +31,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     setFilters,
     setViewMode,
     setSelectedCard,
-    getFilteredCards,
+    getCollectionCards,
     getCollectionStats,
     removeCard
   } = useCardsStore();
@@ -43,11 +43,11 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   // Local state
   const [showStats, setShowStats] = useState(true);
   const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set());
-  const [hoveredCard, setHoveredCard] = useState<Card | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<CollectionCard | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   
   // Computed values
-  const filteredCards = useMemo(() => getFilteredCards(), [collection, filters]);
+  const collectionCards = useMemo(() => getCollectionCards(), [collection, filters]);
   const stats = useMemo(() => getCollectionStats(), [collection]);
   
   // Handlers
@@ -76,7 +76,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     });
   };
   
-  const handleCardHover = useCallback((card: StackedCard | null, event?: React.MouseEvent) => {
+  const handleCardHover = useCallback((card: CollectionCard | null, event?: React.MouseEvent) => {
     setHoveredCard(card);
     if (event) {
       setMousePosition({ x: event.clientX, y: event.clientY });
@@ -89,22 +89,21 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     }
   }, [hoveredCard]);
   
-  const handleAddToDeck = (card: StackedCard) => {
-    // For now, we'll need an active deck to add to. TODO: implement proper deck selection
+  const handleCardClick = useCallback((card: CollectionCard) => {
+    // Only allow interaction with owned cards
+    if (!card.isOwned) return;
+    
+    setSelectedCard(card);
+  }, [setSelectedCard]);
+  
+  const handleAddToDeck = (card: CollectionCard) => {
+    // Only allow adding owned cards to deck
+    if (!card.isOwned) return false;
+    
     const deckId = activeDeck?.id;
     if (!deckId) return false;
     const success = addCardToDeck(deckId, card);
-    if (success) {
-      // Show success feedback
-        // Success feedback removed - could integrate with toast notifications
-    } else {
-      // Show error feedback
-        // Error feedback removed - could integrate with toast notifications
-    }
-  };
-  
-  const handleRemoveCard = (card: StackedCard) => {
-    removeCard(card.id);
+    return success;
   };
   
   const handleBulkActions = (action: 'addToDeck' | 'remove') => {
@@ -125,8 +124,8 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   
   // Unused function - removed
   
-  // Empty state
-  if (collection.length === 0) {
+  // Show loading or empty state based on whether we have any cards to show
+  if (collectionCards.length === 0) {
     return (
       <div className={`collection-page collection-page--empty ${className}`} data-testid={testId}>
         <div className="collection-page__empty-state">
@@ -134,10 +133,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             <Icon emoji="📦" size="2xl" />
           </div>
           <Text variant="h3" align="center" className="collection-page__empty-title">
-            Your Collection is Empty
+            Card Collection
           </Text>
           <Text variant="body" color="muted" align="center" className="collection-page__empty-description">
-            Start rolling cards to build your collection! Every card you roll will appear here.
+            Loading cards...
           </Text>
           <div className="collection-page__empty-actions">
             <Button variant="primary" size="lg">
@@ -159,7 +158,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
             Card Collection
           </Text>
           <Text variant="body" color="muted">
-            {filteredCards.length} of {collection.length} cards
+            {collectionCards.filter(card => card.isOwned).length} owned of {collectionCards.length} cards
           </Text>
         </div>
         
@@ -248,7 +247,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       
       {/* Cards Display */}
       <div className="collection-page__content">
-        {filteredCards.length === 0 ? (
+        {collectionCards.length === 0 ? (
           <div className="collection-page__no-results">
             <div className="collection-page__no-results-icon">
               <Icon name="search" size="2xl" color="muted" />
@@ -269,32 +268,29 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           </div>
         ) : (
           <motion.div 
-            className={`collection-page__cards collection-page__cards--${viewMode}`}
+            className="collection-page__cards collection-page__cards--grid"
             layout
             onMouseMove={handleMouseMove}
           >
             <AnimatePresence mode="popLayout">
-              {filteredCards.map((card, index) => (
+              {collectionCards.map((card, index) => (
                 <motion.div
-                  key={`${card.id}-${index}`}
+                  key={`${card.name}-${index}`}
                   layout
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ 
-                    duration: 0.3,
-                    delay: index * 0.02
+                    duration: 0.2,
+                    delay: index * 0.01
                   }}
                   onMouseEnter={(e) => handleCardHover(card, e)}
                   onMouseLeave={() => handleCardHover(null)}
                 >
-                  <CollectionCard
+                  <MiniCollectionCard
                     card={card}
-                    stackCount={card.stackCount}
-                    viewMode={viewMode}
                     size="sm"
-                    onAddToDeck={handleAddToDeck}
-                    onRemove={handleRemoveCard}
+                    onClick={handleCardClick}
                     testId={`collection-card-${index}`}
                   />
                 </motion.div>

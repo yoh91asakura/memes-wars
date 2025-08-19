@@ -7,12 +7,12 @@ export interface StackedCard extends Card {
 
 // Utility functions for stacked cards
 export class StackedCardUtils {
-  // Group cards by their ID to create stacks
+  // Group cards by their name to create stacks (since same name = duplicate card)
   static createCardStacks(cards: Card[]): StackedCard[] {
     const cardStacks = new Map<string, StackedCard>();
     
     cards.forEach(card => {
-      const key = card.id;
+      const key = card.name; // Group by name instead of id for proper stacking
       if (cardStacks.has(key)) {
         const stack = cardStacks.get(key)!;
         stack.stackCount++;
