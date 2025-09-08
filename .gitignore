@@ -1,4 +1,3 @@
-
 # Dependencies
 node_modules/
 npm-debug.log*
@@ -51,25 +50,17 @@ Icon?
 *.swp
 *.swo
 *~
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-project
-*.sublime-workspace
 
 # Logs
-logs/
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 lerna-debug.log*
 
 # Runtime data
-pids/
+pids
 *.pid
 *.seed
 *.pid.lock
@@ -77,23 +68,24 @@ pids/
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov
-.nyc_output/
+
+# nyc test coverage
+.nyc_output
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons
+build/Release
 
 # Dependency directories
-node_modules/
 jspm_packages/
 
 # Optional npm cache directory
-.npm/
+.npm
 
 # Optional eslint cache
 .eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
 
 # Optional REPL history
 .node_repl_history
@@ -104,321 +96,44 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env.local
+# parcel-bundler cache
+.cache
+.parcel-cache
 
-# parcel-bundler cache (https://parceljs.org/)
-.cache/
-.parcel-cache/
+# vite build cache
+.vite
 
-# Next.js build output
-.next/
-out/
-
-# Nuxt.js build / generate output
-.nuxt/
-dist/
-
-# Gatsby files
-.cache/
-public/
+# rollup cache
+.rollup.cache
 
 # Storybook build outputs
-.out/
-.storybook-out/
+.out
+.storybook-out
 
 # Temporary folders
 tmp/
 temp/
 
-# Playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
-# Vitest
-coverage/
-
-
-# ============================================
-# LOCAL DEVELOPMENT TOOLS
-# Each developer must set up their own environment
-# ============================================
-
-# === TASK MANAGEMENT SYSTEM ===
-# Task tracking is NOW versioned for project clarity
-# (removed from gitignore)
-
-# === CLAUDE FLOW + SPARC METHODOLOGY ===
-# All Claude Flow generated files and directories
-.claude/
-.claude-flow/
-.swarm/
-.hive-mind/
-claude-flow/
-.roo/
-.roomodes
-claude-flow
-claude-flow.bat
-claude-flow.ps1
-
-# Memory and coordination systems
-memory/
-coordination/
-
-# MCP configuration files
-.mcp.json
-claude-flow.config.json
-mcp-config.json
-
-# SPARC workflow files
-hive-mind-prompt-*.txt
-sparc-*.md
-workflow-*.md
-
-
-# Local configuration files
-.env.local
-.env.*.local
-*.local.json
-*.local.yml
-*.local.yaml
-config.local.*
-settings.local.*
-
-# MCP and development configs
-.roo/
-*.local.json
-*.local.yml
-*.local.yaml
-config.local.*
-settings.local.*
-
-# Platform-specific scripts backups
-*.backup
-*.bak
-*.old
-
-# Git hooks (platform-specific)
-.git/hooks/*
-!.git/hooks/*.sample
+# Testing
+/coverage
+/.nyc_output
 
 # Playwright
 playwright-report/
 test-results/
 .playwright/
 
-# Windows specific configuration files
-start-archon.bat
-stop-archon.bat
-*.ps1.log
-*.bat
-*.ps1
-*.cmd
-windows-*.json
-windows-*.config
-.vs/
-*.vcxproj*
-*.sln
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-scripts/setup-windows.ps1
-scripts/*.bat
-scripts/*.ps1
-# But we DO track task management scripts
-!scripts/tasks/*.js
-
-# Windows npm/node specific
-node.exe
-npm.cmd
-npx.cmd
-yarn.cmd
-pnpm.cmd
-
-# Windows build artifacts
-*.dll
-*.exe
-*.obj
-*.ilk
-*.pdb
-
-# Windows package manager
-packages.config
-*.nupkg
-
-# Platform-specific lock files that might differ
-package-lock.json.windows
-yarn.lock.windows
-pnpm-lock.yaml.windows
-
-# Task tracking temporary files (only temp files ignored)
-tasks/*.tmp
-tasks/*.lock
-sync-status.json
-
-# Platform-specific configuration
-.vscode/settings.json
-.vscode/launch.json
-.vscode/tasks.json
-.vscode/*.code-workspace
-tsconfig.tsbuildinfo
-
-# Windows-specific Node/NPM paths
-node_modules/.bin/*.cmd
-node_modules/.bin/*.ps1
-node_modules/.cache/
-
-# Electron/Desktop app Windows specific
-out/
-release/
-dist-electron/
-*.msi
-*.exe
-*.appx
-
-# Windows Defender and system files
-System Volume Information/
-$WINDOWS.~BT/
-$WINDOWS.~WS/
-hiberfil.sys
-pagefile.sys
-swapfile.sys
-
-# === LOCAL DEVELOPMENT TRACKING ===
-# Task tracking NOW in version control for team collaboration
-# Only ignore temporary files
-tasks/*.tmp
-tasks/*.lock
-sync-status.json
-
-# === DOCUMENTATION EXCEPTIONS ===
-# Only CLAUDE.md is versioned for workflow reference
-!CLAUDE.md
-!LOCAL_SETUP.md
-
-# Generated workflow documentation (local only)
-docs/workflow-*.md
-docs/pseudocode/
-docs/architecture/
-docs/gitignore-workflow-guide.md
-!docs/README.md
-!docs/specifications/
-
-# Scripts de validation (locaux uniquement)
-scripts/validate-gitignore.sh
-
-# Python scripts for development
-*.py
-archon-mcp-bridge.py
-
 # Database files
 *.db
-*.db-journal
-*.db-wal
 *.sqlite
-*.sqlite-journal
-*.sqlite-wal
+*.sqlite3
 
-# === ADDITIONAL CLAUDE FLOW FILES ===
-# These may be generated during runtime
-memory/claude-flow-data.json
-memory/sessions/*
-!memory/sessions/README.md
-memory/agents/*
-!memory/agents/README.md
-coordination/memory_bank/*
-coordination/subtasks/*
-coordination/orchestration/*
+# Archives
+*.zip
+*.tar.gz
+*.rar
 
-# === CLAUDE CODE INTEGRATION ===
-# Personal Claude Code settings (keep individual preferences)
-.vscode/settings.json
-.vscode/launch.json
-.vscode/tasks.json
-.vscode/*.code-workspace
-
-# === PERFORMANCE AND MONITORING ===
-# Generated performance reports
-performance-*.json
-metrics-*.json
-bottleneck-*.md
-token-usage-*.json
-
-# === SESSION AND CACHE ===
-# Session data and cache files
-.sessions/
-.cache-*
-session-*.json
-swarm-session-*.json
-
-# ============================================
-# WORKFLOW RULES SUMMARY
-# ============================================
-# 
-# ✅ COMMIT TO GIT:
-# - Application source code (src/, tests/, config/)
-# - Package configuration (package.json, tsconfig.json)
-# - Build configuration (vite.config.ts, etc.)
-# - Documentation (CLAUDE.md, LOCAL_SETUP.md, docs/specifications/)
-# - Task management system (tasks/, scripts/tasks/)
-# - Project status files (PROJECT_STATUS.md, ROADMAP.md, ONBOARDING.md)
-# - This .gitignore file
-#
-# ❌ NEVER COMMIT:
-# - Local development tools (.claude/, memory/, coordination/)
-# - Personal IDE settings (.vscode/settings.json)
-# - Environment files (.env.local)
-# - Temporary task files (*.tmp, *.lock)
-# - Generated workflow files
-# - MCP server configurations
-# - Database files and logs
-#
-# 🔄 WORKFLOW:
-# 1. Each developer sets up their own environment using LOCAL_SETUP.md
-# 2. Use local task management system for tracking work
-# 3. Use SPARC methodology for development
-# 4. Keep only application code in Git
-# ============================================
-
-# Claude Flow generated files
-.claude/settings.local.json
-.mcp.json
-claude-flow.config.json
-.swarm/
-.hive-mind/
-memory/claude-flow-data.json
-memory/sessions/*
-!memory/sessions/README.md
-memory/agents/*
-!memory/agents/README.md
-coordination/memory_bank/*
-coordination/subtasks/*
-coordination/orchestration/*
-*.db
-*.db-journal
-*.db-wal
-*.sqlite
-*.sqlite-journal
-*.sqlite-wal
-claude-flow
-claude-flow.bat
-claude-flow.ps1
-hive-mind-prompt-*.txt
-
-logs
-dev-debug.log
-# Environment variables
-# Editor directories and files
-.idea
-.vscode
-*.ntvs*
-*.njsproj
-*.sw?
-# OS specific
-
-# Task files
-# tasks.json
-# tasks/ 
+# Local configuration overrides
+*.local.*
+config.local.*
+settings.local.*

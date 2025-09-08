@@ -1,164 +1,79 @@
-# 🎮 The Meme Wars - Emoji Trading Card Game
+# 🎮 Meme Wars - Card Game
 
-> A trading card game where emoji cards battle in explosive bullet-hell combat!
+Un jeu de cartes modernes basé sur les mèmes avec mécaniques de combat et collection.
 
-## 🚀 Quick Start
+## 🚀 Démarrage Rapide
 
 ```bash
-# Clone the repository
-git clone <repo-url>
-cd the-meme-wars
-
-# Install dependencies
+# Installer les dépendances
 npm install
 
-# Start development server
+# Démarrer en développement
 npm run dev
+
+# Ouvrir http://localhost:3000
 ```
 
-## 📦 What's in This Repository
+## 📦 Contenu du Projet
 
-This repository contains **ONLY the application code**. All development tools and local configurations must be set up individually by each developer.
+Ce projet contient une application de jeu de cartes complète et nettoyée.
 
-### ✅ Versioned (in Git)
-- `/src` - Application source code
-- `/tests` - Application tests
-- `/public` - Static assets
-- `/config` - Game configuration files
-- `package.json` - Dependencies
-- `tsconfig.json` - TypeScript config
-- `vite.config.ts` - Build config
-- `.gitignore` - Git ignore rules
-- `.gitattributes` - Git attributes
-- `.editorconfig` - Editor config
-- `docs/CLAUDE.md` - Development workflow reference
+### 📁 Structure
+- `/src` - Code source de l'application
+- `/backend` - API et logique serveur
+- `/config` - Configuration du jeu
+- `package.json` - Dépendances nettoyées
+- `tsconfig.json` - Configuration TypeScript
+- `vite.config.ts` - Configuration de build
 
-### ❌ NOT Versioned (Local Setup)
-- `tasks/` - Task management system
-- `.claude/` - Claude configuration
-- `.claude-flow/` - Claude Flow files
-- `memory/` - AI memory files
-- `.vscode/` - VS Code settings
-- `*.local.*` - Any local config files
-- Development databases
-- Python scripts
-
-## ⚠️ Known Development Issues
-
-### "Lockdown failed" Console Error
-If you see `Lockdown failed: TypeError: Cannot delete property 'dispose'` in the console:
-- **Cause**: Browser security extensions (e.g., MetaMask, crypto wallets) implementing JavaScript hardening
-- **Impact**: Does NOT affect application functionality - purely cosmetic console error
-- **Solution**: 
-  - Use incognito/private mode during development (disables extensions)
-  - Or temporarily disable security extensions while developing
-  - The application includes detection utilities that will warn you about this
-
-### Browser Extension Detection
-The app automatically detects browser extensions that may cause lockdown errors and displays informational messages in the development console to help developers understand these non-critical warnings.
-
-## 🛠️ Project Structure
-
-```
-the-meme-wars/
-├── src/                    # Application code
-│   ├── components/         # React components
-│   ├── services/           # Business logic
-│   │   └── RollService.ts  # Card rolling system
-│   ├── stores/             # State management
-│   ├── types/              # TypeScript types
-│   └── data/               # Game data
-│       └── cards/          # Card definitions by rarity
-├── tests/                  # Test files
-│   ├── unit/              # Unit tests
-│   └── e2e/               # E2E tests
-├── config/                 # Game configuration
-│   └── game/
-│       └── roll.config.json
-└── public/                 # Static assets
-```
-
-## 🎯 Features
-
-- **7 Rarity Tiers**: Common to Cosmic
-- **Pity System**: Guaranteed rare cards
-- **Multi-Roll**: 10x and 100x options
-- **Type-Safe**: Full TypeScript
-- **Tested**: Unit + E2E tests
-
-## 🧪 Testing
+## 📋 Scripts Disponibles
 
 ```bash
-# Unit tests
-npm run test
-
-# E2E tests (requires Playwright)
-npx playwright test
-
-# Type checking
-npm run typecheck
+npm run dev          # Serveur de développement
+npm run build        # Build de production  
+npm run test         # Tests unitaires
+npm run lint         # Vérification du code
+npm run typecheck    # Vérification TypeScript
 ```
 
-## 💻 Local Development Setup
+## 🏗️ Structure du Projet
 
-Each developer needs to set up their own local development environment. These tools are NOT included in the repository.
-
-### Task Management System
-```bash
-# Initialize the task system
-npm run tasks:init
-
-# View all tasks
-npm run tasks:list
-
-# Create a new task
-npm run tasks:new
+```
+src/
+├── components/      # Composants React (atoms, molecules, organisms)
+├── data/           # Données des cartes
+├── hooks/          # Hooks personnalisés
+├── models/         # Types et modèles
+├── services/       # Logique métier
+├── stores/         # État global (Zustand)
+├── styles/         # Styles CSS
+└── utils/          # Utilitaires
 ```
 
-### Optional: Claude Flow (AI Workflow)
-```bash
-# Install globally
-npm install -g claude-flow@alpha
+## 🎯 Technologies
 
-# Or use npx
-npx claude-flow@alpha --version
-```
+- **React 18** - Interface utilisateur
+- **TypeScript** - Typage statique
+- **Vite** - Build tool moderne
+- **Zustand** - État global
+- **Styled Components** - CSS-in-JS
+- **React Query** - Gestion des données
+- **Framer Motion** - Animations
 
-### Optional: VS Code Settings
-Create your own `.vscode/settings.json`:
-```json
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
-}
-```
+## 🎮 Fonctionnalités
 
-## 📝 Development Workflow
+- ✅ Collection de cartes mème
+- ✅ Système de combat tactique
+- ✅ Builder de deck
+- ✅ Interface responsive
+- ✅ Animations fluides
+- ✅ Persistance locale
 
-See `docs/CLAUDE.md` for the complete SPARC methodology and development workflow.
+## 🐛 Notes de Développement
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Write tests for new features
-4. Ensure all tests pass
-5. Submit a pull request
-
-### Commit Convention
-```bash
-feat: Add new feature
-fix: Fix bug
-test: Add tests
-docs: Update documentation
-refactor: Refactor code
-style: Format code
-```
+Le projet est maintenant nettoyé et optimisé pour le développement. 
+Les erreurs TypeScript restantes sont liées aux incohérences dans les modèles de cartes et peuvent être corrigées progressivement.
 
 ## 📄 License
 
 MIT
-
----
-
-**Note**: This is a clean repository containing only application code. Each developer must set up their own local development tools and configurations.
