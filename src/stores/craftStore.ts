@@ -8,7 +8,7 @@ import {
   CraftResult, 
   CraftedItem 
 } from '../services/CraftService';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 
 export interface CraftStore {
   // State

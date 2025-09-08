@@ -1,5 +1,5 @@
 import React from 'react';
-import { EffectType } from '../../../models/unified/Card';
+import { EffectType } from '../../../models';
 import styles from './EmojiChip.module.css';
 
 export interface EmojiChipProps {

@@ -77,6 +77,7 @@ export interface StackBonus {
 export interface VisualProperties {
   borderColor: string;                  // Border color based on rarity
   glowIntensity: number;                // 0-1 based on stack level
+  glow?: string;                       // Glow color for effects
   backgroundColor?: string;             // Card background
   animation?: 'pulse' | 'glow' | 'sparkle' | 'flame' | 'rainbow';
 }

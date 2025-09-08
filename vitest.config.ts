@@ -41,7 +41,9 @@ export default defineConfig({
       '@hooks': resolve(__dirname, './src/hooks'),
       '@utils': resolve(__dirname, './src/utils'),
       '@types': resolve(__dirname, './src/types'),
-      '@data': resolve(__dirname, './src/data')
+      '@models': resolve(__dirname, './src/models'),
+      '@data': resolve(__dirname, './src/data'),
+      '@stores': resolve(__dirname, './src/stores')
     }
   }
 });

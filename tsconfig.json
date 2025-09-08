@@ -33,6 +33,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@stores/*": ["src/stores/*"],
       "@types/*": ["src/types/*"],
+      "@models/*": ["src/models/*"],
+      "@data/*": ["src/data/*"],
       "@utils/*": ["src/utils/*"],
       "@config/*": ["config/*"]
     }

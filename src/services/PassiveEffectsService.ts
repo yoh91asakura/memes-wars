@@ -1,7 +1,7 @@
 // Passive Effects Service - Connect card passives to combat system
 // Implementation to link card abilities to CombatEngine
 
-import { Card, CardEffect, TriggerType, EffectType } from '../models/Card';
+import { Card, CardEffect, TriggerType, EffectType } from '../models';
 import { CombatPlayer } from '../models/Combat';
 
 export interface ActivePassive {

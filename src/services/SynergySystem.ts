@@ -1,7 +1,7 @@
 // Synergy System - Detect and apply deck synergies
 // Implementation of Force build, Luck build, and other synergies from CLAUDE.md
 
-import { Card, MemeFamily, EffectType } from '../models/Card';
+import { Card, MemeFamily, EffectType } from '../models';
 
 export interface SynergyType {
   id: string;

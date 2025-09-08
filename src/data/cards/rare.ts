@@ -4,7 +4,7 @@ import {
   EffectType, 
   TriggerType,
   CardUtils 
-} from '../../models/Card';
+} from '../../models';
 
 export const rareCards: Card[] = [
   {

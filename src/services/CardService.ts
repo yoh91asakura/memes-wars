@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { commonCards } from '../data/cards/common';
 import { rareCards } from '../data/cards/rare';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 // Enhanced card service with full game specification support
 export class CardService {
   private allCards: Card[];

@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Card } from '../models/Card';
+import { Card } from '../../../models';
 import { RollPanel } from '../../organisms/RollPanel/RollPanel';
 import { CardGrid } from '../../organisms/CardGrid/CardGrid';
 import { Text } from '../../atoms/Text';

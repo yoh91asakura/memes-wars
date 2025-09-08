@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 import { RollService, RollResult, MultiRollResult } from '../services/RollService';
 
 // Roll configuration

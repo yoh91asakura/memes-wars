@@ -1,7 +1,6 @@
 import React from 'react';
-import { CardEffect, EffectType, TriggerType } from '../../../models/Card';
+import { CardEffect, EffectType, TriggerType } from '../../../models';
 import { Text } from '../../atoms/Text';
-import { Icon } from '../../atoms/Icon';
 import styles from './PassiveAbilities.module.css';
 
 export interface PassiveAbilitiesProps {
@@ -97,7 +96,7 @@ export const PassiveAbilities: React.FC<PassiveAbilitiesProps> = ({
       {showDetails && (
         <div className={styles.header}>
           <Text 
-            variant={size === 'small' ? 'caption' : 'body2'} 
+            variant={size === 'small' ? 'caption' : 'body'} 
             weight="semibold" 
             color="muted"
             className={styles.headerText}
@@ -121,7 +120,7 @@ export const PassiveAbilities: React.FC<PassiveAbilitiesProps> = ({
             <div className={styles.effectContent}>
               <div className={styles.effectName}>
                 <Text 
-                  variant={size === 'small' ? 'caption' : 'body2'} 
+                  variant={size === 'small' ? 'caption' : 'body'} 
                   weight="medium"
                   className={styles.effectNameText}
                 >

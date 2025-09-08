@@ -1,7 +1,7 @@
 // Craft Service - Implementation based on CLAUDE.md Phase 2 specifications
 // Allows players to craft special items and upgrades using cards and resources
 
-import { Card, CardUtils } from '../models/Card';
+import { Card, CardUtils } from '../models';
 import { v4 as uuidv4 } from 'uuid';
 
 // Craft Recipe Types

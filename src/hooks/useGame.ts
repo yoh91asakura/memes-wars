@@ -6,7 +6,7 @@ import { useCombatStore, useCombatActions } from '../stores/combatStore';
 import { GameStateService } from '../services/GameState';
 import { DeckService } from '../services/DeckService';
 import { Deck } from '../models/Deck';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 import { CombatArena } from '../models/Combat';
 
 // Game State Hook

@@ -2,7 +2,7 @@
 // Focused only on active game state, separated from player progression
 
 import { create } from 'zustand';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 
 export interface Deck {
   id: string;

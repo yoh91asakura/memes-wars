@@ -1,7 +1,7 @@
 // Deck Service - Deck validation and management operations
 
 import { Deck, DeckStats, DeckValidation, DeckValidationError, DeckValidationWarning } from '../models/Deck';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 import { EmojiProjectile } from '../models/Combat';
 import { StageManager } from '../data/stages';
 

@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useGame } from '../../../hooks/useGame';
 import { Deck, DeckValidation } from '../../../models/Deck';
-import { Card } from '../models/Card';
+import { Card } from '../../../models';
 import { format } from '../../../utils/format';
 import { Button } from '../../atoms/Button';
 import { Input } from '../../atoms/Input';

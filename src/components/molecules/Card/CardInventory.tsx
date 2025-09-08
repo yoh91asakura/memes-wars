@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '../models/Card';
+import { Card } from '../../../models';
 import { Icon } from '../../atoms/Icon';
 import styles from './Card.module.css';
 
@@ -27,27 +27,30 @@ export const CardInventory: React.FC<CardInventoryProps> = ({
   return (
     <div className={styles.cardInventory}>
       <div className={styles.cardInventoryGrid}>
-        {displayEmojis.map((emoji, index) => (
-          <div 
-            key={index} 
-            className={styles.cardInventoryItem}
-            title={`${emoji.character} - ${emoji.damage} dmg - ${emoji.effects?.join(', ') || 'No effects'}`}
-          >
-            <Icon 
-              emoji={emoji.character} 
-              size="sm" 
-            />
-            {/* Damage indicator */}
-            <span className={styles.cardInventoryDamage}>{emoji.damage}</span>
-            
-            {/* Fire rate indicator if different from default */}
-            {emoji.fireRate && emoji.fireRate !== 1.0 && (
-              <span className={styles.cardInventoryFirerate}>
-                {emoji.fireRate.toFixed(1)}x
-              </span>
-            )}
-          </div>
-        ))}
+        {displayEmojis.map((emoji, index) => {
+          // Handle both string and EmojiAttack formats
+          const isEmojiAttack = typeof emoji === 'object' && emoji !== null;
+          const character = isEmojiAttack ? emoji.character : emoji;
+          const damage = isEmojiAttack ? emoji.damage : undefined;
+          const effects = isEmojiAttack ? emoji.effects : undefined;
+          
+          return (
+            <div 
+              key={index} 
+              className={styles.cardInventoryItem}
+              title={`${character}${damage ? ` - ${damage} dmg` : ''}${effects ? ` - ${effects.join(', ')}` : ''}`}
+            >
+              <Icon 
+                emoji={character} 
+                size="sm" 
+              />
+              {/* Damage indicator for EmojiAttack objects */}
+              {damage && (
+                <span className={styles.cardInventoryDamage}>{damage}</span>
+              )}
+            </div>
+          );
+        })}
         
         {/* Empty slots if less than maxEmojis */}
         {Array.from({ length: maxEmojis - displayEmojis.length }).map((_, index) => (

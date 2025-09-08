@@ -2,7 +2,7 @@
 // Use TCGCard from organisms/TCGCard instead
 import React from 'react';
 import { Card as LegacyCardType } from '../../types';
-import { Card as CardModel, CardUtils } from '../../../models/Card';
+import { Card as CardModel } from '../../../models/Card';
 import { TCGCard } from '../../organisms/TCGCard';
 
 interface CardProps {

@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useCombat, useCombatEngine, useProjectiles, useCombatCamera, useCombatEffects } from '../../../hooks/useCombat';
-import { useAnimation, useParticles } from '../../../hooks/useAnimation';
+import { useParticles } from '../../../hooks/useAnimation';
 import { Position, EmojiProjectile, CombatPlayer } from '../../../models/Combat';
+import { useCombatStore } from '../../../stores/combatStore';
 import { format } from '../../../utils/format';
 import './CombatArena.css';
 

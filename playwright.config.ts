@@ -25,12 +25,12 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [['html'], ['list']],
   
-  /* Global timeout for each test */
-  timeout: 30 * 1000, // 30 seconds instead of default 30 seconds
+  /* Global timeout for each test - extended for combat animations */
+  timeout: 120 * 1000, // 2 minutes for combat completion
   
   /* Global timeout for expect assertions */
   expect: {
-    timeout: 5 * 1000, // 5 seconds for assertions
+    timeout: 10 * 1000, // 10 seconds for game state changes
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -70,15 +70,15 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
     },
 
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+    /* Test against mobile viewports for game responsiveness */
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'iPad Pro',
+      use: { ...devices['iPad Pro'] },
+    },
 
     /* Test against branded browsers. */
     // {

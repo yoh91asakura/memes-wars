@@ -1,7 +1,7 @@
 // Crafting System - Create new items and upgrade cards
 // Implementation based on CLAUDE.md Phase 2 specifications
 
-import { Card, MemeFamily, EffectType } from '../models/Card';
+import { Card, MemeFamily, EffectType } from '../models';
 
 export interface CraftingRecipe {
   id: string;
