@@ -39,12 +39,42 @@ export interface CollectionStats {
   totalValue: number;
 }
 
+export interface CardStack {
+  cardData: Card;
+  count: number;
+  ids: string[];
+  firstAddedAt: string;
+  lastAddedAt: string;
+}
+
+export interface AutoRollSettings {
+  enabled: boolean;
+  maxRolls?: number;
+  stopOnRarity?: string;
+  animationSpeed: 'slow' | 'normal' | 'fast' | 'instant';
+  batchSize: number;
+}
+
+export interface AutoRollState {
+  isActive: boolean;
+  settings: AutoRollSettings;
+  progress: {
+    currentRoll: number;
+    totalRolls: number;
+    cardsObtained: Card[];
+    startTime: number;
+    lastBatchTime: number;
+  };
+}
+
 export interface CardsStore {
   // Collection State
   collection: Card[];
+  cards: Card[]; // Alias for collection for compatibility
   selectedCard: Card | null;
   filters: CollectionFilters;
-  viewMode: 'grid' | 'list';
+  viewMode: 'grid' | 'list' | 'stack';
+  showStacks: boolean;
   
   // Roll State
   isRolling: boolean;
@@ -52,13 +82,18 @@ export interface CardsStore {
   rollHistory: RollHistory[];
   maxHistorySize: number;
   
+  // Auto Roll State
+  autoRollState: AutoRollState;
+  
   // Collection Actions
   addCard: (card: Card) => void;
   addMultipleCards: (cards: Card[]) => void;
   removeCard: (cardId: string) => void;
+  removeCards: (cardIds: string[]) => void; // New method for multiple cards
   setSelectedCard: (card: Card | null) => void;
   setFilters: (filters: Partial<CollectionFilters>) => void;
-  setViewMode: (mode: 'grid' | 'list') => void;
+  setViewMode: (mode: 'grid' | 'list' | 'stack') => void;
+  toggleShowStacks: () => void;
   clearCollection: () => void;
   
   // Roll Actions
@@ -67,6 +102,13 @@ export interface CardsStore {
   performHundredRoll: () => Promise<MultiRollResult>;
   addToHistory: (history: RollHistory) => void;
   clearHistory: () => void;
+  
+  // Auto Roll Actions
+  startAutoRoll: (settings: AutoRollSettings) => Promise<void>;
+  stopAutoRoll: () => void;
+  pauseAutoRoll: () => void;
+  resumeAutoRoll: () => void;
+  updateAutoRollSettings: (settings: Partial<AutoRollSettings>) => void;
   
   // Computed Getters
   getFilteredCards: () => Card[];
@@ -89,6 +131,7 @@ export const useCardsStore = create<CardsStore>()(
     (set, get) => ({
           // Initial state
           collection: [],
+          get cards() { return get().collection; }, // Alias getter for compatibility
           selectedCard: null,
           filters: {
             search: '',
@@ -97,6 +140,25 @@ export const useCardsStore = create<CardsStore>()(
             sortOrder: 'desc'
           },
           viewMode: 'grid',
+          showStacks: false,
+          
+          // Auto Roll State
+          autoRollState: {
+            isActive: false,
+            settings: {
+              enabled: false,
+              animationSpeed: 'normal',
+              batchSize: 1
+            },
+            progress: {
+              currentRoll: 0,
+              totalRolls: 0,
+              cardsObtained: [],
+              startTime: 0,
+              lastBatchTime: 0
+            }
+          },
+          
           isRolling: false,
           lastRollResult: null,
           rollHistory: [],
@@ -138,6 +200,15 @@ export const useCardsStore = create<CardsStore>()(
             });
           },
           
+          removeCards: (cardIds: string[]) => {
+            const state = get();
+            const idSet = new Set(cardIds);
+            set({
+              collection: state.collection.filter(card => !idSet.has(card.id)),
+              selectedCard: state.selectedCard && idSet.has(state.selectedCard.id) ? null : state.selectedCard
+            });
+          },
+          
           setSelectedCard: (card: Card | null) => {
             set({ selectedCard: card });
           },
@@ -149,8 +220,13 @@ export const useCardsStore = create<CardsStore>()(
             });
           },
           
-          setViewMode: (mode: 'grid' | 'list') => {
+          setViewMode: (mode: 'grid' | 'list' | 'stack') => {
             set({ viewMode: mode });
+          },
+          
+          toggleShowStacks: () => {
+            const state = get();
+            set({ showStacks: !state.showStacks });
           },
           
           clearCollection: () => {
@@ -414,6 +490,156 @@ export const useCardsStore = create<CardsStore>()(
             return rollConfig.rollCosts[type];
           },
           
+          // Auto Roll Actions
+          startAutoRoll: async (settings: AutoRollSettings) => {
+            const state = get();
+            if (state.autoRollState.isActive) return;
+            
+            const startTime = Date.now();
+            set({
+              autoRollState: {
+                isActive: true,
+                settings: { ...settings, enabled: true },
+                progress: {
+                  currentRoll: 0,
+                  totalRolls: settings.maxRolls || 0,
+                  cardsObtained: [],
+                  startTime,
+                  lastBatchTime: startTime
+                }
+              }
+            });
+            
+            // Start the auto-roll process
+            const performAutoRoll = async () => {
+              const currentState = get();
+              if (!currentState.autoRollState.isActive) return;
+              
+              const { settings: autoSettings, progress } = currentState.autoRollState;
+              
+              if (autoSettings.maxRolls && progress.currentRoll >= autoSettings.maxRolls) {
+                get().stopAutoRoll();
+                return;
+              }
+              
+              try {
+                // Perform batch rolls based on batchSize
+                const rollPromises = [];
+                for (let i = 0; i < autoSettings.batchSize && progress.currentRoll + i < (autoSettings.maxRolls || Infinity); i++) {
+                  rollPromises.push(get().performSingleRoll());
+                }
+                
+                const results = await Promise.all(rollPromises);
+                const newCards = results.map(r => r.card);
+                
+                // Check stop conditions
+                let shouldStop = false;
+                if (autoSettings.stopOnRarity) {
+                  shouldStop = newCards.some(card => card.rarity.toLowerCase() === autoSettings.stopOnRarity?.toLowerCase());
+                }
+                
+                // Update progress
+                const updatedState = get();
+                set({
+                  autoRollState: {
+                    ...updatedState.autoRollState,
+                    progress: {
+                      ...updatedState.autoRollState.progress,
+                      currentRoll: updatedState.autoRollState.progress.currentRoll + results.length,
+                      cardsObtained: [...updatedState.autoRollState.progress.cardsObtained, ...newCards],
+                      lastBatchTime: Date.now()
+                    }
+                  }
+                });
+                
+                if (shouldStop) {
+                  get().stopAutoRoll();
+                  return;
+                }
+                
+                // Schedule next batch
+                const delay = autoSettings.animationSpeed === 'instant' ? 0 : 
+                            autoSettings.animationSpeed === 'fast' ? 100 :
+                            autoSettings.animationSpeed === 'normal' ? 500 : 1000;
+                            
+                setTimeout(performAutoRoll, delay);
+                
+              } catch (error) {
+                console.error('Auto-roll failed:', error);
+                get().stopAutoRoll();
+              }
+            };
+            
+            // Start the first batch
+            setTimeout(performAutoRoll, 500);
+          },
+          
+          stopAutoRoll: () => {
+            const state = get();
+            set({
+              autoRollState: {
+                ...state.autoRollState,
+                isActive: false
+              }
+            });
+          },
+          
+          pauseAutoRoll: () => {
+            const state = get();
+            set({
+              autoRollState: {
+                ...state.autoRollState,
+                isActive: false // Simple pause by setting inactive
+              }
+            });
+          },
+          
+          resumeAutoRoll: () => {
+            const state = get();
+            if (state.autoRollState.settings.enabled) {
+              get().startAutoRoll(state.autoRollState.settings);
+            }
+          },
+          
+          updateAutoRollSettings: (newSettings: Partial<AutoRollSettings>) => {
+            const state = get();
+            set({
+              autoRollState: {
+                ...state.autoRollState,
+                settings: {
+                  ...state.autoRollState.settings,
+                  ...newSettings
+                }
+              }
+            });
+          },
+          
+          // Stacking Methods
+          getStackedCards: () => {
+            const state = get();
+            const stackMap = new Map<string, CardStack>();
+            
+            state.collection.forEach(card => {
+              const key = `${card.name}-${card.rarity}`;
+              if (stackMap.has(key)) {
+                const stack = stackMap.get(key)!;
+                stack.count += 1;
+                stack.ids.push(card.id);
+                stack.lastAddedAt = card.addedAt || stack.lastAddedAt;
+              } else {
+                stackMap.set(key, {
+                  cardData: card,
+                  count: 1,
+                  ids: [card.id],
+                  firstAddedAt: card.addedAt || new Date().toISOString(),
+                  lastAddedAt: card.addedAt || new Date().toISOString()
+                });
+              }
+            });
+            
+            return Array.from(stackMap.values());
+          },
+          
           // Utilities
           reset: () => {
             set({
@@ -426,9 +652,25 @@ export const useCardsStore = create<CardsStore>()(
                 sortOrder: 'desc'
               },
               viewMode: 'grid',
+              showStacks: false,
               isRolling: false,
               lastRollResult: null,
-              rollHistory: []
+              rollHistory: [],
+              autoRollState: {
+                isActive: false,
+                settings: {
+                  enabled: false,
+                  animationSpeed: 'normal',
+                  batchSize: 1
+                },
+                progress: {
+                  currentRoll: 0,
+                  totalRolls: 0,
+                  cardsObtained: [],
+                  startTime: 0,
+                  lastBatchTime: 0
+                }
+              }
             });
           }
         }),

@@ -1,0 +1,154 @@
+/* Auto Roll Controls - Styles for auto-rolling functionality */
+
+.auto-roll-controls {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.auto-roll-controls__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.auto-roll-controls__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.auto-roll-controls__status {
+  flex-shrink: 0;
+}
+
+.auto-roll-controls__progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auto-roll-controls__progress-bar {
+  width: 60px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.auto-roll-controls__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-500), var(--secondary-400));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.auto-roll-controls__panel {
+  overflow: hidden;
+}
+
+.auto-roll-controls__settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 12px;
+}
+
+.auto-roll-controls__setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.auto-roll-controls__number-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.auto-roll-controls__speed-buttons,
+.auto-roll-controls__rarity-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.auto-roll-controls__actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.auto-roll-controls__active {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 12px;
+}
+
+.auto-roll-controls__progress-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.auto-roll-controls__active-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .auto-roll-controls__setting-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .auto-roll-controls__speed-buttons,
+  .auto-roll-controls__rarity-buttons {
+    justify-content: center;
+  }
+  
+  .auto-roll-controls__number-input {
+    justify-content: center;
+  }
+}
+
+/* Animation states */
+.auto-roll-controls__progress-fill {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Active state styling */
+.auto-roll-controls--active {
+  border-color: var(--primary-400);
+  box-shadow: 0 0 20px rgba(var(--primary-rgb), 0.2);
+}
+
+.auto-roll-controls--active .auto-roll-controls__toggle {
+  color: var(--primary-400);
+}

@@ -33,7 +33,9 @@ export interface RollResult {
   card: Card;
   isGuaranteed: boolean;
   pityTriggered: boolean;
+  pityType?: string;
   rollNumber: number;
+  timestamp?: number;
 }
 
 export interface RollStats {
@@ -58,9 +60,31 @@ export interface MultiRollResult {
 export class RollService {
   private static instance: RollService;
   private allCards: Map<string, Card[]> = new Map();
+  private stats: RollStats;
   
-  private constructor() {
+  constructor() {
     this.initializeCardDatabase();
+    this.stats = this.createInitialStats();
+  }
+  
+  private createInitialStats(): RollStats {
+    return {
+      totalRolls: 0,
+      rollsSinceRare: 0,
+      rollsSinceEpic: 0,
+      rollsSinceLegendary: 0,
+      rollsSinceMythic: 0,
+      rollsSinceCosmic: 0,
+      collectedByRarity: {
+        common: 0,
+        uncommon: 0,
+        rare: 0,
+        epic: 0,
+        legendary: 0,
+        mythic: 0,
+        cosmic: 0
+      }
+    };
   }
 
   public static getInstance(): RollService {
@@ -98,22 +122,36 @@ export class RollService {
   /**
    * Perform a single roll with pity system
    */
-  rollSingle(stats: RollStats): RollResult {
-    const rarity = this.determineRarity(stats);
+  rollSingle(stats?: RollStats): RollResult {
+    // Use internal stats unless external stats provided (for batch operations)
+    const currentStats = stats || this.stats;
+    const rarity = this.determineRarity(currentStats);
     const card = this.getRandomCardOfRarity(rarity);
     
     // Generate unique instance with proper id
     const cardInstance = { ...card, id: uuidv4() };
     
     // Card is already Card
-    const unifiedCard = { ...cardInstance, id: uuidv4(), addedAt: new Date().toISOString() };
+    const unifiedCard = { 
+      ...cardInstance, 
+      id: uuidv4(), 
+      addedAt: new Date().toISOString(),
+      timestamp: Date.now()
+    };
     
     const result: RollResult = {
       card: unifiedCard,
-      isGuaranteed: this.wasGuaranteed(rarity, stats),
-      pityTriggered: this.checkPityTrigger(rarity, stats),
-      rollNumber: stats.totalRolls + 1
+      isGuaranteed: this.wasGuaranteed(rarity, currentStats),
+      pityTriggered: this.checkPityTrigger(rarity, currentStats),
+      pityType: this.checkPityTrigger(rarity, currentStats) ? rarity : undefined,
+      rollNumber: currentStats.totalRolls + 1,
+      timestamp: Date.now()
     };
+
+    // Only update internal stats if no external stats provided
+    if (!stats) {
+      this.stats = this.updateStatsAfterRoll(this.stats, rarity);
+    }
 
     return result;
   }
@@ -175,42 +213,52 @@ export class RollService {
    */
   private determineRarity(stats: RollStats): string {
     // Check pity system first
-    if (stats.rollsSinceCosmic >= rollConfig.pitySystem.guaranteedCosmicAt) {
+    if (stats.rollsSinceCosmic >= rollConfig.pitySystem.guaranteedCosmicAt - 1) {
       return 'cosmic';
     }
-    if (stats.rollsSinceMythic >= rollConfig.pitySystem.guaranteedMythicAt) {
+    if (stats.rollsSinceMythic >= rollConfig.pitySystem.guaranteedMythicAt - 1) {
       return 'mythic';
     }
-    if (stats.rollsSinceLegendary >= rollConfig.pitySystem.guaranteedLegendaryAt) {
+    if (stats.rollsSinceLegendary >= rollConfig.pitySystem.guaranteedLegendaryAt - 1) {
       return 'legendary';
     }
-    if (stats.rollsSinceEpic >= rollConfig.pitySystem.guaranteedEpicAt) {
+    if (stats.rollsSinceEpic >= rollConfig.pitySystem.guaranteedEpicAt - 1) {
       return 'epic';
     }
-    if (stats.rollsSinceRare >= rollConfig.pitySystem.guaranteedRareAt) {
+    if (stats.rollsSinceRare >= rollConfig.pitySystem.guaranteedRareAt - 1) {
       return 'rare';
     }
 
-    // Normal probability roll
+    // Normal probability roll - Fixed cumulative logic
     const random = Math.random();
-    let cumulativeProbability = 0;
-
-    // Check rarities from highest to lowest
-    const rarities = ['cosmic', 'mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
     
-    for (const rarity of rarities) {
-      cumulativeProbability += rollConfig.dropRates[rarity as keyof typeof rollConfig.dropRates];
-      if (random <= cumulativeProbability) {
-        // Check if we have cards of this rarity
-        const cardsOfRarity = this.allCards.get(rarity) || [];
-        if (cardsOfRarity.length > 0) {
-          return rarity;
-        }
-      }
+    // Zones de probabilité (cumulatives):
+    // common: 0.00 - 0.65 (65%)
+    // uncommon: 0.65 - 0.90 (25%) 
+    // rare: 0.90 - 0.97 (7%)
+    // epic: 0.97 - 0.995 (2.5%)
+    // legendary: 0.995 - 0.999 (0.4%)
+    // mythic: 0.999 - 0.9999 (0.09%)
+    // cosmic: 0.9999 - 1.0 (0.01%)
+    
+    let result;
+    if (random < rollConfig.dropRates.common) {
+      result = 'common';
+    } else if (random < rollConfig.dropRates.common + rollConfig.dropRates.uncommon) {
+      result = 'uncommon';
+    } else if (random < rollConfig.dropRates.common + rollConfig.dropRates.uncommon + rollConfig.dropRates.rare) {
+      result = 'rare';
+    } else if (random < rollConfig.dropRates.common + rollConfig.dropRates.uncommon + rollConfig.dropRates.rare + rollConfig.dropRates.epic) {
+      result = 'epic';
+    } else if (random < rollConfig.dropRates.common + rollConfig.dropRates.uncommon + rollConfig.dropRates.rare + rollConfig.dropRates.epic + rollConfig.dropRates.legendary) {
+      result = 'legendary';
+    } else if (random < rollConfig.dropRates.common + rollConfig.dropRates.uncommon + rollConfig.dropRates.rare + rollConfig.dropRates.epic + rollConfig.dropRates.legendary + rollConfig.dropRates.mythic) {
+      result = 'mythic';
+    } else {
+      result = 'cosmic';
     }
-
-    // Fallback to common
-    return 'common';
+    
+    return result;
   }
 
   /**
@@ -236,11 +284,11 @@ export class RollService {
    */
   private wasGuaranteed(rarity: string, stats: RollStats): boolean {
     switch (rarity) {
-      case 'cosmic': return stats.rollsSinceCosmic >= rollConfig.pitySystem.guaranteedCosmicAt;
-      case 'mythic': return stats.rollsSinceMythic >= rollConfig.pitySystem.guaranteedMythicAt;
-      case 'legendary': return stats.rollsSinceLegendary >= rollConfig.pitySystem.guaranteedLegendaryAt;
-      case 'epic': return stats.rollsSinceEpic >= rollConfig.pitySystem.guaranteedEpicAt;
-      case 'rare': return stats.rollsSinceRare >= rollConfig.pitySystem.guaranteedRareAt;
+      case 'cosmic': return stats.rollsSinceCosmic >= rollConfig.pitySystem.guaranteedCosmicAt - 1;
+      case 'mythic': return stats.rollsSinceMythic >= rollConfig.pitySystem.guaranteedMythicAt - 1;
+      case 'legendary': return stats.rollsSinceLegendary >= rollConfig.pitySystem.guaranteedLegendaryAt - 1;
+      case 'epic': return stats.rollsSinceEpic >= rollConfig.pitySystem.guaranteedEpicAt - 1;
+      case 'rare': return stats.rollsSinceRare >= rollConfig.pitySystem.guaranteedRareAt - 1;
       default: return false;
     }
   }
@@ -272,7 +320,7 @@ export class RollService {
     const newStats = { ...stats };
     newStats.totalRolls += 1;
     
-    // Reset counters for obtained rarity and higher
+    // Reset counters for obtained rarity and higher, increment lower rarities
     switch (rarity) {
       case 'cosmic':
         newStats.rollsSinceCosmic = 0;
@@ -286,26 +334,45 @@ export class RollService {
         newStats.rollsSinceLegendary = 0;
         newStats.rollsSinceEpic = 0;
         newStats.rollsSinceRare = 0;
+        newStats.rollsSinceCosmic += 1;
         break;
       case 'legendary':
         newStats.rollsSinceLegendary = 0;
         newStats.rollsSinceEpic = 0;
         newStats.rollsSinceRare = 0;
+        newStats.rollsSinceMythic += 1;
+        newStats.rollsSinceCosmic += 1;
         break;
       case 'epic':
         newStats.rollsSinceEpic = 0;
         newStats.rollsSinceRare = 0;
+        newStats.rollsSinceLegendary += 1;
+        newStats.rollsSinceMythic += 1;
+        newStats.rollsSinceCosmic += 1;
         break;
       case 'rare':
         newStats.rollsSinceRare = 0;
+        newStats.rollsSinceEpic += 1;
+        newStats.rollsSinceLegendary += 1;
+        newStats.rollsSinceMythic += 1;
+        newStats.rollsSinceCosmic += 1;
         break;
-      default:
-        // Increment all counters for common/uncommon
+      case 'uncommon':
         newStats.rollsSinceRare += 1;
         newStats.rollsSinceEpic += 1;
         newStats.rollsSinceLegendary += 1;
         newStats.rollsSinceMythic += 1;
         newStats.rollsSinceCosmic += 1;
+        break;
+      case 'common':
+      default:
+        // Increment all counters for common
+        newStats.rollsSinceRare += 1;
+        newStats.rollsSinceEpic += 1;
+        newStats.rollsSinceLegendary += 1;
+        newStats.rollsSinceMythic += 1;
+        newStats.rollsSinceCosmic += 1;
+        break;
     }
 
     // Update collection stats
@@ -510,6 +577,55 @@ export class RollService {
       }
     });
     return rarities;
+  }
+
+  // ===== NEW METHODS FOR TEST COMPATIBILITY =====
+
+  /**
+   * Get current stats
+   */
+  getStats(): RollStats {
+    return { ...this.stats };
+  }
+
+  /**
+   * Get roll configuration
+   */
+  getConfig() {
+    return rollConfig;
+  }
+
+  /**
+   * Reset statistics
+   */
+  resetStats(): void {
+    this.stats = this.createInitialStats();
+  }
+
+  /**
+   * Perform multiple rolls
+   */
+  rollMultiple(count: number): RollResult[] {
+    if (count <= 0 || count > 100) {
+      throw new Error(`Invalid roll count: ${count}. Must be between 1 and 100.`);
+    }
+
+    const results: RollResult[] = [];
+    for (let i = 0; i < count; i++) {
+      results.push(this.rollSingle());
+    }
+    return results;
+  }
+
+  /**
+   * Get daily bonus info (placeholder for future implementation)
+   */
+  getDailyBonusInfo() {
+    return {
+      available: false,
+      multiplier: 1,
+      resetTime: Date.now() + 24 * 60 * 60 * 1000
+    };
   }
 
 

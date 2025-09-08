@@ -16,6 +16,9 @@ import {
   ProjectileEffect
 } from '../models/Combat';
 import { Deck } from '../models/Deck';
+import { EMOJI_EFFECTS, EmojiEffectsManager } from '../data/emojiEffects';
+import passiveEffectsService, { PassiveActivation, PassiveTriggerEvent } from './PassiveEffectsService';
+import SynergySystem, { ActiveSynergy } from './SynergySystem';
 
 export interface ICombatEngine {
   initialize(playerDeck: Deck, opponentDeck: Deck): void;
@@ -32,6 +35,9 @@ export class CombatEngine implements ICombatEngine {
   private lastFrameTime: number = 0;
   private animationFrameId: number | null = null;
   private eventCallbacks: Map<CombatEventType, ((event: CombatEvent) => void)[]> = new Map();
+  
+  // Synergy tracking
+  private playerSynergies: Map<string, ActiveSynergy[]> = new Map();
 
   constructor(arena: CombatArena) {
     this.state = this.createInitialState(arena);
@@ -45,6 +51,14 @@ export class CombatEngine implements ICombatEngine {
     this.state.players = [player1, player2];
     this.state.phase = 'waiting';
     this.state.startTime = Date.now();
+
+    // Initialize passive effects for both players
+    passiveEffectsService.initializePassives(player1, playerDeck.cards);
+    passiveEffectsService.initializePassives(player2, opponentDeck.cards);
+
+    // Initialize synergies for both players
+    this.initializeSynergies(player1, playerDeck.cards);
+    this.initializeSynergies(player2, opponentDeck.cards);
 
     this.emitEvent('match_started', {
       players: this.state.players.map(p => ({ id: p.id, username: p.username })),
@@ -74,6 +88,9 @@ export class CombatEngine implements ICombatEngine {
 
     // Update effects
     this.updateActiveEffects(deltaTime);
+
+    // Process passive effects
+    this.processPassiveEffects(deltaTime);
 
     // Process AI for bot players
     this.updateAI(deltaTime);
@@ -304,6 +321,87 @@ export class CombatEngine implements ICombatEngine {
     };
   }
 
+  // Initialize synergies for a player
+  private initializeSynergies(player: CombatPlayer, cards: any[]): void {
+    const synergyResult = SynergySystem.detectSynergies(cards);
+    this.playerSynergies.set(player.id, synergyResult.activeSynergies);
+    
+    // Apply synergy bonuses to player stats
+    this.applySynergyBonuses(player, synergyResult.activeSynergies);
+
+    // Emit synergy information
+    this.emitEvent('synergies_initialized', {
+      playerId: player.id,
+      synergies: synergyResult.activeSynergies.map(s => ({
+        id: s.synergyId,
+        level: s.level,
+        strength: s.strength
+      })),
+      deckArchetype: synergyResult.deckStats.deckArchetype
+    });
+  }
+
+  // Apply synergy bonuses to player
+  private applySynergyBonuses(player: CombatPlayer, synergies: ActiveSynergy[]): void {
+    for (const synergy of synergies) {
+      for (const bonus of synergy.bonuses) {
+        switch (bonus.type) {
+          case 'damage':
+            // Damage bonus will be applied during projectile firing
+            break;
+            
+          case 'health':
+            const healthBonus = bonus.isPercentage 
+              ? player.maxHealth * (bonus.value / 100)
+              : bonus.value;
+            player.maxHealth += healthBonus;
+            player.health += healthBonus;
+            break;
+            
+          case 'speed':
+            const speedBonus = bonus.isPercentage
+              ? player.fireRate * (bonus.value / 100)
+              : bonus.value;
+            player.fireRate += speedBonus;
+            break;
+            
+          case 'luck':
+            // Luck bonus will be tracked and applied to rewards
+            break;
+            
+          case 'special':
+            // Special effects handled per synergy type
+            this.applySpecialSynergyEffect(player, synergy.synergyId, bonus);
+            break;
+        }
+      }
+    }
+  }
+
+  // Apply special synergy effects
+  private applySpecialSynergyEffect(player: CombatPlayer, synergyId: string, bonus: any): void {
+    switch (synergyId) {
+      case 'TANK_BUILD':
+        // Add initial shield
+        if (bonus.description.includes('shield')) {
+          player.shield = Math.min(player.maxShield, player.shield + bonus.value);
+        }
+        break;
+        
+      case 'ANCIENT_POWER':
+        // Revive once capability - would be handled in death logic
+        break;
+        
+      case 'FORCE_BUILD':
+        // Critical hit chance - handled during damage application
+        break;
+        
+      case 'SPEED_BUILD':
+        // Projectile speed bonus - handled during firing
+        break;
+    }
+  }
+
   private startCountdown(onComplete: () => void): void {
     let count = 3;
     const countdownInterval = setInterval(() => {
@@ -399,6 +497,10 @@ export class CombatEngine implements ICombatEngine {
     const target = this.state.players.find(p => p.id !== player.id && p.isAlive);
     if (!target) return;
 
+    // Get random emoji and its effects
+    const emojiChar = this.getRandomEmoji(player.deck.cards);
+    const emojiEffect = EmojiEffectsManager.getEffect(emojiChar);
+    
     // Calculate direction to target
     const direction = {
       x: target.position.x - player.position.x,
@@ -411,23 +513,55 @@ export class CombatEngine implements ICombatEngine {
     direction.x /= length;
     direction.y /= length;
 
+    // Use emoji effect data if available, otherwise defaults
+    const baseSpeed = emojiEffect ? emojiEffect.speed * 60 : 300; // Convert to pixels/sec
+    let damage = emojiEffect ? emojiEffect.damage : 10 + Math.random() * 20;
+
+    // Apply synergy damage bonuses
+    damage = this.applySynergyDamageBonus(player.id, damage);
+
+    // Apply trajectory-based velocity calculation
+    let velocity = { x: direction.x * baseSpeed, y: direction.y * baseSpeed };
+    
+    // Apply synergy speed bonuses
+    velocity = this.applySynergySpeedBonus(player.id, velocity);
+    
+    if (emojiEffect?.trajectory === 'wave') {
+      velocity.y += Math.sin(Date.now() * 0.01) * baseSpeed * 0.3;
+    } else if (emojiEffect?.trajectory === 'arc') {
+      velocity.y -= baseSpeed * 0.5; // Initial upward arc
+    } else if (emojiEffect?.trajectory === 'spiral') {
+      const angle = Date.now() * 0.005;
+      velocity.x += Math.cos(angle) * baseSpeed * 0.2;
+      velocity.y += Math.sin(angle) * baseSpeed * 0.2;
+    }
+
+    // Convert emoji effects to projectile effects
+    const projectileEffects: ProjectileEffect[] = [];
+    if (emojiEffect?.effects) {
+      for (const effect of emojiEffect.effects) {
+        projectileEffects.push({
+          type: effect.type,
+          duration: effect.duration || 3,
+          intensity: effect.value || effect.tickDamage || 1
+        });
+      }
+    }
+
     const projectile: EmojiProjectile = {
       id: `proj_${Date.now()}_${Math.random()}`,
-      emoji: this.getRandomEmoji(player.deck.cards),
+      emoji: emojiChar,
       position: { ...player.position },
-      velocity: {
-        x: direction.x * 300, // Base speed
-        y: direction.y * 300
-      },
-      damage: 10 + Math.random() * 20,
+      velocity,
+      damage,
       size: 32,
       rotation: 0,
       ownerId: player.id,
       bounces: 0,
-      maxBounces: 2,
+      maxBounces: emojiEffect?.trajectory === 'spiral' ? 1 : 2,
       lifespan: 0,
-      maxLifespan: 5,
-      effects: [],
+      maxLifespan: emojiEffect?.speed ? Math.max(3, 8 - emojiEffect.speed) : 5,
+      effects: projectileEffects,
       trail: [],
       isActive: true
     };
@@ -440,13 +574,27 @@ export class CombatEngine implements ICombatEngine {
       playerId: player.id,
       projectileId: projectile.id,
       emoji: projectile.emoji,
-      position: projectile.position
+      position: projectile.position,
+      emojiEffect: emojiEffect?.type || 'direct'
     });
+
+    // Check for synergy special effects on projectile fire
+    this.checkSynergySpecialEffects(player.id, 'projectile_fire', { projectileId: projectile.id });
   }
 
   private getRandomEmoji(cards: any[]): string {
-    const emojis = ['💥', '🔥', '⚡', '💨', '🌟', '💯', '🎯', '💢'];
-    return emojis[Math.floor(Math.random() * emojis.length)];
+    // Get emojis from cards first, fall back to system emojis
+    const cardEmojis = cards.flatMap(card => 
+      card.emojis?.map((emoji: any) => emoji.character) || [card.emoji]
+    ).filter(Boolean);
+    
+    if (cardEmojis.length > 0) {
+      return cardEmojis[Math.floor(Math.random() * cardEmojis.length)];
+    }
+    
+    // Fallback to system emoji pool
+    const systemEmojis = EmojiEffectsManager.getAllEmojis();
+    return systemEmojis[Math.floor(Math.random() * systemEmojis.length)];
   }
 
   private isColliding(projectile: EmojiProjectile, player: CombatPlayer): boolean {
@@ -504,18 +652,42 @@ export class CombatEngine implements ICombatEngine {
           // Update shield
           player.shield = Math.max(0, player.shield - collision.damage);
 
-          // Apply effects
+          // Apply effects from projectile
           for (const effect of collision.effects) {
             this.addActiveEffect(player.id, effect, projectile.ownerId);
           }
 
           // Update shooter accuracy
           const shooter = this.state.players.find(p => p.id === projectile.ownerId);
+
+          // Apply emoji-specific effects using new system
+          const emojiEffect = EmojiEffectsManager.getEffect(projectile.emoji);
+          if (emojiEffect?.effects) {
+            for (const effect of emojiEffect.effects) {
+              // Apply immediate or over-time effects based on emoji type
+              this.applyEmojiEffect(player, shooter, effect, emojiEffect);
+            }
+          }
+
+          // Trigger ON_HIT passives for shooter
           if (shooter) {
             shooter.shotsHit++;
             shooter.damage += actualDamage;
             shooter.accuracy = shooter.shotsHit / shooter.shotsFired;
+
+            this.triggerPassives('ON_HIT', shooter.id, {
+              targetId: player.id,
+              damage: actualDamage,
+              projectileEmoji: projectile.emoji
+            });
           }
+
+          // Trigger ON_DAMAGE passives for target
+          this.triggerPassives('ON_DAMAGE', player.id, {
+            sourceId: shooter?.id,
+            damage: actualDamage,
+            remainingHealth: player.health
+          });
 
           // Check if player died
           if (player.health <= 0) {
@@ -533,6 +705,9 @@ export class CombatEngine implements ICombatEngine {
               damage: actualDamage
             });
           } else {
+            // Check for low HP triggers
+            this.checkLowHpTriggers(player);
+            
             this.emitEvent('player_damaged', {
               playerId: player.id,
               damage: actualDamage,
@@ -549,6 +724,14 @@ export class CombatEngine implements ICombatEngine {
             targetId: player.id,
             damage: actualDamage
           });
+
+          // Check for synergy special effects on projectile hit
+          if (shooter) {
+            this.checkSynergySpecialEffects(shooter.id, 'projectile_hit', { 
+              targetId: player.id, 
+              damage: actualDamage 
+            });
+          }
         }
       }
     }
@@ -571,10 +754,19 @@ export class CombatEngine implements ICombatEngine {
       this.animationFrameId = null;
     }
 
+    // Clean up passive effects for all players
+    for (const player of this.state.players) {
+      passiveEffectsService.cleanup(player.id);
+    }
+
     this.emitEvent('match_ended', {
       winner: winner.id,
       duration: this.state.endTime - this.state.startTime,
-      reason: this.state.timeRemaining <= 0 ? 'timeout' : 'elimination'
+      reason: this.state.timeRemaining <= 0 ? 'timeout' : 'elimination',
+      passiveStats: this.state.players.map(p => ({
+        playerId: p.id,
+        stats: passiveEffectsService.getPassiveStats(p.id)
+      }))
     });
   }
 
@@ -647,6 +839,455 @@ export class CombatEngine implements ICombatEngine {
   private applyStunEffect(target: CombatPlayer, effect: ActiveEffect): void {
     target.moveSpeed = 0;
     target.fireRate = 0;
+  }
+
+  // New method for emoji-specific effect handling
+  private applyEmojiEffect(target: CombatPlayer | undefined, shooter: CombatPlayer | undefined, effect: any, emojiEffect: any): void {
+    if (!target) return;
+
+    switch (effect.type) {
+      case 'BURN':
+        if (effect.tickDamage && effect.duration) {
+          // Create burn effect over time
+          this.addActiveEffect(target.id, {
+            type: 'burn',
+            duration: effect.duration * 1000,
+            intensity: effect.tickDamage
+          }, shooter?.id || 'system');
+        }
+        break;
+
+      case 'FREEZE':
+        if (effect.value && effect.duration) {
+          // Slow down target
+          const originalSpeed = target.moveSpeed;
+          const originalFireRate = target.fireRate;
+          target.moveSpeed *= effect.value;
+          target.fireRate *= effect.value;
+          
+          // Reset after duration
+          setTimeout(() => {
+            target.moveSpeed = originalSpeed;
+            target.fireRate = originalFireRate;
+          }, effect.duration * 1000);
+        }
+        break;
+
+      case 'HEAL':
+        if (effect.value && shooter) {
+          // Heal the shooter, not the target
+          shooter.health = Math.min(shooter.maxHealth, shooter.health + effect.value);
+          this.state.stats.totalHealing += effect.value;
+          
+          this.emitEvent('player_healed', {
+            playerId: shooter.id,
+            healAmount: effect.value,
+            currentHealth: shooter.health
+          });
+        }
+        break;
+
+      case 'POISON':
+        if (effect.tickDamage && effect.duration) {
+          // Apply poison damage over time
+          this.addActiveEffect(target.id, {
+            type: 'poison',
+            duration: effect.duration * 1000,
+            intensity: effect.tickDamage
+          }, shooter?.id || 'system');
+        }
+        break;
+
+      case 'SHIELD':
+        if (effect.value && shooter) {
+          // Shield the shooter
+          shooter.shield = Math.min(shooter.maxShield, shooter.shield + effect.value);
+          
+          this.emitEvent('shield_applied', {
+            playerId: shooter.id,
+            shieldAmount: effect.value,
+            currentShield: shooter.shield
+          });
+        }
+        break;
+
+      case 'BOOST':
+        if (effect.value && effect.duration && shooter) {
+          // Boost shooter's performance
+          const originalFireRate = shooter.fireRate;
+          shooter.fireRate *= effect.value;
+          
+          setTimeout(() => {
+            shooter.fireRate = originalFireRate;
+          }, effect.duration * 1000);
+        }
+        break;
+
+      case 'STUN':
+        if (effect.duration && Math.random() < (effect.chance || 1)) {
+          // Stun target
+          const originalSpeed = target.moveSpeed;
+          const originalFireRate = target.fireRate;
+          target.moveSpeed = 0;
+          target.fireRate = 0;
+          
+          setTimeout(() => {
+            target.moveSpeed = originalSpeed;
+            target.fireRate = originalFireRate;
+          }, effect.duration * 1000);
+        }
+        break;
+
+      case 'DRAIN':
+        if (effect.value && shooter) {
+          // Drain health from target to shooter
+          const drainAmount = Math.min(effect.value, target.health);
+          target.health -= drainAmount;
+          shooter.health = Math.min(shooter.maxHealth, shooter.health + drainAmount);
+          this.state.stats.totalDamage += drainAmount;
+          this.state.stats.totalHealing += drainAmount;
+        }
+        break;
+
+      case 'LUCKY':
+        if (effect.value && shooter) {
+          // Increase reward multiplier temporarily
+          // This would need to be tracked in player stats or game state
+          this.emitEvent('luck_boost_applied', {
+            playerId: shooter.id,
+            multiplier: effect.value,
+            duration: effect.duration || 10
+          });
+        }
+        break;
+
+      case 'MULTIPLY':
+        if (Math.random() < (effect.chance || 0.2) && shooter) {
+          // Create additional projectile
+          setTimeout(() => {
+            this.fireProjectile(shooter);
+          }, 100);
+        }
+        break;
+
+      default:
+        console.log(`Unhandled emoji effect: ${effect.type}`);
+        break;
+    }
+  }
+
+  // Passive effects integration methods
+  private processPassiveEffects(deltaTime: number): void {
+    // Process periodic passives
+    const periodicActivations = passiveEffectsService.processPeriodicEffects(deltaTime);
+    this.applyPassiveActivations(periodicActivations);
+  }
+
+  private triggerPassives(triggerType: string, playerId: string, metadata: any = {}): void {
+    const event: PassiveTriggerEvent = {
+      type: triggerType as any, // Will be mapped to TriggerType
+      playerId,
+      timestamp: Date.now(),
+      ...metadata
+    };
+
+    const activations = passiveEffectsService.triggerPassives(event);
+    this.applyPassiveActivations(activations);
+  }
+
+  private checkLowHpTriggers(player: CombatPlayer): void {
+    const activations = passiveEffectsService.checkLowHpTriggers(player);
+    this.applyPassiveActivations(activations);
+  }
+
+  private applyPassiveActivations(activations: PassiveActivation[]): void {
+    for (const activation of activations) {
+      const player = this.state.players.find(p => p.id === activation.playerId);
+      if (!player) continue;
+
+      switch (activation.type) {
+        case 'heal':
+          const healAmount = activation.value;
+          player.health = Math.min(player.maxHealth, player.health + healAmount);
+          this.state.stats.totalHealing += healAmount;
+          
+          this.emitEvent('passive_heal', {
+            playerId: player.id,
+            amount: healAmount,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        case 'boost':
+          const boostMultiplier = activation.value;
+          const originalFireRate = player.fireRate;
+          player.fireRate *= boostMultiplier;
+          
+          // Reset after duration
+          setTimeout(() => {
+            player.fireRate = originalFireRate;
+          }, activation.duration * 1000);
+
+          this.emitEvent('passive_boost', {
+            playerId: player.id,
+            multiplier: boostMultiplier,
+            duration: activation.duration,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        case 'shield':
+          const shieldAmount = activation.value;
+          player.shield = Math.min(player.maxShield, player.shield + shieldAmount);
+
+          this.emitEvent('passive_shield', {
+            playerId: player.id,
+            amount: shieldAmount,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        case 'burn':
+        case 'freeze':
+        case 'poison':
+          // Create over-time effect
+          this.addActiveEffect(player.id, {
+            type: activation.type,
+            duration: activation.duration * 1000,
+            intensity: activation.value
+          }, 'passive');
+
+          this.emitEvent('passive_debuff', {
+            playerId: player.id,
+            type: activation.type,
+            value: activation.value,
+            duration: activation.duration,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        case 'lucky':
+          // Track luck bonus (would need to be stored in player stats)
+          this.emitEvent('passive_luck', {
+            playerId: player.id,
+            multiplier: activation.value,
+            duration: activation.duration,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        case 'burst':
+          // Mark next attack for extra damage
+          this.emitEvent('passive_burst', {
+            playerId: player.id,
+            multiplier: activation.value,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        case 'reflect':
+          // Add reflection capability temporarily
+          this.emitEvent('passive_reflect', {
+            playerId: player.id,
+            percentage: activation.value * 100,
+            duration: activation.duration,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        case 'multiply':
+          // Fire additional projectiles
+          const additionalShots = activation.value - 1;
+          for (let i = 0; i < additionalShots; i++) {
+            setTimeout(() => {
+              this.fireProjectile(player);
+            }, i * 50); // Stagger shots slightly
+          }
+
+          this.emitEvent('passive_multiply', {
+            playerId: player.id,
+            additionalShots,
+            description: activation.description,
+            passiveId: activation.id
+          });
+          break;
+
+        default:
+          console.warn(`Unhandled passive activation type: ${activation.type}`);
+      }
+    }
+  }
+
+  // Synergy bonus application methods
+  private applySynergyDamageBonus(playerId: string, baseDamage: number): number {
+    const synergies = this.playerSynergies.get(playerId) || [];
+    let damageMultiplier = 1;
+    
+    for (const synergy of synergies) {
+      for (const bonus of synergy.bonuses) {
+        if (bonus.type === 'damage') {
+          if (bonus.isPercentage) {
+            damageMultiplier += bonus.value / 100;
+          } else {
+            baseDamage += bonus.value;
+          }
+        }
+      }
+    }
+    
+    // Check for critical hits from Force Build
+    const forceBuilds = synergies.filter(s => s.synergyId === 'FORCE_BUILD');
+    for (const forceBuild of forceBuilds) {
+      const criticalBonus = forceBuild.bonuses.find(b => b.description.includes('critical'));
+      if (criticalBonus && Math.random() < criticalBonus.value) {
+        baseDamage *= 2; // Critical hit!
+        this.emitEvent('critical_hit', { playerId, damage: baseDamage });
+      }
+    }
+    
+    return baseDamage * damageMultiplier;
+  }
+
+  private applySynergySpeedBonus(playerId: string, baseVelocity: { x: number; y: number }): { x: number; y: number } {
+    const synergies = this.playerSynergies.get(playerId) || [];
+    let speedMultiplier = 1;
+    
+    for (const synergy of synergies) {
+      // Speed Build projectile speed bonus
+      if (synergy.synergyId === 'SPEED_BUILD') {
+        const speedBonus = synergy.bonuses.find(b => b.description.includes('2x faster'));
+        if (speedBonus) {
+          speedMultiplier *= speedBonus.value;
+        }
+      }
+      
+      // General speed bonuses
+      for (const bonus of synergy.bonuses) {
+        if (bonus.type === 'special' && bonus.description.includes('faster')) {
+          speedMultiplier *= bonus.value;
+        }
+      }
+    }
+    
+    return {
+      x: baseVelocity.x * speedMultiplier,
+      y: baseVelocity.y * speedMultiplier
+    };
+  }
+
+  private checkSynergySpecialEffects(playerId: string, context: string, data: any = {}): void {
+    const synergies = this.playerSynergies.get(playerId) || [];
+    
+    for (const synergy of synergies) {
+      switch (synergy.synergyId) {
+        case 'ELEMENTAL_MASTERY':
+          if (context === 'projectile_hit') {
+            const randomEffect = synergy.bonuses.find(b => b.description.includes('random elemental'));
+            if (randomEffect && Math.random() < randomEffect.value) {
+              this.applyRandomElementalEffect(data.targetId);
+            }
+          }
+          break;
+          
+        case 'MEME_LORD':
+          if (context === 'projectile_fire') {
+            const chaosEffect = synergy.bonuses.find(b => b.description.includes('chaos'));
+            if (chaosEffect && Math.random() < chaosEffect.value) {
+              this.applyChaosEffect(playerId);
+            }
+          }
+          break;
+          
+        case 'RAINBOW_CHAOS':
+          if (context === 'any') {
+            const randomPowerful = synergy.bonuses.find(b => b.description.includes('random powerful'));
+            if (randomPowerful && Math.random() < randomPowerful.value) {
+              this.applyRandomPowerfulEffect(playerId);
+            }
+          }
+          break;
+          
+        case 'LUCK_BUILD':
+          if (context === 'reward_calculation') {
+            const doubleRewards = synergy.bonuses.find(b => b.description.includes('double rewards'));
+            if (doubleRewards && Math.random() < doubleRewards.value) {
+              data.rewardMultiplier = (data.rewardMultiplier || 1) * 2;
+            }
+          }
+          break;
+      }
+    }
+  }
+
+  private applyRandomElementalEffect(targetId: string): void {
+    const effects = ['burn', 'freeze', 'poison'];
+    const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+    
+    this.addActiveEffect(targetId, {
+      type: randomEffect,
+      duration: 3000,
+      intensity: 5
+    }, 'synergy');
+
+    this.emitEvent('synergy_elemental_proc', {
+      targetId,
+      effectType: randomEffect,
+      source: 'ELEMENTAL_MASTERY'
+    });
+  }
+
+  private applyChaosEffect(playerId: string): void {
+    const chaosEffects = [
+      'boost_damage',
+      'random_teleport',
+      'duplicate_projectile',
+      'shield_burst',
+      'heal_random'
+    ];
+    
+    const effect = chaosEffects[Math.floor(Math.random() * chaosEffects.length)];
+    
+    this.emitEvent('synergy_chaos_proc', {
+      playerId,
+      effectType: effect,
+      source: 'MEME_LORD'
+    });
+  }
+
+  private applyRandomPowerfulEffect(playerId: string): void {
+    const player = this.state.players.find(p => p.id === playerId);
+    if (!player) return;
+    
+    const powerfulEffects = [
+      () => { player.health = Math.min(player.maxHealth, player.health + 50); }, // Big heal
+      () => { player.shield = Math.min(player.maxShield, player.shield + 100); }, // Big shield
+      () => { this.fireProjectile(player); this.fireProjectile(player); }, // Double shot
+      () => { player.fireRate *= 3; setTimeout(() => player.fireRate /= 3, 5000); } // Temp speed
+    ];
+    
+    const randomEffect = powerfulEffects[Math.floor(Math.random() * powerfulEffects.length)];
+    randomEffect();
+    
+    this.emitEvent('synergy_rainbow_chaos_proc', {
+      playerId,
+      source: 'RAINBOW_CHAOS'
+    });
+  }
+
+  private getSynergyInfo(playerId: string): any {
+    const synergies = this.playerSynergies.get(playerId) || [];
+    return {
+      activeSynergies: synergies.length,
+      synergyIds: synergies.map(s => s.synergyId),
+      totalStrength: synergies.reduce((sum, s) => sum + s.strength, 0)
+    };
   }
 
   private emitEvent(type: CombatEventType, data: Record<string, unknown>, position?: Position): void {

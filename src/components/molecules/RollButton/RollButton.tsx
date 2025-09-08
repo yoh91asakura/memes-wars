@@ -53,6 +53,7 @@ export const RollButton: React.FC<RollButtonProps> = ({
           disabled={disabled || loading}
           loading={loading}
           className="roll-button__btn"
+          testId={testId ? `${testId}-btn` : "roll-button"}
         >
           <Icon
             name="roll"

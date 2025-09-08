@@ -4,6 +4,7 @@ import { Card } from '../models/Card';
 import { usePlayerStore } from '../../../stores/playerStore';
 import { useCardsStore } from '../../../stores/cardsStore';
 import { RollButton } from '../../molecules/RollButton/RollButton';
+import { AutoRollControls } from '../../molecules/AutoRollControls';
 import { TCGCard } from '../TCGCard';
 import { Text } from '../../atoms/Text';
 import { Icon } from '../../atoms/Icon';
@@ -134,9 +135,13 @@ export const RollPanel: React.FC<RollPanelProps> = ({
             loading={isRolling}
             rollCount={stats?.totalRolls || 0}
             disabled={false}
+            testId="roll-button"
           />
         </div>
       </div>
+
+      {/* Auto Roll Controls */}
+      <AutoRollControls testId="auto-roll-controls" />
 
       {/* Tips */}
       <div className="roll-panel__tips">

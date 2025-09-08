@@ -60,6 +60,7 @@ export const Icon: React.FC<IconProps> = ({
       // Game Icons
       'cards': '🃏',
       'roll': '🎲',
+      'craft': '🛠️',
       'battle': '⚔️',
       'deck': '📚',
       'collection': '📦',

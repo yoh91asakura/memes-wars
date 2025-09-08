@@ -39,6 +39,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
       onClick: () => onNavigate('collection'),
     },
     {
+      id: 'craft',
+      label: 'Crafting',
+      icon: 'craft',
+      active: currentPage === 'craft',
+      onClick: () => onNavigate('craft'),
+    },
+    {
       id: 'battle',
       label: 'Battle Arena',
       icon: 'battle',
