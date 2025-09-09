@@ -306,6 +306,50 @@ export default defineConfig({
 
 # 5. 📋 SPEC KIT WORKFLOW
 
+## 🎯 Current Working Context
+
+### Active Spec Directory
+```
+/specs/001-extract-current-project/
+├── spec.md              # ✅ Functional requirements (31 enhanced features)
+├── plan.md              # ✅ Implementation plan (Phase 3.5 active)
+├── research.md          # ✅ Technology decisions and patterns
+├── data-model.md        # ✅ Complete data models with new entities
+├── quickstart.md        # ✅ Updated with core game loop testing
+├── contracts/           # ✅ Service contracts and API definitions
+└── tasks.md             # ✅ Phase 3.5 polish tasks
+```
+
+### Quick Spec Commands
+```bash
+# Read current implementation status
+Read specs/001-extract-current-project/spec.md
+
+# Check active tasks
+Read specs/001-extract-current-project/tasks.md
+
+# Review architecture decisions
+Read specs/001-extract-current-project/research.md
+
+# Understand data models
+Read specs/001-extract-current-project/data-model.md
+```
+
+## 🔄 Spec-Driven Development Workflow
+
+### Current Phase Integration
+```typescript
+// When implementing new features, always check:
+const currentPhase = 'Phase 3.5: Core Game Loop Polish';
+const activeSpecs = 'specs/001-extract-current-project/';
+const focusAreas = [
+  'Save persistence for currencies',
+  'Deck validation interface',
+  'Smooth transition animations',
+  'Audio feedback integration'
+];
+```
+
 ## 🎯 Feature Development Commands
 
 ### Core Spec Kit Scripts
@@ -508,6 +552,44 @@ npm run build              # Production build
 npm run preview            # Preview build locally
 ```
 
+## 🎯 Quick Development References
+
+### Essential File Locations
+```bash
+# Core implementation files
+src/components/pages/CombatPage/     # Main game loop integration
+src/services/RewardService.ts        # NEW: Post-combat rewards
+src/services/AIMatchmakingService.ts # NEW: AI opponent generation
+src/stores/currencyStore.ts          # NEW: Economy management
+
+# Configuration & data
+src/data/stages/                     # Stage progression data
+src/data/cards/                      # All card definitions
+
+# Documentation
+specs/001-extract-current-project/   # Current feature specs
+README.md                           # Complete game description
+STATUS.md                           # Quick project overview
+```
+
+### Development Workflow Integration
+```bash
+# Before implementing new features:
+1. Read specs/001-extract-current-project/spec.md    # Understand requirements
+2. Check specs/001-extract-current-project/tasks.md  # See current tasks
+3. Review CLAUDE.md section 8 for current status     # Implementation status
+
+# During implementation:
+1. Follow TDD: npm run test:watch                   # Red-Green-Refactor
+2. Check integration: npm run test:e2e              # Full game loop
+3. Validate performance: F12 → window.gameDebug     # Runtime debugging
+
+# After implementation:
+1. npm run typecheck && npm run lint               # Code quality
+2. Update relevant spec files if needed             # Keep docs current
+3. Test core game loop: Go to Combat page          # Manual validation
+```
+
 ## 🔍 Game-Specific Debugging
 ```bash
 # Debug RNG systems
@@ -539,6 +621,20 @@ window.gameDebug = {
 ---
 
 # 8. 🎯 CURRENT IMPLEMENTATION STATUS - CORE GAME LOOP COMPLETE
+
+## 🔍 Documentation Status Overview
+
+### ✅ Completed Documentation
+- **README.md**: ✅ Updated with complete game description and core loop diagram
+- **specs/001-extract-current-project/spec.md**: ✅ Enhanced with 31 functional requirements
+- **specs/001-extract-current-project/tasks.md**: ✅ Phase 3.5 polish tasks defined
+- **specs/001-extract-current-project/data-model.md**: ✅ Updated with new entities
+- **CLAUDE.md**: ✅ Optimized with spec system integration (this update)
+
+### 🎯 Documentation In Progress
+- **specs/001-extract-current-project/contracts/**: Missing rewardservice.md, aimatchmaking.md, currencystore.md
+- **STATUS.md**: Quick project overview file to be created
+- **Versions & Changelog**: Synchronization needed across documentation
 
 ## 📁 Core Game Loop Implementation Status
 **Current Phase**: Core Game Loop Finalization & Polish  
@@ -605,4 +701,51 @@ window.gameDebug = {
 6. **Audio Feedback**: Sound effects for combat, rewards, rolls
 7. **Tutorial System**: Onboarding for new players
 8. **Balance Tuning**: Optimal reward rates and stage difficulty
+
+### 📚 Working With Specs System
+
+#### Quick Spec Navigation
+```typescript
+// When Claude needs to understand current implementation:
+const specPaths = {
+  currentRequirements: 'specs/001-extract-current-project/spec.md',
+  activeTasks: 'specs/001-extract-current-project/tasks.md', 
+  dataModels: 'specs/001-extract-current-project/data-model.md',
+  serviceContracts: 'specs/001-extract-current-project/contracts/',
+  testingGuide: 'specs/001-extract-current-project/quickstart.md'
+};
+
+// Current implementation status always in:
+const statusLocation = 'CLAUDE.md section 8: CURRENT IMPLEMENTATION STATUS';
+```
+
+#### Spec-First Development
+```bash
+# Always start here when working on features:
+1. Read spec.md - What are we building?
+2. Check data-model.md - What entities exist?
+3. Review contracts/ - What APIs are defined?
+4. Check tasks.md - What's the current focus?
+5. Use quickstart.md - How to test what we build?
+
+# Implementation should always update:
+- CLAUDE.md section 8 (implementation status)
+- README.md (if major features added)
+- Relevant contract files (if APIs change)
+```
+
+#### Context Switching
+```typescript
+// When switching between different areas of the codebase:
+interface ContextMap {
+  gameLoop: 'src/components/pages/CombatPage/';
+  rewards: 'src/services/RewardService.ts';
+  economy: 'src/stores/currencyStore.ts';
+  progression: 'src/services/StageService.ts';
+  documentation: 'specs/001-extract-current-project/';
+}
+
+// Always reference current spec requirements before changes
+const getRequirements = () => Read('specs/001-extract-current-project/spec.md');
+```
 
