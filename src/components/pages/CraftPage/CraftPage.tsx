@@ -27,7 +27,7 @@ export const CraftPage: React.FC<CraftPageProps> = ({
   }, []);
   
   return (
-    <div className={`craft-page ${className}`.trim()} data-testid={testId}>
+    <div className={`craft-page ${className}`.trim()} data-testid={testId || 'craft-page'}>
       {/* Page Header */}
       <section className="craft-page__header">
         <div className="craft-page__title-section">

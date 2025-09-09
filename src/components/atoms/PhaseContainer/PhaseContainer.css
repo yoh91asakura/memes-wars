@@ -1,0 +1,252 @@
+/* PhaseContainer - Game phase transition animations */
+
+.phase-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Phase-specific backgrounds */
+.phase-container.phase-roll {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.phase-container.phase-equip {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.phase-container.phase-battle {
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+}
+
+.phase-container.phase-reward {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+}
+
+.phase-container.phase-idle {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+/* Active/Inactive states */
+.phase-container.inactive {
+  opacity: 0.3;
+  transform: scale(0.95);
+  pointer-events: none;
+}
+
+.phase-container.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: all;
+  z-index: 10;
+}
+
+/* Phase Indicator */
+.phase-indicator {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 120px;
+}
+
+.phase-label {
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.phase-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.phase-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #64b5f6, #42a5f5);
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.8s ease-in-out;
+}
+
+.phase-progress-fill.animated {
+  width: 100%;
+}
+
+/* Phase Content */
+.phase-content {
+  position: relative;
+  z-index: 50;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background Effects */
+.phase-background-effects {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.bg-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+  animation: gradientFloat 8s ease-in-out infinite alternate;
+}
+
+.bg-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.05;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: patternDrift 20s linear infinite;
+}
+
+.bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  animation: glowPulse 4s ease-in-out infinite alternate;
+}
+
+/* Phase-specific indicator colors */
+.phase-roll .phase-progress-fill {
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.phase-equip .phase-progress-fill {
+  background: linear-gradient(90deg, #f093fb, #f5576c);
+}
+
+.phase-battle .phase-progress-fill {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+}
+
+.phase-reward .phase-progress-fill {
+  background: linear-gradient(90deg, #ffecd2, #fcb69f);
+}
+
+/* Transition animations */
+@keyframes gradientFloat {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  100% { transform: translate(-10px, -10px) rotate(5deg); }
+}
+
+@keyframes patternDrift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+@keyframes glowPulse {
+  0% { opacity: 0.1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Hover effects for active phases */
+.phase-container.active:hover .bg-glow {
+  animation-duration: 2s;
+}
+
+.phase-container.active:hover .phase-indicator {
+  background: rgba(0, 0, 0, 0.9);
+  transform: scale(1.05);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .phase-container {
+    min-height: 100vh;
+  }
+
+  .phase-indicator {
+    top: 10px;
+    left: 10px;
+    padding: 6px 12px;
+    min-width: 100px;
+  }
+
+  .phase-label {
+    font-size: 0.7rem;
+  }
+
+  .phase-content {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .phase-indicator {
+    position: relative;
+    top: 0;
+    left: 0;
+    margin: 10px;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .phase-indicator {
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .bg-gradient,
+  .bg-pattern,
+  .bg-glow {
+    opacity: 0.02;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .phase-container {
+    transition: opacity 0.3s ease;
+  }
+
+  .bg-gradient,
+  .bg-pattern,
+  .bg-glow {
+    animation: none;
+  }
+
+  .phase-progress-fill.animated {
+    transition: width 0.3s ease;
+  }
+}

@@ -5,11 +5,14 @@ import { useCombat, useCombatStats } from '../../../hooks/useCombat';
 import { useCombatStore } from '../../../stores/combatStore';
 import { useGame } from '../../../hooks/useGame';
 import { useStageStore, useCurrentStageData, stageActions } from '../../../stores/stageStore';
+import { useCardsStore } from '../../../stores/cardsStore';
 import { useGold, useTickets } from '../../../stores/currencyStore';
 import { getRewardService, RewardDistribution } from '../../../services/RewardService';
 import { getAIMatchmakingService } from '../../../services/AIMatchmakingService';
+import { useAudio } from '../../../hooks/useAudio';
 import { CombatArena } from '../../organisms/CombatArena';
 import { PlayerHealth } from '../../molecules/PlayerHealth';
+import { DeckSelector } from '../../organisms/DeckSelector';
 import { Button } from '../../atoms/Button';
 import { format } from '../../../utils/format';
 import './CombatPage.css';
@@ -18,6 +21,10 @@ export const CombatPage: React.FC = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [rewards, setRewards] = useState<RewardDistribution | null>(null);
   const [showRewardsModal, setShowRewardsModal] = useState(false);
+  const [showDeckSelector, setShowDeckSelector] = useState(false);
+  const [selectedDeck, setSelectedDeck] = useState<any[] | null>(null);
+  const [autoCreatedDeck, setAutoCreatedDeck] = useState(false);
+  const [isAutoStarting, setIsAutoStarting] = useState(false);
   
   // Combat state
   const {
@@ -37,6 +44,7 @@ export const CombatPage: React.FC = () => {
 
   // Game state  
   const { activeDeck, createNewDeck } = useGame();
+  const { collection } = useCardsStore();
   
   // Stage progression
   const { currentStage, currentDeckLimit } = useStageStore();
@@ -48,6 +56,50 @@ export const CombatPage: React.FC = () => {
   
   // Combat stats
   const { getOverallStats, getLeaderboard } = useCombatStats();
+  
+  // Audio
+  const { playSFX, playMusic, stopMusic } = useAudio();
+
+  // Auto-create deck from available cards
+  const createDefaultDeckFromCards = async () => {
+    if (collection.length === 0) {
+      console.warn('No cards available to create deck');
+      return null;
+    }
+    
+    // Use the first available cards (up to deck limit)
+    const availableCards = collection.slice(0, Math.min(deckLimit, 5)); // Max 5 cards for combat
+    const defaultDeck = {
+      id: 'auto-combat-deck',
+      name: 'Auto Combat Deck',
+      cards: availableCards,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    console.log(`Auto-created combat deck with ${availableCards.length} cards:`, availableCards.map(c => c.name));
+    setAutoCreatedDeck(true);
+    return defaultDeck;
+  };
+
+  // Handle deck selection
+  const handleDeckConfirmed = (deck: any[]) => {
+    setSelectedDeck(deck);
+    setShowDeckSelector(false);
+  };
+
+  const handleCancelDeckSelection = () => {
+    setShowDeckSelector(false);
+    // Use active deck as fallback if selection is cancelled
+    if (activeDeck?.cards) {
+      setSelectedDeck(activeDeck.cards);
+    }
+  };
+
+  const handleOpenDeckSelector = () => {
+    setShowDeckSelector(true);
+  };
 
   // Initialize combat when component mounts
   useEffect(() => {
@@ -95,13 +147,18 @@ export const CombatPage: React.FC = () => {
         }
       };
 
-      // Use active deck or create a default one
-      let playerDeck = activeDeck;
+      // Use selected deck, active deck, or auto-create from cards
+      let playerDeck = selectedDeck ? { cards: selectedDeck, name: 'Combat Deck', id: 'combat' } : activeDeck;
       if (!playerDeck) {
-        playerDeck = await createNewDeck('Default Deck');
+        // Try to auto-create from available cards
+        playerDeck = await createDefaultDeckFromCards();
         if (!playerDeck) {
-          console.error('Failed to create default deck');
-          return;
+          // Last resort - create empty deck (will be filled later)
+          playerDeck = await createNewDeck('Default Deck');
+          if (!playerDeck) {
+            console.error('Failed to create default deck');
+            return;
+          }
         }
       }
 
@@ -117,10 +174,34 @@ export const CombatPage: React.FC = () => {
       setIsInitialized(true);
     };
 
-    if (!isInitialized && !isActive) {
+    // Initialize combat if we have a deck (selected, active, or auto-created) and deck selector is not shown
+    if (!isInitialized && !isActive && !showDeckSelector && (selectedDeck || activeDeck || collection.length > 0)) {
       initializeMatch();
     }
-  }, [isInitialized, isActive, activeDeck, initializeCombat, createNewDeck]);
+  }, [isInitialized, isActive, activeDeck, selectedDeck, showDeckSelector, initializeCombat, createNewDeck, collection, deckLimit]);
+
+  // Auto-start combat after initialization
+  useEffect(() => {
+    if (isInitialized && phase === 'waiting') {
+      setIsAutoStarting(true);
+      
+      // Play combat start music and sound
+      playMusic('combat_theme', { loop: true, fadeIn: 2.0, volume: 0.5 });
+      playSFX('combat_start');
+      
+      // Small delay to ensure UI is ready and let user see the setup
+      const autoStartTimeout = setTimeout(() => {
+        console.log('Auto-starting combat after deck selection...');
+        startCombat();
+        setIsAutoStarting(false);
+      }, 3000); // 3 second delay for user to see the setup and auto-start indicator
+
+      return () => {
+        clearTimeout(autoStartTimeout);
+        setIsAutoStarting(false);
+      };
+    }
+  }, [isInitialized, phase, startCombat, playMusic, playSFX]);
 
   // Handle combat phase changes and stage completion
   useEffect(() => {
@@ -128,6 +209,11 @@ export const CombatPage: React.FC = () => {
       const handleCombatEnd = async () => {
         // Check if player won
         if (winner.id === 'player') {
+          // Play victory sound and music
+          stopMusic(1.0);
+          playSFX('combat_victory');
+          playMusic('victory_fanfare', { loop: false, fadeIn: 0.5, volume: 0.7 });
+          
           // Complete the stage and calculate rewards
           if (stageData) {
             const rewardService = getRewardService();
@@ -156,6 +242,17 @@ export const CombatPage: React.FC = () => {
             setRewards(distribution);
             setShowRewardsModal(true);
             
+            // Play reward sounds based on what was earned
+            if (distribution.goldEarned > 0) {
+              playSFX('reward_coins', { delay: 0.5 });
+            }
+            if (distribution.ticketsEarned > 0) {
+              playSFX('reward_tickets', { delay: 1.0 });
+            }
+            if (distribution.bonusRewards && distribution.bonusRewards.length > 0) {
+              playSFX('reward_level_up', { delay: 1.5 });
+            }
+            
             // Complete stage in store
             stageActions.completeBattle(currentStage, true, calculation.finalRewards);
             
@@ -169,7 +266,9 @@ export const CombatPage: React.FC = () => {
             }, 5000);
           }
         } else {
-          // Player lost - record defeat
+          // Player lost - play defeat sound and record defeat
+          stopMusic(1.0);
+          playSFX('combat_defeat');
           stageActions.completeBattle(currentStage, false);
         }
       };
@@ -180,18 +279,21 @@ export const CombatPage: React.FC = () => {
 
   // Event handlers
   const handleStartCombat = () => {
+    playSFX('ui_click');
     if (isInitialized && phase === 'waiting') {
       startCombat();
     }
   };
 
   const handlePauseCombat = () => {
+    playSFX('ui_click');
     if (phase === 'active') {
       pauseCombat();
     }
   };
 
   const handleResumeCombat = () => {
+    playSFX('ui_click');
     if (phase === 'paused') {
       resumeCombat();
     }
@@ -216,9 +318,27 @@ export const CombatPage: React.FC = () => {
   const overallStats = getOverallStats();
   const leaderboard = getLeaderboard();
 
+  // Show loading only if we truly can't proceed
+  if (!isInitialized && collection.length === 0 && !activeDeck) {
+    return (
+      <div className="combat-page loading" data-testid="combat-page">
+        <div className="loading-container">
+          <div className="loading-spinner" />
+          <p>No cards available for combat. Please go to Roll page to get cards.</p>
+          <Button 
+            onClick={() => window.location.hash = '#roll'}
+            variant="primary"
+          >
+            Go to Roll Page
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (!isInitialized) {
     return (
-      <div className="combat-page loading">
+      <div className="combat-page loading" data-testid="combat-page">
         <div className="loading-container">
           <div className="loading-spinner" />
           <p>Initializing Combat Arena...</p>
@@ -228,16 +348,39 @@ export const CombatPage: React.FC = () => {
   }
 
   return (
-    <div className="combat-page">
-      {/* Combat Header */}
-      <header className="combat-header">
-        <div className="combat-info">
-          <h1 className="combat-title">
-            {stageData ? `Stage ${currentStage}: ${stageData.name}` : 'Combat Arena'}
-          </h1>
-          <div className="stage-info">
-            {stageData && (
-              <>
+    <div className="combat-page" data-testid="combat-page">
+      {/* Show deck selector if needed */}
+      {showDeckSelector && (
+        <div className="deck-selection-overlay">
+          <div className="deck-selection-container">
+            <DeckSelector
+              currentDeck={activeDeck?.cards || []}
+              maxDeckSize={deckLimit}
+              onDeckConfirmed={handleDeckConfirmed}
+              onCancel={handleCancelDeckSelection}
+              requiredSynergies={stageData?.requiredSynergies || []}
+              stageHints={{
+                enemyType: stageData?.enemyType,
+                recommendedStrategy: stageData?.isBoss ? 'power' : 'balance',
+                difficulty: stageData?.enemyDifficulty
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Combat interface - only shown when deck is selected */}
+      {!showDeckSelector && (
+        <>
+          {/* Combat Header */}
+          <header className="combat-header">
+            <div className="combat-info">
+              <h1 className="combat-title">
+                {stageData ? `Stage ${currentStage}: ${stageData.name}` : 'Combat Arena'}
+              </h1>
+              <div className="stage-info">
+                {stageData && (
+                  <>
                 <span className={`difficulty-badge ${stageData.enemyDifficulty}`}>
                   {stageData.enemyDifficulty.toUpperCase()}
                 </span>
@@ -273,12 +416,42 @@ export const CombatPage: React.FC = () => {
           </div>
         )}
 
+        {/* Deck Management Button */}
+        <div className="deck-management">
+          <Button 
+            onClick={handleOpenDeckSelector}
+            variant="secondary"
+            size="sm"
+          >
+            🃏 Manage Deck
+          </Button>
+          {autoCreatedDeck && (
+            <div className="auto-deck-notice">
+              <span className="notice-icon">ℹ️</span>
+              <span className="notice-text">Using auto-created deck from your cards</span>
+            </div>
+          )}
+        </div>
+
         {/* Combat Controls */}
         <div className="combat-controls-header">
-          {phase === 'waiting' && (
+          {phase === 'waiting' && !isAutoStarting && (
             <Button onClick={handleStartCombat} variant="primary">
               Start Combat
             </Button>
+          )}
+          
+          {phase === 'waiting' && isAutoStarting && (
+            <div className="auto-start-indicator">
+              <div className="auto-start-spinner" />
+              <span>Combat starting automatically in 3 seconds...</span>
+              <Button onClick={() => {
+                setIsAutoStarting(false);
+                handleStartCombat();
+              }} variant="primary" size="small">
+                Start Now
+              </Button>
+            </div>
           )}
           
           {phase === 'active' && (
@@ -494,6 +667,8 @@ export const CombatPage: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

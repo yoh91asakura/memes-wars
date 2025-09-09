@@ -5,6 +5,7 @@ export { Icon } from './Icon';
 export { Input } from './Input';
 export { Spinner } from './Spinner';
 export { Text } from './Text';
+export { PhaseContainer } from './PhaseContainer';
 
 // New TCG Card atoms
 export { CardImage } from './CardImage';
@@ -19,6 +20,7 @@ export type { CardImageProps } from './CardImage';
 export type { StatBadgeProps } from './StatBadge';
 export type { RarityIndicatorProps } from './RarityIndicator';
 export type { EmojiChipProps } from './EmojiChip';
+export type { PhaseContainerProps } from './PhaseContainer';
 
 // Base component props interface
 export interface BaseComponentProps {

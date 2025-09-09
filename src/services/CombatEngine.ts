@@ -19,6 +19,7 @@ import { Deck } from '../models/Deck';
 import { EMOJI_EFFECTS, EmojiEffectsManager } from '../data/emojiEffects';
 import passiveEffectsService, { PassiveActivation, PassiveTriggerEvent } from './PassiveEffectsService';
 import SynergySystem, { ActiveSynergy } from './SynergySystem';
+import EmojiLoader, { EmojiCombatSequence } from './EmojiLoader';
 
 export interface ICombatEngine {
   initialize(playerDeck: Deck, opponentDeck: Deck): void;
@@ -38,6 +39,9 @@ export class CombatEngine implements ICombatEngine {
   
   // Synergy tracking
   private playerSynergies: Map<string, ActiveSynergy[]> = new Map();
+  
+  // Emoji sequences for each player
+  private playerEmojiSequences: Map<string, EmojiCombatSequence> = new Map();
 
   constructor(arena: CombatArena) {
     this.state = this.createInitialState(arena);
@@ -59,6 +63,10 @@ export class CombatEngine implements ICombatEngine {
     // Initialize synergies for both players
     this.initializeSynergies(player1, playerDeck.cards);
     this.initializeSynergies(player2, opponentDeck.cards);
+
+    // Initialize emoji sequences for both players
+    this.initializeEmojiSequences(player1, playerDeck.cards);
+    this.initializeEmojiSequences(player2, opponentDeck.cards);
 
     this.emitEvent('match_started', {
       players: this.state.players.map(p => ({ id: p.id, username: p.username })),
@@ -402,6 +410,69 @@ export class CombatEngine implements ICombatEngine {
     }
   }
 
+  // Initialize emoji sequences for a player based on their deck
+  private initializeEmojiSequences(player: CombatPlayer, cards: any[]): void {
+    try {
+      // Load emojis synchronously for immediate combat initialization
+      EmojiLoader.loadEmojisFromDeck(cards).then(loadedEmojis => {
+        const combatSequence = EmojiLoader.generateProjectileSequence(loadedEmojis);
+        
+        this.playerEmojiSequences.set(player.id, combatSequence);
+        
+        // Get stats for logging
+        const emojiStats = EmojiLoader.getEmojiStats(loadedEmojis);
+        
+        console.log(`Emoji sequence initialized for ${player.id}:`, {
+          totalEmojis: emojiStats.totalEmojis,
+          averageDamage: emojiStats.averageDamage,
+          hasSpecialEffects: emojiStats.hasSpecialEffects,
+          topEmojis: emojiStats.topEmojis.slice(0, 3).map(e => e.emoji)
+        });
+
+        // Emit emoji information
+        this.emitEvent('emojis_loaded', {
+          playerId: player.id,
+          totalEmojis: emojiStats.totalEmojis,
+          averageDamage: emojiStats.averageDamage,
+          specialEffectsCount: combatSequence.specialEffectsCount
+        });
+      }).catch(error => {
+        console.error(`Failed to load emojis for ${player.id}:`, error);
+        
+        // Set default emoji sequence as fallback
+        const defaultEmoji = this.getDefaultLoadedEmoji();
+        this.playerEmojiSequences.set(player.id, {
+          sequence: [defaultEmoji],
+          totalWeight: 1,
+          averageDamage: defaultEmoji.effect.damage,
+          specialEffectsCount: 0
+        });
+      });
+    } catch (error) {
+      console.error(`Failed to initialize emoji sequence for ${player.id}:`, error);
+      
+      // Create fallback sequence
+      const defaultEmoji = EmojiLoader.getRandomEmojiFromSequence({
+        sequence: [],
+        totalWeight: 0,
+        averageDamage: 0,
+        specialEffectsCount: 0
+      });
+      
+      this.playerEmojiSequences.set(player.id, {
+        sequence: [defaultEmoji],
+        totalWeight: 1,
+        averageDamage: defaultEmoji.effect.damage,
+        specialEffectsCount: 0
+      });
+    }
+  }
+
+  // Get the current emoji sequence for a player
+  public getPlayerEmojiSequence(playerId: string): EmojiCombatSequence | null {
+    return this.playerEmojiSequences.get(playerId) || null;
+  }
+
   private startCountdown(onComplete: () => void): void {
     let count = 3;
     const countdownInterval = setInterval(() => {
@@ -497,9 +568,14 @@ export class CombatEngine implements ICombatEngine {
     const target = this.state.players.find(p => p.id !== player.id && p.isAlive);
     if (!target) return;
 
-    // Get random emoji and its effects
-    const emojiChar = this.getRandomEmoji(player.deck.cards);
-    const emojiEffect = EmojiEffectsManager.getEffect(emojiChar);
+    // Get emoji from loaded sequence (real emojis from player's deck)
+    const emojiSequence = this.playerEmojiSequences.get(player.id);
+    const loadedEmoji = emojiSequence 
+      ? EmojiLoader.getRandomEmojiFromSequence(emojiSequence)
+      : this.getDefaultLoadedEmoji();
+    
+    const emojiChar = loadedEmoji.emoji;
+    const emojiEffect = loadedEmoji.effect;
     
     // Calculate direction to target
     const direction = {
@@ -513,9 +589,9 @@ export class CombatEngine implements ICombatEngine {
     direction.x /= length;
     direction.y /= length;
 
-    // Use emoji effect data if available, otherwise defaults
-    const baseSpeed = emojiEffect ? emojiEffect.speed * 60 : 300; // Convert to pixels/sec
-    let damage = emojiEffect ? emojiEffect.damage : 10 + Math.random() * 20;
+    // Use emoji effect data from loaded emoji
+    const baseSpeed = emojiEffect.speed * 60; // Convert to pixels/sec
+    let damage = emojiEffect.damage;
 
     // Apply synergy damage bonuses
     damage = this.applySynergyDamageBonus(player.id, damage);
@@ -595,6 +671,21 @@ export class CombatEngine implements ICombatEngine {
     // Fallback to system emoji pool
     const systemEmojis = EmojiEffectsManager.getAllEmojis();
     return systemEmojis[Math.floor(Math.random() * systemEmojis.length)];
+  }
+
+  private getDefaultLoadedEmoji(): { emoji: string; effect: any } {
+    return {
+      emoji: '💥',
+      effect: {
+        emoji: '💥',
+        damage: 15,
+        speed: 250,
+        trajectory: 'straight' as const,
+        type: 'direct' as const,
+        description: 'Default combat projectile',
+        rarity: 'common' as const
+      }
+    };
   }
 
   private isColliding(projectile: EmojiProjectile, player: CombatPlayer): boolean {

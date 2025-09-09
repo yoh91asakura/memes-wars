@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Auto-Roll System E2E', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the application
-    await page.goto('http://localhost:3002');
+    await page.goto('/');
     
     // Wait for the app to load
     await page.waitForSelector('[data-testid="main-app"]');
@@ -71,7 +71,7 @@ test.describe('Auto-Roll System E2E', () => {
 test.describe('Card Stacking System E2E', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the application
-    await page.goto('http://localhost:3002');
+    await page.goto('/');
     
     // Wait for the app to load
     await page.waitForSelector('[data-testid="main-app"]');

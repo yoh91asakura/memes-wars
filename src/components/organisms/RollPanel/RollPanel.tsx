@@ -12,12 +12,14 @@ import './RollPanel.css';
 
 interface RollPanelProps {
   onRoll?: () => Promise<Card>;
+  disabled?: boolean;
   className?: string;
   testId?: string;
 }
 
 export const RollPanel: React.FC<RollPanelProps> = ({
   onRoll,
+  disabled = false,
   className = '',
   testId,
 }) => {
@@ -29,7 +31,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
   const { isRolling, lastRollResult } = useCardsStore();
 
   const handleRoll = async () => {
-    if (!onRoll || isRolling) return;
+    if (!onRoll || isRolling || disabled) return;
 
     try {
       setShowReveal(false);
@@ -37,11 +39,9 @@ export const RollPanel: React.FC<RollPanelProps> = ({
       
       const newCard = await onRoll();
       
-      // Delay reveal for dramatic effect
-      setTimeout(() => {
-        setRevealCard(newCard);
-        setShowReveal(true);
-      }, 1000);
+      // Immediate reveal for smooth gameplay
+      setRevealCard(newCard);
+      setShowReveal(true);
     } catch (error) {
       console.error('Roll failed:', error);
     }
@@ -134,7 +134,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
             onRoll={handleRoll}
             loading={isRolling}
             rollCount={stats?.totalRolls || 0}
-            disabled={false}
+            disabled={disabled || !onRoll}
             testId="roll-button"
           />
         </div>

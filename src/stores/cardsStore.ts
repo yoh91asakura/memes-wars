@@ -139,8 +139,8 @@ export const useCardsStore = create<CardsStore>()(
             sortBy: 'dateAdded',
             sortOrder: 'desc'
           },
-          viewMode: 'grid',
-          showStacks: false,
+          viewMode: 'stack',
+          showStacks: true,
           
           // Auto Roll State
           autoRollState: {
@@ -235,24 +235,88 @@ export const useCardsStore = create<CardsStore>()(
               selectedCard: null
             });
           },
+
+          // Give starter cards to new players
+          giveStarterCards: async () => {
+            const starterCardIds = [
+              'common-001', // Fire Ember 🔥
+              'common-002', // Water Drop 💧
+              'common-003', // Earth Stone 🪨
+              'common-006', // Doge Classic 🐕
+              'common-011', // Trollface 😈
+              'common-015', // Chad 💪
+              'common-020', // Pepe 🐸
+              'common-025'  // Wojak 😪
+            ];
+
+            try {
+              // Import cards and add them to collection
+              const { commonCards } = await import('../data/cards/common');
+              const starterCards = commonCards.filter(card => 
+                starterCardIds.includes(card.id)
+              );
+              
+              console.log(`Adding ${starterCards.length} starter cards:`, starterCards.map(c => c.name));
+              
+              starterCards.forEach(card => {
+                get().addCard({
+                  ...card, 
+                  id: `starter-${card.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                  addedAt: new Date().toISOString()
+                });
+              });
+              
+              console.log('Starter cards added successfully');
+            } catch (error) {
+              console.error('Failed to load starter cards:', error);
+              
+              // Fallback: create some basic cards manually
+              const fallbackCards = [
+                {
+                  id: `fallback-fire-${Date.now()}`,
+                  name: 'Fire Ember 🔥',
+                  rarity: 2,
+                  luck: 5,
+                  emojis: [{ character: '🔥', damage: 3, speed: 3, trajectory: 'straight' as const, target: 'OPPONENT' as const }],
+                  family: 'ABSTRACT_CONCEPTS' as any,
+                  reference: 'Starter fire card',
+                  stackLevel: 1,
+                  goldReward: 15,
+                  emoji: '🔥',
+                  description: 'A basic fire attack',
+                  addedAt: new Date().toISOString()
+                },
+                {
+                  id: `fallback-water-${Date.now()}`,
+                  name: 'Water Drop 💧',
+                  rarity: 2,
+                  luck: 5,
+                  emojis: [{ character: '💧', damage: 2, speed: 4, trajectory: 'straight' as const, target: 'OPPONENT' as const }],
+                  family: 'ABSTRACT_CONCEPTS' as any,
+                  reference: 'Starter water card',
+                  stackLevel: 1,
+                  goldReward: 15,
+                  emoji: '💧',
+                  description: 'A basic water attack',
+                  addedAt: new Date().toISOString()
+                }
+              ];
+              
+              fallbackCards.forEach(card => {
+                get().addCard(card as any);
+              });
+              
+              console.log('Added fallback starter cards');
+            }
+          },
           
           // Roll Actions
           performSingleRoll: async () => {
             set({ isRolling: true });
             
             try {
-              // Get player stats from the player store (if available)
-              const playerStats = {
-                totalRolls: 0,
-                rollsSinceRare: 0,
-                rollsSinceEpic: 0,
-                rollsSinceLegendary: 0,
-                rollsSinceMythic: 0,
-                rollsSinceCosmic: 0,
-                collectedByRarity: {}
-              };
-              
-              const result = rollService.rollSingle(playerStats);
+              // RollService.rollSingle() takes no parameters (it manages its own pity system)
+              const result = rollService.rollSingle();
               
               // Add to collection
               get().addCard(result.card);
@@ -282,36 +346,28 @@ export const useCardsStore = create<CardsStore>()(
             set({ isRolling: true });
             
             try {
-              const playerStats = {
-                totalRolls: 0,
-                rollsSinceRare: 0,
-                rollsSinceEpic: 0,
-                rollsSinceLegendary: 0,
-                rollsSinceMythic: 0,
-                rollsSinceCosmic: 0,
-                collectedByRarity: {}
-              };
-              
-              const result = rollService.rollTen(playerStats);
+              // RollService.rollMultiple(10) returns RollResult[] directly
+              const results = rollService.rollMultiple(10);
               
               // Add all cards to collection
-              get().addMultipleCards(result.cards.map(r => r.card));
+              get().addMultipleCards(results.map(r => r.card));
               
               // Add to history
               get().addToHistory({
                 id: `roll-${Date.now()}`,
                 timestamp: Date.now(),
-                cards: result.cards,
+                cards: results,
                 type: 'ten',
                 cost: rollConfig.rollCosts.ten
               });
               
+              // Set the last result to the last card rolled
               set({ 
-                lastRollResult: result,
+                lastRollResult: results[results.length - 1],
                 isRolling: false 
               });
               
-              return result;
+              return results;
             } catch (error) {
               set({ isRolling: false });
               throw error;
@@ -322,39 +378,28 @@ export const useCardsStore = create<CardsStore>()(
             set({ isRolling: true });
             
             try {
-              const playerStats = {
-                totalRolls: 0,
-                rollsSinceRare: 0,
-                rollsSinceEpic: 0,
-                rollsSinceLegendary: 0,
-                rollsSinceMythic: 0,
-                rollsSinceCosmic: 0,
-                collectedByRarity: {}
-              };
-              
-              const result = rollService.rollHundred(playerStats);
+              // RollService.rollMultiple(100) returns RollResult[] directly
+              const results = rollService.rollMultiple(100);
               
               // Add all cards to collection
-              get().addMultipleCards(result.cards.map(r => r.card));
-              if (result.bonusCards) {
-                get().addMultipleCards(result.bonusCards);
-              }
+              get().addMultipleCards(results.map(r => r.card));
               
               // Add to history
               get().addToHistory({
                 id: `roll-${Date.now()}`,
                 timestamp: Date.now(),
-                cards: result.cards,
+                cards: results,
                 type: 'hundred',
                 cost: rollConfig.rollCosts.hundred
               });
               
+              // Set the last result to the last card rolled
               set({ 
-                lastRollResult: result,
+                lastRollResult: results[results.length - 1],
                 isRolling: false 
               });
               
-              return result;
+              return results;
             } catch (error) {
               set({ isRolling: false });
               throw error;
@@ -387,7 +432,21 @@ export const useCardsStore = create<CardsStore>()(
             
             // Apply rarity filter
             if (state.filters.rarity !== 'all') {
-              filtered = filtered.filter(card => card.rarity === state.filters.rarity);
+              // Convert rarity names to numbers for filtering
+              const rarityMap: Record<string, number> = {
+                'common': 2,
+                'uncommon': 4,
+                'rare': 10,
+                'epic': 50,
+                'legendary': 200,
+                'mythic': 500,
+                'cosmic': 1000,
+                'divine': 2000,
+                'infinity': 5000
+              };
+              
+              const targetRarity = rarityMap[state.filters.rarity.toLowerCase()] || state.filters.rarity;
+              filtered = filtered.filter(card => card.rarity === targetRarity);
             }
             
             // Apply sorting
@@ -399,8 +458,9 @@ export const useCardsStore = create<CardsStore>()(
                   comparison = a.name.localeCompare(b.name);
                   break;
                 case 'rarity':
-                  const rarityOrder = ['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC', 'COSMIC', 'DIVINE', 'INFINITY'];
-                  comparison = rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+                  // Since rarity is a number (1/X probability), we can sort directly
+                  // Lower numbers = more common = higher probability
+                  comparison = a.rarity - b.rarity;
                   break;
                 case 'power':
                   comparison = (a.attack + a.defense + a.health) - (b.attack + b.defense + b.health);
@@ -455,8 +515,18 @@ export const useCardsStore = create<CardsStore>()(
             return stats;
           },
           
-          getCardsByRarity: (rarity: string) => {
+          getCardsByRarity: (rarity: string | number) => {
             const state = get();
+            if (typeof rarity === 'string') {
+              // Convert string rarity to number
+              const rarityMap: Record<string, number> = {
+                'common': 2, 'uncommon': 4, 'rare': 10, 'epic': 50,
+                'legendary': 200, 'mythic': 500, 'cosmic': 1000,
+                'divine': 2000, 'infinity': 5000
+              };
+              const targetRarity = rarityMap[rarity.toLowerCase()];
+              return state.collection.filter(card => card.rarity === targetRarity);
+            }
             return state.collection.filter(card => card.rarity === rarity);
           },
           
@@ -651,8 +721,8 @@ export const useCardsStore = create<CardsStore>()(
                 sortBy: 'dateAdded',
                 sortOrder: 'desc'
               },
-              viewMode: 'grid',
-              showStacks: false,
+              viewMode: 'stack',
+              showStacks: true,
               isRolling: false,
               lastRollResult: null,
               rollHistory: [],

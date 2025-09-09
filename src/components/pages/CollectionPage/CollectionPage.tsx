@@ -131,7 +131,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   // Empty state
   if (collection.length === 0) {
     return (
-      <div className={`collection-page collection-page--empty ${className}`} data-testid={testId}>
+      <div className={`collection-page collection-page--empty ${className}`} data-testid={testId || 'collection-page'}>
         <div className="collection-page__empty-state">
           <div className="collection-page__empty-icon">
             <Icon emoji="📦" size="2xl" />
@@ -154,7 +154,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   }
   
   return (
-    <div className={`collection-page ${className}`} data-testid={testId}>
+    <div className={`collection-page ${className}`} data-testid={testId || 'collection-page'}>
       {/* Page Header */}
       <div className="collection-page__header">
         <div className="collection-page__title-section">

@@ -67,12 +67,12 @@ export interface TransactionFilter {
   source?: string;
 }
 
-// Roll costs configuration
+// Roll costs configuration - balanced for smooth progression
 const ROLL_COSTS = {
   gold: {
-    single: 100,
-    ten: 900,    // 10% discount
-    hundred: 8000 // 20% discount
+    single: 75,
+    ten: 675,    // 10% discount
+    hundred: 6000 // 20% discount
   },
   tickets: {
     single: 1,
@@ -96,8 +96,8 @@ export const useCurrencyStore = create<CurrencyState>()(
   subscribeWithSelector(
     persist(
       (set, get) => ({
-        // Initial state
-        gold: 1000, // Starting gold
+        // Initial state - balanced for smooth onboarding
+        gold: 1200, // Starting gold (16 rolls worth)
         tickets: 5,  // Starting tickets
         gems: 0,
         
@@ -415,7 +415,24 @@ export const currencyActions = {
     useCurrencyStore.getState().purchaseRoll(type, method),
 
   // Daily bonus
-  claimDaily: () => useCurrencyStore.getState().claimDailyBonus()
+  claimDaily: () => useCurrencyStore.getState().claimDailyBonus(),
+
+  // Game management  
+  resetForNewPlayer: () => {
+    const state = useCurrencyStore.getState();
+    // Reset to initial values for new players
+    useCurrencyStore.setState({
+      gold: 1200,
+      tickets: 5,
+      gems: 0,
+      transactions: [],
+      dailyBonus: {
+        lastClaimed: 0,
+        streak: 0,
+        nextReward: DAILY_REWARDS[0]
+      }
+    });
+  }
 };
 
 export default useCurrencyStore;

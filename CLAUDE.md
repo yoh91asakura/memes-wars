@@ -353,6 +353,21 @@ const focusAreas = [
 ## 🎯 Feature Development Commands
 
 ### Core Spec Kit Scripts
+
+#### 🪟 Windows Usage
+
+**Option 1 : Wrappers .bat (Recommandé)**
+Utiliser directement depuis CMD ou PowerShell dans le dossier `memes-wars/` :
+```cmd
+# Create new feature branch and spec structure
+scripts\create-new-feature.bat "feature description"
+
+# Setup implementation plan for current branch
+scripts\setup-plan.bat
+```
+
+**Option 2 : Git Bash (Direct)**
+Ouvrir **Git Bash** dans le dossier `memes-wars/` :
 ```bash
 # Create new feature branch and spec structure
 ./scripts/create-new-feature.sh "feature description"
@@ -365,6 +380,21 @@ const focusAreas = [
 
 # Update agent context (CLAUDE.md)
 ./scripts/update-agent-context.sh claude
+```
+
+#### 💡 Alternative si Git Bash indisponible
+Si Git Bash n'est pas disponible, utiliser manuellement :
+```bash
+# 1. Créer une nouvelle branche
+git checkout -b 002-feature-name
+
+# 2. Créer le dossier spec
+mkdir -p specs/002-feature-name
+
+# 3. Copier le template
+cp templates/spec-template.md specs/002-feature-name/spec.md
+
+# 4. Éditer le fichier spec.md avec les requirements
 ```
 
 ### Implementation Flow
