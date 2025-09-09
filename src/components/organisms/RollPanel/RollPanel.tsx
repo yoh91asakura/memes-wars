@@ -25,7 +25,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
   const [showReveal, setShowReveal] = useState(false);
   
   // Store hooks
-  const { coins, stats } = usePlayerStore();
+  const { stats } = usePlayerStore();
   const { isRolling, lastRollResult } = useCardsStore();
 
   const handleRoll = async () => {
@@ -69,7 +69,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
           <Icon emoji="🎯" size="md" />
           <div className="roll-panel__stat-content">
             <Text variant="h4" weight="bold" color="primary">
-              {stats?.cardsCollected || 0}
+              {Object.values(stats?.collectedByRarity || {}).reduce((sum, count) => sum + count, 0)}
             </Text>
             <Text variant="caption" color="muted">
               Cards Collected

@@ -170,7 +170,7 @@ interface PassiveIndicatorProps {
 
 const PassiveIndicator: React.FC<PassiveIndicatorProps> = ({ 
   passives, 
-  playerId, 
+  playerId: _playerId, 
   className 
 }) => {
   if (!passives || passives.length === 0) {

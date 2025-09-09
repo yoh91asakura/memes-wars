@@ -1,7 +1,7 @@
 // Stage Info Component - Display current stage information and deck limits
 import React from 'react';
 import styled from 'styled-components';
-import { useCurrentStageData, useDeckSizeLimit } from '../../../stores/stageStore';
+import { useCurrentStageData } from '../../../stores/stageStore';
 
 const StageInfoContainer = styled.div`
   background: rgba(25, 25, 35, 0.9);

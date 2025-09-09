@@ -28,9 +28,7 @@ export const AutoRollControls: React.FC<AutoRollControlsProps> = ({
   const { 
     autoRollState, 
     startAutoRoll, 
-    stopAutoRoll, 
-    pauseAutoRoll, 
-    resumeAutoRoll,
+    stopAutoRoll,
     updateAutoRollSettings 
   } = useCardsStore();
 

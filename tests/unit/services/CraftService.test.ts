@@ -34,11 +34,11 @@ describe('CraftService', () => {
 
   describe('Craft Validation', () => {
     const mockCards: Card[] = [
-      { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [] },
-      { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [] },
-      { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [] },
-      { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [] },
-      { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [] },
+      { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
     ];
 
     it('should validate crafting requirements - success case', () => {
@@ -75,11 +75,11 @@ describe('CraftService', () => {
 
   describe('Crafting Process', () => {
     const mockCards: Card[] = [
-      { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [] },
-      { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [] },
-      { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [] },
-      { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [] },
-      { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [] },
+      { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+      { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
     ];
 
     it('should successfully craft a lucky charm', async () => {
@@ -119,11 +119,11 @@ describe('CraftService', () => {
 
     it('should track active items after crafting consumables', async () => {
       const mockCards: Card[] = [
-        { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [] },
-        { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [] },
-        { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [] },
-        { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [] },
-        { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [] },
+        { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
       ];
 
       const result = await craftService.craft('lucky_charm', mockCards);
@@ -138,11 +138,11 @@ describe('CraftService', () => {
 
     it('should use active items correctly', async () => {
       const mockCards: Card[] = [
-        { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [] },
-        { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [] },
-        { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [] },
-        { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [] },
-        { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [] },
+        { id: '1', name: 'Test Common 1', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '2', name: 'Test Common 2', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '3', name: 'Test Common 3', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '4', name: 'Test Common 4', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
+        { id: '5', name: 'Test Common 5', rarity: 2, luck: 5, emojis: [], family: 'CLASSIC_INTERNET' as any, reference: 'test', stackLevel: 1, goldReward: 10, emoji: '🐵', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
       ];
 
       const craftResult = await craftService.craft('lucky_charm', mockCards);

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useCraftStore } from '../../../stores/craftStore';
 import { useCardsStore } from '../../../stores/cardsStore';
 import { usePlayerStore } from '../../../stores/playerStore';
-import { CraftRecipe } from '../../../services/CraftService';
+// import { CraftRecipe } from '../../../services/CraftService';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Badge } from '../../atoms/Badge';
@@ -23,9 +23,7 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
   
   // Stores
   const {
-    availableRecipes,
     selectedRecipe,
-    activeItems,
     isCrafting,
     initializeCrafting,
     selectRecipe,
@@ -104,9 +102,9 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
           <div className="craft-panel__active-items-grid">
             {activeBoosts.map((boost, index) => (
               <div key={index} className="craft-panel__active-item">
-                <span className="craft-panel__active-item-icon">{boost.icon}</span>
+                <span className="craft-panel__active-item-icon">⚡</span>
                 <div className="craft-panel__active-item-details">
-                  <Text variant="caption" weight="medium">{boost.name}</Text>
+                  <Text variant="caption" weight="medium">{boost.type || 'Active Boost'}</Text>
                   <Text variant="caption" color="muted">
                     {boost.remaining ? `${boost.remaining} uses left` : 'Active'}
                   </Text>
@@ -123,7 +121,7 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
           <Button
             key={category}
             variant={selectedCategory === category ? 'primary' : 'secondary'}
-            size="small"
+            size="sm"
             onClick={() => setSelectedCategory(category)}
             className="craft-panel__category-btn"
           >
@@ -164,10 +162,10 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
                   onClick={() => handleRecipeSelect(recipe.id)}
                 >
                   <div className="craft-panel__recipe-header">
-                    <span className="craft-panel__recipe-icon">{recipe.icon}</span>
+                    <span className="craft-panel__recipe-icon">🔨</span>
                     <Badge 
                       variant={recipe.rarity === 'legendary' ? 'warning' : 'info'}
-                      size="small"
+                      size="sm"
                     >
                       {recipe.rarity}
                     </Badge>
@@ -222,7 +220,7 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
             <div className="craft-panel__selected-recipe">
               <div className="craft-panel__selected-recipe-header">
                 <span className="craft-panel__selected-recipe-icon">
-                  {selectedRecipe.icon}
+                  🔨
                 </span>
                 <div>
                   <Text variant="h5" weight="medium">
@@ -230,7 +228,7 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
                   </Text>
                   <Badge 
                     variant={selectedRecipe.rarity === 'legendary' ? 'warning' : 'info'}
-                    size="small"
+                    size="sm"
                   >
                     {selectedRecipe.rarity}
                   </Badge>
@@ -258,14 +256,14 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
               {/* Additional Info */}
               {selectedRecipe.unique && (
                 <div className="craft-panel__recipe-info">
-                  <Badge variant="warning" size="small">Unique</Badge>
+                  <Badge variant="warning" size="sm">Unique</Badge>
                   <Text variant="caption" color="muted">Can only be crafted once</Text>
                 </div>
               )}
               
               {selectedRecipe.cooldown && (
                 <div className="craft-panel__recipe-info">
-                  <Badge variant="info" size="small">Cooldown</Badge>
+                  <Badge variant="info" size="sm">Cooldown</Badge>
                   <Text variant="caption" color="muted">
                     {Math.floor(selectedRecipe.cooldown / (1000 * 60 * 60))}h cooldown
                   </Text>
@@ -274,7 +272,7 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
               
               {selectedRecipe.playerLevelRequired && (
                 <div className="craft-panel__recipe-info">
-                  <Badge variant="secondary" size="small">Level {selectedRecipe.playerLevelRequired}</Badge>
+                  <Badge variant="secondary" size="sm">Level {selectedRecipe.playerLevelRequired}</Badge>
                   <Text variant="caption" color="muted">Required level</Text>
                 </div>
               )}
@@ -283,7 +281,7 @@ export const CraftPanel: React.FC<CraftPanelProps> = ({
               <div className="craft-panel__craft-action">
                 <Button
                   variant="primary"
-                  size="large"
+                  size="lg"
                   disabled={!canCraftSelected.canCraft || isCrafting}
                   onClick={handleCraft}
                   className="craft-panel__craft-btn"

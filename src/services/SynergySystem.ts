@@ -410,8 +410,8 @@ export class SynergySystem {
   // Analyze single synergy against deck
   private static analyzeSynergy(deck: Card[], synergyType: SynergyType): SynergyAnalysis {
     let currentCount = 0;
-    let triggeringCards: string[] = [];
-    let missingElements: string[] = [];
+    const triggeringCards: string[] = [];
+    const missingElements: string[] = [];
 
     // Check each rule
     for (const rule of synergyType.detectionRules) {

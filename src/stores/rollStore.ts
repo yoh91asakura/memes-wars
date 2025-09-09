@@ -86,7 +86,7 @@ interface RollStore {
   getPityProgress: () => Record<string, { current: number; max: number; percentage: number }>;
 }
 
-const rollService = RollService.getInstance();
+const rollService = new RollService();
 
 const initialStats: RollStats = {
   totalRolls: 0,

@@ -102,14 +102,23 @@ Players engage in fast-paced 30 second to 2 minute gaming sessions where they co
 - **FR-025**: System MUST persist stage progress with completion status, best performance metrics, and unlock achievements
 
 #### Economy & Resource Management
-- **FR-026**: System MUST manage multiple currency types (gold, gems) with crafting integration and reward distribution
-- **FR-027**: System MUST track comprehensive player statistics including crafting metrics, synergy usage, and passive ability performance
-- **FR-028**: System MUST provide resource balance validation preventing exploitative crafting loops or economy breaking
+- **FR-026**: System MUST manage multiple currency types (gold, tickets, gems) with automatic reward distribution and transaction tracking
+- **FR-027**: System MUST calculate combat rewards based on performance (victory, perfect health, speed bonuses) with stage difficulty scaling
+- **FR-028**: System MUST integrate currency economy with roll system (gold/tickets for card purchases) and stage progression rewards
+- **FR-029**: System MUST track comprehensive player statistics including crafting metrics, synergy usage, and passive ability performance
+- **FR-030**: System MUST provide resource balance validation preventing exploitative crafting loops or economy breaking
+
+#### AI & Combat Integration
+- **FR-031**: System MUST generate AI opponents dynamically based on stage data with appropriate difficulty scaling and card compositions
+- **FR-032**: System MUST create AI behavior profiles (aggressiveness, accuracy, reaction time) matching stage difficulty requirements
+- **FR-033**: System MUST validate AI opponent balance against player deck power level to ensure fair combat encounters
+- **FR-034**: System MUST integrate stage progression with combat outcomes, automatically advancing players upon victory
+- **FR-035**: System MUST display real-time currency updates and reward notifications during and after combat encounters
 
 #### Session Design & Performance
-- **FR-029**: System MUST support quick gaming sessions lasting 30 seconds to 2 minutes per complete cycle with enhanced automation features
-- **FR-030**: System MUST provide immediate feedback through visual indicators, progress notifications, and real-time stat updates
-- **FR-031**: System MUST persist all player progress including card collection, crafted items, stage progress, synergy data, and passive ability statistics
+- **FR-036**: System MUST support quick gaming sessions lasting 30 seconds to 2 minutes per complete cycle with enhanced automation features
+- **FR-037**: System MUST provide immediate feedback through visual indicators, progress notifications, and real-time stat updates
+- **FR-038**: System MUST persist all player progress including card collection, crafted items, stage progress, synergy data, and passive ability statistics
 
 ### Key Entities *(include if feature involves data)*
 
@@ -123,8 +132,12 @@ Players engage in fast-paced 30 second to 2 minute gaming sessions where they co
 - **PassiveEffect**: Card ability system with trigger types (battle start, low HP, high combo, periodic), effect applications, cooldown management, and proc tracking integrated with combat engine
 - **Combat**: Enhanced automated battle instance with passive ability processing, synergy bonus integration, projectile physics, effect applications, and frame-based calculations maintaining 30s-2min engagement
 - **Player Progress**: Comprehensive progression tracking including card collection, crafted item history, stage completion, synergy usage statistics, passive ability performance, and currency management
-- **Economy**: Multi-currency system (gold, gems) with crafting integration, resource conversion rates, balance validation, and reward distribution based on stage performance and combat results
+- **Economy**: Multi-currency system (gold, tickets, gems) with automatic reward distribution, transaction tracking, daily bonuses, and integration with roll/combat systems
 - **AutoRoll**: Automated rolling system with batch processing, stop-on-rarity conditions, animation controls, and pity system integration for enhanced user experience
+- **CurrencyTransaction**: Transaction record with timestamp, type (gain/spend), amount, source, and balance tracking for complete economic transparency
+- **RewardDistribution**: Combat reward calculation including base rewards, performance bonuses, achievements, unlocks, and bonus cards with automatic currency distribution
+- **AIOpponent**: Dynamic AI adversary with generated deck, behavior profile, difficulty scaling, and power balancing based on stage requirements and player progression
+- **StageRewards**: Stage completion rewards including gold, tickets, bonus items, and special unlocks with performance-based multipliers and difficulty scaling
 
 ---
 

@@ -2,15 +2,18 @@
 // This file provides a unified interface to both Card models for compatibility
 
 // Primary exports from unified Card model
-export {
+export type {
   Card,
+  CardEffect,
+  EmojiAttack,
+  PassiveAbility
+} from './unified/Card';
+
+export {
   CardRarity,
   MemeFamily,
   EffectType,
   TriggerType,
-  CardEffect,
-  EmojiAttack,
-  PassiveAbility,
   CardValidator,
   CardUtils
 } from './unified/Card';

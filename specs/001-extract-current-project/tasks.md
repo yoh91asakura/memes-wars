@@ -1,28 +1,33 @@
-# Tasks: Memes Wars Advanced Feature Optimization & Polish
+# Tasks: Memes Wars Core Game Loop Finalization & Polish
 
-**Current Status**: Core implementation COMPLETE - Advanced systems fully implemented
-**Focus**: Performance optimization, balance refinement, and feature enhancement
-**Prerequisites**: All major systems implemented ✓ (CraftService, PassiveEffects, SynergySystem, etc.)
+**Current Status**: Core Game Loop COMPLETE ✅ - All systems integrated and functional
+**Focus**: Final polish, integration completion, and advanced feature optimization
+**Prerequisites**: Core game loop implemented ✓ (RewardService, AIMatchmaking, CurrencyStore, Stage Integration)
 
 ## Implementation Status Review
 ```
-✅ COMPLETED SYSTEMS:
-   → Core Game Loop: Roll → Equip → Battle → Reward
+✅ COMPLETED CORE GAME LOOP:
+   → Roll → Equip → Battle → Reward → Repeat (FULLY FUNCTIONAL)
+   → RewardService: Performance-based reward calculation & distribution
+   → AIMatchmakingService: Dynamic AI opponent generation per stage
+   → CurrencyStore: Gold/tickets/gems economy with transaction tracking
+   → Stage Integration: 50+ stages with automatic progression
+   → Combat-Rewards Connection: Seamless flow between combat and rewards
+   → UI Integration: Currency display, rewards modal, stage progression
+   
+✅ COMPLETED ADVANCED SYSTEMS:
    → Advanced Crafting: 10+ recipes with constraints and cooldowns  
    → Synergy Detection: 8 synergy types with real-time calculation
    → Passive Effects: Trigger-based abilities with combat integration
    → Auto-Roll System: Batch processing with stop conditions
-   → Stage Progression: Boss encounters with unlock requirements
-   → Multi-Currency Economy: Gold, gems, resource conversion
    → Complete UI Components: CraftPanel, SynergyPanel, StageSelector
    → Comprehensive Testing: Unit tests and E2E coverage
    
-🎯 FOCUS AREAS (Phase 4 - Optimization):
-   → Performance: 60fps combat, memory optimization
-   → Balance: Statistical validation, drop rate tuning
-   → Polish: Advanced UI features, analytics integration
-   → Extensibility: Plugin systems, mod support preparation
-   → Quality: Bug fixes, edge case handling, error recovery
+🎯 FOCUS AREAS (Phase 3.5 - Core Loop Polish):
+   → Final integration: Deck validation, real emoji loading
+   → User experience: Smooth transitions, feedback animations
+   → Save persistence: Progress saving between sessions
+   → Balance tuning: Reward rates, stage difficulty
 ```
 
 ## Format: `[ID] [P?] Description`
@@ -34,35 +39,52 @@
 - All game code in `src/` directory following atomic design pattern
 - Tests in `tests/unit/` and `tests/e2e/`
 
+## Phase 3.5: Core Game Loop Finalization (NEW - PRIORITY)
+- [x] **T001** ✅ Core reward service implementation in `src/services/RewardService.ts`
+- [x] **T002** ✅ AI matchmaking service for dynamic opponents in `src/services/AIMatchmakingService.ts`
+- [x] **T003** ✅ Currency store for economy management in `src/stores/currencyStore.ts`
+- [x] **T004** ✅ Stage progression integration in `src/components/pages/CombatPage/CombatPage.tsx`
+- [x] **T005** ✅ Combat-to-rewards flow connection with automatic progression
+- [x] **T006** ✅ Currency display and rewards modal in combat UI
+- [ ] **T007** [P] Deck validation and selection interface before combat in `src/components/organisms/DeckSelector/`
+- [ ] **T008** [P] Real emoji loading from player deck cards into combat engine
+- [ ] **T009** [P] Automatic combat initialization after deck selection
+- [ ] **T010** [P] Save game persistence for currencies and stage progress
+- [ ] **T011** [P] Transition animations between Roll→Equip→Battle→Reward phases
+- [ ] **T012** [P] Sound effects and audio feedback for combat and rewards
+- [ ] **T013** [P] Tutorial/onboarding flow for new players
+- [ ] **T014** [P] Balance tuning: stage difficulty, reward rates, currency costs
+- [ ] **T015** [P] Achievement system integration with combat victories
+
 ## Phase 4.1: Performance Optimization & Monitoring
-- [ ] **T001** Combat engine performance profiling and 60fps guarantee in `src/services/CombatEngine.ts`
-- [ ] **T002** [P] Memory usage optimization for large card collections in stores (`src/stores/*`)
-- [ ] **T003** [P] Synergy calculation performance optimization for 15+ card decks in `src/services/SynergySystem.ts`
-- [ ] **T004** [P] Passive effects processing optimization for 50+ concurrent effects in `src/services/PassiveEffectsService.ts`
-- [ ] **T005** [P] Auto-roll batch processing performance tuning in `src/components/molecules/AutoRollControls/`
+- [ ] **T016** Combat engine performance profiling and 60fps guarantee in `src/services/CombatEngine.ts`
+- [ ] **T017** [P] Memory usage optimization for large card collections in stores (`src/stores/*`)
+- [ ] **T018** [P] Synergy calculation performance optimization for 15+ card decks in `src/services/SynergySystem.ts`
+- [ ] **T019** [P] Passive effects processing optimization for 50+ concurrent effects in `src/services/PassiveEffectsService.ts`
+- [ ] **T020** [P] Auto-roll batch processing performance tuning in `src/components/molecules/AutoRollControls/`
 
 ## Phase 4.2: Game Balance & Statistical Validation
-- [ ] **T006** [P] Comprehensive drop rate statistical analysis and validation in `tests/unit/services/DropRateValidation.test.ts`
-- [ ] **T007** [P] Pity system balance verification across 100,000+ roll simulations in `tests/unit/services/PitySystemBalance.test.ts`
-- [ ] **T008** [P] Synergy power level analysis and balance adjustments in `tests/unit/services/SynergyBalance.test.ts`
-- [ ] **T009** [P] Combat duration analysis ensuring 30s-2min engagement in `tests/e2e/combat-duration-analysis.spec.ts`
-- [ ] **T010** [P] Passive effect balance validation preventing overpowered combinations in `tests/unit/services/PassiveEffectBalance.test.ts`
-- [ ] **T011** [P] Economic balance analysis preventing crafting exploits in `tests/unit/services/EconomicBalance.test.ts`
+- [ ] **T021** [P] Comprehensive drop rate statistical analysis and validation in `tests/unit/services/DropRateValidation.test.ts`
+- [ ] **T022** [P] Pity system balance verification across 100,000+ roll simulations in `tests/unit/services/PitySystemBalance.test.ts`
+- [ ] **T023** [P] Synergy power level analysis and balance adjustments in `tests/unit/services/SynergyBalance.test.ts`
+- [ ] **T024** [P] Combat duration analysis ensuring 30s-2min engagement in `tests/e2e/combat-duration-analysis.spec.ts`
+- [ ] **T025** [P] Passive effect balance validation preventing overpowered combinations in `tests/unit/services/PassiveEffectBalance.test.ts`
+- [ ] **T026** [P] Economic balance analysis preventing crafting exploits in `tests/unit/services/EconomicBalance.test.ts`
 
 ## Phase 4.3: Advanced Feature Enhancement
-- [ ] **T012** [P] Advanced auto-roll features: smart stopping, rarity targeting in `src/components/molecules/AutoRollControls/`
-- [ ] **T013** [P] Synergy recommendation engine enhancement in `src/services/SynergySystem.ts`
-- [ ] **T014** [P] Passive effect visual indicators and combat feedback in `src/components/molecules/PassiveIndicator/`
-- [ ] **T015** [P] Crafting queue system for batch crafting in `src/services/CraftService.ts`
-- [ ] **T016** [P] Stage difficulty scaling algorithm refinement in `src/data/stages.ts`
+- [ ] **T027** [P] Advanced auto-roll features: smart stopping, rarity targeting in `src/components/molecules/AutoRollControls/`
+- [ ] **T028** [P] Synergy recommendation engine enhancement in `src/services/SynergySystem.ts`
+- [ ] **T029** [P] Passive effect visual indicators and combat feedback in `src/components/molecules/PassiveIndicator/`
+- [ ] **T030** [P] Crafting queue system for batch crafting in `src/services/CraftService.ts`
+- [ ] **T031** [P] Stage difficulty scaling algorithm refinement in `src/data/stages.ts`
 
-## Phase 4.4: User Experience & Interface Polish
-- [ ] **T017** [P] Advanced synergy visualization with real-time strength meters in `src/components/organisms/SynergyPanel/`
-- [ ] **T018** [P] Crafting success/failure animations and feedback in `src/components/organisms/CraftPanel/`
-- [ ] **T019** [P] Stage progression celebration and unlock animations in `src/components/organisms/StageSelector/`
-- [ ] **T020** [P] Enhanced combat visual effects for passive ability triggers in combat UI
-- [ ] **T021** [P] Deck optimization suggestions and automated deck building in `src/components/pages/CraftPage/`
-- [ ] **T022** [P] Achievement system integration with crafting and synergy milestones
+## Phase 4.4: User Experience & Interface Polish  
+- [ ] **T032** [P] Advanced synergy visualization with real-time strength meters in `src/components/organisms/SynergyPanel/`
+- [ ] **T033** [P] Crafting success/failure animations and feedback in `src/components/organisms/CraftPanel/`
+- [ ] **T034** [P] Stage progression celebration and unlock animations in `src/components/organisms/StageSelector/`
+- [ ] **T035** [P] Enhanced combat visual effects for passive ability triggers in combat UI
+- [ ] **T036** [P] Deck optimization suggestions and automated deck building in `src/components/pages/CraftPage/`
+- [ ] **T037** [P] Achievement system integration with crafting and synergy milestones
 
 ## Phase 4.5: Analytics & Monitoring Integration
 - [ ] **T023** [P] Player behavior analytics for synergy preference tracking in `src/services/AnalyticsService.ts`
@@ -103,17 +125,17 @@
 
 ## Dependencies
 ```
-Performance Optimization (T001-T005)
+✅ Phase 3.5: Core Game Loop Finalization (T001-T015) [COMPLETED T001-T006, REMAINING T007-T015]
   ↓
-Balance Validation (T006-T011) [Statistical Analysis]
+Phase 4.1: Performance Optimization (T016-T020)
   ↓
-Advanced Features (T012-T016) → UX Polish (T017-T022) [Parallel]
+Phase 4.2: Balance Validation (T021-T026) [Statistical Analysis]
   ↓
-Analytics & Monitoring (T023-T027)
+Phase 4.3: Advanced Features (T027-T031) → Phase 4.4: UX Polish (T032-T037) [Parallel]
   ↓
-Quality Assurance (T028-T032) → Advanced Testing (T033-T037) [Parallel]
+Phase 4.5+: Analytics & Monitoring (T038+)
   ↓
-Documentation (T038-T042) → Future-Proofing (T043-T049) [Parallel]
+Quality Assurance & Testing → Documentation & Future-Proofing [Parallel]
 ```
 
 ## Parallel Execution Examples

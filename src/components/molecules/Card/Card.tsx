@@ -77,7 +77,7 @@ const CardComponent: React.FC<CardProps> = ({
   variant = 'tcg',
   showStats = true,
   showInventory = true,
-  showAbility = true,
+  showAbility: _showAbility,
   onClick,
   className = '',
   testId,

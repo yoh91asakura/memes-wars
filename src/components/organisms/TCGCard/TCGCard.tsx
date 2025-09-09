@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardUtils } from '../../../models/Card';
+import { Card, CardUtils } from '../../../models';
 import { CardFrame } from '../../molecules/CardFrame';
 import { CardHeader } from '../../molecules/CardHeader';
 import { CardFooter } from '../../molecules/CardFooter';

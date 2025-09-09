@@ -230,8 +230,8 @@ export class ProjectileAnimations {
     damping: number = 0.8
   ): Position[] {
     const trajectory: Position[] = [{ ...position }];
-    let currentPos = { ...position };
-    let currentVel = { ...velocity };
+    const currentPos = { ...position };
+    const currentVel = { ...velocity };
     
     const timeStep = 1 / 60; // 60 FPS
     const maxSteps = bounceCount * 120; // Max 2 seconds per bounce

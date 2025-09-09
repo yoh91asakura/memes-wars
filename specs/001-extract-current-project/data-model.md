@@ -644,4 +644,188 @@ DECK_CHANGE → RULE_EVALUATION → SYNERGY_CALCULATION → BONUS_APPLICATION �
 CARD_ADD → FAMILY_CHECK → STRENGTH_CALC → ARCHETYPE_UPDATE → RECOMMENDATIONS
 ```
 
-This enhanced data model provides the foundation for implementing all advanced functional requirements including crafting systems, synergy detection, passive abilities, and automated gameplay features while maintaining type safety, performance optimization, and clear relationships between all game entities. The model supports real-time calculations, persistent state management, and extensible game mechanics for future feature expansion.
+## NEW: Core Game Loop Entities (Phase 3.5)
+
+### CurrencyState
+Complete economy management with multi-currency support and transaction tracking.
+
+```typescript
+interface CurrencyState {
+  // Primary currencies
+  gold: number;                     // Primary currency for rolls and purchases
+  tickets: number;                  // Combat rewards for rolls
+  gems?: number;                    // Premium currency
+  
+  // Transaction history
+  transactions: CurrencyTransaction[];
+  
+  // Daily rewards system
+  dailyBonus: {
+    lastClaimed: number;            // Timestamp of last claim
+    streak: number;                 // Consecutive days
+    nextReward: DailyReward;        // Upcoming reward
+  };
+  
+  // Roll economy integration
+  canAffordRoll: (type: 'single' | 'ten' | 'hundred', method: 'gold' | 'tickets') => boolean;
+  getRollCost: (type: 'single' | 'ten' | 'hundred', method: 'gold' | 'tickets') => number;
+  purchaseRoll: (type: 'single' | 'ten' | 'hundred', method: 'gold' | 'tickets') => boolean;
+}
+
+interface CurrencyTransaction {
+  id: string;
+  timestamp: number;
+  type: 'gain' | 'spend';
+  currency: 'gold' | 'tickets' | 'gems';
+  amount: number;
+  source: string;                   // "Combat Victory", "Daily Bonus", "Roll Purchase"
+  balance: number;                  // Balance after transaction
+}
+
+interface DailyReward {
+  gold: number;
+  tickets: number;
+  gems?: number;
+  bonus?: string;                   // Special rewards like "Free rare card"
+}
+```
+
+### RewardDistribution
+Post-combat reward calculation and distribution system.
+
+```typescript
+interface RewardDistribution {
+  gold: number;                     // Gold earned
+  tickets: number;                  // Tickets earned
+  experience: number;               // XP gained
+  bonusCards?: Card[];              // Special card rewards
+  achievements?: string[];          // Unlocked achievements
+  unlocks?: string[];               // New features unlocked
+}
+
+interface CombatResult {
+  victory: boolean;
+  stageId: number;
+  playerDamage: number;
+  enemyDamage: number;
+  combatDuration: number;
+  perfectVictory?: boolean;         // No damage taken (1.5x multiplier)
+  speedBonus?: boolean;             // Completed quickly (1.25x multiplier)
+}
+
+interface RewardCalculation {
+  baseRewards: StageRewards;
+  bonusMultipliers: {
+    perfect: number;                // 1.5 for perfect victory
+    speed: number;                  // 1.25 for speed bonus
+    difficulty: number;             // Based on stage
+    consecutive: number;            // Win streak bonus
+  };
+  finalRewards: StageRewards;
+  totalExperience: number;
+}
+```
+
+### AIOpponent
+Dynamic AI adversary generation with stage-appropriate difficulty.
+
+```typescript
+interface AIOpponent {
+  id: string;
+  name: string;                     // "Elemental Mage", "Stone Guardian"
+  deck: Deck;                       // Generated deck with appropriate cards
+  difficulty: 'easy' | 'medium' | 'hard' | 'boss';
+  behavior: AIBehavior;
+  health: number;
+  maxHealth: number;
+}
+
+interface AIBehavior {
+  aggressiveness: number;           // 0-1 scale for attack frequency
+  accuracyBonus: number;            // -0.2 to +0.3 accuracy modifier
+  reactionTime: number;             // Milliseconds between actions
+  emojiPreference: string[];        // Preferred emojis to use
+  specialTactics?: string[];        // "focus_fire", "evasive_maneuvers"
+}
+
+interface AIDeckTemplate {
+  name: string;
+  emojis: string[];                 // Available emoji pool
+  rarityDistribution: {
+    common: number;                 // 0.9 for easy, 0.1 for boss
+    rare: number;
+    epic: number;
+    legendary?: number;
+  };
+  synergies?: string[];             // Preferred synergy types
+  theme: string;                    // "elemental", "defensive", "chaos"
+}
+```
+
+### StageRewards
+Enhanced stage completion rewards with performance scaling.
+
+```typescript
+interface StageRewards {
+  gold: number;                     // Base gold reward
+  tickets: number;                  // Base ticket reward
+  bonusRewards: string[];           // Special rewards array
+}
+
+interface Stage {
+  id: number;
+  name: string;                     // "First Meme", "Stone Guardian"
+  description: string;              // Flavor text
+  
+  // Enemy configuration
+  enemyHp: number;                  // Scaled with stage progression
+  enemyEmojis: string[];            // Available emoji attacks
+  enemyAttackSpeed: number;         // Attack frequency
+  enemyDifficulty: 'easy' | 'medium' | 'hard' | 'boss';
+  
+  // Rewards
+  goldReward: number;
+  ticketsReward: number;
+  bonusRewards?: string[];          // "rare_card_guarantee", "power_crystal"
+  
+  // Progression
+  unlockRequirement?: {
+    previousStage?: number;
+    playerLevel?: number;
+    cardsCollected?: number;
+  };
+  
+  // Deck constraints
+  deckSizeLimit: number;            // 3→4→5→6 progression
+  
+  // Special properties
+  isBoss: boolean;
+  isSpecial: boolean;
+  specialRules?: string[];          // "enemy_heals_over_time", "reflects_projectiles"
+  
+  // Visual
+  background: string;
+  theme: string;
+}
+```
+
+## Enhanced Data Relationships
+
+### Core Game Loop Flow
+- **Player** triggers **Combat** → **AIMatchmaking** generates **AIOpponent** based on **Stage**
+- **Combat** completion → **RewardService** calculates **RewardDistribution** based on **CombatResult**
+- **RewardDistribution** → **CurrencyStore** updates **gold/tickets** with **CurrencyTransaction**
+- **Stage** completion → Auto-advance to next **Stage** if unlocked
+- **Currency** enables **Roll** system → **Card** acquisition → **Deck** building → repeat
+
+### Economy Integration
+- **CombatResult** + **Stage** → **RewardCalculation** → **CurrencyTransaction**
+- **Currency** + **RollCosts** → **RollSystem** → **Card** acquisition
+- **DailyBonus** → **CurrencyState** → sustained engagement
+
+### AI Matchmaking Flow
+- **Stage** + **AIDeckTemplate** → **AIOpponent** generation
+- **AIBehavior** + **difficulty** → appropriate challenge level
+- **Player deck power** vs **AI deck power** → balanced encounters
+
+This enhanced data model now includes all the core game loop entities that enable the complete Roll→Equip→Battle→Reward→Repeat cycle with automatic progression, dynamic AI opponents, performance-based rewards, and integrated economy management.

@@ -36,7 +36,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
   className = ''
 }) => {
   // Game state
-  const { deckService, validateDeck, saveDeck } = useGame();
+  const { deckService, saveDeck } = useGame();
   
   // Deck builder state
   const [currentDeck, setCurrentDeck] = useState<Deck | null>(initialDeck || null);
@@ -59,7 +59,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
   });
 
   // UI state
-  const [activeTab, setActiveTab] = useState<'collection' | 'deck'>('collection');
+  const [_activeTab, _setActiveTab] = useState<'collection' | 'deck'>('collection');
   const [isLoading, setIsLoading] = useState(false);
   const [showStats, setShowStats] = useState(true);
 
@@ -266,10 +266,10 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
         </div>
 
         <div className="deck-actions">
-          <Button onClick={clearDeck} variant="secondary" size="small">
+          <Button onClick={clearDeck} variant="secondary" size="sm">
             Clear Deck
           </Button>
-          <Button onClick={() => optimizeDeck('balance')} variant="secondary" size="small">
+          <Button onClick={() => optimizeDeck('balance')} variant="secondary" size="sm">
             Optimize
           </Button>
           <Button
@@ -280,7 +280,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
             Save Deck
           </Button>
           {onDeckCancel && (
-            <Button onClick={onDeckCancel} variant="danger" size="small">
+            <Button onClick={onDeckCancel} variant="danger" size="sm">
               Cancel
             </Button>
           )}

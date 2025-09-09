@@ -587,7 +587,7 @@ export class GameStateService {
   private startPerformanceMonitoring(): void {
     let frameCount = 0;
     let lastTime = performance.now();
-    let fpsValues: number[] = [];
+    const fpsValues: number[] = [];
 
     const monitor = () => {
       const currentTime = performance.now();

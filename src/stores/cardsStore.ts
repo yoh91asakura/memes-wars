@@ -124,7 +124,7 @@ export interface CardsStore {
   reset: () => void;
 }
 
-const rollService = RollService.getInstance();
+const rollService = new RollService();
 
 export const useCardsStore = create<CardsStore>()(
   persist(

@@ -12,13 +12,16 @@ export enum CardRarity {
 }
 
 export enum MemeFamily {
-  CLASSIC_INTERNET = 'classic_internet',
-  MEME_FORMATS = 'meme_formats',
-  MYTHOLOGY = 'mythology',
-  HISTORICAL_FIGURES = 'historical_figures',
-  ANIMALS = 'animals',
-  GAMING_ARCHETYPES = 'gaming_archetypes',
-  LIFE_SITUATIONS = 'life_situations'
+  CLASSIC_INTERNET = 'CLASSIC_INTERNET',
+  MEME_FORMATS = 'MEME_FORMATS',
+  MYTHOLOGY = 'MYTHOLOGY',
+  HISTORICAL_FIGURES = 'HISTORICAL_FIGURES',
+  ANIMALS = 'ANIMALS',
+  ABSTRACT_CONCEPTS = 'ABSTRACT_CONCEPTS',
+  EMOTIONS_REACTIONS = 'EMOTIONS_REACTIONS',
+  INTERNET_CULTURE = 'INTERNET_CULTURE',
+  GAMING_ARCHETYPES = 'GAMING_ARCHETYPES',
+  LIFE_SITUATIONS = 'LIFE_SITUATIONS'
 }
 
 // Special effect types that can proc during combat
@@ -45,11 +48,11 @@ export enum TriggerType {
   RANDOM = 'RANDOM',                    // Random proc during battle
   ON_HIT = 'ON_HIT',                   // When this card's emoji hits opponent
   ON_DAMAGE = 'ON_DAMAGE',             // When player takes damage
-  PERIODIC = 'periodic',               // Every X seconds
-  BATTLE_START = 'battle_start',       // At beginning of combat
+  PERIODIC = 'PERIODIC',               // Every X seconds
+  BATTLE_START = 'BATTLE_START',       // At beginning of combat
   BATTLE_END = 'BATTLE_END',           // At end of combat
-  LOW_HP = 'low_hp',                   // When HP below threshold
-  HIGH_COMBO = 'high_combo',           // After multiple hits
+  LOW_HP = 'LOW_HP',                   // When HP below threshold
+  HIGH_COMBO = 'HIGH_COMBO',           // After multiple hits
   FAMILY_SYNERGY = 'FAMILY_SYNERGY'    // When other family cards present
 }
 
@@ -88,7 +91,7 @@ export interface Card {
   luck: number;                  // Luck stat affecting rewards and effects
   emojis: string[] | EmojiAttack[]; // Combat projectiles - support both formats
   family: MemeFamily;            // Thematic classification for synergies
-  reference?: string;            // Specific pop culture reference
+  reference: string;             // Specific pop culture reference
   
   // === COMPATIBILITY WITH ORIGINAL MODEL ===
   memeFamily?: MemeFamily;       // Legacy property name
@@ -102,7 +105,7 @@ export interface Card {
   goldReward: number;            // Gold earned when rolled
   
   // === DISPLAY ===
-  emoji?: string;                // Primary emoji for card display
+  emoji: string;                 // Primary emoji for card display
   flavor?: string;               // Humorous description
   description?: string;          // Card description
   imageUrl?: string;             // Card artwork
@@ -114,8 +117,8 @@ export interface Card {
   unlockStage?: number;         // When card becomes available
   
   // === METADATA ===
-  createdAt?: string;           // When card was created
-  updatedAt?: string;           // Last update time
+  createdAt: string;            // When card was created
+  updatedAt: string;            // Last update time
   addedAt?: string;             // When added to collection
 }
 

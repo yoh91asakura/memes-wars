@@ -3,6 +3,7 @@ import { MainLayout } from './components/templates/MainLayout/MainLayout';
 import { RollPage } from './components/pages/RollPage/RollPage';
 import { CollectionPage } from './components/pages/CollectionPage/CollectionPage';
 import { CraftPage } from './components/pages/CraftPage/CraftPage';
+import { CombatPage } from './components/pages/CombatPage/CombatPage';
 import { Text } from './components/atoms/Text';
 import './App.css';
 
@@ -24,16 +25,7 @@ function App() {
       case 'craft':
         return <CraftPage testId="craft-page" />;
       case 'battle':
-        return (
-          <div className="page-placeholder">
-            <Text variant="h3" color="inherit" align="center">
-              ⚔️ Battle Arena
-            </Text>
-            <Text variant="body" color="muted" align="center">
-              Epic meme card battles await! (Coming Soon)
-            </Text>
-          </div>
-        );
+        return <CombatPage />;
       default:
         return <RollPage testId="roll-page" />;
     }
