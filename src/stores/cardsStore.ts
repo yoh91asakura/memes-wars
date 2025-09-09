@@ -95,6 +95,7 @@ export interface CardsStore {
   setViewMode: (mode: 'grid' | 'list' | 'stack') => void;
   toggleShowStacks: () => void;
   clearCollection: () => void;
+  giveStarterCards: () => Promise<void>;
   
   // Roll Actions
   performSingleRoll: () => Promise<RollResult>;
@@ -749,3 +750,8 @@ export const useCardsStore = create<CardsStore>()(
     }
   )
 );
+
+// Export for debugging in development
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  (window as any).useCardsStore = useCardsStore;
+}

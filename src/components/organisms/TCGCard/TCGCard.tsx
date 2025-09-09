@@ -73,25 +73,6 @@ export const TCGCard: React.FC<TCGCardProps> = ({
     };
   };
 
-  const getLayoutRatios = () => {
-    const hasPassives = card.cardEffects && card.cardEffects.length > 0;
-    switch (variant) {
-      case 'battle':
-        return hasPassives 
-          ? { header: 10, image: 68, emojis: 7, passives: 10, footer: 5 }
-          : { header: 12, image: 75, emojis: 8, footer: 5 };
-      case 'detail':
-        return hasPassives 
-          ? { header: 8, image: 70, emojis: 6, passives: 12, footer: 4 }
-          : { header: 10, image: 80, emojis: 6, footer: 4 };
-      default: // collection
-        return hasPassives 
-          ? { header: 8, image: 70, emojis: 6, passives: 12, footer: 4 }
-          : { header: 10, image: 78, emojis: 7, footer: 5 };
-    }
-  };
-
-  const ratios = getLayoutRatios();
 
   return (
     <motion.div
@@ -109,10 +90,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
           className={styles.cardFrame}
         >
         {/* Header Section - Name & Rarity */}
-        <div 
-          className={styles.headerSection}
-          style={{ minHeight: `${ratios.header}%` }}
-        >
+        <div className={styles.headerSection}>
           <CardHeader
             name={card.name}
             rarity={card.rarity}
@@ -122,10 +100,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
         </div>
 
         {/* Main Image Section */}
-        <div 
-          className={styles.imageSection}
-          style={{ minHeight: `${ratios.image}%` }}
-        >
+        <div className={styles.imageSection}>
           {!imageUrl && card.emoji ? (
             <div className={styles.emojiDisplay}>
               <span className={styles.mainEmoji}>{card.emoji}</span>
@@ -143,10 +118,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
 
         {/* Emoji Inventory Section */}
         {showEmojis && card.emojis && card.emojis.length > 0 && (
-          <div 
-            className={styles.emojiSection}
-            style={{ minHeight: `${ratios.emojis}%` }}
-          >
+          <div className={styles.emojiSection}>
             <EmojiInventory
               emojis={card.emojis}
               maxDisplay={size === 'small' ? 4 : size === 'large' ? 8 : 6}
@@ -159,10 +131,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
 
         {/* Passive Abilities Section */}
         {card.cardEffects && card.cardEffects.length > 0 && (
-          <div 
-            className={styles.passivesSection}
-            style={{ minHeight: `${ratios.passives || 0}%` }}
-          >
+          <div className={styles.passivesSection}>
             <PassiveAbilities
               cardEffects={card.cardEffects}
               size={size}
@@ -173,10 +142,7 @@ export const TCGCard: React.FC<TCGCardProps> = ({
 
         {/* Footer Section - Stats */}
         {showStats && (
-          <div 
-            className={styles.footerSection}
-            style={{ minHeight: `${ratios.footer}%` }}
-          >
+          <div className={styles.footerSection}>
             <CardFooter
               health={card.hp || 100}
               luck={card.luck || 0}

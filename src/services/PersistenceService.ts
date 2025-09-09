@@ -73,35 +73,27 @@ export class PersistenceService {
   static loadGame(): Promise<boolean> {
     return new Promise((resolve) => {
       try {
-        const saveDataString = localStorage.getItem(this.SAVE_KEY);
-        if (!saveDataString) {
-          console.log('No save data found');
-          resolve(false);
-          return;
-        }
-
-        const saveData: GameSaveData = JSON.parse(saveDataString);
+        // Check if any of the main stores have persisted data
+        // Since stores use Zustand persist middleware, they handle loading automatically
+        const cardsData = localStorage.getItem('cards-store');
+        const currencyData = localStorage.getItem('currency-store');
+        const stageData = localStorage.getItem('stage-store');
+        const playerData = localStorage.getItem('player-store');
         
-        // Validate save data
-        if (!this.validateSaveData(saveData)) {
-          console.error('Invalid save data format');
+        // If any store has data, consider it a returning player
+        const hasExistingData = cardsData || currencyData || stageData || playerData;
+        
+        if (hasExistingData) {
+          console.log('Existing game data found - returning player');
+          console.log('Game loaded successfully (stores handle persistence automatically)');
+          resolve(true);
+        } else {
+          console.log('No save data found - new player');
           resolve(false);
-          return;
         }
-
-        // Load data into stores (they should handle the persistence internally)
-        console.log('Game loaded successfully:', {
-          version: saveData.version,
-          lastSaved: new Date(saveData.metadata.lastSaved).toLocaleString(),
-          playTime: this.formatPlayTime(saveData.metadata.playTime)
-        });
-
-        resolve(true);
       } catch (error) {
-        console.error('Failed to load game:', error);
-        
-        // Attempt to load backup
-        return this.loadBackup().then(resolve);
+        console.error('Failed to check for existing game data:', error);
+        resolve(false);
       }
     });
   }

@@ -1,6 +1,6 @@
 // Combat Page - Main combat screen container
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useCombat, useCombatStats } from '../../../hooks/useCombat';
 import { useCombatStore } from '../../../stores/combatStore';
 import { useGame } from '../../../hooks/useGame';
@@ -25,6 +25,9 @@ export const CombatPage: React.FC = () => {
   const [selectedDeck, setSelectedDeck] = useState<any[] | null>(null);
   const [autoCreatedDeck, setAutoCreatedDeck] = useState(false);
   const [isAutoStarting, setIsAutoStarting] = useState(false);
+  
+  // Prevent multiple initialization attempts
+  const initializingRef = useRef(false);
   
   // Combat state
   const {
@@ -61,7 +64,7 @@ export const CombatPage: React.FC = () => {
   const { playSFX, playMusic, stopMusic } = useAudio();
 
   // Auto-create deck from available cards
-  const createDefaultDeckFromCards = async () => {
+  const createDefaultDeckFromCards = useCallback(async () => {
     if (collection.length === 0) {
       console.warn('No cards available to create deck');
       return null;
@@ -81,7 +84,7 @@ export const CombatPage: React.FC = () => {
     console.log(`Auto-created combat deck with ${availableCards.length} cards:`, availableCards.map(c => c.name));
     setAutoCreatedDeck(true);
     return defaultDeck;
-  };
+  }, [collection, deckLimit]);
 
   // Handle deck selection
   const handleDeckConfirmed = (deck: any[]) => {
@@ -104,81 +107,109 @@ export const CombatPage: React.FC = () => {
   // Initialize combat when component mounts
   useEffect(() => {
     const initializeMatch = async () => {
-      // Check if current stage is unlocked
-      if (!isUnlocked) {
-        console.error(`Stage ${currentStage} is not unlocked`);
+      // Prevent multiple concurrent initialization attempts
+      if (initializingRef.current) {
         return;
       }
+      initializingRef.current = true;
 
-      // Create arena based on current stage
-      const arena = {
-        id: `stage_${currentStage}_arena`,
-        width: 1200,
-        height: 800,
-        boundaries: [
-          { x: 0, y: 0, width: 1200, height: 20 }, // Top
-          { x: 0, y: 780, width: 1200, height: 20 }, // Bottom
-          { x: 0, y: 0, width: 20, height: 800 }, // Left
-          { x: 1180, y: 0, width: 20, height: 800 } // Right
-        ],
-        obstacles: [
-          {
-            id: 'center_obstacle',
-            position: { x: 550, y: 350 },
-            size: { width: 100, height: 100 },
-            type: 'bouncy' as const,
-            health: 100,
-            maxHealth: 100
-          }
-        ],
-        playerSpawns: [
-          { x: 200, y: 400 },
-          { x: 1000, y: 400 }
-        ],
-        powerupSpawns: [],
-        settings: {
-          gravity: 200,
-          friction: 0.98,
-          bounceMultiplier: 0.8,
-          maxProjectiles: 100,
-          tickRate: 60,
-          roundDuration: stageData?.isBoss ? 180000 : 120000, // Longer for boss fights
-          suddenDeathTime: stageData?.isBoss ? 150000 : 90000
+      try {
+        // Check if current stage is unlocked
+        if (!isUnlocked) {
+          console.error(`Stage ${currentStage} is not unlocked`);
+          return;
         }
-      };
 
-      // Use selected deck, active deck, or auto-create from cards
-      let playerDeck = selectedDeck ? { cards: selectedDeck, name: 'Combat Deck', id: 'combat' } : activeDeck;
-      if (!playerDeck) {
-        // Try to auto-create from available cards
-        playerDeck = await createDefaultDeckFromCards();
+        console.log('Initializing combat match...');
+
+        // Create arena based on current stage
+        const arena = {
+          id: `stage_${currentStage}_arena`,
+          width: 1200,
+          height: 800,
+          boundaries: [
+            { x: 0, y: 0, width: 1200, height: 20 }, // Top
+            { x: 0, y: 780, width: 1200, height: 20 }, // Bottom
+            { x: 0, y: 0, width: 20, height: 800 }, // Left
+            { x: 1180, y: 0, width: 20, height: 800 } // Right
+          ],
+          obstacles: [
+            {
+              id: 'center_obstacle',
+              position: { x: 550, y: 350 },
+              size: { width: 100, height: 100 },
+              type: 'bouncy' as const,
+              health: 100,
+              maxHealth: 100
+            }
+          ],
+          playerSpawns: [
+            { x: 200, y: 400 },
+            { x: 1000, y: 400 }
+          ],
+          powerupSpawns: [],
+          settings: {
+            gravity: 200,
+            friction: 0.98,
+            bounceMultiplier: 0.8,
+            maxProjectiles: 100,
+            tickRate: 60,
+            roundDuration: stageData?.isBoss ? 180000 : 120000, // Longer for boss fights
+            suddenDeathTime: stageData?.isBoss ? 150000 : 90000
+          }
+        };
+
+        // Use selected deck, active deck, or auto-create from cards
+        let playerDeck = selectedDeck ? { cards: selectedDeck, name: 'Combat Deck', id: 'combat' } : activeDeck;
         if (!playerDeck) {
-          // Last resort - create empty deck (will be filled later)
-          playerDeck = await createNewDeck('Default Deck');
+          // Try to auto-create from available cards
+          playerDeck = await createDefaultDeckFromCards();
           if (!playerDeck) {
-            console.error('Failed to create default deck');
-            return;
+            // Last resort - create empty deck (will be filled later)
+            playerDeck = await createNewDeck('Default Deck');
+            if (!playerDeck) {
+              console.error('Failed to create default deck');
+              return;
+            }
           }
         }
+
+        // Generate AI opponent based on current stage
+        const aiMatchmaking = getAIMatchmakingService();
+        const aiOpponent = aiMatchmaking.generateOpponent(stageData, 1); // TODO: Get actual player level
+        
+        console.log(`Generated AI opponent: ${aiOpponent.name} with ${aiOpponent.deck.cards.length} cards`);
+        console.log(`AI Health: ${aiOpponent.health}, Difficulty: ${aiOpponent.difficulty}`);
+
+        // Initialize combat with AI opponent
+        initializeCombat(arena, playerDeck, aiOpponent.deck);
+        setIsInitialized(true);
+        console.log('Combat initialization complete');
+      } catch (error) {
+        console.error('Combat initialization failed:', error);
+      } finally {
+        initializingRef.current = false;
       }
-
-      // Generate AI opponent based on current stage
-      const aiMatchmaking = getAIMatchmakingService();
-      const aiOpponent = aiMatchmaking.generateOpponent(stageData, 1); // TODO: Get actual player level
-      
-      console.log(`Generated AI opponent: ${aiOpponent.name} with ${aiOpponent.deck.cards.length} cards`);
-      console.log(`AI Health: ${aiOpponent.health}, Difficulty: ${aiOpponent.difficulty}`);
-
-      // Initialize combat with AI opponent
-      initializeCombat(arena, playerDeck, aiOpponent.deck);
-      setIsInitialized(true);
     };
 
-    // Initialize combat if we have a deck (selected, active, or auto-created) and deck selector is not shown
-    if (!isInitialized && !isActive && !showDeckSelector && (selectedDeck || activeDeck || collection.length > 0)) {
+    // Initialize combat if conditions are met
+    const shouldInitialize = !isInitialized && 
+                           !isActive && 
+                           !showDeckSelector && 
+                           !initializingRef.current &&
+                           (selectedDeck || activeDeck || collection.length > 0);
+
+    if (shouldInitialize) {
       initializeMatch();
     }
-  }, [isInitialized, isActive, activeDeck, selectedDeck, showDeckSelector, initializeCombat, createNewDeck, collection, deckLimit]);
+  }, [isInitialized, isActive, showDeckSelector, selectedDeck, activeDeck, collection.length]);
+
+  // Cleanup initialization flag on unmount
+  useEffect(() => {
+    return () => {
+      initializingRef.current = false;
+    };
+  }, []);
 
   // Auto-start combat after initialization
   useEffect(() => {
@@ -306,6 +337,7 @@ export const CombatPage: React.FC = () => {
   const handleResetCombat = () => {
     resetCombat();
     setIsInitialized(false);
+    initializingRef.current = false; // Reset initialization flag
   };
 
   const handleExitCombat = () => {
@@ -318,12 +350,11 @@ export const CombatPage: React.FC = () => {
   const overallStats = getOverallStats();
   const leaderboard = getLeaderboard();
 
-  // Show loading only if we truly can't proceed
+  // Show no cards message (not loading state) if we truly can't proceed
   if (!isInitialized && collection.length === 0 && !activeDeck) {
     return (
-      <div className="combat-page loading" data-testid="combat-page">
-        <div className="loading-container">
-          <div className="loading-spinner" />
+      <div className="combat-page no-cards" data-testid="combat-page">
+        <div className="no-cards-container">
           <p>No cards available for combat. Please go to Roll page to get cards.</p>
           <Button 
             onClick={() => window.location.hash = '#roll'}

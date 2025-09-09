@@ -1,23 +1,40 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { MainLayout } from './components/templates/MainLayout/MainLayout';
 import { RollPage } from './components/pages/RollPage/RollPage';
 import { CollectionPage } from './components/pages/CollectionPage/CollectionPage';
 import { CraftPage } from './components/pages/CraftPage/CraftPage';
 import { CombatPage } from './components/pages/CombatPage/CombatPage';
 import { DeckPage } from './components/pages/DeckPage/DeckPage';
-import { Text } from './components/atoms/Text';
 import { PhaseContainer } from './components/atoms/PhaseContainer';
 import { PersistenceService } from './services/PersistenceService';
 import { useTransitions } from './hooks/useTransitions';
 import { useAudio } from './hooks/useAudio';
+import { TestCardButton } from './components/debug/TestCardButton';
 import type { GamePhase } from './services/TransitionAnimationService';
 import './App.css';
 
 type Page = 'roll' | 'collection' | 'craft' | 'battle' | 'deck';
 
-function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('roll');
+// Map routes to pages and phases
+const ROUTE_CONFIG = {
+  '/': { page: 'roll' as Page, phase: 'roll' as GamePhase },
+  '/roll': { page: 'roll' as Page, phase: 'roll' as GamePhase },
+  '/collection': { page: 'collection' as Page, phase: 'equip' as GamePhase },
+  '/craft': { page: 'craft' as Page, phase: 'equip' as GamePhase },
+  '/deck': { page: 'deck' as Page, phase: 'equip' as GamePhase },
+  '/battle': { page: 'battle' as Page, phase: 'battle' as GamePhase }
+};
+
+function AppContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Get current page from route
+  const currentRoute = ROUTE_CONFIG[location.pathname as keyof typeof ROUTE_CONFIG] || ROUTE_CONFIG['/'];
+  const currentPage = currentRoute.page;
+  const currentPagePhase = currentRoute.phase;
   
   // Transition management
   const { currentPhase, isTransitioning, transitionTo } = useTransitions();
@@ -37,6 +54,12 @@ function App() {
           console.log('Game data loaded successfully');
         } else {
           console.log('No existing save data found, starting fresh');
+          
+          // Give starter cards to new players
+          const { useCardsStore } = await import('./stores/cardsStore');
+          const cardsStore = useCardsStore.getState();
+          await cardsStore.giveStarterCards();
+          console.log('Starter cards provided for new player');
         }
 
         // Play startup music when audio is ready
@@ -53,31 +76,33 @@ function App() {
     initializeApp();
   }, [isInitialized, playMusic]);
 
+  // Handle phase transitions when route changes
+  useEffect(() => {
+    const handlePhaseTransition = async () => {
+      if (currentPagePhase !== currentPhase && !isTransitioning) {
+        await transitionTo(currentPagePhase);
+      }
+    };
+
+    handlePhaseTransition();
+  }, [currentPagePhase, currentPhase, isTransitioning, transitionTo]);
+
   const handleNavigate = async (page: string) => {
     if (isTransitioning) return; // Prevent navigation during transitions
-    
-    const newPage = page as Page;
     
     // Play navigation sound
     playSFX('transition_whoosh');
     
-    // Map pages to phases for transitions
-    const pageToPhase: Record<Page, GamePhase> = {
-      roll: 'roll',
-      collection: 'equip', // Collection is part of equip phase
-      craft: 'equip', // Craft is part of equip phase  
-      deck: 'equip', // Deck is part of equip phase
-      battle: 'battle'
+    // Navigate using React Router
+    const routeMap = {
+      'roll': '/',
+      'collection': '/collection', 
+      'craft': '/craft',
+      'deck': '/deck',
+      'battle': '/battle'
     };
     
-    const newPhase = pageToPhase[newPage];
-    
-    // Only transition if phase changes
-    if (newPhase !== currentPhase) {
-      await transitionTo(newPhase);
-    }
-    
-    setCurrentPage(newPage);
+    navigate(routeMap[page as keyof typeof routeMap] || '/');
   };
 
   // Show loading screen while initializing
@@ -93,86 +118,16 @@ function App() {
     );
   }
 
-  const renderPage = () => {
-    const pageToPhase: Record<Page, GamePhase> = {
-      roll: 'roll',
-      collection: 'equip',
-      craft: 'equip',
-      deck: 'equip',
-      battle: 'battle'
-    };
-    
-    const currentPagePhase = pageToPhase[currentPage];
-    
-    switch (currentPage) {
-      case 'roll':
-        return (
-          <PhaseContainer 
-            phase="roll" 
-            isActive={currentPhase === 'roll'}
-            enableParticles={true}
-            particleType="sparkles"
-          >
-            <RollPage testId="roll-page" />
-          </PhaseContainer>
-        );
-      case 'collection':
-        return (
-          <PhaseContainer 
-            phase="equip" 
-            isActive={currentPhase === 'equip'}
-            enableParticles={true}
-            particleType="stars"
-          >
-            <CollectionPage testId="collection-page" />
-          </PhaseContainer>
-        );
-      case 'craft':
-        return (
-          <PhaseContainer 
-            phase="equip" 
-            isActive={currentPhase === 'equip'}
-            enableParticles={true}
-            particleType="coins"
-          >
-            <CraftPage testId="craft-page" />
-          </PhaseContainer>
-        );
-      case 'deck':
-        return (
-          <PhaseContainer 
-            phase="equip" 
-            isActive={currentPhase === 'equip'}
-            enableParticles={true}
-            particleType="gears"
-          >
-            <DeckPage testId="deck-page" />
-          </PhaseContainer>
-        );
-      case 'battle':
-        return (
-          <PhaseContainer 
-            phase="battle" 
-            isActive={currentPhase === 'battle'}
-            enableParticles={true}
-            particleType="confetti"
-          >
-            <CombatPage />
-          </PhaseContainer>
-        );
-      default:
-        return (
-          <PhaseContainer 
-            phase="roll" 
-            isActive={currentPhase === 'roll'}
-            enableParticles={true}
-            particleType="sparkles"
-          >
-            <RollPage testId="roll-page" />
-          </PhaseContainer>
-        );
-    }
-  };
+  const renderPageWithPhase = (page: React.ReactNode, particleType: 'coins' | 'confetti' | 'sparkles' | 'stars' | 'gears' = 'sparkles') => (
+    <PhaseContainer 
+      phase={currentPagePhase}
+      isActive={currentPhase === currentPagePhase}
+      enableParticles={true}
+      particleType={particleType}
+    >
+      {page}
+    </PhaseContainer>
+  );
 
   return (
     <MainLayout 
@@ -180,8 +135,24 @@ function App() {
       onNavigate={handleNavigate}
       testId="main-app"
     >
-      {renderPage()}
+      <Routes>
+        <Route path="/" element={renderPageWithPhase(<RollPage testId="roll-page" />, 'sparkles')} />
+        <Route path="/roll" element={renderPageWithPhase(<RollPage testId="roll-page" />, 'sparkles')} />
+        <Route path="/collection" element={renderPageWithPhase(<CollectionPage testId="collection-page" />, 'stars')} />
+        <Route path="/craft" element={renderPageWithPhase(<CraftPage testId="craft-page" />, 'coins')} />
+        <Route path="/deck" element={renderPageWithPhase(<DeckPage testId="deck-page" />, 'gears')} />
+        <Route path="/battle" element={renderPageWithPhase(<CombatPage />, 'confetti')} />
+      </Routes>
+      <TestCardButton />
     </MainLayout>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 

@@ -1,4 +1,4 @@
-import { EffectType } from '../models/unified/Card';
+import { EffectType } from '../models';
 
 // Convert effect string to EffectType enum
 export function convertEffectToEnum(effect: string | EffectType): EffectType {
