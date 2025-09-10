@@ -332,7 +332,7 @@ export function useCombatAI(playerId: string) {
     }));
 
     distances.sort((a, b) => a.distance - b.distance);
-    return distances[0].player.id;
+    return distances[0]?.player.id || playerId;
   }, [playerId, players, getPlayer]);
 
   const executeAI = useCallback(() => {

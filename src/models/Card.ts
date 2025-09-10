@@ -48,7 +48,10 @@ export enum EffectType {
   CHAOS = 'CHAOS',            // Random effect
   PRECISION = 'PRECISION',    // Guaranteed critical hit
   KNOCKBACK = 'KNOCKBACK',    // Push back enemy
-  buff_defense = 'buff_defense', // Increase defense
+  PUSH = 'PUSH',              // Push back enemy (alias)
+  DEFENSE = 'DEFENSE',        // Increase defense
+  SPEED_BOOST = 'SPEED_BOOST', // Increase movement/fire rate
+  buff_defense = 'buff_defense', // Increase defense (legacy)
 }
 
 // Card effect trigger types
@@ -123,7 +126,7 @@ export interface Card {
   name: string;                        // Display name (meme reference)
   rarity: number;                      // Expressed as 1/X probability (2, 4, 10, 50, etc.)
   luck: number;                        // Luck stat affecting rewards and effects (1-5000+)
-  emojis: Emoji[];                     // Attack projectiles
+  emojis: (Emoji | string)[];          // Attack projectiles (string for backward compatibility)
   family: MemeFamily;                  // Thematic family for synergies
   reference: string;                   // Specific pop culture reference
   

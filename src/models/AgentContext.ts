@@ -393,6 +393,14 @@ export const validateContextConsistency = (
   
   const [primary, ...others] = contexts;
   
+  if (!primary) {
+    return {
+      consistent: false,
+      inconsistencies: [],
+      lastValidation: new Date()
+    };
+  }
+  
   // Check phase consistency
   others.forEach(context => {
     if (context.currentPhase !== primary.currentPhase) {
