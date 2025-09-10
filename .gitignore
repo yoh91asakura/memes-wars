@@ -137,3 +137,8 @@ test-results/
 *.local.*
 config.local.*
 settings.local.*
+
+# Context updater temporary files
+scripts/context-temp/
+scripts/*.log
+scripts/context-backup.*

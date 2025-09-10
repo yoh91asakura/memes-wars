@@ -1,29 +1,7 @@
 # 🎮 CLAUDE.md - Memes Wars AI Agent Guide
 
-<!-- AUTO-GENERATED CONTEXT - 2025-09-10 19:54:27 -->
-## 🎯 Current Context (Auto-Detected)
-**Active Spec**: 005-complete-card-management
-**Current Task**: T  - Install card management dependencies: `npm install...
-**Progress**: 0/45 tasks (0%)
-**Branch**: 005-complete-card-management
-**Last Update**: 2025-09-10 19:54:27
-
-### 📋 Quick Status
-- **Completed**: 0 tasks ✅
-- **Remaining**: 45 tasks
-- **Directory**: `specs/005-complete-card-management/`
-- **Tasks File**: `specs/005-complete-card-management/tasks.md`
+<!-- AUTO-GENERATED CONTEXT - PLACEHOLDER -->
 <!-- END AUTO-GENERATED CONTEXT -->
-
-
-
-
-
-
-
-
-
-
 
 ## 🎯 Project Overview
 **Memes Wars** - Auto-battler RNG Card Game (30s-2min loop)  
@@ -37,7 +15,8 @@ memes-wars/
 ├── README.md            # 🎮 Game description & quickstart
 ├── specs/               # 📋 All specifications & tasks
 │   ├── 001-extract-current-project/  # ✅ Game implementation
-│   └── 004-refactor-all-the/        # 🔄 AI optimization
+│   ├── 004-refactor-all-the/        # 🔄 AI optimization
+│   └── 005-complete-card-management/ # 🔧 Card management system
 ├── src/                 # 💻 Source code (Atomic Design)
 └── tests/              # 🧪 Constitutional test order
 ```
@@ -51,13 +30,13 @@ memes-wars/
 → `src/components/pages/CombatPage/` - Core game loop
 
 ### AI Development Workflow  
-→ `specs/004-refactor-all-the/` - AI optimization specs  
+→ `specs/005-complete-card-management/` - Card management system (CURRENT)
 → `scripts/` - Spec-kit automation tools  
 → `tests/` - TDD workflow (contract → integration → e2e)
 
 ### Current Tasks & Status
 → `STATUS.md` - Quick project overview  
-→ `specs/*/tasks.md` - Active implementation tasks
+→ `specs/005-complete-card-management/tasks.md` - Active implementation tasks
 
 ## 🛠️ Essential Commands
 ```bash
@@ -80,7 +59,7 @@ specify validate        # Check prerequisites
 
 The system automatically detects:
 - **Current spec** from Git branch name
-- **Active tasks** from specs/*/tasks.md  
+- **Active tasks** from specs/*/tasks.md
 - **Progress status** from completed markers
 - **Recent changes** in codebase
 
