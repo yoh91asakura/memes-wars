@@ -1,13 +1,16 @@
 // Deck Service - Deck validation and management operations
 
 import { Deck, DeckStats, DeckValidation, DeckValidationError, DeckValidationWarning } from '../models/Deck';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 import { EmojiProjectile } from '../models/Combat';
+import { StageManager } from '../data/stages';
 
 export interface IDeckService {
-  validateDeck(cards: Card[]): boolean;
+  validateDeck(cards: Card[], stageNumber?: number): boolean;
+  validateDeckForStage(cards: Card[], stageNumber: number): DeckValidation;
   calculateTotalHP(deck: Deck): number;
   getActiveEmojis(deck: Deck): EmojiProjectile[];
+  getDeckSizeLimit(stageNumber: number): number;
   saveDeck(deck: Deck): void;
   loadDeck(id: string): Deck;
 }
@@ -17,9 +20,93 @@ export class DeckService implements IDeckService {
   private readonly MAX_DECK_SIZE = 30;
   private readonly MAX_COPIES_PER_CARD = 3;
 
-  public validateDeck(cards: Card[]): boolean {
+  public validateDeck(cards: Card[], stageNumber?: number): boolean {
+    if (stageNumber) {
+      const validation = this.validateDeckForStage(cards, stageNumber);
+      return validation.isValid;
+    }
     const validation = this.getDetailedValidation(cards);
     return validation.isValid;
+  }
+
+  public validateDeckForStage(cards: Card[], stageNumber: number): DeckValidation {
+    const errors: DeckValidationError[] = [];
+    const warnings: DeckValidationWarning[] = [];
+    
+    // Get stage-specific deck size limit
+    const deckSizeLimit = this.getDeckSizeLimit(stageNumber);
+    
+    // Stage-specific size validation
+    if (cards.length === 0) {
+      errors.push({
+        type: 'size',
+        message: `Deck cannot be empty for stage ${stageNumber}.`,
+        severity: 'error'
+      });
+    }
+    
+    if (cards.length > deckSizeLimit) {
+      errors.push({
+        type: 'size',
+        message: `Deck size exceeds limit for stage ${stageNumber}. Maximum: ${deckSizeLimit}, current: ${cards.length}.`,
+        severity: 'error'
+      });
+    }
+    
+    // Warning if deck is not at maximum size
+    if (cards.length < deckSizeLimit && cards.length > 0) {
+      warnings.push({
+        type: 'optimization',
+        message: `Deck could use ${deckSizeLimit - cards.length} more cards for stage ${stageNumber}.`,
+        severity: 'warning'
+      });
+    }
+    
+    // Duplicate validation (same as original)
+    const cardCounts = this.getCardCounts(cards);
+    for (const [cardId, count] of cardCounts) {
+      if (count > this.MAX_COPIES_PER_CARD) {
+        errors.push({
+          type: 'duplicates',
+          message: `Too many copies of card ${cardId}. Maximum ${this.MAX_COPIES_PER_CARD}, found ${count}.`,
+          severity: 'error'
+        });
+      }
+    }
+    
+    // Stage difficulty suggestions
+    const stage = StageManager.getStage(stageNumber);
+    if (stage) {
+      // Suggest strategy based on enemy emojis
+      const enemyEmojis = stage.enemyEmojis;
+      if (enemyEmojis.includes('🛡️') && !cards.some(card => card.emojis?.some(emoji => emoji.character === '💥'))) {
+        warnings.push({
+          type: 'strategy',
+          message: `Enemy has shields (🛡️). Consider adding explosive emojis (💥) for better damage.`,
+          severity: 'info'
+        });
+      }
+      
+      if (enemyEmojis.includes('🔥') && !cards.some(card => card.emojis?.some(emoji => emoji.character === '❄️'))) {
+        warnings.push({
+          type: 'strategy',
+          message: `Enemy uses fire (🔥). Consider adding ice emojis (❄️) for counter-effect.`,
+          severity: 'info'
+        });
+      }
+    }
+    
+    return {
+      isValid: errors.length === 0,
+      errors,
+      warnings,
+      deckSize: cards.length,
+      maxDeckSize: deckSizeLimit
+    };
+  }
+
+  public getDeckSizeLimit(stageNumber: number): number {
+    return StageManager.getDeckSizeLimit(stageNumber);
   }
 
   public getDetailedValidation(cards: Card[]): DeckValidation {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '../models/Card';
+import { Card } from '../../../models';
 import { Text } from '../../atoms/Text';
 import { Icon } from '../../atoms/Icon';
 import styles from './Card.module.css';
@@ -47,10 +47,10 @@ export const CardAbility: React.FC<CardAbilityProps> = ({
       {showEffects && hasCardEffects && (
         <div className="card__ability-effects">
           {card.cardEffects!.slice(0, 2).map((effect, index) => (
-            <div key={effect.id || index} className="card__effect-item">
+            <div key={index} className="card__effect-item">
               <div className="card__effect-header">
                 <Text variant="caption" weight="medium" color="secondary">
-                  {effect.name}
+                  {effect.effect}
                 </Text>
                 {effect.chance && effect.chance < 1 && (
                   <Text variant="caption" color="muted">
@@ -58,11 +58,10 @@ export const CardAbility: React.FC<CardAbilityProps> = ({
                   </Text>
                 )}
               </div>
-              {effect.description && (
-                <Text variant="caption" color="muted" className="card__effect-description">
-                  {effect.description}
-                </Text>
-              )}
+              <Text variant="caption" color="muted" className="card__effect-description">
+                Trigger: {effect.trigger} | Value: {effect.value}
+                {effect.duration && ` | Duration: ${effect.duration}s`}
+              </Text>
             </div>
           ))}
           

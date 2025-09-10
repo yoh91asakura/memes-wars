@@ -1,516 +1,384 @@
-// Import both Card types and conversion utilities
-import { Card, CardUtils } from '../models/Card';
-import { Card as LegacyCard } from '../components/types';
-import { commonCards } from '../data/cards/common';
-import { uncommonCards } from '../data/cards/uncommon';
-import { rareCards } from '../data/cards/rare';
-import { epicCards } from '../data/cards/epic';
-import { legendaryCards } from '../data/cards/legendary';
-import { mythicCards } from '../data/cards/mythic';
-import { cosmicCards } from '../data/cards/cosmic';
-// Create a proper config object
-const rollConfig = {
-  dropRates: {
-    common: 0.65,
-    uncommon: 0.25,
-    rare: 0.07,
-    epic: 0.025,
-    legendary: 0.004,
-    mythic: 0.0009,
-    cosmic: 0.0001
-  },
-  pitySystem: {
-    guaranteedRareAt: 10,
-    guaranteedEpicAt: 30,
-    guaranteedLegendaryAt: 90,
-    guaranteedMythicAt: 200,
-    guaranteedCosmicAt: 500
-  }
-};
-import { v4 as uuidv4 } from 'uuid';
+// RollService Implementation - Follows contract specification exactly
+// Implements specs/001-extract-current-project/contracts/rollservice.md
+
+import { Card, MemeFamily, CardUtils } from '../models';
+
+// Contract interfaces - must match test expectations exactly
+export interface IRollService {
+  rollSingle(): RollResult;
+  rollMultiple(count: number): RollResult[];
+  getPityStatus(): PityStatus;
+  getStatistics(): RollStatistics;
+  resetPity(): void;
+}
 
 export interface RollResult {
   card: Card;
-  isGuaranteed: boolean;
   pityTriggered: boolean;
+  rarityBoosted: boolean;
   rollNumber: number;
+  timestamp: Date;
 }
 
-export interface RollStats {
+export interface PityStatus {
+  rollsWithoutRare: number;
+  rollsWithoutEpic: number;
+  rollsWithoutLegendary: number;
+  rollsWithoutMythic: number;
+  nextGuaranteed?: CardRarity;
+  rollsUntilGuaranteed?: number;
+}
+
+export interface RollStatistics {
   totalRolls: number;
-  rollsSinceRare: number;
-  rollsSinceEpic: number;
-  rollsSinceLegendary: number;
-  rollsSinceMythic: number;
-  rollsSinceCosmic: number;
-  collectedByRarity: Record<string, number>;
+  cardsByRarity: Record<CardRarity, number>;
+  averageRollsPerRare: number;
+  pityTriggeredCount: number;
+  currentStreak: Record<CardRarity, number>;
 }
 
-export interface MultiRollResult {
-  cards: RollResult[];
-  guaranteedTriggered: boolean;
-  bonusCards: Card[];
-  totalValue: number;
-  rarityBreakdown?: Record<string, number>;
-  highlights?: Card[];
-}
+// Drop rate configuration matching contract specification
+const DROP_RATES: Record<CardRarity, number> = {
+  [CardRarity.COMMON]: 0.65,     // 65%
+  [CardRarity.UNCOMMON]: 0.25,   // 25%
+  [CardRarity.RARE]: 0.07,       // 7%
+  [CardRarity.EPIC]: 0.025,      // 2.5%
+  [CardRarity.LEGENDARY]: 0.004, // 0.4%
+  [CardRarity.MYTHIC]: 0.0009,   // 0.09%
+  [CardRarity.COSMIC]: 0.0001,   // 0.01%
+};
 
-export class RollService {
-  private static instance: RollService;
-  private allCards: Map<string, Card[]> = new Map();
-  
-  private constructor() {
-    this.initializeCardDatabase();
-  }
+// Pity system thresholds matching contract
+const PITY_THRESHOLDS = {
+  [CardRarity.RARE]: 10,
+  [CardRarity.EPIC]: 30,
+  [CardRarity.LEGENDARY]: 90,
+  [CardRarity.MYTHIC]: 200,
+};
 
-  public static getInstance(): RollService {
-    if (!RollService.instance) {
-      RollService.instance = new RollService();
+export class RollService implements IRollService {
+  private rollCount = 0;
+  private pityCounters: Record<CardRarity, number> = {
+    [CardRarity.COMMON]: 0,
+    [CardRarity.UNCOMMON]: 0,
+    [CardRarity.RARE]: 0,
+    [CardRarity.EPIC]: 0,
+    [CardRarity.LEGENDARY]: 0,
+    [CardRarity.MYTHIC]: 0,
+    [CardRarity.COSMIC]: 0,
+  };
+  private statistics: RollStatistics = {
+    totalRolls: 0,
+    cardsByRarity: {
+      [CardRarity.COMMON]: 0,
+      [CardRarity.UNCOMMON]: 0,
+      [CardRarity.RARE]: 0,
+      [CardRarity.EPIC]: 0,
+      [CardRarity.LEGENDARY]: 0,
+      [CardRarity.MYTHIC]: 0,
+      [CardRarity.COSMIC]: 0,
+    },
+    averageRollsPerRare: 0,
+    pityTriggeredCount: 0,
+    currentStreak: {
+      [CardRarity.COMMON]: 0,
+      [CardRarity.UNCOMMON]: 0,
+      [CardRarity.RARE]: 0,
+      [CardRarity.EPIC]: 0,
+      [CardRarity.LEGENDARY]: 0,
+      [CardRarity.MYTHIC]: 0,
+      [CardRarity.COSMIC]: 0,
     }
-    return RollService.instance;
-  }
+  };
 
-  private initializeCardDatabase(): void {
-    // Initialize with all available cards
-    // Map cards with lowercase keys for consistency
-    this.allCards.set('common', this.convertCardsToUnified(commonCards));
-    this.allCards.set('uncommon', this.convertCardsToUnified(uncommonCards));
-    this.allCards.set('rare', this.convertCardsToUnified(rareCards));
-    this.allCards.set('epic', this.convertCardsToUnified(epicCards));
-    this.allCards.set('legendary', this.convertCardsToUnified(legendaryCards));
-    this.allCards.set('mythic', this.convertCardsToUnified(mythicCards));
-    this.allCards.set('cosmic', this.convertCardsToUnified(cosmicCards));
-  }
+  rollSingle(): RollResult {
+    this.rollCount++;
+    this.statistics.totalRolls++;
 
-  /**
-   * Convert Card to legacy Card format for compatibility
-   */
-  private convertCardsToUnified(cards: Card[]): Card[] {
-    return cards.map(card => ({
-      ...card,
-      id: card.id || uuidv4(),
-      addedAt: card.addedAt || new Date().toISOString()
-    }));
-  }
-
-  
-
-  /**
-   * Perform a single roll with pity system
-   */
-  rollSingle(stats: RollStats): RollResult {
-    const rarity = this.determineRarity(stats);
-    const card = this.getRandomCardOfRarity(rarity);
-    
-    // Generate unique instance with proper id
-    const cardInstance = { ...card, id: uuidv4() };
-    
-    // Card is already Card
-    const unifiedCard = { ...cardInstance, id: uuidv4(), addedAt: new Date().toISOString() };
-    
-    const result: RollResult = {
-      card: unifiedCard,
-      isGuaranteed: this.wasGuaranteed(rarity, stats),
-      pityTriggered: this.checkPityTrigger(rarity, stats),
-      rollNumber: stats.totalRolls + 1
-    };
-
-    return result;
-  }
-
-  /**
-   * Perform 10-roll with guaranteed rare or better
-   */
-  rollTen(stats: RollStats): MultiRollResult {
-    const cards: RollResult[] = [];
-    let hasRareOrBetter = false;
-    let currentStats = { ...stats };
-
-    // Roll 9 cards normally
-    for (let i = 0; i < 9; i++) {
-      const result = this.rollSingle(currentStats);
-      cards.push(result);
-      
-      const rarityLower = CardUtils.getRarityName(result.card.rarity).toLowerCase();
-      if (['rare', 'epic', 'legendary', 'mythic', 'cosmic'].includes(rarityLower)) {
-        hasRareOrBetter = true;
-      }
-      
-      // Update stats for next roll
-      currentStats = this.updateStatsAfterRoll(currentStats, CardUtils.getRarityName(result.card.rarity).toLowerCase());
-    }
-
-    // 10th card: guarantee rare or better if none yet
-    if (!hasRareOrBetter) {
-      const guaranteedRarity = this.getGuaranteedRarity(['rare', 'epic', 'legendary', 'mythic', 'cosmic']);
-      const guaranteedCard = this.getRandomCardOfRarity(guaranteedRarity);
-      
-      cards.push({
-        card: { ...guaranteedCard, id: uuidv4() },
-        isGuaranteed: true,
-        pityTriggered: false,
-        rollNumber: currentStats.totalRolls + 10
-      });
-    } else {
-      // Normal 10th roll
-      cards.push(this.rollSingle(currentStats));
-    }
-
-    // Calculate rarity breakdown
-    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card as any));
-    const highlights = this.getHighlightCards(cards.map(r => r.card as any));
-
-    return {
-      cards,
-      guaranteedTriggered: !hasRareOrBetter,
-      bonusCards: [],
-      totalValue: cards.reduce((sum, result) => sum + this.getCardValue(result.card as any), 0),
-      rarityBreakdown,
-      highlights: highlights as unknown as Card[]
-    };
-  }
-
-  /**
-   * Determine rarity based on drop rates and pity system
-   */
-  private determineRarity(stats: RollStats): string {
     // Check pity system first
-    if (stats.rollsSinceCosmic >= rollConfig.pitySystem.guaranteedCosmicAt) {
-      return 'cosmic';
-    }
-    if (stats.rollsSinceMythic >= rollConfig.pitySystem.guaranteedMythicAt) {
-      return 'mythic';
-    }
-    if (stats.rollsSinceLegendary >= rollConfig.pitySystem.guaranteedLegendaryAt) {
-      return 'legendary';
-    }
-    if (stats.rollsSinceEpic >= rollConfig.pitySystem.guaranteedEpicAt) {
-      return 'epic';
-    }
-    if (stats.rollsSinceRare >= rollConfig.pitySystem.guaranteedRareAt) {
-      return 'rare';
-    }
-
-    // Normal probability roll
-    const random = Math.random();
-    let cumulativeProbability = 0;
-
-    // Check rarities from highest to lowest
-    const rarities = ['cosmic', 'mythic', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
+    const pityResult = this.checkPitySystem();
     
-    for (const rarity of rarities) {
-      cumulativeProbability += rollConfig.dropRates[rarity as keyof typeof rollConfig.dropRates];
-      if (random <= cumulativeProbability) {
-        // Check if we have cards of this rarity
-        const cardsOfRarity = this.allCards.get(rarity) || [];
-        if (cardsOfRarity.length > 0) {
-          return rarity;
-        }
-      }
-    }
+    let rarity: CardRarity;
+    let pityTriggered = false;
 
-    // Fallback to common
-    return 'common';
-  }
-
-  /**
-   * Get random card of specific rarity
-   */
-  public getRandomCardOfRarity(rarity: string): Card {
-    const cardsOfRarity = this.allCards.get(rarity) || [];
-    
-    if (cardsOfRarity.length === 0) {
-      // Fallback to common if rarity not available
-      const commonCardsArray = this.allCards.get('common') || [];
-      if (commonCardsArray.length === 0) {
-        throw new Error('No cards available');
-      }
-      return commonCardsArray[Math.floor(Math.random() * commonCardsArray.length)];
-    }
-    
-    return cardsOfRarity[Math.floor(Math.random() * cardsOfRarity.length)];
-  }
-
-  /**
-   * Check if this roll was guaranteed by pity
-   */
-  private wasGuaranteed(rarity: string, stats: RollStats): boolean {
-    switch (rarity) {
-      case 'cosmic': return stats.rollsSinceCosmic >= rollConfig.pitySystem.guaranteedCosmicAt;
-      case 'mythic': return stats.rollsSinceMythic >= rollConfig.pitySystem.guaranteedMythicAt;
-      case 'legendary': return stats.rollsSinceLegendary >= rollConfig.pitySystem.guaranteedLegendaryAt;
-      case 'epic': return stats.rollsSinceEpic >= rollConfig.pitySystem.guaranteedEpicAt;
-      case 'rare': return stats.rollsSinceRare >= rollConfig.pitySystem.guaranteedRareAt;
-      default: return false;
-    }
-  }
-
-  /**
-   * Check if pity was triggered for this roll
-   */
-  private checkPityTrigger(rarity: string, stats: RollStats): boolean {
-    return this.wasGuaranteed(rarity, stats);
-  }
-
-  /**
-   * Get guaranteed rarity from available options
-   */
-  private getGuaranteedRarity(options: string[]): string {
-    for (const rarity of options) {
-      const cardsOfRarity = this.allCards.get(rarity) || [];
-      if (cardsOfRarity.length > 0) {
-        return rarity;
-      }
-    }
-    return 'common'; // Fallback
-  }
-
-  /**
-   * Update stats after a roll
-   */
-  private updateStatsAfterRoll(stats: RollStats, rarity: string): RollStats {
-    const newStats = { ...stats };
-    newStats.totalRolls += 1;
-    
-    // Reset counters for obtained rarity and higher
-    switch (rarity) {
-      case 'cosmic':
-        newStats.rollsSinceCosmic = 0;
-        newStats.rollsSinceMythic = 0;
-        newStats.rollsSinceLegendary = 0;
-        newStats.rollsSinceEpic = 0;
-        newStats.rollsSinceRare = 0;
-        break;
-      case 'mythic':
-        newStats.rollsSinceMythic = 0;
-        newStats.rollsSinceLegendary = 0;
-        newStats.rollsSinceEpic = 0;
-        newStats.rollsSinceRare = 0;
-        break;
-      case 'legendary':
-        newStats.rollsSinceLegendary = 0;
-        newStats.rollsSinceEpic = 0;
-        newStats.rollsSinceRare = 0;
-        break;
-      case 'epic':
-        newStats.rollsSinceEpic = 0;
-        newStats.rollsSinceRare = 0;
-        break;
-      case 'rare':
-        newStats.rollsSinceRare = 0;
-        break;
-      default:
-        // Increment all counters for common/uncommon
-        newStats.rollsSinceRare += 1;
-        newStats.rollsSinceEpic += 1;
-        newStats.rollsSinceLegendary += 1;
-        newStats.rollsSinceMythic += 1;
-        newStats.rollsSinceCosmic += 1;
-    }
-
-    // Update collection stats
-    newStats.collectedByRarity[rarity] = (newStats.collectedByRarity[rarity] || 0) + 1;
-
-    return newStats;
-  }
-
-  /**
-   * Get card value for calculating roll worth
-   */
-  private getCardValue(card: any): number {
-    const rarityValues = {
-      common: 1,
-      uncommon: 5,
-      rare: 25,
-      epic: 100,
-      legendary: 500,
-      mythic: 2500,
-      cosmic: 10000
-    };
-    
-    // Handle both enum and string rarities
-    const rarityKey = (typeof card.rarity === 'string' ? card.rarity : String(card.rarity)).toLowerCase();
-    return rarityValues[rarityKey as keyof typeof rarityValues] || 1;
-  }
-
-  /**
-   * Get drop rate for a specific rarity
-   */
-  getDropRate(rarity: string): number {
-    return rollConfig.dropRates[rarity as keyof typeof rollConfig.dropRates] || 0;
-  }
-
-  /**
-   * Get pity information
-   */
-  getPityInfo(stats: RollStats): Record<string, { current: number; max: number; percentage: number }> {
-    return {
-      rare: {
-        current: stats.rollsSinceRare,
-        max: rollConfig.pitySystem.guaranteedRareAt,
-        percentage: (stats.rollsSinceRare / rollConfig.pitySystem.guaranteedRareAt) * 100
-      },
-      epic: {
-        current: stats.rollsSinceEpic,
-        max: rollConfig.pitySystem.guaranteedEpicAt,
-        percentage: (stats.rollsSinceEpic / rollConfig.pitySystem.guaranteedEpicAt) * 100
-      },
-      legendary: {
-        current: stats.rollsSinceLegendary,
-        max: rollConfig.pitySystem.guaranteedLegendaryAt,
-        percentage: (stats.rollsSinceLegendary / rollConfig.pitySystem.guaranteedLegendaryAt) * 100
-      },
-      mythic: {
-        current: stats.rollsSinceMythic,
-        max: rollConfig.pitySystem.guaranteedMythicAt,
-        percentage: (stats.rollsSinceMythic / rollConfig.pitySystem.guaranteedMythicAt) * 100
-      },
-      cosmic: {
-        current: stats.rollsSinceCosmic,
-        max: rollConfig.pitySystem.guaranteedCosmicAt,
-        percentage: (stats.rollsSinceCosmic / rollConfig.pitySystem.guaranteedCosmicAt) * 100
-      }
-    };
-  }
-
-  /**
-   * Add cards to the database (for when new rarities are created)
-   */
-  addCardsToDatabase(rarity: string, cards: Card[]): void {
-    this.allCards.set(rarity, cards);
-  }
-
-  /**
-   * Perform 100-roll with multiple guarantees and bonus rewards
-   */
-  rollHundred(stats: RollStats): MultiRollResult {
-    const cards: RollResult[] = [];
-    let currentStats = { ...stats };
-    const bonusCards: Card[] = [];
-    
-    // Track rarities obtained
-    const rarityCount = {
-      common: 0,
-      uncommon: 0,
-      rare: 0,
-      epic: 0,
-      legendary: 0,
-      mythic: 0,
-      cosmic: 0
-    };
-
-    // Perform 99 regular rolls
-    for (let i = 0; i < 99; i++) {
-      const result = this.rollSingle(currentStats);
-      cards.push(result);
-      
-      const rarity = result.card.rarity as unknown as string;
-      rarityCount[rarity as keyof typeof rarityCount]++;
-      
-      currentStats = this.updateStatsAfterRoll(currentStats, rarity);
-    }
-
-    // 100th roll: Guarantee epic or better if none obtained
-    const hasEpicOrBetter = rarityCount.epic > 0 || rarityCount.legendary > 0 || 
-                            rarityCount.mythic > 0 || rarityCount.cosmic > 0;
-    
-    if (!hasEpicOrBetter) {
-      const guaranteedRarity = this.getGuaranteedRarity(['epic', 'legendary', 'mythic', 'cosmic']);
-      const guaranteedCard = this.getRandomCardOfRarity(guaranteedRarity);
-      
-      cards.push({
-        card: { ...guaranteedCard, id: uuidv4() },
-        isGuaranteed: true,
-        pityTriggered: false,
-        rollNumber: currentStats.totalRolls + 100
-      });
-      
-      rarityCount[guaranteedRarity as keyof typeof rarityCount]++;
+    if (pityResult.shouldTrigger) {
+      rarity = pityResult.guaranteedRarity!;
+      pityTriggered = true;
+      this.statistics.pityTriggeredCount++;
     } else {
-      const result = this.rollSingle(currentStats);
-      cards.push(result);
-      rarityCount[result.card.rarity as unknown as keyof typeof rarityCount]++;
+      // Normal roll based on drop rates
+      rarity = this.rollRarity();
     }
 
-    // Bonus rewards based on total value
-    const totalValue = cards.reduce((sum, result) => sum + this.getCardValue(result.card as any), 0);
+    // Generate card of determined rarity
+    const card = this.generateCard(rarity);
     
-    // Bonus epic card if total value > 5000
-    if (totalValue > 5000) {
-      const bonusEpic = this.getRandomCardOfRarity('epic');
-      if (bonusEpic) {
-        bonusCards.push({ ...bonusEpic, id: uuidv4(), addedAt: new Date().toISOString() });
-      }
-    }
+    // Update pity counters
+    this.updatePityCounters(rarity);
     
-    // Bonus legendary card if total value > 10000
-    if (totalValue > 10000) {
-      const bonusLegendary = this.getRandomCardOfRarity('legendary');
-      if (bonusLegendary) {
-        bonusCards.push({ ...bonusLegendary, id: uuidv4(), addedAt: new Date().toISOString() });
-      }
-    }
-
-    // Bonus mythic card if got 5+ legendaries
-    if (rarityCount.legendary >= 5) {
-      const bonusMythic = this.getRandomCardOfRarity('mythic');
-      if (bonusMythic) {
-        bonusCards.push({ ...bonusMythic, id: uuidv4(), addedAt: new Date().toISOString() });
-      }
-    }
-
-    const rarityBreakdown = this.calculateRarityBreakdown(cards.map(r => r.card as any));
-    const highlights = this.getHighlightCards(cards.map(r => r.card as any));
+    // Update statistics
+    this.statistics.cardsByRarity[rarity]++;
+    this.updateCurrentStreak(rarity);
+    this.recalculateAverageRollsPerRare();
 
     return {
-      cards,
-      guaranteedTriggered: !hasEpicOrBetter,
-      bonusCards: bonusCards,
-      totalValue,
-      rarityBreakdown,
-      highlights: highlights as unknown as Card[]
+      card,
+      pityTriggered,
+      rarityBoosted: false, // Not implemented in this version
+      rollNumber: this.rollCount,
+      timestamp: new Date()
     };
   }
 
-  /**
-   * Calculate rarity breakdown for cards
-   */
-  private calculateRarityBreakdown(cards: any[]): Record<string, number> {
-    const breakdown: Record<string, number> = {};
+  rollMultiple(count: number): RollResult[] {
+    if (count <= 0 || count > 100) {
+      throw new Error('Invalid roll count. Must be between 1 and 100.');
+    }
+
+    const results: RollResult[] = [];
     
-    for (const card of cards) {
-      const rarityKey = (typeof card.rarity === 'string' ? card.rarity : String(card.rarity)).toLowerCase();
-      breakdown[rarityKey] = (breakdown[rarityKey] || 0) + 1;
+    for (let i = 0; i < count; i++) {
+      results.push(this.rollSingle());
+    }
+
+    return results;
+  }
+
+  getPityStatus(): PityStatus {
+    const nextGuaranteed = this.getNextGuaranteedRarity();
+    
+    return {
+      rollsWithoutRare: this.pityCounters[CardRarity.RARE],
+      rollsWithoutEpic: this.pityCounters[CardRarity.EPIC],
+      rollsWithoutLegendary: this.pityCounters[CardRarity.LEGENDARY],
+      rollsWithoutMythic: this.pityCounters[CardRarity.MYTHIC],
+      nextGuaranteed,
+      rollsUntilGuaranteed: nextGuaranteed ? this.getRollsUntilGuaranteed(nextGuaranteed) : undefined
+    };
+  }
+
+  getStatistics(): RollStatistics {
+    return { ...this.statistics }; // Return copy to prevent external mutation
+  }
+
+  resetPity(): void {
+    this.pityCounters = {
+      [CardRarity.COMMON]: 0,
+      [CardRarity.UNCOMMON]: 0,
+      [CardRarity.RARE]: 0,
+      [CardRarity.EPIC]: 0,
+      [CardRarity.LEGENDARY]: 0,
+      [CardRarity.MYTHIC]: 0,
+      [CardRarity.COSMIC]: 0,
+    };
+  }
+
+  // Private helper methods
+  private checkPitySystem(): { shouldTrigger: boolean; guaranteedRarity?: CardRarity } {
+    // Check in order of precedence (highest rarity first)
+    if (this.pityCounters[CardRarity.MYTHIC] >= PITY_THRESHOLDS[CardRarity.MYTHIC]) {
+      return { shouldTrigger: true, guaranteedRarity: CardRarity.MYTHIC };
+    }
+    if (this.pityCounters[CardRarity.LEGENDARY] >= PITY_THRESHOLDS[CardRarity.LEGENDARY]) {
+      return { shouldTrigger: true, guaranteedRarity: CardRarity.LEGENDARY };
+    }
+    if (this.pityCounters[CardRarity.EPIC] >= PITY_THRESHOLDS[CardRarity.EPIC]) {
+      return { shouldTrigger: true, guaranteedRarity: CardRarity.EPIC };
+    }
+    if (this.pityCounters[CardRarity.RARE] >= PITY_THRESHOLDS[CardRarity.RARE]) {
+      return { shouldTrigger: true, guaranteedRarity: CardRarity.RARE };
     }
     
-    return breakdown;
+    return { shouldTrigger: false };
   }
 
-  /**
-   * Get highlight cards (rare or better)
-   */
-  private getHighlightCards(cards: any[]): any[] {
-    const highlightRarities = ['rare', 'epic', 'legendary', 'mythic', 'cosmic'];
-    return cards.filter(card => {
-      const rarityKey = (typeof card.rarity === 'string' ? card.rarity : String(card.rarity)).toLowerCase();
-      return highlightRarities.includes(rarityKey);
-    })
-    .sort((a, b) => this.getCardValue(b) - this.getCardValue(a))
-    .slice(0, 5); // Top 5 best cards
+  private rollRarity(): CardRarity {
+    const random = Math.random();
+    let cumulative = 0;
+
+    // Roll based on cumulative probabilities
+    for (const [rarity, rate] of Object.entries(DROP_RATES)) {
+      cumulative += rate;
+      if (random <= cumulative) {
+        return rarity as CardRarity;
+      }
+    }
+
+    // Fallback to common (should not happen with proper rates)
+    return CardRarity.COMMON;
   }
 
-  /**
-   * Get all available rarities
-   */
-  getAvailableRarities(): string[] {
-    const rarities: string[] = [];
-    this.allCards.forEach((cards, rarity) => {
-      if (cards.length > 0) {
-        rarities.push(rarity);
+  private generateCard(rarity: CardRarity): Card {
+    // Generate sample cards based on rarity
+    const cardTemplates = this.getCardTemplates(rarity);
+    const template = cardTemplates[Math.floor(Math.random() * cardTemplates.length)];
+    
+    return CardUtils.createCard({
+      name: template.name,
+      rarity,
+      memeFamily: template.memeFamily,
+      emojis: template.emojis,
+      health: template.health,
+      attackDamage: template.attackDamage,
+      attackSpeed: template.attackSpeed,
+      manaCost: template.manaCost,
+      passiveAbility: template.passiveAbility,
+      flavor: template.flavor,
+      imageUrl: template.imageUrl || 'placeholder.jpg',
+      unlockStage: template.unlockStage || 1
+    });
+  }
+
+  private getCardTemplates(rarity: CardRarity) {
+    // Sample card templates for each rarity
+    const templates = {
+      [CardRarity.COMMON]: [
+        { name: 'Doge', memeFamily: MemeFamily.CLASSIC_INTERNET, emojis: ['🐶'], health: 80, attackDamage: 10, attackSpeed: 1.0, flavor: 'Much wow, very card' },
+        { name: 'Trollface', memeFamily: MemeFamily.CLASSIC_INTERNET, emojis: ['😈'], health: 90, attackDamage: 8, attackSpeed: 1.2, flavor: 'Problem?' },
+        { name: 'Grumpy Cat', memeFamily: MemeFamily.ANIMALS, emojis: ['😾'], health: 70, attackDamage: 12, attackSpeed: 0.9, flavor: 'NO.' }
+      ],
+      [CardRarity.UNCOMMON]: [
+        { name: 'Drake Pointing', memeFamily: MemeFamily.MEME_FORMATS, emojis: ['👉'], health: 120, attackDamage: 15, attackSpeed: 1.1, flavor: 'This one' },
+        { name: 'Pepe', memeFamily: MemeFamily.CLASSIC_INTERNET, emojis: ['🐸'], health: 100, attackDamage: 18, attackSpeed: 1.0, flavor: 'Feels good man' }
+      ],
+      [CardRarity.RARE]: [
+        { name: 'Chad', memeFamily: MemeFamily.CLASSIC_INTERNET, emojis: ['💪'], health: 150, attackDamage: 25, attackSpeed: 1.3, flavor: 'Yes.' },
+        { name: 'Zeus', memeFamily: MemeFamily.MYTHOLOGY, emojis: ['⚡'], health: 200, attackDamage: 30, attackSpeed: 0.8, flavor: 'God of thunder' }
+      ],
+      [CardRarity.EPIC]: [
+        { name: 'Giga Chad', memeFamily: MemeFamily.CLASSIC_INTERNET, emojis: ['💪', '🔥'], health: 250, attackDamage: 40, attackSpeed: 1.5, manaCost: 3, flavor: 'Ultimate Chad' },
+        { name: 'Odin', memeFamily: MemeFamily.MYTHOLOGY, emojis: ['⚡', '🗡️'], health: 300, attackDamage: 35, attackSpeed: 1.0, manaCost: 4, flavor: 'Allfather' }
+      ],
+      [CardRarity.LEGENDARY]: [
+        { 
+          name: 'Eternal Doge', 
+          memeFamily: MemeFamily.CLASSIC_INTERNET, 
+          emojis: ['🐶', '⭐', '💎'], 
+          health: 400, 
+          attackDamage: 50, 
+          attackSpeed: 2.0, 
+          manaCost: 5,
+          passiveAbility: {
+            id: 'eternal-wow',
+            name: 'Eternal Wow',
+            description: 'Much immortal, very eternal',
+            effect: '{"type": "immortal_once", "value": 1}',
+            trigger: 'low_hp'
+          },
+          flavor: 'Such legend, much eternal'
+        }
+      ],
+      [CardRarity.MYTHIC]: [
+        { 
+          name: 'Cosmic Pepe', 
+          memeFamily: MemeFamily.CLASSIC_INTERNET, 
+          emojis: ['🐸', '🌟', '🌌'], 
+          health: 600, 
+          attackDamage: 75, 
+          attackSpeed: 2.5, 
+          manaCost: 7,
+          passiveAbility: {
+            id: 'reality-warp',
+            name: 'Reality Warp',
+            description: 'Warps the fabric of meme reality',
+            effect: '{"type": "double_damage", "chance": 0.3}',
+            trigger: 'combat_start'
+          },
+          flavor: 'Ascended beyond mortal comprehension'
+        }
+      ],
+      [CardRarity.COSMIC]: [
+        { 
+          name: 'The One Meme', 
+          memeFamily: MemeFamily.CLASSIC_INTERNET, 
+          emojis: ['🌌', '⭐', '💎', '🔥'], 
+          health: 1000, 
+          attackDamage: 100, 
+          attackSpeed: 3.0, 
+          manaCost: 10,
+          passiveAbility: {
+            id: 'meme-singularity',
+            name: 'Meme Singularity',
+            description: 'All memes are one, one is all memes',
+            effect: '{"type": "win_condition", "chance": 0.1}',
+            trigger: 'synergy'
+          },
+          flavor: 'The source code of all memes'
+        }
+      ]
+    };
+
+    return templates[rarity] || templates[CardRarity.COMMON];
+  }
+
+  private updatePityCounters(rolledRarity: CardRarity): void {
+    // Reset counters for the rarity rolled and lower
+    const rarityOrder = [
+      CardRarity.COMMON,
+      CardRarity.UNCOMMON,
+      CardRarity.RARE,
+      CardRarity.EPIC,
+      CardRarity.LEGENDARY,
+      CardRarity.MYTHIC,
+      CardRarity.COSMIC
+    ];
+
+    const rolledIndex = rarityOrder.indexOf(rolledRarity);
+    
+    // Reset all counters up to and including the rolled rarity
+    for (let i = 0; i <= rolledIndex; i++) {
+      this.pityCounters[rarityOrder[i]] = 0;
+    }
+
+    // Increment counters for higher rarities
+    for (let i = rolledIndex + 1; i < rarityOrder.length; i++) {
+      this.pityCounters[rarityOrder[i]]++;
+    }
+  }
+
+  private updateCurrentStreak(rarity: CardRarity): void {
+    // Reset all streaks except the current one
+    Object.keys(this.statistics.currentStreak).forEach(r => {
+      if (r === rarity) {
+        this.statistics.currentStreak[r as CardRarity]++;
+      } else {
+        this.statistics.currentStreak[r as CardRarity] = 0;
       }
     });
-    return rarities;
   }
 
+  private recalculateAverageRollsPerRare(): void {
+    const rareCount = this.statistics.cardsByRarity[CardRarity.RARE] +
+                     this.statistics.cardsByRarity[CardRarity.EPIC] +
+                     this.statistics.cardsByRarity[CardRarity.LEGENDARY] +
+                     this.statistics.cardsByRarity[CardRarity.MYTHIC] +
+                     this.statistics.cardsByRarity[CardRarity.COSMIC];
+    
+    if (rareCount > 0) {
+      this.statistics.averageRollsPerRare = this.statistics.totalRolls / rareCount;
+    }
+  }
 
+  private getNextGuaranteedRarity(): CardRarity | undefined {
+    // Return the next rarity that will be guaranteed based on current pity
+    if (this.pityCounters[CardRarity.RARE] >= PITY_THRESHOLDS[CardRarity.RARE] - 1) {
+      return CardRarity.RARE;
+    }
+    if (this.pityCounters[CardRarity.EPIC] >= PITY_THRESHOLDS[CardRarity.EPIC] - 1) {
+      return CardRarity.EPIC;
+    }
+    if (this.pityCounters[CardRarity.LEGENDARY] >= PITY_THRESHOLDS[CardRarity.LEGENDARY] - 1) {
+      return CardRarity.LEGENDARY;
+    }
+    if (this.pityCounters[CardRarity.MYTHIC] >= PITY_THRESHOLDS[CardRarity.MYTHIC] - 1) {
+      return CardRarity.MYTHIC;
+    }
+    return undefined;
+  }
+
+  private getRollsUntilGuaranteed(rarity: CardRarity): number {
+    const threshold = PITY_THRESHOLDS[rarity];
+    const current = this.pityCounters[rarity];
+    return Math.max(0, threshold - current);
+  }
 }

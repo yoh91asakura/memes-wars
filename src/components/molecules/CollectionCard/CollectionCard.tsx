@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardUtils } from '../../../models/Card';
-import { CardComponent } from '../Card/Card';
+import { Card, CardUtils } from '../../../models';
+import { TCGCard } from '../../organisms/TCGCard/TCGCard';
 import { Text } from '../../atoms/Text';
 import { Button } from '../../atoms/Button';
 import { Icon } from '../../atoms/Icon';
@@ -144,12 +144,14 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
 
   return (
     <div className="collection-card__wrapper">
-      <CardComponent
+      <TCGCard
         card={card}
-        variant="tcg"
-        size={size}
-        interactive={true}
-        onClick={onSelect ? (clickedCard) => onSelect(clickedCard as Card) : undefined}
+        variant="collection"
+        size={size === 'sm' ? 'small' : size === 'lg' ? 'large' : 'medium'}
+        animated={true}
+        showEmojis={true}
+        showStats={true}
+        onClick={onSelect ? (clickedCard) => onSelect(clickedCard) : undefined}
         className={className}
         testId={testId}
       />

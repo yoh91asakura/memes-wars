@@ -4,7 +4,7 @@ import {
   EffectType, 
   TriggerType,
   CardUtils 
-} from '../../models/Card';
+} from '../../models';
 
 // Common cards (1/2 probability) - Everyday memes
 export const commonCards: Card[] = [

@@ -3,7 +3,7 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 
 export interface Notification {
   id: string;

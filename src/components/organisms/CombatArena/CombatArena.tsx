@@ -2,8 +2,9 @@
 
 import React, { useEffect, useRef, useCallback, useState } from 'react';
 import { useCombat, useCombatEngine, useProjectiles, useCombatCamera, useCombatEffects } from '../../../hooks/useCombat';
-import { useAnimation, useParticles } from '../../../hooks/useAnimation';
+import { useParticles } from '../../../hooks/useAnimation';
 import { Position, EmojiProjectile, CombatPlayer } from '../../../models/Combat';
+import { useCombatStore } from '../../../stores/combatStore';
 import { format } from '../../../utils/format';
 import './CombatArena.css';
 
@@ -36,19 +37,19 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
   const { startGameLoop, stopGameLoop, isRunning } = useCombatEngine();
   
   // Projectiles
-  const { projectiles, getActiveProjectiles } = useProjectiles();
+  const { getActiveProjectiles } = useProjectiles();
   
   // Camera
   const { cameraPosition, panCamera, zoomCamera, centerOnAction } = useCombatCamera();
   
   // Effects
-  const { screenShake, flashEffect, triggerScreenShake } = useCombatEffects();
+  const { screenShake, flashEffect } = useCombatEffects();
   
   // Particles
-  const { setCanvas, createExplosion, startRenderLoop, stopRenderLoop } = useParticles();
+  const { setCanvas, startRenderLoop, stopRenderLoop } = useParticles();
 
   // Mouse interaction state
-  const [mousePos, setMousePos] = useState<Position>({ x: 0, y: 0 });
+  const [, setMousePos] = useState<Position>({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<Position>({ x: 0, y: 0 });
 
@@ -255,7 +256,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     }
   };
 
-  const drawEffects = (ctx: CanvasRenderingContext2D) => {
+  const drawEffects = (_ctx: CanvasRenderingContext2D) => {
     // This would draw visual effects like explosions, power-ups, etc.
     // For now, just a placeholder
   };
@@ -312,7 +313,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 
     if (e.button === 0) { // Left click - fire projectile
       if (isActive && phase === 'active') {
-        const worldPos = screenToWorld({ x, y });
+        screenToWorld({ x, y });
         // Fire projectile at mouse position
         // This would be handled by the combat system
       }

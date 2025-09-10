@@ -64,6 +64,19 @@ export interface CardEffect {
   chance: number;                       // Base proc chance (0-1)
   effect: EffectType;                   // What happens
   duration?: number;                    // Effect duration in seconds
+  value?: number;                       // Effect value (damage, heal amount, etc)
+}
+
+// Passive abilities for cards
+export interface PassiveAbility {
+  id: string;                           // Unique ability ID
+  name: string;                         // Display name
+  description: string;                  // What the ability does
+  trigger: TriggerType;                 // When it activates
+  effect: EffectType;                   // Type of effect
+  chance: number;                       // Activation chance (0-1)
+  cooldown?: number;                    // Cooldown in seconds
+  value?: number;                       // Effect strength
 }
 
 // Stack bonus system for duplicate cards
@@ -77,6 +90,7 @@ export interface StackBonus {
 export interface VisualProperties {
   borderColor: string;                  // Border color based on rarity
   glowIntensity: number;                // 0-1 based on stack level
+  glow?: string;                       // Glow color for effects
   backgroundColor?: string;             // Card background
   animation?: 'pulse' | 'glow' | 'sparkle' | 'flame' | 'rainbow';
 }
@@ -104,9 +118,20 @@ export interface Card {
   description?: string;                // Card description
   visual?: VisualProperties;           // Visual customization
   
-  // === OPTIONAL COMBAT ===
+  // === COMBAT STATS ===
   hp?: number;                         // Card's HP contribution to player total
+  attack?: number;                     // Attack power
+  defense?: number;                    // Defense value
+  health?: number;                     // Alias for hp
+  damage?: number;                     // Base damage
+  cost?: number;                       // Mana/energy cost
+  
+  // === ABILITIES ===
   cardEffects?: CardEffect[];          // Effects that can proc during battle
+  passiveAbility?: PassiveAbility;     // Passive ability
+  
+  // === CARD TYPE ===
+  type?: string;                       // Card type (creature, spell, etc)
   
   // === METADATA ===
   createdAt: string;                   // When card was created

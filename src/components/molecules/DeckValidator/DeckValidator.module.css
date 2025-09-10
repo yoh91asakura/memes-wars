@@ -1,0 +1,117 @@
+/* DeckValidator - Simplified styles */
+.deck-validator {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Header */
+.validator-header {
+  text-align: center;
+}
+
+.deck-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+}
+
+.deck-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.deck-size {
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+}
+
+.deck-size.valid {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.deck-size.invalid {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Validation status */
+.validation-status {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.check.valid {
+  color: #10b981;
+}
+
+.check.invalid {
+  color: #ef4444;
+}
+
+/* Deck summary */
+.deck-summary {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.deck-summary h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.deck-summary p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+}
+
+.deck-summary .warning {
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+/* Actions */
+.confirmation-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .deck-validator {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .confirmation-actions {
+    flex-direction: column;
+  }
+}

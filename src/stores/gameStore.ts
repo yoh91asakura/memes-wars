@@ -2,7 +2,8 @@
 // Focused only on active game state, separated from player progression
 
 import { create } from 'zustand';
-import { Card } from '../models/Card';
+import { persist } from 'zustand/middleware';
+import { Card } from '../models';
 
 export interface Deck {
   id: string;
@@ -83,7 +84,8 @@ export interface GameStore {
 }
 
 export const useGameStore = create<GameStore>()(
-  (set, get) => ({
+  persist(
+    (set, get) => ({
         // Initial state
         currentMatch: null,
         isInGame: false,
@@ -316,5 +318,18 @@ export const useGameStore = create<GameStore>()(
             isInGame: false
           });
         }
-      })
+      }),
+      {
+        name: 'game-store',
+        partialize: (state) => ({
+          // Persist important game data but not temporary session state
+          decks: state.decks,
+          activeDeck: state.activeDeck,
+          maxDeckSize: state.maxDeckSize,
+          minDeckSize: state.minDeckSize,
+          settings: state.settings,
+          // DO NOT persist: currentMatch, isInGame, isConnected (session data)
+        })
+      }
+    )
 );

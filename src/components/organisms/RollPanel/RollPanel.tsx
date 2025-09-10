@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Card } from '../models/Card';
+import { Card } from '../../../models';
 import { usePlayerStore } from '../../../stores/playerStore';
 import { useCardsStore } from '../../../stores/cardsStore';
 import { RollButton } from '../../molecules/RollButton/RollButton';
+import { AutoRollControls } from '../../molecules/AutoRollControls';
 import { TCGCard } from '../TCGCard';
 import { Text } from '../../atoms/Text';
 import { Icon } from '../../atoms/Icon';
@@ -11,12 +12,14 @@ import './RollPanel.css';
 
 interface RollPanelProps {
   onRoll?: () => Promise<Card>;
+  disabled?: boolean;
   className?: string;
   testId?: string;
 }
 
 export const RollPanel: React.FC<RollPanelProps> = ({
   onRoll,
+  disabled = false,
   className = '',
   testId,
 }) => {
@@ -24,11 +27,11 @@ export const RollPanel: React.FC<RollPanelProps> = ({
   const [showReveal, setShowReveal] = useState(false);
   
   // Store hooks
-  const { coins, stats } = usePlayerStore();
+  const { stats } = usePlayerStore();
   const { isRolling, lastRollResult } = useCardsStore();
 
   const handleRoll = async () => {
-    if (!onRoll || isRolling) return;
+    if (!onRoll || isRolling || disabled) return;
 
     try {
       setShowReveal(false);
@@ -36,11 +39,9 @@ export const RollPanel: React.FC<RollPanelProps> = ({
       
       const newCard = await onRoll();
       
-      // Delay reveal for dramatic effect
-      setTimeout(() => {
-        setRevealCard(newCard);
-        setShowReveal(true);
-      }, 1000);
+      // Immediate reveal for smooth gameplay
+      setRevealCard(newCard);
+      setShowReveal(true);
     } catch (error) {
       console.error('Roll failed:', error);
     }
@@ -68,7 +69,7 @@ export const RollPanel: React.FC<RollPanelProps> = ({
           <Icon emoji="🎯" size="md" />
           <div className="roll-panel__stat-content">
             <Text variant="h4" weight="bold" color="primary">
-              {stats?.cardsCollected || 0}
+              {Object.values(stats?.collectedByRarity || {}).reduce((sum, count) => sum + count, 0)}
             </Text>
             <Text variant="caption" color="muted">
               Cards Collected
@@ -133,10 +134,14 @@ export const RollPanel: React.FC<RollPanelProps> = ({
             onRoll={handleRoll}
             loading={isRolling}
             rollCount={stats?.totalRolls || 0}
-            disabled={false}
+            disabled={disabled || !onRoll}
+            testId="roll-button"
           />
         </div>
       </div>
+
+      {/* Auto Roll Controls */}
+      <AutoRollControls testId="auto-roll-controls" />
 
       {/* Tips */}
       <div className="roll-panel__tips">

@@ -29,7 +29,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
     <div className={headerClass}>
       <div className={styles.nameSection}>
         <Text 
-          variant={compact ? 'body2' : 'h6'} 
+          variant={compact ? 'body' : 'h6'} 
           weight="semibold"
           align={alignment}
           className={styles.cardName}

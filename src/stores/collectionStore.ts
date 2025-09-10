@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Card } from '../models/Card';
+import { Card } from '../models';
 import { CardService } from '../services/CardService';
 
 interface CollectionFilters {

@@ -1,5 +1,5 @@
-// Re-export the unified card model for backward compatibility
-export * from '../../models/unified/Card';
+// Re-export the card model for backward compatibility
+export * from '../../models';
 export * from './emoji';
 
 // Global type definitions for The Meme Wars
@@ -12,35 +12,8 @@ export interface User {
   createdAt: Date;
 }
 
-// Legacy Card interface - for backward compatibility with components
-// Using the simplified version that matches current component usage
-export interface Card {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl?: string;
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary' | 'mythic' | 'cosmic';
-  emoji: string;
-  type?: string;
-  cost?: number;
-  damage?: number;
-  attack?: number;
-  defense?: number;
-  color?: string;
-  stats: {
-    attack: number;
-    defense: number;
-    health: number;
-    speed?: number;
-  };
-  effects?: string[];
-  tags?: string[];
-  ability?: string;
-  flavor?: string;
-  createdAt?: Date;
-}
-
-export type Rarity = Card['rarity'];
+// Note: Card interfaces are now unified in src/models/Card.ts
+// All components should import from src/models for consistency
 
 export interface CardRoll {
   id: string;

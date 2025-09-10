@@ -25,11 +25,14 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     collection,
     filters,
     viewMode,
+    showStacks,
     selectedCard,
     setFilters,
     setViewMode,
+    toggleShowStacks,
     setSelectedCard,
     getFilteredCards,
+    getStackedCards,
     getCollectionStats,
     removeCard
   } = useCardsStore();
@@ -44,7 +47,16 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   
   // Computed values
   const filteredCards = useMemo(() => getFilteredCards(), [collection, filters]);
+  const stackedCards = useMemo(() => getStackedCards(), [collection]);
   const stats = useMemo(() => getCollectionStats(), [collection]);
+  
+  // Display data based on view mode
+  const displayData = useMemo(() => {
+    if (showStacks && viewMode === 'stack') {
+      return stackedCards;
+    }
+    return filteredCards.map(card => ({ cardData: card, count: 1, ids: [card.id] }));
+  }, [filteredCards, stackedCards, showStacks, viewMode]);
   
   // Handlers
   const handleSearchChange = (search: string) => {
@@ -59,8 +71,12 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
     setFilters({ sortBy: sortBy as any, sortOrder });
   };
   
-  const handleViewModeChange = (mode: 'grid' | 'list') => {
+  const handleViewModeChange = (mode: 'grid' | 'list' | 'stack') => {
     setViewMode(mode);
+    if (mode === 'stack') {
+      // Auto-enable stacks when stack view is selected
+      if (!showStacks) toggleShowStacks();
+    }
   };
   
   const handleClearFilters = () => {
@@ -115,7 +131,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   // Empty state
   if (collection.length === 0) {
     return (
-      <div className={`collection-page collection-page--empty ${className}`} data-testid={testId}>
+      <div className={`collection-page collection-page--empty ${className}`} data-testid={testId || 'collection-page'}>
         <div className="collection-page__empty-state">
           <div className="collection-page__empty-icon">
             <Icon emoji="📦" size="2xl" />
@@ -138,7 +154,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
   }
   
   return (
-    <div className={`collection-page ${className}`} data-testid={testId}>
+    <div className={`collection-page ${className}`} data-testid={testId || 'collection-page'}>
       {/* Page Header */}
       <div className="collection-page__header">
         <div className="collection-page__title-section">
@@ -151,6 +167,16 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
         </div>
         
         <div className="collection-page__header-actions">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleShowStacks}
+            testId="toggle-stacks"
+          >
+            <Icon emoji={showStacks ? "📦" : "📑"} size="sm" />
+            {showStacks ? 'Individual' : 'Stacked'} View
+          </Button>
+          
           <Button
             variant="ghost"
             size="sm"
@@ -235,7 +261,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       
       {/* Cards Display */}
       <div className="collection-page__content">
-        {filteredCards.length === 0 ? (
+        {displayData.length === 0 ? (
           <div className="collection-page__no-results">
             <div className="collection-page__no-results-icon">
               <Icon name="search" size="2xl" color="muted" />
@@ -256,13 +282,13 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           </div>
         ) : (
           <motion.div 
-            className={`collection-page__cards collection-page__cards--${viewMode}`}
+            className={`collection-page__cards collection-page__cards--${showStacks ? 'stack' : viewMode}`}
             layout
           >
             <AnimatePresence mode="popLayout">
-              {filteredCards.map((card, index) => (
+              {displayData.map((item, index) => (
                 <motion.div
-                  key={`${card.id}-${index}`}
+                  key={showStacks ? `${item.cardData.name}-${item.cardData.rarity}` : `${item.cardData.id}-${index}`}
                   layout
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -271,16 +297,24 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
                     duration: 0.3,
                     delay: index * 0.02
                   }}
+                  className="collection-page__card-wrapper"
                 >
                   <CollectionCard
-                    card={card}
-                    viewMode={viewMode}
+                    card={item.cardData}
+                    viewMode={showStacks ? 'stack' : viewMode}
                     onSelect={handleCardSelect}
                     onAddToDeck={handleAddToDeck}
                     onRemove={handleRemoveCard}
-                    className={selectedCard?.id === card.id ? 'collection-card--selected' : ''}
+                    className={selectedCard?.id === item.cardData.id ? 'collection-card--selected' : ''}
                     testId={`collection-card-${index}`}
                   />
+                  {showStacks && item.count > 1 && (
+                    <div className="collection-page__stack-badge">
+                      <Text variant="caption" weight="bold" color="primary">
+                        x{item.count}
+                      </Text>
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </AnimatePresence>

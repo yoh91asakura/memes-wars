@@ -32,6 +32,16 @@ export default [
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error',
       'no-var': 'error',
+      // AI-friendly patterns for better code readability and understanding
+      'id-length': ['warn', { min: 2, exceptions: ['_', 'i', 'j', 'x', 'y'] }],
+      'max-depth': ['warn', 4],
+      'max-lines-per-function': ['warn', 100],
+      'complexity': ['warn', 10],
+      'max-params': ['warn', 4],
+      'prefer-destructuring': ['warn', { array: false, object: true }],
+      'object-shorthand': ['warn', 'always'],
+      'arrow-spacing': 'warn',
+      'space-before-function-paren': ['warn', { anonymous: 'always', named: 'never', asyncArrow: 'always' }],
     },
   },
   {

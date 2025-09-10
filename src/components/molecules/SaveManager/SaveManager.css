@@ -1,0 +1,266 @@
+/* SaveManager - Game save/load interface styles */
+
+.save-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: var(--bg-secondary, #2a2a2a);
+  border-radius: 12px;
+  border: 1px solid var(--border-primary, #333);
+}
+
+.save-manager h3 {
+  margin: 0;
+  color: var(--text-primary, #ffffff);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Save Info Display */
+.save-info {
+  padding: 16px;
+  background: var(--bg-tertiary, rgba(255, 255, 255, 0.03));
+  border-radius: 8px;
+  border: 1px solid var(--border-secondary, #444);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.info-item .label {
+  color: var(--text-secondary, #cccccc);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.info-item .value {
+  color: var(--text-primary, #ffffff);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.no-save-info {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-tertiary, #888888);
+  background: var(--bg-tertiary, rgba(255, 255, 255, 0.03));
+  border-radius: 8px;
+  border: 2px dashed var(--border-secondary, #444);
+}
+
+.no-save-info p {
+  margin: 0;
+  font-style: italic;
+}
+
+/* Auto-save Status */
+.auto-save-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-tertiary, rgba(255, 255, 255, 0.03));
+  border-radius: 6px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary, #888888);
+  transition: background-color 0.3s ease;
+}
+
+.auto-save-status.saving .status-dot {
+  background: var(--warning, #ff9800);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.auto-save-status.saved .status-dot {
+  background: var(--success, #4caf50);
+}
+
+.auto-save-status.idle .status-dot {
+  background: var(--info, #2196f3);
+}
+
+.status-text {
+  color: var(--text-secondary, #cccccc);
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+/* Operation Status */
+.operation-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  color: white;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: slideInDown 0.3s ease-out;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Action Buttons */
+.save-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.primary-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.secondary-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.save-actions button {
+  min-width: 120px;
+}
+
+.secondary-actions button {
+  min-width: 100px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .save-manager {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .primary-actions,
+  .secondary-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .save-actions button,
+  .secondary-actions button {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .save-manager {
+    padding: 12px;
+  }
+
+  .save-manager h3 {
+    font-size: 1.1rem;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .info-item .label,
+  .info-item .value {
+    font-size: 0.8rem;
+  }
+}
+
+/* Accessibility */
+.save-manager button:focus-visible {
+  outline: 2px solid var(--accent-primary, #64b5f6);
+  outline-offset: 2px;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .save-manager {
+    background: var(--bg-secondary-dark, #1a1a1a);
+    border-color: var(--border-primary-dark, #2a2a2a);
+  }
+
+  .save-info {
+    background: var(--bg-tertiary-dark, rgba(255, 255, 255, 0.02));
+    border-color: var(--border-secondary-dark, #333);
+  }
+}
+
+/* Animation for save success/error states */
+.save-manager[data-last-operation="success"] {
+  animation: saveSuccess 0.6s ease-out;
+}
+
+.save-manager[data-last-operation="error"] {
+  animation: saveError 0.6s ease-out;
+}
+
+@keyframes saveSuccess {
+  0% { border-color: var(--border-primary, #333); }
+  50% { border-color: var(--success, #4caf50); }
+  100% { border-color: var(--border-primary, #333); }
+}
+
+@keyframes saveError {
+  0% { border-color: var(--border-primary, #333); }
+  50% { border-color: var(--error, #f44336); }
+  100% { border-color: var(--border-primary, #333); }
+}

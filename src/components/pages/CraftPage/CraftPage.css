@@ -1,0 +1,191 @@
+/* CraftPage Styles */
+.craft-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+/* Header */
+.craft-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.craft-page__title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.craft-page__intro {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+/* Main Content */
+.craft-page__main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.craft-page__craft-panel {
+  width: 100%;
+  max-width: 1400px;
+}
+
+/* Help Section */
+.craft-page__help {
+  margin-top: 2rem;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.craft-page__help-details {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.craft-page__help-summary {
+  padding: 1.5rem;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background 0.2s ease;
+  user-select: none;
+}
+
+.craft-page__help-summary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.craft-page__help-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.craft-page__help-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border-left: 4px solid #00ff88;
+}
+
+.craft-page__tips-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.craft-page__tips-list li {
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  border-left: 3px solid rgba(0, 255, 136, 0.5);
+  position: relative;
+}
+
+.craft-page__tips-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0.25rem;
+  color: #00ff88;
+  font-weight: bold;
+}
+
+.craft-page__tips-list li {
+  padding-left: 2rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.craft-page {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.craft-page__help-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .craft-page {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  .craft-page__header {
+    gap: 1rem;
+  }
+  
+  .craft-page__intro {
+    padding: 1rem;
+  }
+  
+  .craft-page__help-content {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .craft-page__help-section {
+    padding: 0.75rem;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  .craft-page__help-summary {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  
+  .craft-page__help-summary:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .craft-page__help-details {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .craft-page__help-section {
+    border-left: 6px solid #00ff88;
+  }
+  
+  .craft-page__tips-list li {
+    border-left: 4px solid #00ff88;
+  }
+}

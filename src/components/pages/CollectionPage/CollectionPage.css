@@ -49,6 +49,34 @@
   padding: 16px 0;
 }
 
+/* Stack View Layout */
+.collection-page__cards--stack {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.collection-page__card-wrapper {
+  position: relative;
+}
+
+.collection-page__stack-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(135deg, var(--primary-500), var(--secondary-400));
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--background);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
 /* Cards List Layout */
 .collection-page__cards--list {
   display: flex;
