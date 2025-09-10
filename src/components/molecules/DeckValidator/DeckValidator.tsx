@@ -20,7 +20,7 @@ export const DeckValidator: React.FC<DeckValidatorProps> = ({
   requiredSynergies: _requiredSynergies = [],
   className = ''
 }) => {
-  const [selectedCards, _setSelectedCards] = useState<Record<string, unknown>[]>(currentDeck);
+  const [selectedCards] = useState<Record<string, unknown>[]>(currentDeck);
 
   // Simple validation - just check if deck has cards
   const isValid = selectedCards.length > 0;

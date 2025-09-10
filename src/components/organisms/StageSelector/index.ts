@@ -1,1 +1,1 @@
-export { default } from './StageSelector';
+export { default as StageSelector } from './StageSelector';

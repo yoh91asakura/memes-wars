@@ -115,6 +115,7 @@ export interface CardsStore {
   getFilteredCards: () => Card[];
   getCollectionStats: () => CollectionStats;
   getCardsByRarity: (rarity: string) => Card[];
+  getStackedCards: () => CardStack[];
   hasCard: (cardId: string) => boolean;
   getCardCount: (cardId: string) => number;
   getDuplicateCards: () => Card[];

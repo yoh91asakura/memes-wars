@@ -344,7 +344,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
               <Button
                 onClick={() => optimizeDeck('balance')}
                 variant="secondary"
-                size="small"
+                size="sm"
                 disabled={collection.length === 0}
               >
                 Auto-Optimize
@@ -352,7 +352,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
               <Button
                 onClick={() => optimizeDeck('synergy')}
                 variant="secondary"
-                size="small"
+                size="sm"
                 disabled={collection.length === 0}
               >
                 Maximize Synergy
@@ -360,7 +360,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
               <Button
                 onClick={() => optimizeDeck('power')}
                 variant="secondary"
-                size="small"
+                size="sm"
                 disabled={collection.length === 0}
               >
                 Maximize Power
@@ -368,7 +368,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
               <Button
                 onClick={clearDeck}
                 variant="danger"
-                size="small"
+                size="sm"
                 disabled={selectedDeck.length === 0}
               >
                 Clear Deck
@@ -438,7 +438,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
                 type="search"
                 placeholder="Search cards..."
                 value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                onChange={(value) => setFilters(prev => ({ ...prev, search: value }))}
               />
               
               <select

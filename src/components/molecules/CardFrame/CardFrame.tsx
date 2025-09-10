@@ -7,7 +7,7 @@ export interface CardFrameProps {
   children: React.ReactNode;
   animated?: boolean;
   size?: 'small' | 'medium' | 'large';
-  variant?: 'default' | 'battle' | 'collection';
+  variant?: 'default' | 'battle' | 'collection' | 'detail';
   selected?: boolean;
   className?: string;
 }

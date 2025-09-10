@@ -265,6 +265,10 @@ const SynergyPanel: React.FC<SynergyPanelProps> = ({ deck, className }) => {
     return synergyResult.activeSynergies.map((synergy) => {
       const synergyType = SYNERGY_TYPES[synergy.synergyId];
       
+      if (!synergyType) {
+        return null;
+      }
+      
       return (
         <SynergyCard 
           key={synergy.synergyId} 
@@ -310,6 +314,10 @@ const SynergyPanel: React.FC<SynergyPanelProps> = ({ deck, className }) => {
         {synergyResult.potentialSynergies.slice(0, 3).map((potential) => {
           const synergyType = SYNERGY_TYPES[potential.synergyId];
           const progress = potential.currentCount / potential.requiredCount;
+          
+          if (!synergyType) {
+            return null;
+          }
           
           return (
             <SynergyCard 

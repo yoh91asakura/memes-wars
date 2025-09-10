@@ -104,6 +104,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
       // Show error feedback
         // Error feedback removed - could integrate with toast notifications
     }
+    return success;
   };
   
   const handleRemoveCard = (card: Card) => {

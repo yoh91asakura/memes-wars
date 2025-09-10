@@ -1,1 +1,1 @@
-export { default } from './SynergyPanel';
+export { default as SynergyPanel } from './SynergyPanel';

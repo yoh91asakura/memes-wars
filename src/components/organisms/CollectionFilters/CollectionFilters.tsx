@@ -11,11 +11,11 @@ interface CollectionFiltersProps {
   rarity: string | 'all';
   sortBy: 'name' | 'rarity' | 'power' | 'dateAdded';
   sortOrder: 'asc' | 'desc';
-  viewMode: 'grid' | 'list';
+  viewMode: 'grid' | 'list' | 'stack';
   onSearchChange: (search: string) => void;
   onRarityChange: (rarity: string | 'all') => void;
   onSortChange: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
-  onViewModeChange: (mode: 'grid' | 'list') => void;
+  onViewModeChange: (mode: 'grid' | 'list' | 'stack') => void;
   onClearFilters: () => void;
   className?: string;
   testId?: string;

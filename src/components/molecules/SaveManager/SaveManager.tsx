@@ -72,7 +72,7 @@ export const SaveManager: React.FC<SaveManagerProps> = ({
       }
       
       onSaveComplete?.(success);
-    } catch (error) {
+    } catch {
       setLastOperation('Error occurred while saving');
     } finally {
       setIsOperating(false);
@@ -90,7 +90,7 @@ export const SaveManager: React.FC<SaveManagerProps> = ({
       const success = await PersistenceService.loadGame();
       setLastOperation(success ? 'Game loaded successfully!' : 'No save data found');
       onLoadComplete?.(success);
-    } catch (error) {
+    } catch {
       setLastOperation('Error occurred while loading');
     } finally {
       setIsOperating(false);
@@ -122,7 +122,7 @@ export const SaveManager: React.FC<SaveManagerProps> = ({
         const info = PersistenceService.getSaveInfo();
         setSaveInfo(info);
       }
-    } catch (error) {
+    } catch {
       setLastOperation('Error occurred while importing');
     } finally {
       setIsOperating(false);
@@ -151,7 +151,7 @@ export const SaveManager: React.FC<SaveManagerProps> = ({
       if (success) {
         setSaveInfo({ exists: false });
       }
-    } catch (error) {
+    } catch {
       setLastOperation('Error occurred while clearing save data');
     } finally {
       setIsOperating(false);

@@ -479,7 +479,7 @@ export const CombatPage: React.FC = () => {
               <Button onClick={() => {
                 setIsAutoStarting(false);
                 handleStartCombat();
-              }} variant="primary" size="small">
+              }} variant="primary" size="sm">
                 Start Now
               </Button>
             </div>
@@ -622,7 +622,7 @@ export const CombatPage: React.FC = () => {
               <Button 
                 onClick={() => setShowRewardsModal(false)} 
                 variant="secondary"
-                size="small"
+                size="sm"
               >
                 ✕
               </Button>

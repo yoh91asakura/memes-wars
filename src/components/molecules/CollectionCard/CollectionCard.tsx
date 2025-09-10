@@ -10,11 +10,14 @@ import './CollectionCard.css';
 interface CollectionCardProps {
   card: Card;
   size?: 'sm' | 'md' | 'lg';
-  viewMode?: 'grid' | 'list';
+  viewMode?: 'grid' | 'list' | 'stack';
   showActions?: boolean;
+  compact?: boolean;
+  showDetails?: boolean;
   onSelect?: (card: Card) => void;
   onAddToDeck?: (card: Card) => void;
   onRemove?: (card: Card) => void;
+  onClick?: () => void;
   className?: string;
   testId?: string;
 }
@@ -24,9 +27,12 @@ export const CollectionCard: React.FC<CollectionCardProps> = ({
   size = 'md',
   viewMode = 'grid',
   showActions = true,
+  compact = false,
+  showDetails = false,
   onSelect,
   onAddToDeck,
   onRemove,
+  onClick,
   className = '',
   testId
 }) => {
