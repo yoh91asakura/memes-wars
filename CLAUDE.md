@@ -6,9 +6,10 @@
 3. [🧪 TDD WORKFLOW WITH VITEST](#3-tdd-workflow-with-vitest)
 4. [🎭 E2E TESTING WITH PLAYWRIGHT](#4-e2e-testing-with-playwright)
 5. [📋 SPEC KIT WORKFLOW](#5-spec-kit-workflow)
-6. [🎯 GAME MECHANICS IMPLEMENTATION](#6-game-mechanics-implementation)
-7. [🛠️ DEVELOPMENT COMMANDS](#7-development-commands)
-8. [🎯 CURRENT IMPLEMENTATION STATUS](#8-current-implementation-status)
+6. [🤖 AI AGENT COLLABORATION](#6-ai-agent-collaboration)
+7. [🎯 GAME MECHANICS IMPLEMENTATION](#7-game-mechanics-implementation)
+8. [🛠️ DEVELOPMENT COMMANDS](#8-development-commands)
+9. [🎯 CURRENT IMPLEMENTATION STATUS](#9-current-implementation-status)
 
 ---
 
@@ -310,44 +311,57 @@ export default defineConfig({
 
 ### Active Spec Directory
 ```
+/specs/004-refactor-all-the/
+├── spec.md              # ✅ 30 functional requirements for AI optimization
+├── plan.md              # ✅ Implementation plan (Phases 0-2 complete)
+├── research.md          # ✅ Best practices for AI-assisted development
+├── data-model.md        # ✅ Spec-kit entities and collaboration patterns
+├── quickstart.md        # ✅ Developer onboarding guide
+├── contracts/           # ✅ Service interface definitions (4 services)
+└── tasks.md             # ✅ 18 implementation tasks (Phase 2/4 active)
+```
+
+### Previous Completed Work
+```
 /specs/001-extract-current-project/
-├── spec.md              # ✅ Functional requirements (31 enhanced features)
-├── plan.md              # ✅ Implementation plan (Phase 3.5 active)
-├── research.md          # ✅ Technology decisions and patterns
-├── data-model.md        # ✅ Complete data models with new entities
-├── quickstart.md        # ✅ Updated with core game loop testing
-├── contracts/           # ✅ Service contracts and API definitions
-└── tasks.md             # ✅ Phase 3.5 polish tasks
+├── spec.md              # ✅ COMPLETED: Core game loop implementation
+├── plan.md              # ✅ COMPLETED: Game mechanics planning
+├── research.md          # ✅ COMPLETED: Game architecture decisions
+└── contracts/           # ✅ COMPLETED: Game service contracts
 ```
 
 ### Quick Spec Commands
 ```bash
-# Read current implementation status
-Read specs/001-extract-current-project/spec.md
+# Read current refactoring requirements
+Read specs/004-refactor-all-the/spec.md
 
-# Check active tasks
-Read specs/001-extract-current-project/tasks.md
+# Check active refactoring tasks
+Read specs/004-refactor-all-the/tasks.md
 
-# Review architecture decisions
-Read specs/001-extract-current-project/research.md
+# Review AI optimization research
+Read specs/004-refactor-all-the/research.md
 
-# Understand data models
-Read specs/001-extract-current-project/data-model.md
+# Understand spec-kit data models
+Read specs/004-refactor-all-the/data-model.md
 ```
 
 ## 🔄 Spec-Driven Development Workflow
 
 ### Current Phase Integration
 ```typescript
-// When implementing new features, always check:
-const currentPhase = 'Phase 3.5: Core Game Loop Polish';
-const activeSpecs = 'specs/001-extract-current-project/';
+// When implementing refactoring tasks, always check:
+const currentPhase = 'Phase 2: Project Refactoring & AI Optimization';
+const activeSpecs = 'specs/004-refactor-all-the/';
 const focusAreas = [
-  'Save persistence for currencies',
-  'Deck validation interface',
-  'Smooth transition animations',
-  'Audio feedback integration'
+  'Documentation consolidation and CLAUDE.md updates',
+  'Atomic design pattern enforcement',
+  'Cross-platform script compatibility',
+  'AI navigation and context optimization'
 ];
+
+// Previous phase completed:
+const completedPhase = 'Core Game Loop Implementation';
+const completedSpecs = 'specs/001-extract-current-project/';
 ```
 
 ## 🎯 Feature Development Commands
@@ -455,7 +469,151 @@ git commit -m "feat: add divine rarity cards with balanced mechanics"
 
 ---
 
-# 6. 🎯 GAME MECHANICS IMPLEMENTATION
+# 6. 🤖 AI AGENT COLLABORATION
+
+## 🎯 Spec-Kit Optimization Status
+
+**Current Branch**: `004-refactor-all-the`  
+**Active Spec**: `specs/004-refactor-all-the/`  
+**Focus**: Project refactoring for Claude Code & spec-kit optimization
+
+### ✅ Phase 1 Complete - Design & Contracts
+- **Specification**: 30 functional requirements across 6 categories
+- **Research**: Comprehensive best practices for AI-assisted development
+- **Data Models**: Spec-kit entities and collaboration patterns
+- **Service Contracts**: 4 core services for agent coordination
+  - SpecService: Specification lifecycle management
+  - TestOrchestrationService: TDD workflow coordination  
+  - AgentContextService: Multi-agent communication
+  - DocumentationSyncService: Consistency maintenance
+
+### 🎯 Agent Collaboration Patterns
+
+#### Multi-Agent Coordination
+```typescript
+// Current agent ecosystem:
+const agentTypes = {
+  "claude": "Primary development agent (spec-kit workflows)",
+  "copilot": "Code completion and pattern assistance", 
+  "gemini": "Alternative AI assistant (when applicable)"
+};
+
+// Shared context through:
+// - CLAUDE.md (this file) - Primary AI context
+// - specs/*/spec.md - Feature specifications  
+// - specs/*/tasks.md - Implementation tasks
+// - specs/*/contracts/ - Service interfaces
+```
+
+#### Agent-Optimized Architecture
+```
+Project Structure (Optimized for AI Navigation):
+├── CLAUDE.md                    # Primary AI context (this file)
+├── specs/004-refactor-all-the/  # Active spec-kit refactoring
+│   ├── spec.md                  # 30 functional requirements
+│   ├── plan.md                  # Implementation planning
+│   ├── research.md              # Best practices research
+│   ├── data-model.md           # Entity definitions
+│   ├── quickstart.md           # Developer onboarding
+│   └── contracts/              # Service interface definitions
+├── src/components/             # Atomic design pattern (AI-friendly)
+├── tests/                      # Constitutional test order
+│   ├── contract/              # Service interface tests
+│   ├── integration/           # Service interaction tests  
+│   ├── e2e/                   # Full workflow tests (Playwright)
+│   └── unit/                  # Component tests
+└── scripts/                   # Cross-platform spec-kit utilities
+```
+
+#### Constitutional Testing for AI Workflows
+```
+TDD Order (NON-NEGOTIABLE):
+1. Contract Tests     → Define service interfaces
+2. Integration Tests  → Validate service interactions
+3. E2E Tests         → Cover complete user workflows
+4. Unit Tests        → Test individual components
+
+# AI agents MUST follow this order for constitutional compliance
+# RED-GREEN-Refactor cycle enforced at each level
+```
+
+### 🔧 Agent Context Management
+
+#### Context Synchronization
+```markdown
+# Context files stay synchronized automatically:
+# - CLAUDE.md: Primary AI context (this file)
+# - .github/copilot-instructions.md: GitHub Copilot context
+# - GEMINI.md: Gemini CLI context (when applicable)
+
+# Context update triggers:
+# - Spec status changes
+# - Phase transitions  
+# - Task completions
+# - Documentation updates
+```
+
+#### Token Optimization
+```
+CLAUDE.md Guidelines:
+- Keep under 150 lines total for token efficiency
+- Focus on current active work and context
+- Archive completed phases to appendix
+- Use clear section markers for AI navigation
+- Include absolute file paths for Windows compatibility
+```
+
+### 🚀 Spec-Kit Commands for AI Agents
+
+#### Core Workflow Commands
+```bash
+# Feature creation (AI agents can suggest and execute)
+bash scripts/create-new-feature.sh "feature description"
+
+# Planning setup (generates comprehensive design docs)
+bash scripts/setup-plan.sh
+
+# Context updates (synchronize agent instruction files)
+bash scripts/update-agent-context.sh claude
+bash scripts/update-agent-context.sh copilot
+
+# Prerequisites checking
+bash scripts/check-task-prerequisites.sh
+```
+
+#### Agent Coordination Commands
+```bash
+# Validate spec-kit compliance
+npm run validate:spec-kit
+
+# Test constitutional order compliance  
+npm run test:constitutional
+
+# Generate agent context reports
+npm run generate:agent-context
+
+# Synchronize documentation
+npm run sync:documentation
+```
+
+### 📊 Agent Collaboration Metrics
+
+#### Current Performance Targets
+- **Claude Code Understanding Time**: < 30 seconds
+- **Multi-agent task coordination**: < 5 minutes setup
+- **Context synchronization**: < 2 seconds
+- **Test feedback cycle**: < 2 minutes
+
+#### Success Indicators
+- ✅ Agents can navigate project structure instantly
+- ✅ TDD workflow followed constitutionally  
+- ✅ Documentation stays synchronized automatically
+- ✅ Cross-platform scripts work reliably
+- ✅ Service contracts enable clear collaboration
+
+---
+
+# 7. 🎯 GAME MECHANICS IMPLEMENTATION
 
 ## 🎴 Card System Implementation Map
 
@@ -556,7 +714,7 @@ const implementationPhases = {
 
 ---
 
-# 7. 🛠️ DEVELOPMENT COMMANDS
+# 8. 🛠️ DEVELOPMENT COMMANDS
 
 ## 🎮 Core Development
 ```bash
@@ -597,9 +755,11 @@ src/data/stages/                     # Stage progression data
 src/data/cards/                      # All card definitions
 
 # Documentation
-specs/001-extract-current-project/   # Current feature specs
+specs/004-refactor-all-the/         # Active refactoring specs
+specs/001-extract-current-project/   # Completed game loop specs  
 README.md                           # Complete game description
 STATUS.md                           # Quick project overview
+CLAUDE.md                           # AI agent context (this file)
 ```
 
 ### Development Workflow Integration
@@ -650,32 +810,46 @@ window.gameDebug = {
 
 ---
 
-# 8. 🎯 CURRENT IMPLEMENTATION STATUS - CORE GAME LOOP COMPLETE
+# 9. 🎯 CURRENT IMPLEMENTATION STATUS - PROJECT REFACTORING
 
 ## 🔍 Documentation Status Overview
 
-### ✅ Completed Documentation
-- **README.md**: ✅ Updated with complete game description and core loop diagram
-- **specs/001-extract-current-project/spec.md**: ✅ Enhanced with 31 functional requirements
-- **specs/001-extract-current-project/tasks.md**: ✅ Phase 3.5 polish tasks defined
-- **specs/001-extract-current-project/data-model.md**: ✅ Updated with new entities
-- **CLAUDE.md**: ✅ Optimized with spec system integration (this update)
+### ✅ Completed Documentation (Previous Phase)
+- **specs/001-extract-current-project/**: ✅ COMPLETED: Core game loop implementation
+  - spec.md: 31 functional requirements for game mechanics
+  - tasks.md: Core game loop implementation tasks (complete)
+  - contracts/: Game service interfaces (operational)
+- **Game Implementation**: ✅ FULLY OPERATIONAL: Roll→Equip→Battle→Reward loop
 
-### 🎯 Documentation In Progress
-- **specs/001-extract-current-project/contracts/**: Missing rewardservice.md, aimatchmaking.md, currencystore.md
-- **STATUS.md**: Quick project overview file to be created
-- **Versions & Changelog**: Synchronization needed across documentation
+### 🎯 Current Refactoring Phase (Active)
+- **specs/004-refactor-all-the/**: 🔄 AI OPTIMIZATION & SPEC-KIT INTEGRATION
+  - spec.md: ✅ 30 functional requirements for AI-assisted development
+  - plan.md: ✅ Implementation blueprint (Phases 0-2 complete)
+  - research.md: ✅ Best practices for Claude Code integration
+  - data-model.md: ✅ Spec-kit entities and workflows
+  - tasks.md: 🔄 18 refactoring tasks (Phase 2/4 active)
+- **CLAUDE.md**: 🔄 IN PROGRESS: Context consolidation and optimization
+- **STATUS.md**: ⏳ TO BE CREATED: Quick project overview
 
-## 📁 Core Game Loop Implementation Status
-**Current Phase**: Core Game Loop Finalization & Polish  
-**Branch**: `001-extract-current-project` | **Status**: ✅ Core Game Loop COMPLETE → 🎯 Polish Phase
+## 📁 Current Refactoring Status
+**Current Phase**: Project Refactoring & AI Optimization  
+**Branch**: `004-refactor-all-the` | **Status**: 🔄 Documentation & Structure Phase (2/4)
 
-### 📄 Updated Spec Documentation
-- **Specification**: `specs/001-extract-current-project/spec.md` - ✅ Enhanced with core game loop systems
-- **Data Models**: `specs/001-extract-current-project/data-model.md` - ✅ Updated with new entities (CurrencyState, RewardDistribution, AIOpponent, StageRewards)
-- **Task List**: `specs/001-extract-current-project/tasks.md` - ✅ Added Phase 3.5 for core loop finalization
-- **Contracts**: `specs/001-extract-current-project/contracts/*.md` - ✅ Enhanced with new services
-- **Quickstart**: `specs/001-extract-current-project/quickstart.md` - 🔄 Being updated with core loop features
+### 📄 Active Refactoring Tasks
+- **Phase 1 - Documentation**: 🔄 IN PROGRESS
+  - T003: ✅ CLAUDE.md consolidation (this update)
+  - T004: ⏳ STATUS.md creation (next task)
+  - T005: ⏳ README.md spec-kit workflow documentation
+- **Phase 2 - Structure**: ⏳ PENDING
+  - T007: Atomic design pattern enforcement in `src/components/`
+  - T008: Data model unification in `src/models/`
+  - T010: Test organization in `tests/`
+- **Phase 3 - Workflow**: ⏳ PENDING
+  - T011: Windows script compatibility fixes
+  - T013: Task format standardization
+- **Phase 4 - AI Optimization**: ⏳ PENDING
+  - T015: Section markers for AI navigation
+  - T016: Descriptive function naming
 
 ### 🎯 Implemented Service Contracts ✅ OPERATIONAL
 - **RollService**: `contracts/rollservice.md` - ✅ Enhanced with auto-roll capabilities

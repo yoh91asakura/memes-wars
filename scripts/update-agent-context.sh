@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Incrementally update agent context files based on new feature plan
+# Incrementally update agent context files based on feature plan and current implementation status
 # Supports: CLAUDE.md, GEMINI.md, and .github/copilot-instructions.md
-# O(1) operation - only reads current context file and new plan.md
+# Enhanced for spec-kit workflow and documentation sync integration
+# O(1) operation - reads context file and spec/plan documents
 
 set -e
 
@@ -9,6 +10,8 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 FEATURE_DIR="$REPO_ROOT/specs/$CURRENT_BRANCH"
 NEW_PLAN="$FEATURE_DIR/plan.md"
+SPEC_FILE="$FEATURE_DIR/spec.md"
+TASKS_FILE="$FEATURE_DIR/tasks.md"
 
 # Determine which agent context files to update
 CLAUDE_FILE="$REPO_ROOT/CLAUDE.md"
@@ -17,20 +20,69 @@ COPILOT_FILE="$REPO_ROOT/.github/copilot-instructions.md"
 
 # Allow override via argument
 AGENT_TYPE="$1"
+JSON_MODE=false
+for arg in "$@"; do
+    case "$arg" in
+        --json) JSON_MODE=true ;;
+        --help|-h) echo "Usage: $0 [claude|gemini|copilot|all] [--json]"; exit 0 ;;
+    esac
+done
 
-if [ ! -f "$NEW_PLAN" ]; then
-    echo "ERROR: No plan.md found at $NEW_PLAN"
+# Check for spec documents (more flexible than just plan.md)
+AVAILABLE_DOCS=()
+[ -f "$NEW_PLAN" ] && AVAILABLE_DOCS+=("plan.md")
+[ -f "$SPEC_FILE" ] && AVAILABLE_DOCS+=("spec.md")
+[ -f "$TASKS_FILE" ] && AVAILABLE_DOCS+=("tasks.md")
+
+if [ ${#AVAILABLE_DOCS[@]} -eq 0 ]; then
+    echo "ERROR: No spec documents found in $FEATURE_DIR"
+    echo "Expected at least one of: spec.md, plan.md, tasks.md"
     exit 1
 fi
 
 echo "=== Updating agent context files for feature $CURRENT_BRANCH ==="
+echo "Available documents: ${AVAILABLE_DOCS[*]}"
 
-# Extract tech from new plan
-NEW_LANG=$(grep "^**Language/Version**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Language\/Version**: //' | grep -v "NEEDS CLARIFICATION" || echo "")
-NEW_FRAMEWORK=$(grep "^**Primary Dependencies**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Primary Dependencies**: //' | grep -v "NEEDS CLARIFICATION" || echo "")
-NEW_TESTING=$(grep "^**Testing**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Testing**: //' | grep -v "NEEDS CLARIFICATION" || echo "")
-NEW_DB=$(grep "^**Storage**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Storage**: //' | grep -v "N/A" | grep -v "NEEDS CLARIFICATION" || echo "")
-NEW_PROJECT_TYPE=$(grep "^**Project Type**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Project Type**: //' || echo "")
+# Extract information from available documents
+NEW_LANG=""
+NEW_FRAMEWORK=""
+NEW_TESTING=""
+NEW_DB=""
+NEW_PROJECT_TYPE=""
+CURRENT_PHASE=""
+TASK_PROGRESS=""
+
+# Try to extract from plan.md if available
+if [ -f "$NEW_PLAN" ]; then
+    NEW_LANG=$(grep "^**Language/Version**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Language\/Version**: //' | grep -v "NEEDS CLARIFICATION" || echo "")
+    NEW_FRAMEWORK=$(grep "^**Primary Dependencies**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Primary Dependencies**: //' | grep -v "NEEDS CLARIFICATION" || echo "")
+    NEW_TESTING=$(grep "^**Testing**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Testing**: //' | grep -v "NEEDS CLARIFICATION" || echo "")
+    NEW_DB=$(grep "^**Storage**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Storage**: //' | grep -v "N/A" | grep -v "NEEDS CLARIFICATION" || echo "")
+    NEW_PROJECT_TYPE=$(grep "^**Project Type**: " "$NEW_PLAN" 2>/dev/null | head -1 | sed 's/^**Project Type**: //' || echo "")
+fi
+
+# Extract current phase and progress from tasks.md if available
+if [ -f "$TASKS_FILE" ]; then
+    # Find the current active phase (look for phases that are not fully completed)
+    CURRENT_PHASE=$(grep -E "^## Phase [0-9]+:" "$TASKS_FILE" | grep -E "(IN PROGRESS|🔄)" | head -1 | sed -E 's/^## (Phase [0-9]+:[^✅🔄]*).*/\1/' || echo "")
+    if [ -z "$CURRENT_PHASE" ]; then
+        CURRENT_PHASE=$(grep -E "^## Phase [0-9]+:" "$TASKS_FILE" | tail -1 | sed -E 's/^## (Phase [0-9]+:[^✅🔄]*).*/\1/' || echo "Unknown Phase")
+    fi
+    
+    # Count completed vs total tasks
+    COMPLETED_TASKS=$(grep -c "^- \[x\]" "$TASKS_FILE" 2>/dev/null || echo "0")
+    TOTAL_TASKS=$(grep -c "^- \[" "$TASKS_FILE" 2>/dev/null || echo "0")
+    if [ "$TOTAL_TASKS" -gt 0 ]; then
+        PROGRESS_PERCENT=$((COMPLETED_TASKS * 100 / TOTAL_TASKS))
+        TASK_PROGRESS="$COMPLETED_TASKS/$TOTAL_TASKS tasks complete ($PROGRESS_PERCENT%)"
+    fi
+fi
+
+# Extract tech stack from spec.md if plan.md wasn't informative enough
+if [ -f "$SPEC_FILE" ] && [ -z "$NEW_LANG" ]; then
+    NEW_LANG=$(grep -E "^.*Tech Stack|^.*Technology" "$SPEC_FILE" -A 5 | grep -E "React|TypeScript|JavaScript|Python|Rust|Java|Go" | head -1 || echo "")
+    NEW_FRAMEWORK=$(grep -E "Zustand|Redux|Express|Flask|FastAPI|Actix|Spring" "$SPEC_FILE" | head -1 || echo "")
+fi
 
 # Function to update a single agent context file
 update_agent_file() {
@@ -81,8 +133,16 @@ update_agent_file() {
         # Add code style
         sed -i.bak "s|\[LANGUAGE-SPECIFIC, ONLY FOR LANGUAGES IN USE\]|$NEW_LANG: Follow standard conventions|" "$temp_file"
         
-        # Add recent changes
-        sed -i.bak "s|\[LAST 3 FEATURES AND WHAT THEY ADDED\]|- $CURRENT_BRANCH: Added $NEW_LANG + $NEW_FRAMEWORK|" "$temp_file"
+        # Add recent changes with phase and progress info
+        CHANGE_DESCRIPTION="$CURRENT_BRANCH: Added $NEW_LANG + $NEW_FRAMEWORK"
+        if [ ! -z "$CURRENT_PHASE" ]; then
+            CHANGE_DESCRIPTION="$CHANGE_DESCRIPTION ($CURRENT_PHASE"
+            if [ ! -z "$TASK_PROGRESS" ]; then
+                CHANGE_DESCRIPTION="$CHANGE_DESCRIPTION - $TASK_PROGRESS"
+            fi
+            CHANGE_DESCRIPTION="$CHANGE_DESCRIPTION)"
+        fi
+        sed -i.bak "s|\[LAST 3 FEATURES AND WHAT THEY ADDED\]|- $CHANGE_DESCRIPTION|" "$temp_file"
         
         rm "$temp_file.bak"
     else
@@ -197,6 +257,13 @@ case "$AGENT_TYPE" in
     "copilot")
         update_agent_file "$COPILOT_FILE" "GitHub Copilot"
         ;;
+    "all")
+        # Update all agent context files, creating if missing
+        update_agent_file "$CLAUDE_FILE" "Claude Code"
+        mkdir -p "$(dirname "$COPILOT_FILE")"
+        update_agent_file "$COPILOT_FILE" "GitHub Copilot"
+        [ -f "$GEMINI_FILE" ] && update_agent_file "$GEMINI_FILE" "Gemini CLI"
+        ;;
     "")
         # Update all existing files
         [ -f "$CLAUDE_FILE" ] && update_agent_file "$CLAUDE_FILE" "Claude Code"
@@ -214,21 +281,37 @@ case "$AGENT_TYPE" in
         exit 1
         ;;
 esac
-echo ""
-echo "Summary of changes:"
-if [ ! -z "$NEW_LANG" ]; then
-    echo "- Added language: $NEW_LANG"
-fi
-if [ ! -z "$NEW_FRAMEWORK" ]; then
-    echo "- Added framework: $NEW_FRAMEWORK"
-fi
-if [ ! -z "$NEW_DB" ] && [ "$NEW_DB" != "N/A" ]; then
-    echo "- Added database: $NEW_DB"
-fi
+# Output results
+if $JSON_MODE; then
+    printf '{"branch":"%s","phase":"%s","progress":"%s","documents":[%s],"changes":{"language":"%s","framework":"%s","database":"%s"}}\n' \
+        "$CURRENT_BRANCH" "$CURRENT_PHASE" "$TASK_PROGRESS" "$(printf '"%s",' "${AVAILABLE_DOCS[@]}" | sed 's/,$//')" "$NEW_LANG" "$NEW_FRAMEWORK" "$NEW_DB"
+else
+    echo ""
+    echo "Summary of changes:"
+    echo "- Branch: $CURRENT_BRANCH"
+    if [ ! -z "$CURRENT_PHASE" ]; then
+        echo "- Current Phase: $CURRENT_PHASE"
+    fi
+    if [ ! -z "$TASK_PROGRESS" ]; then
+        echo "- Progress: $TASK_PROGRESS"
+    fi
+    if [ ! -z "$NEW_LANG" ]; then
+        echo "- Language: $NEW_LANG"
+    fi
+    if [ ! -z "$NEW_FRAMEWORK" ]; then
+        echo "- Framework: $NEW_FRAMEWORK"
+    fi
+    if [ ! -z "$NEW_DB" ] && [ "$NEW_DB" != "N/A" ]; then
+        echo "- Database: $NEW_DB"
+    fi
+    echo "- Documents processed: ${AVAILABLE_DOCS[*]}"
 
-echo ""
-echo "Usage: $0 [claude|gemini|copilot]"
-echo "  - No argument: Update all existing agent context files"
-echo "  - claude: Update only CLAUDE.md"
-echo "  - gemini: Update only GEMINI.md" 
-echo "  - copilot: Update only .github/copilot-instructions.md"
+    echo ""
+    echo "Usage: $0 [claude|gemini|copilot|all] [--json]"
+    echo "  - No argument: Update all existing agent context files"
+    echo "  - claude: Update only CLAUDE.md"
+    echo "  - gemini: Update only GEMINI.md" 
+    echo "  - copilot: Update only .github/copilot-instructions.md"
+    echo "  - all: Update all agent context files (create if missing)"
+    echo "  - --json: Output results in JSON format"
+fi

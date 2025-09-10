@@ -1,8 +1,11 @@
 // Crafting System - Create new items and upgrade cards
 // Implementation based on CLAUDE.md Phase 2 specifications
 
+// #region AI_NAV_IMPORTS
 import { Card, MemeFamily, EffectType } from '../models';
+// #endregion
 
+// #region AI_NAV_INTERFACES
 export interface CraftingRecipe {
   id: string;
   name: string;
@@ -364,7 +367,9 @@ export const CRAFTING_MATERIALS: Record<string, CraftingMaterial> = {
     value: 200
   }
 };
+// #endregion
 
+// #region AI_NAV_MAIN_CLASS
 export class CraftingSystem {
   private static playerInventories: Map<string, CraftingInventory> = new Map();
   private static craftingHistory: CraftingAttempt[] = [];

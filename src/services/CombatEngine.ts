@@ -1,5 +1,6 @@
 // Combat Engine - Core battle system logic
 
+// #region AI_NAV_IMPORTS
 import { 
   CombatState, 
   CombatArena, 
@@ -20,7 +21,9 @@ import { EMOJI_EFFECTS, EmojiEffectsManager } from '../data/emojiEffects';
 import passiveEffectsService, { PassiveActivation, PassiveTriggerEvent } from './PassiveEffectsService';
 import SynergySystem, { ActiveSynergy } from './SynergySystem';
 import EmojiLoader, { EmojiCombatSequence } from './EmojiLoader';
+// #endregion
 
+// #region AI_NAV_INTERFACES
 export interface ICombatEngine {
   initialize(playerDeck: Deck, opponentDeck: Deck): void;
   startBattle(): void;
@@ -29,7 +32,9 @@ export interface ICombatEngine {
   applyEffects(effects: Effect[]): void;
   determineWinner(): CombatPlayer | null;
 }
+// #endregion
 
+// #region AI_NAV_MAIN_CLASS
 export class CombatEngine implements ICombatEngine {
   private state: CombatState;
   private frameCount: number = 0;
@@ -46,7 +51,9 @@ export class CombatEngine implements ICombatEngine {
   constructor(arena: CombatArena) {
     this.state = this.createInitialState(arena);
   }
+  // #endregion
 
+  // #region AI_NAV_PUBLIC_METHODS
   public initialize(playerDeck: Deck, opponentDeck: Deck): void {
     // Create players from decks
     const player1 = this.createPlayerFromDeck(playerDeck, 'player1', this.state.arena.playerSpawns[0]);
@@ -252,7 +259,9 @@ export class CombatEngine implements ICombatEngine {
       }
     }
   }
+  // #endregion
 
+  // #region AI_NAV_PRIVATE_METHODS
   // Private implementation methods
   private createInitialState(arena: CombatArena): CombatState {
     return {
@@ -1398,4 +1407,5 @@ export class CombatEngine implements ICombatEngine {
       callbacks.forEach(callback => callback(event));
     }
   }
+  // #endregion
 }
