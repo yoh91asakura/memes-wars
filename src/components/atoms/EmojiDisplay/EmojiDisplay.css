@@ -1,0 +1,395 @@
+/* EmojiDisplay - Advanced emoji component with effects */
+
+.emoji-display {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+  border-radius: 12px;
+  padding: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  overflow: hidden;
+}
+
+/* Size variants */
+.emoji-display--small {
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.emoji-display--medium {
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.emoji-display--large {
+  padding: 0.75rem;
+  border-radius: 16px;
+}
+
+.emoji-display--xlarge {
+  padding: 1rem;
+  border-radius: 20px;
+}
+
+/* Interactive states */
+.emoji-display--clickable {
+  cursor: pointer;
+}
+
+.emoji-display--clickable:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.emoji-display--clickable:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Main emoji container */
+.emoji-display__main {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji-display__character {
+  font-size: 2.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+
+/* Size-specific character sizing */
+.emoji-display--small .emoji-display__character {
+  font-size: 1.5rem;
+}
+
+.emoji-display--medium .emoji-display__character {
+  font-size: 2.5rem;
+}
+
+.emoji-display--large .emoji-display__character {
+  font-size: 4rem;
+}
+
+.emoji-display--xlarge .emoji-display__character {
+  font-size: 6rem;
+}
+
+/* Animated effects */
+.emoji-display--animated .emoji-display__character {
+  animation: emoji-pulse 2s ease-in-out infinite;
+}
+
+@keyframes emoji-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Effect overlay */
+.emoji-display__effect-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  opacity: 0.3;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.emoji-display__effect-overlay--direct {
+  background: radial-gradient(circle, rgba(255, 107, 107, 0.4), transparent);
+  animation: effect-direct 1.5s ease-in-out infinite;
+}
+
+.emoji-display__effect-overlay--overtime {
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.4), transparent);
+  animation: effect-overtime 2s ease-in-out infinite;
+}
+
+.emoji-display__effect-overlay--utility {
+  background: radial-gradient(circle, rgba(78, 205, 196, 0.4), transparent);
+  animation: effect-utility 2.5s ease-in-out infinite;
+}
+
+.emoji-display__effect-overlay--support {
+  background: radial-gradient(circle, rgba(46, 204, 113, 0.4), transparent);
+  animation: effect-support 3s ease-in-out infinite;
+}
+
+@keyframes effect-direct {
+  0%, 100% { transform: scale(0.8); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 0.1; }
+}
+
+@keyframes effect-overtime {
+  0%, 100% { transform: rotate(0deg) scale(0.9); opacity: 0.3; }
+  50% { transform: rotate(180deg) scale(1.1); opacity: 0.1; }
+}
+
+@keyframes effect-utility {
+  0%, 100% { transform: scale(0.9); opacity: 0.3; }
+  33% { transform: scale(1.1); opacity: 0.2; }
+  66% { transform: scale(0.95); opacity: 0.25; }
+}
+
+@keyframes effect-support {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  25% { transform: scale(1.05); opacity: 0.2; }
+  50% { transform: scale(1.1); opacity: 0.1; }
+  75% { transform: scale(1.05); opacity: 0.2; }
+}
+
+/* Stats display */
+.emoji-display__stats {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.emoji-display__stat {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 6px;
+  padding: 0.125rem 0.25rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: white;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 1.5rem;
+  justify-content: center;
+}
+
+.emoji-display__stat-icon {
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.emoji-display__stat-value {
+  line-height: 1;
+}
+
+.emoji-display__stat--damage {
+  background: rgba(255, 107, 107, 0.8);
+}
+
+.emoji-display__stat--speed {
+  background: rgba(78, 205, 196, 0.8);
+}
+
+.emoji-display__stat--trajectory {
+  background: rgba(155, 89, 182, 0.8);
+}
+
+.emoji-display__stat--type {
+  background: rgba(52, 152, 219, 0.8);
+}
+
+/* Rarity indicators */
+.emoji-display__rarity {
+  position: absolute;
+  bottom: 0.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji-display__rarity-dots {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.emoji-display__rarity-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* Rarity colors */
+.emoji-display--common {
+  border: 2px solid rgba(149, 165, 166, 0.3);
+}
+
+.emoji-display--common .emoji-display__rarity-dot {
+  background: #95a5a6;
+}
+
+.emoji-display--uncommon {
+  border: 2px solid rgba(46, 204, 113, 0.3);
+}
+
+.emoji-display--uncommon .emoji-display__rarity-dot {
+  background: #2ecc71;
+}
+
+.emoji-display--rare {
+  border: 2px solid rgba(52, 152, 219, 0.3);
+}
+
+.emoji-display--rare .emoji-display__rarity-dot {
+  background: #3498db;
+}
+
+.emoji-display--epic {
+  border: 2px solid rgba(155, 89, 182, 0.5);
+  box-shadow: 0 0 20px rgba(155, 89, 182, 0.3);
+  animation: epic-border 3s ease-in-out infinite;
+}
+
+.emoji-display--epic .emoji-display__rarity-dot {
+  background: #9b59b6;
+  animation: epic-dots 2s ease-in-out infinite;
+}
+
+@keyframes epic-border {
+  0%, 100% {
+    border-color: rgba(155, 89, 182, 0.5);
+    box-shadow: 0 0 20px rgba(155, 89, 182, 0.3);
+  }
+  50% {
+    border-color: rgba(155, 89, 182, 0.8);
+    box-shadow: 0 0 30px rgba(155, 89, 182, 0.5);
+  }
+}
+
+@keyframes epic-dots {
+  0%, 100% {
+    background: #9b59b6;
+    box-shadow: 0 0 4px rgba(155, 89, 182, 0.5);
+  }
+  50% {
+    background: #c39bd3;
+    box-shadow: 0 0 8px rgba(155, 89, 182, 0.8);
+  }
+}
+
+/* Special effects for epic rarity */
+.emoji-display__special-effect--epic {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: inherit;
+  background: linear-gradient(45deg, 
+    rgba(155, 89, 182, 0.6) 0%, 
+    transparent 25%, 
+    transparent 75%, 
+    rgba(155, 89, 182, 0.6) 100%
+  );
+  z-index: -1;
+  animation: epic-rotate 4s linear infinite;
+}
+
+@keyframes epic-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Hover effects */
+.emoji-display--hovered .emoji-display__character {
+  transform: scale(1.1);
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+}
+
+.emoji-display--hovered .emoji-display__stats {
+  transform: translateY(-2px);
+}
+
+.emoji-display--hovered .emoji-display__rarity-dot {
+  transform: scale(1.2);
+}
+
+/* Size-specific adjustments */
+.emoji-display--small .emoji-display__stats {
+  margin-top: 0.25rem;
+  gap: 0.125rem;
+}
+
+.emoji-display--small .emoji-display__stat {
+  font-size: 0.5rem;
+  padding: 0.0625rem 0.125rem;
+  min-width: 1rem;
+}
+
+.emoji-display--large .emoji-display__stats {
+  margin-top: 0.75rem;
+  gap: 0.375rem;
+}
+
+.emoji-display--large .emoji-display__stat {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.375rem;
+  min-width: 2rem;
+}
+
+.emoji-display--xlarge .emoji-display__stats {
+  margin-top: 1rem;
+  gap: 0.5rem;
+}
+
+.emoji-display--xlarge .emoji-display__stat {
+  font-size: 0.875rem;
+  padding: 0.375rem 0.5rem;
+  min-width: 2.5rem;
+}
+
+/* Accessibility */
+.emoji-display:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  .emoji-display {
+    border-width: 3px;
+  }
+  
+  .emoji-display__stat {
+    background: rgba(0, 0, 0, 0.9);
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .emoji-display,
+  .emoji-display__character,
+  .emoji-display__effect-overlay,
+  .emoji-display__rarity-dot,
+  .emoji-display__special-effect--epic {
+    animation: none !important;
+    transition: none !important;
+  }
+  
+  .emoji-display--clickable:hover {
+    transform: none;
+  }
+}

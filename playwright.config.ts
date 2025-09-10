@@ -222,7 +222,7 @@ export default defineConfig({
   ],
 
   // Global setup and teardown files
-  globalSetup: './tests/setup.ts',
+  // globalSetup: './tests/setup.ts', // Disabled - conflicts with Vitest
   
   // Artifacts and reporting
   preserveOutput: 'failures-only',

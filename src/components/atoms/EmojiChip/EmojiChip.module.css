@@ -18,4 +18,62 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
-/* Simplified - no damage or effect indicators needed */
+/* Effect indicator for emoji stats */
+.effectIndicator {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  display: flex;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 8px;
+  font-weight: 600;
+  color: white;
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-width: 20px;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.emojiChip:hover .effectIndicator {
+  opacity: 1;
+}
+
+.damage {
+  color: #ff6b6b;
+}
+
+.speed {
+  color: #4ecdc4;
+}
+
+/* Rarity-based styling */
+.emojiChip.rarity-common {
+  filter: drop-shadow(0 0 4px rgba(149, 165, 166, 0.5));
+}
+
+.emojiChip.rarity-uncommon {
+  filter: drop-shadow(0 0 4px rgba(46, 204, 113, 0.5));
+}
+
+.emojiChip.rarity-rare {
+  filter: drop-shadow(0 0 4px rgba(52, 152, 219, 0.5));
+}
+
+.emojiChip.rarity-epic {
+  filter: drop-shadow(0 0 6px rgba(155, 89, 182, 0.7));
+  animation: epic-glow 3s ease-in-out infinite;
+}
+
+@keyframes epic-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(155, 89, 182, 0.7));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(155, 89, 182, 0.9));
+  }
+}

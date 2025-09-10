@@ -7,6 +7,8 @@ import { CardFooter } from '../../molecules/CardFooter';
 import { EmojiInventory } from '../../molecules/EmojiInventory';
 import { PassiveAbilities } from '../../molecules/PassiveAbilities';
 import { CardImage } from '../../atoms/CardImage';
+import { EmojiDisplay } from '../../atoms/EmojiDisplay';
+import { EmojiEffectsManager } from '../../../data/emojiEffects';
 import styles from './TCGCard.module.css';
 
 export interface TCGCardProps {
@@ -102,9 +104,15 @@ export const TCGCard: React.FC<TCGCardProps> = ({
         {/* Main Image Section */}
         <div className={styles.imageSection}>
           {!imageUrl && card.emoji ? (
-            <div className={styles.emojiDisplay}>
-              <span className={styles.mainEmoji}>{card.emoji}</span>
-            </div>
+            <EmojiDisplay
+              emoji={card.emoji}
+              size={size === 'small' ? 'small' : size === 'large' ? 'large' : 'medium'}
+              showEffects={variant === 'detail'}
+              showTooltip={true}
+              showTrajectory={variant === 'detail'}
+              animated={animated}
+              className={styles.emojiDisplay}
+            />
           ) : (
             <CardImage
               src={imageUrl}

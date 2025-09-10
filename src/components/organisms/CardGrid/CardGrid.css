@@ -231,3 +231,59 @@
     }
   }
 }
+
+/* Virtualized grid styles */
+.card-grid__virtualized {
+  width: 100%;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--background-surface, #ffffff);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.card-grid__virtualized .react-window-grid {
+  outline: none;
+}
+
+/* Virtualized item container */
+.card-grid__virtualized-item {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 8px;
+}
+
+/* Performance optimizations for virtualized mode */
+.card-grid__virtualized .tcg-card {
+  transform: translateZ(0); /* Force GPU acceleration */
+  will-change: transform;
+}
+
+/* Scrollbar styling for virtualized grid */
+.card-grid__virtualized .react-window-grid::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.card-grid__virtualized .react-window-grid::-webkit-scrollbar-track {
+  background: var(--scrollbar-track, #f1f1f1);
+  border-radius: 4px;
+}
+
+.card-grid__virtualized .react-window-grid::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb, #c1c1c1);
+  border-radius: 4px;
+}
+
+.card-grid__virtualized .react-window-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover, #a8a8a8);
+}
+
+/* Dark theme for virtualized grid */
+@media (prefers-color-scheme: dark) {
+  .card-grid__virtualized {
+    border-color: var(--border-color-dark, #4a5568);
+    background: var(--background-surface-dark, #2d3748);
+  }
+}

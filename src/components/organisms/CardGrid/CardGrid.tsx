@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import * as ReactWindow from 'react-window';
 import { Card, CardUtils } from '../../../models/Card';
 import { TCGCard } from '../TCGCard';
 import { SearchBox } from '../../molecules/SearchBox/SearchBox';
@@ -21,6 +22,11 @@ interface CardGridProps {
   testId?: string;
   variant?: 'collection' | 'battle' | 'detail';
   cardSize?: 'small' | 'medium' | 'large';
+  // Virtualization options
+  enableVirtualization?: boolean;
+  virtualHeight?: number;
+  virtualWidth?: number;
+  itemsPerRow?: number;
 }
 
 export const CardGrid: React.FC<CardGridProps> = ({
@@ -36,9 +42,16 @@ export const CardGrid: React.FC<CardGridProps> = ({
   testId,
   variant = 'collection',
   cardSize = 'medium',
+  enableVirtualization = cards.length > 100, // Auto-enable for large collections
+  virtualHeight = 600,
+  virtualWidth = 800,
+  itemsPerRow = 4,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'rarity' | 'recent'>('recent');
+  const [containerDimensions, setContainerDimensions] = useState({ width: virtualWidth, height: virtualHeight });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<ReactWindow.FixedSizeGrid>(null);
 
   // Filter and sort cards
   const filteredCards = useMemo(() => {
@@ -74,6 +87,41 @@ export const CardGrid: React.FC<CardGridProps> = ({
     return filtered;
   }, [cards, searchQuery, sortBy]);
 
+  // Calculate grid dimensions for virtualization
+  const gridConfig = useMemo(() => {
+    const cardWidth = cardSize === 'small' ? 120 : cardSize === 'large' ? 220 : 180;
+    const cardHeight = cardSize === 'small' ? 168 : cardSize === 'large' ? 308 : 252;
+    const gap = 16;
+    
+    const actualItemsPerRow = Math.max(1, Math.floor((containerDimensions.width - gap) / (cardWidth + gap)));
+    const rowCount = Math.ceil(filteredCards.length / actualItemsPerRow);
+    
+    return {
+      columnCount: actualItemsPerRow,
+      rowCount,
+      columnWidth: cardWidth + gap,
+      rowHeight: cardHeight + gap,
+      cardWidth,
+      cardHeight
+    };
+  }, [containerDimensions, filteredCards.length, cardSize]);
+
+  // Update container dimensions on resize
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerDimensions({
+          width: rect.width || virtualWidth,
+          height: virtualHeight
+        });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, [virtualWidth, virtualHeight]);
 
   const handleCardClick = (card: Card) => {
     if (onCardClick) {
@@ -99,6 +147,87 @@ export const CardGrid: React.FC<CardGridProps> = ({
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
   };
+
+  // Virtualized grid item renderer
+  const renderGridItem = useCallback(({ columnIndex, rowIndex, style }: {
+    columnIndex: number;
+    rowIndex: number;
+    style: React.CSSProperties;
+  }) => {
+    const cardIndex = rowIndex * gridConfig.columnCount + columnIndex;
+    const card = filteredCards[cardIndex];
+    
+    if (!card) {
+      return <div style={style} />;
+    }
+
+    return (
+      <div style={{
+        ...style,
+        padding: '8px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start'
+      }}>
+        <TCGCard
+          card={card}
+          variant={variant}
+          size={cardSize}
+          animated={!enableVirtualization} // Disable animations in virtualized mode for performance
+          onClick={() => handleCardClick(card)}
+          showStats={true}
+          showEmojis={true}
+        />
+      </div>
+    );
+  }, [filteredCards, gridConfig.columnCount, variant, cardSize, enableVirtualization, handleCardClick]);
+
+  // Non-virtualized grid renderer (for small collections)
+  const renderStaticGrid = () => (
+    <motion.div
+      className="card-grid__container"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {filteredCards.map((card) => (
+        <motion.div
+          key={card.id}
+          variants={cardVariants}
+          layout
+        >
+          <TCGCard
+            card={card}
+            variant={variant}
+            size={cardSize}
+            animated
+            onClick={handleCardClick}
+            showStats={true}
+            showEmojis={true}
+          />
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+
+  // Virtualized grid renderer (for large collections)
+  const renderVirtualizedGrid = () => (
+    <div className="card-grid__virtualized" ref={containerRef}>
+      <ReactWindow.FixedSizeGrid
+        ref={gridRef}
+        columnCount={gridConfig.columnCount}
+        columnWidth={gridConfig.columnWidth}
+        height={Math.min(virtualHeight, gridConfig.rowCount * gridConfig.rowHeight)}
+        rowCount={gridConfig.rowCount}
+        rowHeight={gridConfig.rowHeight}
+        width={containerDimensions.width}
+        overscanRowCount={2}
+        overscanColumnCount={1}
+      >
+        {renderGridItem}
+      </ReactWindow.FixedSizeGrid>
+    </div>
+  );
 
   return (
     <div className={`card-grid ${className}`.trim()} data-testid={testId}>
@@ -165,30 +294,7 @@ export const CardGrid: React.FC<CardGridProps> = ({
         <>
           {/* Cards */}
           {filteredCards.length > 0 ? (
-            <motion.div
-              className="card-grid__container"
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {filteredCards.map((card) => (
-                <motion.div
-                  key={card.id}
-                  variants={cardVariants}
-                  layout
-                >
-                <TCGCard
-                  card={card}
-                  variant={variant}
-                  size={cardSize}
-                  animated
-                  onClick={handleCardClick}
-                  showStats={true}
-                  showEmojis={true}
-                />
-                </motion.div>
-              ))}
-            </motion.div>
+            enableVirtualization ? renderVirtualizedGrid() : renderStaticGrid()
           ) : (
             /* Empty state */
             <div className="card-grid__empty">

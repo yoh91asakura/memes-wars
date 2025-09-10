@@ -23,5 +23,10 @@ export { default as TestOrchestrationService } from './TestOrchestrationService'
 export { default as AgentContextService } from './AgentContextService';
 export { default as DocumentationSyncService } from './DocumentationSyncService';
 
+// Card Management Services - Advanced card collection management
+export { CardManagementService } from './CardManagementService';
+export { ImageUploadService } from './ImageUploadService';
+export { CardSyncService } from './CardSyncService';
+
 // Legacy services (may need updating)
 export { default as CraftingSystem } from './CraftingSystem';

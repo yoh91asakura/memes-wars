@@ -42,6 +42,12 @@ export default [
       'object-shorthand': ['warn', 'always'],
       'arrow-spacing': 'warn',
       'space-before-function-paren': ['warn', { anonymous: 'always', named: 'never', asyncArrow: 'always' }],
+      
+      // Card management specific patterns
+      'no-magic-numbers': ['warn', { ignore: [0, 1, -1, 100, 1000] }],
+      'consistent-return': 'warn',
+      'no-nested-ternary': 'warn',
+      'prefer-template': 'warn',
     },
   },
   {

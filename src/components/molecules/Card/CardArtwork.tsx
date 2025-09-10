@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardUtils } from '../../../models/Card';
 import { getCardImageUrl, getPlaceholderImageUrl, generateCardPlaceholder } from '../../../utils/cardImageUtils';
-import styles from './Card.module.css';
+import './CardArtwork.css';
 
 interface CardArtworkProps {
   card: Card;
@@ -35,18 +35,12 @@ export const CardArtwork: React.FC<CardArtworkProps> = ({ card, size = 'md', var
   if (variant === 'simple') {
     // Simple variant - just the image with no overlays
     return (
-      <div className={`${styles.cardArtwork} ${styles[`cardArtwork--${size}`] || ''}`}>
+      <div className={`cardArtwork cardArtwork--${size}`}>
         <img 
           src={getImageSrc()}
           alt={card.name}
           onError={handleImageError}
-          className={styles.cardImage}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            borderRadius: '8px'
-          }}
+          className="cardImage"
         />
       </div>
     );
@@ -54,31 +48,25 @@ export const CardArtwork: React.FC<CardArtworkProps> = ({ card, size = 'md', var
 
   // Default variant with overlays
   return (
-    <div className={`${styles.cardArtwork} ${styles[`cardArtwork--${size}`] || ''}`}>
+    <div className={`cardArtwork cardArtwork--${size}`}>
       <img 
         src={getImageSrc()}
         alt={card.name}
         onError={handleImageError}
-        className={styles.cardImage}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          borderRadius: '12px 12px 0 0'
-        }}
+        className="cardImage"
       />
       
       {/* Rarity overlay effect */}
-      <div className={`${styles.cardImageOverlay} ${styles[`overlay--${CardUtils.getRarityName(card.rarity).toLowerCase()}`] || ''}`} />
+      <div className={`cardImageOverlay overlay--${CardUtils.getRarityName(card.rarity).toLowerCase()}`} />
       
       {/* Card name overlay */}
-      <div className={styles.cardNameOverlay}>
-        <span className={styles.cardNameText}>{card.name}</span>
+      <div className="cardNameOverlay">
+        <span className="cardNameText">{card.name}</span>
       </div>
       
       {/* Visual glow effect using card's visual properties */}
       <div 
-        className={styles.cardArtworkGlow}
+        className="cardArtworkGlow"
         style={{
           '--glow-color': card.visual?.glow || '#ffffff',
           '--border-color': card.visual?.borderColor || '#e9ecef'

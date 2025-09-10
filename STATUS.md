@@ -61,10 +61,10 @@ npm run validate:spec-kit     # Validate spec-kit compliance
 ```
 
 ### 📁 Documentation
-- **Current specs**: `/specs/004-refactor-all-the/` (AI optimization)
+- **Current specs**: `/specs/005-complete-card-management/` (complete-card-management)
 - **Completed specs**: `/specs/001-extract-current-project/` (Core game)  
 - **AI context**: `CLAUDE.md` (Minimal guide), `docs/CLAUDE_ARCHIVE.md` (Full historical)
 - **Project status**: `STATUS.md` (This file)
 - **Game info**: `README.md`
 
-**Last Updated**: 2025-01-10 | **Status**: All Phases Complete ✅ | **Quality**: Production Ready
+**Last Updated**: 2025-09-10| **Status**: All Phases Complete ✅ | **Quality**: Production Ready
