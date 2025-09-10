@@ -29,7 +29,7 @@ export interface ICombatEngine {
   startBattle(): void;
   processFrame(deltaTime: number): void;
   checkCollisions(): Collision[];
-  applyEffects(effects: Effect[]): void;
+  applyEffects(effects: ActiveEffect[]): void;
   determineWinner(): CombatPlayer | null;
 }
 // #endregion
@@ -56,8 +56,10 @@ export class CombatEngine implements ICombatEngine {
   // #region AI_NAV_PUBLIC_METHODS
   public initialize(playerDeck: Deck, opponentDeck: Deck): void {
     // Create players from decks
-    const player1 = this.createPlayerFromDeck(playerDeck, 'player1', this.state.arena.playerSpawns[0]);
-    const player2 = this.createPlayerFromDeck(opponentDeck, 'player2', this.state.arena.playerSpawns[1]);
+    const spawn1 = this.state.arena.playerSpawns[0] || { x: 100, y: 300 };
+    const spawn2 = this.state.arena.playerSpawns[1] || { x: 700, y: 300 };
+    const player1 = this.createPlayerFromDeck(playerDeck, 'player1', spawn1);
+    const player2 = this.createPlayerFromDeck(opponentDeck, 'player2', spawn2);
 
     this.state.players = [player1, player2];
     this.state.phase = 'waiting';

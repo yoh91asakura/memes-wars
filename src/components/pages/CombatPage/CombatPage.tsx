@@ -160,7 +160,12 @@ export const CombatPage: React.FC = () => {
         };
 
         // Use selected deck, active deck, or auto-create from cards
-        let playerDeck = selectedDeck ? { cards: selectedDeck, name: 'Combat Deck', id: 'combat' } : activeDeck;
+        let playerDeck = activeDeck;
+        
+        // If selectedDeck is provided, create a temporary deck from it
+        if (selectedDeck && selectedDeck.length > 0) {
+          playerDeck = await createNewDeck('Combat Deck', selectedDeck);
+        }
         if (!playerDeck) {
           // Try to auto-create from available cards
           playerDeck = await createDefaultDeckFromCards();
@@ -175,6 +180,10 @@ export const CombatPage: React.FC = () => {
         }
 
         // Generate AI opponent based on current stage
+        if (!stageData) {
+          throw new Error('No stage data available for combat');
+        }
+        
         const aiMatchmaking = getAIMatchmakingService();
         const aiOpponent = aiMatchmaking.generateOpponent(stageData, 1); // TODO: Get actual player level
         
@@ -274,13 +283,13 @@ export const CombatPage: React.FC = () => {
             setShowRewardsModal(true);
             
             // Play reward sounds based on what was earned
-            if (distribution.goldEarned > 0) {
+            if (distribution.gold > 0) {
               playSFX('reward_coins', { delay: 0.5 });
             }
-            if (distribution.ticketsEarned > 0) {
+            if (distribution.tickets > 0) {
               playSFX('reward_tickets', { delay: 1.0 });
             }
-            if (distribution.bonusRewards && distribution.bonusRewards.length > 0) {
+            if (distribution.bonusCards && distribution.bonusCards.length > 0) {
               playSFX('reward_level_up', { delay: 1.5 });
             }
             
@@ -389,9 +398,9 @@ export const CombatPage: React.FC = () => {
               maxDeckSize={deckLimit}
               onDeckConfirmed={handleDeckConfirmed}
               onCancel={handleCancelDeckSelection}
-              requiredSynergies={stageData?.requiredSynergies || []}
+              requiredSynergies={[]}
               stageHints={{
-                enemyType: stageData?.enemyType,
+                enemyType: stageData?.enemyDifficulty === 'boss' ? 'boss' : 'normal',
                 recommendedStrategy: stageData?.isBoss ? 'power' : 'balance',
                 difficulty: stageData?.enemyDifficulty
               }}

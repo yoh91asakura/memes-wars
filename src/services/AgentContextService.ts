@@ -13,7 +13,10 @@ import type {
   ProjectNavigationMap,
   AgentCoordination,
   TokenOptimization,
-  ContextConsistencyResult,
+  ContextConsistencyResult
+} from '@/models/AgentContext';
+
+import {
   createAgentContext,
   calculateTokenCount,
   optimizeContextForTokens,
@@ -366,6 +369,10 @@ export class AgentContextService {
     // Simple conflict resolution - primary agent wins
     const primaryUpdate = conflictingUpdates.find(update => update.agent === 'claude');
     const winningUpdate = primaryUpdate || conflictingUpdates[0];
+    
+    if (!winningUpdate) {
+      throw new Error('No updates available to resolve conflict');
+    }
     
     return {
       strategy: 'priority',
