@@ -2,8 +2,8 @@
 // Follows specs/001-extract-current-project/contracts/rollservice.md
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Card, CardRarity } from '../../../src/models/unified/Card';
-import { RollService } from '../../../src/services/RollService';
+import { Card } from '../../../src/models/Card';
+import { RollService as ActualRollService } from '../../../src/services/RollService';
 
 // Contract interfaces from rollservice.md
 interface IRollService {
@@ -36,16 +36,16 @@ interface PityStatus {
   rollsWithoutEpic: number;
   rollsWithoutLegendary: number;
   rollsWithoutMythic: number;
-  nextGuaranteed?: CardRarity;
+  nextGuaranteed?: string;
   rollsUntilGuaranteed?: number;
 }
 
 interface RollStatistics {
   totalRolls: number;
-  cardsByRarity: Record<CardRarity, number>;
+  cardsByRarity: Record<string, number>;
   averageRollsPerRare: number;
   pityTriggeredCount: number;
-  currentStreak: Record<CardRarity, number>;
+  currentStreak: Record<string, number>;
 }
 
 // This will fail until we implement RollService
@@ -54,7 +54,7 @@ class RollService implements IRollService {
     throw new Error('RollService not implemented yet');
   }
   
-  rollMultiple(count: number): RollResult[] {
+  rollMultiple(_count: number): RollResult[] {
     throw new Error('RollService not implemented yet');
   }
   
@@ -94,7 +94,7 @@ describe('RollService Contract Test', () => {
 
     it('should have proper RollResult structure', () => {
       // Contract test structure verification
-      const expectedRollResult = {
+      const _expectedRollResult = {
         card: expect.any(Object), // Card interface
         pityTriggered: expect.any(Boolean),
         rarityBoosted: expect.any(Boolean),
@@ -120,13 +120,12 @@ describe('RollService Contract Test', () => {
         }
         const result = rollService.rollSingle();
         expect(result.pityTriggered).toBe(true);
-        expect([CardRarity.RARE, CardRarity.EPIC, CardRarity.LEGENDARY, CardRarity.MYTHIC, CardRarity.COSMIC]
-          .includes(result.card.rarity)).toBe(true);
+        expect(result.card.rarity).toBeLessThanOrEqual(1000); // Should be epic or better
       }).toThrow('RollService not implemented yet');
     });
 
     it('should have proper PityStatus structure', () => {
-      const expectedPityStatus = {
+      const _expectedPityStatus = {
         rollsWithoutRare: expect.any(Number),
         rollsWithoutEpic: expect.any(Number), 
         rollsWithoutLegendary: expect.any(Number),
@@ -172,7 +171,7 @@ describe('RollService Contract Test', () => {
           results.push(rollService.rollSingle());
         }
         
-        const commonCount = results.filter(r => r.card.rarity === CardRarity.COMMON).length;
+        const commonCount = results.filter(r => r.card.rarity === 2).length; // 2 = common probability
         expect(commonCount / 10000).toBeCloseTo(0.65, 1); // Within 10%
       }).toThrow('RollService not implemented yet');
     });
@@ -180,27 +179,27 @@ describe('RollService Contract Test', () => {
 
   describe('Statistics Contract', () => {
     it('should have proper RollStatistics structure', () => {
-      const expectedStatistics = {
+      const _expectedStatistics = {
         totalRolls: expect.any(Number),
         cardsByRarity: expect.objectContaining({
-          [CardRarity.COMMON]: expect.any(Number),
-          [CardRarity.UNCOMMON]: expect.any(Number),
-          [CardRarity.RARE]: expect.any(Number),
-          [CardRarity.EPIC]: expect.any(Number),
-          [CardRarity.LEGENDARY]: expect.any(Number),
-          [CardRarity.MYTHIC]: expect.any(Number),
-          [CardRarity.COSMIC]: expect.any(Number)
+          'common': expect.any(Number),
+          'uncommon': expect.any(Number),
+          'rare': expect.any(Number),
+          'epic': expect.any(Number),
+          'legendary': expect.any(Number),
+          'mythic': expect.any(Number),
+          'cosmic': expect.any(Number)
         }),
         averageRollsPerRare: expect.any(Number),
         pityTriggeredCount: expect.any(Number),
         currentStreak: expect.objectContaining({
-          [CardRarity.COMMON]: expect.any(Number),
-          [CardRarity.UNCOMMON]: expect.any(Number),
-          [CardRarity.RARE]: expect.any(Number),
-          [CardRarity.EPIC]: expect.any(Number),
-          [CardRarity.LEGENDARY]: expect.any(Number),
-          [CardRarity.MYTHIC]: expect.any(Number),
-          [CardRarity.COSMIC]: expect.any(Number)
+          'common': expect.any(Number),
+          'uncommon': expect.any(Number),
+          'rare': expect.any(Number),
+          'epic': expect.any(Number),
+          'legendary': expect.any(Number),
+          'mythic': expect.any(Number),
+          'cosmic': expect.any(Number)
         })
       };
 

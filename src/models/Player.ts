@@ -1,6 +1,6 @@
 // Player Models - All player-related data structures
 
-import { Card } from './unified/Card';
+import { Card } from './Card';
 import { CombatStats } from './Combat';
 
 export interface Player {

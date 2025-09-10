@@ -258,4 +258,5 @@ const PassiveIndicator: React.FC<PassiveIndicatorProps> = ({
   );
 };
 
+export { PassiveIndicator };
 export default PassiveIndicator;

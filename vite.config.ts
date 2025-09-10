@@ -22,6 +22,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['styled-components', 'framer-motion'],
+          game: ['zustand'],
+          charts: ['@tanstack/react-query']
+        }
+      }
+    }
   },
   test: {
     globals: true,

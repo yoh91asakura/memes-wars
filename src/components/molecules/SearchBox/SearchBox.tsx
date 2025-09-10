@@ -118,3 +118,5 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
     </div>
   );
 };
+
+export default SearchBox;

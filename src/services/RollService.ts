@@ -1,7 +1,7 @@
 // RollService Implementation - Follows contract specification exactly
 // Implements specs/001-extract-current-project/contracts/rollservice.md
 
-import { Card, MemeFamily, CardUtils } from '../models';
+import { Card, CardRarity, MemeFamily, CardUtils } from '../models';
 
 // Contract interfaces - must match test expectations exactly
 export interface IRollService {

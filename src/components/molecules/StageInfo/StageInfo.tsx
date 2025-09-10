@@ -318,4 +318,5 @@ const StageInfo: React.FC = () => {
   );
 };
 
+export { StageInfo };
 export default StageInfo;

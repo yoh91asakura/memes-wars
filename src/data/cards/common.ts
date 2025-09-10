@@ -95,30 +95,19 @@ export const commonCards: Card[] = [
         damage: 0,  // Healing emoji, no damage
         speed: 2,
         trajectory: 'arc',
-        effects: [EffectType.HEAL],  // Heal 5 HP from spec
-        target: 'SELF',  // Heals self
-        fireRate: 0.8,
-        piercing: false,
-        homing: false,
-        bounces: 0
+        effect: EffectType.HEAL,     // Heal 5 HP from spec
+        target: 'SELF'  // Heals self
       },
       {
         character: '💚',  // Second identical healing emoji
         damage: 0,
         speed: 2,
         trajectory: 'arc',
-        effects: [EffectType.HEAL],
-        target: 'SELF',
-        fireRate: 0.8,
-        piercing: false,
-        homing: false,
-        bounces: 0
+        effect: EffectType.HEAL,
+        target: 'SELF'
       }
     ],
     cardEffects: [{
-      id: 'refresh_proc',
-      name: 'Refresh',
-      description: 'Chance to heal self when attacking',
       trigger: TriggerType.ON_HIT,
       chance: 0.3,
       effect: EffectType.HEAL,
@@ -196,8 +185,8 @@ export const commonCards: Card[] = [
     passiveAbility: {
       name: 'Fortify',
       description: 'Increases defense by 1 each turn, max 3',
-      trigger: 'onTurnStart',
-      effect: 'buff_defense',
+      trigger: TriggerType.onTurnStart,
+      effect: EffectType.buff_defense,
       value: 1
     },
     emojiProjectile: {

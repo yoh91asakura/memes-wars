@@ -2,6 +2,20 @@
 // Aligned with docs/specifications/game-specification.md
 // Simple, focused on core gameplay mechanics
 
+// Card rarity levels - for compatibility with existing code
+export enum CardRarity {
+  COMMON = 'common',
+  UNCOMMON = 'uncommon', 
+  RARE = 'rare',
+  EPIC = 'epic',
+  LEGENDARY = 'legendary',
+  MYTHIC = 'mythic',
+  COSMIC = 'cosmic',
+  DIVINE = 'divine',
+  INFINITY = 'infinity',
+  BEYOND = 'beyond'
+}
+
 // Meme families for thematic groupings and synergies
 export enum MemeFamily {
   CLASSIC_INTERNET = 'CLASSIC_INTERNET',         // Doge, Pepe, Wojak, Chad, Trollface
@@ -33,6 +47,8 @@ export enum EffectType {
   BARRIER = 'BARRIER',        // Temporary invincibility
   CHAOS = 'CHAOS',            // Random effect
   PRECISION = 'PRECISION',    // Guaranteed critical hit
+  KNOCKBACK = 'KNOCKBACK',    // Push back enemy
+  buff_defense = 'buff_defense', // Increase defense
 }
 
 // Card effect trigger types
@@ -46,6 +62,7 @@ export enum TriggerType {
   LOW_HP = 'LOW_HP',                   // When HP below threshold
   HIGH_COMBO = 'HIGH_COMBO',           // After multiple hits
   FAMILY_SYNERGY = 'FAMILY_SYNERGY',   // When other family cards present
+  onTurnStart = 'onTurnStart',         // At start of turn
 }
 
 // Emoji projectile - aligned with game spec
@@ -55,7 +72,7 @@ export interface Emoji {
   speed: number;                        // Projectile velocity (1-5)
   effect?: EffectType;                  // Special effect on hit
   trajectory: 'straight' | 'arc' | 'wave' | 'spiral'; // Movement pattern
-  target: 'OPPONENT';                   // Always targets opponent
+  target: 'OPPONENT' | 'SELF';          // Target opponent or self
 }
 
 // Card effects that can proc randomly during combat
@@ -65,6 +82,7 @@ export interface CardEffect {
   effect: EffectType;                   // What happens
   duration?: number;                    // Effect duration in seconds
   value?: number;                       // Effect value (damage, heal amount, etc)
+  cooldown?: number;                    // Cooldown in seconds
 }
 
 // Passive abilities for cards
@@ -83,7 +101,9 @@ export interface PassiveAbility {
 export interface StackBonus {
   luckMultiplier: number;               // +10% per stack level
   goldMultiplier: number;               // +15% per stack level
-  bonusEmojis: Emoji[];                 // Additional emoji variants per stack
+  bonusEmojis: (Emoji | string)[];      // Additional emoji variants per stack
+  effectBonus?: number;                 // Effect power bonus
+  damageBonus?: number;                 // Damage bonus
 }
 
 // Visual properties for card display
@@ -92,6 +112,7 @@ export interface VisualProperties {
   glowIntensity: number;                // 0-1 based on stack level
   glow?: string;                       // Glow color for effects
   backgroundColor?: string;             // Card background
+  textColor?: string;                   // Text color
   animation?: 'pulse' | 'glow' | 'sparkle' | 'flame' | 'rainbow';
 }
 
@@ -129,9 +150,18 @@ export interface Card {
   // === ABILITIES ===
   cardEffects?: CardEffect[];          // Effects that can proc during battle
   passiveAbility?: PassiveAbility;     // Passive ability
+  effects?: CardEffect[];              // Alternative name for cardEffects (compatibility)
   
   // === CARD TYPE ===
   type?: string;                       // Card type (creature, spell, etc)
+  
+  // === SYNERGIES ===
+  synergies?: MemeFamily[];            // Synergistic families
+  
+  // === ECONOMIC SYSTEM ===
+  goldGeneration?: number;             // Gold generated per use
+  dustValue?: number;                  // Dust value when disenchanted
+  tradeable?: boolean;                 // Can be traded
   
   // === METADATA ===
   createdAt: string;                   // When card was created

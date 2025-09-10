@@ -1,7 +1,14 @@
 import { v4 as uuidv4 } from 'uuid';
 import { commonCards } from '../data/cards/common';
 import { rareCards } from '../data/cards/rare';
-import { Card } from '../models';
+import { Card, CardRarity, MemeFamily, CardUtils } from '../models';
+
+// CardType enum for this service
+enum CardType {
+  CREATURE = 'creature',
+  SPELL = 'spell',
+  ARTIFACT = 'artifact'
+}
 // Enhanced card service with full game specification support
 export class CardService {
   private allCards: Card[];

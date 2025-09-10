@@ -29,16 +29,16 @@ export const EmojiDisplay: React.FC<EmojiDisplayProps> = ({
       <div className="emoji-header">
         <h4>Combat Emojis</h4>
         <div className="emoji-stats">
-          <Badge variant="info" size="xs">
+          <Badge variant="info" size="sm">
             {totalEmojis} total
           </Badge>
           {averageDamage > 0 && (
-            <Badge variant="warning" size="xs">
+            <Badge variant="warning" size="sm">
               ~{averageDamage} dmg
             </Badge>
           )}
           {specialEffectsCount > 0 && (
-            <Badge variant="success" size="xs">
+            <Badge variant="success" size="sm">
               {specialEffectsCount} effects
             </Badge>
           )}

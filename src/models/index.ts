@@ -12,6 +12,7 @@ export type {
 } from './Card';
 
 export {
+  CardRarity,
   MemeFamily,
   EffectType,
   TriggerType,

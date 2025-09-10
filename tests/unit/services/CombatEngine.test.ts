@@ -2,9 +2,21 @@
 // Follows specs/001-extract-current-project/contracts/combatengine.md
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Deck } from '../../../src/models/unified/Deck';
-import { Stage } from '../../../src/models/unified/Stage';
-import { Card, CardRarity } from '../../../src/models/unified/Card';
+import { Deck } from '../../../src/models/Deck';
+import { Card } from '../../../src/models/Card';
+
+// Test-specific interfaces
+interface Stage {
+  id: number;
+  name: string;
+  enemyHealth: number;
+  enemyEmojis: string[];
+  enemyAttackSpeed: number;
+  rewardCoins: number;
+  rewardTickets: number;
+  bossStage: boolean;
+  backgroundTheme: string;
+}
 
 // Contract interfaces from combatengine.md
 interface Vector2D {
@@ -165,22 +177,77 @@ describe('CombatEngine Contract Test', () => {
         {
           id: 'card-1',
           name: 'Test Card',
-          rarity: CardRarity.COMMON,
-          memeFamily: 'classic_internet' as any,
-          emojis: ['🔥'],
-          health: 100,
-          attackDamage: 10,
-          attackSpeed: 1.0,
-          flavor: 'Test flavor',
-          imageUrl: 'test.jpg',
-          unlockStage: 1
+          rarity: 2, // Common probability
+          family: 'CLASSIC_INTERNET' as any,
+          reference: 'Test reference',
+          emojis: [
+            {
+              character: '🔥',
+              damage: 10,
+              speed: 3,
+              trajectory: 'straight',
+              target: 'OPPONENT'
+            }
+          ],
+          hp: 100,
+          luck: 50,
+          goldReward: 20,
+          emoji: '🔥',
+          stackLevel: 1,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
         }
       ],
+      isActive: true,
+      isValid: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: 'test-user',
+      version: 1,
       maxSize: 3,
-      synergyBonuses: [],
-      totalManaCost: 0,
-      createdAt: new Date(),
-      lastUsed: new Date()
+      minSize: 1,
+      format: 'standard' as any,
+      stats: {
+        totalHealth: 100,
+        totalDamage: 10,
+        averageDamage: 10,
+        averageHealth: 100,
+        rarityDistribution: {
+          common: 1,
+          uncommon: 0,
+          rare: 0,
+          epic: 0,
+          legendary: 0,
+          mythic: 0,
+          cosmic: 0,
+          divine: 0,
+          infinity: 0
+        },
+        typeDistribution: {},
+        projectedFireRate: 1.0,
+        projectedDPS: 10,
+        projectedSurvivability: 100,
+        offensiveRating: 5,
+        defensiveRating: 5,
+        utilityRating: 5,
+        synergyRating: 5,
+        overallRating: 5
+      },
+      theme: {
+        primaryColor: '#000000',
+        secondaryColor: '#ffffff',
+        backgroundColor: '#f0f0f0',
+        cardBackDesign: 'default',
+        iconSet: 'default',
+        name: 'Default Theme'
+      },
+      isPublic: false,
+      likes: 0,
+      downloads: 0,
+      tags: [],
+      isTournamentLegal: true,
+      bannedCards: [],
+      restrictedCards: []
     };
     
     // Mock stage

@@ -1,1 +1,1 @@
-export { default } from './PassiveIndicator';
+export { default, PassiveIndicator } from './PassiveIndicator';

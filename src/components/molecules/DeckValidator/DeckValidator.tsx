@@ -6,8 +6,8 @@ import { Button } from '../../atoms/Button';
 import './DeckValidator.module.css';
 
 export interface DeckValidatorProps {
-  currentDeck: any[];
-  onDeckValid: (deck: any[]) => void;
+  currentDeck: Record<string, unknown>[];
+  onDeckValid: (deck: Record<string, unknown>[]) => void;
   onCancel?: () => void;
   requiredSynergies?: string[];
   className?: string;
@@ -17,10 +17,10 @@ export const DeckValidator: React.FC<DeckValidatorProps> = ({
   currentDeck,
   onDeckValid,
   onCancel,
-  requiredSynergies = [],
+  requiredSynergies: _requiredSynergies = [],
   className = ''
 }) => {
-  const [selectedCards, setSelectedCards] = useState<any[]>(currentDeck);
+  const [selectedCards, _setSelectedCards] = useState<Record<string, unknown>[]>(currentDeck);
 
   // Simple validation - just check if deck has cards
   const isValid = selectedCards.length > 0;

@@ -167,7 +167,7 @@ export class StringFormat {
   // Format template string with variables
   static template(template: string, variables: Record<string, string | number>): string {
     return template.replace(/\{(\w+)\}/g, (match, key) => {
-      return variables.hasOwnProperty(key) ? String(variables[key]) : match;
+      return Object.prototype.hasOwnProperty.call(variables, key) ? String(variables[key]) : match;
     });
   }
 
@@ -189,8 +189,8 @@ export class StringFormat {
       .toLowerCase()
       .trim()
       .replace(/[\s_-]+/g, '-')
-      .replace(/[^\w\-]+/g, '')
-      .replace(/\-\-+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-')
       .replace(/^-+/, '')
       .replace(/-+$/, '');
   }

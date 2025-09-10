@@ -6,16 +6,12 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [react()],
   test: {
-    // Vitest 1.3.0: Sequential test execution for constitutional order
-    sequence: {
-      hooks: 'stack',
-      setupFiles: 'list',
-    },
-    
     // Run tests in constitutional order: contract -> integration -> unit
     sequence: {
       concurrent: false, // Enforce sequential execution
       shuffle: false,    // Maintain order
+      hooks: 'stack',
+      setupFiles: 'list',
     },
 
     // Environment configuration
@@ -100,10 +96,9 @@ export default defineConfig({
     teardownTimeout: 5000,
     
     // Vitest 1.3.0: Reporter configuration
-    reporters: ['verbose', 'json', 'html'],
+    reporters: ['verbose', 'json'],
     outputFile: {
       json: './test-results/results.json',
-      html: './test-results/index.html',
     },
 
     // Vitest 1.3.0: Benchmark support (if needed)
@@ -131,13 +126,15 @@ export default defineConfig({
     bail: 5, // Stop after 5 failures
 
     // Mock configuration
-    deps: {
-      inline: [
-        // Inline dependencies that need to be transformed
-        '@tanstack/react-query',
-        'framer-motion',
-        'styled-components',
-      ],
+    server: {
+      deps: {
+        inline: [
+          // Inline dependencies that need to be transformed
+          '@tanstack/react-query',
+          'framer-motion',
+          'styled-components',
+        ],
+      },
     },
 
     // Vitest 1.3.0: CSS handling

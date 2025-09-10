@@ -10,7 +10,6 @@ import { PhaseContainer } from './components/atoms/PhaseContainer';
 import { PersistenceService } from './services/PersistenceService';
 import { useTransitions } from './hooks/useTransitions';
 import { useAudio } from './hooks/useAudio';
-import { TestCardButton } from './components/debug/TestCardButton';
 import type { GamePhase } from './services/TransitionAnimationService';
 import './App.css';
 
@@ -118,7 +117,7 @@ function AppContent() {
     );
   }
 
-  const renderPageWithPhase = (page: React.ReactNode, particleType: 'coins' | 'confetti' | 'sparkles' | 'stars' | 'gears' = 'sparkles') => (
+  const renderPageWithPhase = (page: React.ReactNode, particleType: 'coins' | 'confetti' | 'sparkles' | 'stars' = 'sparkles') => (
     <PhaseContainer 
       phase={currentPagePhase}
       isActive={currentPhase === currentPagePhase}
@@ -140,10 +139,9 @@ function AppContent() {
         <Route path="/roll" element={renderPageWithPhase(<RollPage testId="roll-page" />, 'sparkles')} />
         <Route path="/collection" element={renderPageWithPhase(<CollectionPage testId="collection-page" />, 'stars')} />
         <Route path="/craft" element={renderPageWithPhase(<CraftPage testId="craft-page" />, 'coins')} />
-        <Route path="/deck" element={renderPageWithPhase(<DeckPage testId="deck-page" />, 'gears')} />
+        <Route path="/deck" element={renderPageWithPhase(<DeckPage testId="deck-page" />, 'stars')} />
         <Route path="/battle" element={renderPageWithPhase(<CombatPage />, 'confetti')} />
       </Routes>
-      <TestCardButton />
     </MainLayout>
   );
 }

@@ -1,6 +1,6 @@
 // Combat Models - All combat-related data structures
 
-import { Card } from './unified/Card';
+import { Card } from './Card';
 
 export interface Position {
   x: number;

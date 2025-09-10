@@ -100,3 +100,5 @@ export const RollButton: React.FC<RollButtonProps> = ({
     </div>
   );
 };
+
+export default RollButton;

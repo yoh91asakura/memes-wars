@@ -25,37 +25,40 @@ const sessionStorageMock = {
 
 // Setup global mocks
 beforeAll(() => {
-  Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-  Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
+  // Check if window is available (should be with jsdom environment)
+  if (typeof window !== 'undefined') {
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+    Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
   
-  // Mock window.location
-  Object.defineProperty(window, 'location', {
-    value: {
-      origin: 'http://localhost:3000',
-      href: 'http://localhost:3000',
-      pathname: '/',
-    },
-    writable: true,
-  });
+    // Mock window.location
+    Object.defineProperty(window, 'location', {
+      value: {
+        origin: 'http://localhost:3000',
+        href: 'http://localhost:3000',
+        pathname: '/',
+      },
+      writable: true,
+    });
 
-  // Mock performance API
-  Object.defineProperty(window, 'performance', {
-    value: {
-      now: vi.fn(() => Date.now()),
-      mark: vi.fn(),
-      measure: vi.fn(),
-      getEntriesByName: vi.fn(() => []),
-    },
-  });
+    // Mock performance API
+    Object.defineProperty(window, 'performance', {
+      value: {
+        now: vi.fn(() => Date.now()),
+        mark: vi.fn(),
+        measure: vi.fn(),
+        getEntriesByName: vi.fn(() => []),
+      },
+    });
 
-  // Mock requestAnimationFrame
-  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
-    return setTimeout(() => callback(Date.now()), 16);
-  });
+    // Mock requestAnimationFrame
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      return setTimeout(() => callback(Date.now()), 16);
+    });
 
-  vi.stubGlobal('cancelAnimationFrame', (id: number) => {
-    clearTimeout(id);
-  });
+    vi.stubGlobal('cancelAnimationFrame', (id: number) => {
+      clearTimeout(id);
+    });
+  }
 });
 
 // Clean up after each test

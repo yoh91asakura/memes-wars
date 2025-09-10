@@ -1,1 +1,1 @@
-export { default } from './RollButton';
+export { default, RollButton } from './RollButton';

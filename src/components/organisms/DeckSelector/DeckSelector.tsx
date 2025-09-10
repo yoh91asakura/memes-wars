@@ -98,8 +98,8 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
       }
 
       // Calculate synergy score
-      const synergies = synergySystem.detectSynergies(selectedDeck);
-      validation.synergyScore = synergies.reduce((total, synergy) => total + synergy.strength, 0);
+      const synergies = SynergySystem.detectSynergies(selectedDeck);
+      validation.synergyScore = synergies.activeSynergies.reduce((total: number, synergy: any) => total + synergy.strength, 0);
 
       // Calculate power level
       validation.powerLevel = selectedDeck.reduce((total, card) => 
@@ -108,7 +108,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
 
       // Check required synergies
       if (requiredSynergies.length > 0) {
-        const activeSynergyTypes = synergies.map(s => s.type.toLowerCase());
+        const activeSynergyTypes = synergies.activeSynergies.map((s: any) => s.type.toLowerCase());
         const missingRequired = requiredSynergies.filter(req => 
           !activeSynergyTypes.includes(req.toLowerCase())
         );
@@ -153,12 +153,12 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
       const search = filters.search.toLowerCase();
       filtered = filtered.filter(card => 
         card.name.toLowerCase().includes(search) ||
-        card.description.toLowerCase().includes(search)
+        card.description?.toLowerCase().includes(search)
       );
     }
 
     if (filters.rarity !== 'all') {
-      filtered = filtered.filter(card => card.rarity === filters.rarity);
+      filtered = filtered.filter(card => String(card.rarity) === filters.rarity);
     }
 
     if (filters.inDeck !== 'all') {
@@ -169,8 +169,8 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
     if (filters.synergy !== 'all') {
       // Filter by cards that contribute to specific synergy
       filtered = filtered.filter(card => {
-        const synergies = synergySystem.detectSynergies([...selectedDeck, card]);
-        return synergies.some(synergy => synergy.type.toLowerCase() === filters.synergy.toLowerCase());
+        const synergies = SynergySystem.detectSynergies([...selectedDeck, card]);
+        return synergies.activeSynergies.some((synergy: any) => synergy.type.toLowerCase() === filters.synergy.toLowerCase());
       });
     }
 
@@ -209,11 +209,11 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
         for (const card of availableCards) {
           if (optimizedDeck.length >= maxDeckSize) break;
           
-          const currentSynergies = synergySystem.detectSynergies(optimizedDeck);
-          const newSynergies = synergySystem.detectSynergies([...optimizedDeck, card]);
+          const currentSynergies = SynergySystem.detectSynergies(optimizedDeck);
+          const newSynergies = SynergySystem.detectSynergies([...optimizedDeck, card]);
           
-          const currentScore = currentSynergies.reduce((total, s) => total + s.strength, 0);
-          const newScore = newSynergies.reduce((total, s) => total + s.strength, 0);
+          const currentScore = currentSynergies.activeSynergies.reduce((total: number, s: any) => total + s.strength, 0);
+          const newScore = newSynergies.activeSynergies.reduce((total: number, s: any) => total + s.strength, 0);
           
           if (newScore > currentScore) {
             optimizedDeck.push(card);
@@ -247,8 +247,8 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
     const suggestions = [...validation.suggestions];
     
     // Add specific card suggestions
-    const currentSynergies = synergySystem.detectSynergies(selectedDeck);
-    if (currentSynergies.length === 0) {
+    const currentSynergies = SynergySystem.detectSynergies(selectedDeck);
+    if (currentSynergies.activeSynergies.length === 0) {
       suggestions.push('Try adding cards with matching types or elements for synergy bonuses');
     }
     
@@ -265,7 +265,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
     return (
       <div className={`deck-selector loading ${className}`}>
         <div className="optimization-overlay">
-          <Spinner size="large" />
+          <Spinner size="lg" />
           <h3>Optimizing Deck...</h3>
           <p>Finding the best card combinations for your strategy</p>
         </div>
@@ -282,10 +282,10 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
           <div className="stage-info">
             <span className="stage-number">Stage {currentStage}</span>
             {stageHints?.difficulty && (
-              <StatBadge label="Difficulty" value={stageHints.difficulty} variant="info" />
+              <StatBadge icon="⚡" label="Difficulty" value={0} variant="default" />
             )}
             {stageHints?.enemyType && (
-              <StatBadge label="Enemy" value={stageHints.enemyType} variant="secondary" />
+              <StatBadge icon="👾" label="Enemy" value={0} variant="compact" />
             )}
           </div>
         </div>
@@ -293,21 +293,24 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
         <div className="deck-stats">
           <div className="stat-group">
             <StatBadge 
+              icon="🃏"
               label="Cards" 
-              value={`${selectedDeck.length}/${maxDeckSize}`}
-              variant={selectedDeck.length <= maxDeckSize ? 'success' : 'error'}
+              value={selectedDeck.length}
+              variant="default"
             />
             {validation && (
               <>
                 <StatBadge 
+                  icon="⚡"
                   label="Power" 
-                  value={validation.powerLevel.toString()}
-                  variant="info"
+                  value={validation.powerLevel}
+                  variant="default"
                 />
                 <StatBadge 
+                  icon="🔗"
                   label="Synergy" 
-                  value={validation.synergyScore.toFixed(1)}
-                  variant="secondary"
+                  value={Math.round(validation.synergyScore)}
+                  variant="compact"
                 />
               </>
             )}
@@ -416,7 +419,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
             {selectedDeck.length > 1 && (
               <div className="synergy-display">
                 <h4>Active Synergies</h4>
-                {synergySystem.detectSynergies(selectedDeck).map((synergy, index) => (
+                {SynergySystem.detectSynergies(selectedDeck).activeSynergies.map((synergy: any, index: number) => (
                   <div key={index} className="synergy-item">
                     <span className="synergy-name">{synergy.type}</span>
                     <span className="synergy-strength">{synergy.strength.toFixed(1)}x</span>
@@ -546,7 +549,7 @@ export const DeckSelector: React.FC<DeckSelectorProps> = ({
             variant="primary"
             onClick={handleConfirmDeck}
             disabled={!validation?.isValid}
-            size="large"
+            size="lg"
           >
             Start Combat with {selectedDeck.length} cards
           </Button>

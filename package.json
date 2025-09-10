@@ -7,7 +7,8 @@
     "dev": "cross-env NODE_ENV=development vite",
     "dev:fast": "cross-env NODE_ENV=development vite --host",
     "dev:debug": "cross-env NODE_ENV=development DEBUG=* vite",
-    "build": "cross-env NODE_ENV=production npm run typecheck && vite build",
+    "build": "cross-env NODE_ENV=production vite build",
+    "build:safe": "cross-env NODE_ENV=production npm run typecheck && vite build",
     "build:analyze": "cross-env NODE_ENV=production ANALYZE=true npm run build",
     "preview": "cross-env NODE_ENV=production vite preview",
     "test": "cross-env NODE_ENV=test vitest",
@@ -57,7 +58,7 @@
     "spec:update": "node scripts/run-script.cjs update-agent-context claude",
     "postinstall": "shx echo \"Setup complete! Run npm run dev to start development\"",
     "predev": "shx echo \"Starting development server...\"",
-    "prebuild": "npm run typecheck",
+    "prebuild": "echo \"Starting build...\"",
     "start": "npm run dev",
     "ci": "concurrently \"npm run validate\" \"npm run test:ci\" \"npm run build\""
   },

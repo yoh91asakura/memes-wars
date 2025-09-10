@@ -2,8 +2,15 @@
 // Follows specs/001-extract-current-project/contracts/deckservice.md
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Deck, SynergyBonus } from '../../../src/models/unified/Deck';
-import { Card, CardRarity, MemeFamily } from '../../../src/models/unified/Card';
+import { Deck } from '../../../src/models/Deck';
+import { Card, MemeFamily } from '../../../src/models/Card';
+
+// Test-specific interfaces
+interface SynergyBonus {
+  type: string;
+  description: string;
+  bonus: number;
+}
 
 // Contract interfaces from deckservice.md
 interface IDeckService {
@@ -58,7 +65,7 @@ interface DeckStatistics {
   totalHealth: number;
   totalDamage: number;
   averageAttackSpeed: number;
-  rarityDistribution: Record<CardRarity, number>;
+  rarityDistribution: Record<string, number>;
   manaDistribution: Record<number, number>;
   synergyStrength: number;
   deckPower: number;
@@ -115,16 +122,26 @@ describe('DeckService Contract Test', () => {
     mockCard = {
       id: 'card-1',
       name: 'Test Card',
-      rarity: CardRarity.COMMON,
-      memeFamily: MemeFamily.CLASSIC_INTERNET,
-      emojis: ['🔥'],
-      health: 100,
-      attackDamage: 15,
-      attackSpeed: 1.2,
-      manaCost: 2,
-      flavor: 'A test card',
-      imageUrl: 'test.jpg',
-      unlockStage: 1
+      rarity: 2, // Common probability
+      emojis: [
+        {
+          character: '🔥',
+          damage: 15,
+          speed: 3,
+          trajectory: 'straight',
+          target: 'OPPONENT'
+        }
+      ],
+      family: MemeFamily.CLASSIC_INTERNET,
+      reference: 'Test reference',
+      luck: 50,
+      stackLevel: 1,
+      goldReward: 20,
+      emoji: '🔥',
+      hp: 100,
+      description: 'A test card',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
     
     // Mock deck for testing
@@ -132,11 +149,56 @@ describe('DeckService Contract Test', () => {
       id: 'deck-1',
       name: 'Test Deck',
       cards: [mockCard],
+      isActive: true,
+      isValid: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: 'test-user',
+      version: 1,
       maxSize: 3,
-      synergyBonuses: [],
-      totalManaCost: 2,
-      createdAt: new Date(),
-      lastUsed: new Date()
+      minSize: 1,
+      format: 'standard' as any,
+      stats: {
+        totalHealth: 100,
+        totalDamage: 15,
+        averageDamage: 15,
+        averageHealth: 100,
+        rarityDistribution: {
+          common: 1,
+          uncommon: 0,
+          rare: 0,
+          epic: 0,
+          legendary: 0,
+          mythic: 0,
+          cosmic: 0,
+          divine: 0,
+          infinity: 0
+        },
+        typeDistribution: {},
+        projectedFireRate: 1.2,
+        projectedDPS: 15,
+        projectedSurvivability: 100,
+        offensiveRating: 5,
+        defensiveRating: 5,
+        utilityRating: 5,
+        synergyRating: 5,
+        overallRating: 5
+      },
+      theme: {
+        primaryColor: '#000000',
+        secondaryColor: '#ffffff',
+        backgroundColor: '#f0f0f0',
+        cardBackDesign: 'default',
+        iconSet: 'default',
+        name: 'Default Theme'
+      },
+      isPublic: false,
+      likes: 0,
+      downloads: 0,
+      tags: [],
+      isTournamentLegal: true,
+      bannedCards: [],
+      restrictedCards: []
     };
     
     vi.clearAllMocks();
@@ -243,7 +305,8 @@ describe('DeckService Contract Test', () => {
     it('should update total mana cost after removal', () => {
       expect(() => {
         // Contract: Recalculate totalManaCost after card removal
-        const beforeRemoval = mockDeck.totalManaCost; // Should be 2
+        // Note: totalManaCost property doesn't exist in current Deck model
+        const beforeRemoval = mockDeck.cards.length; // Track card count instead
         deckService.removeCardFromDeck('deck-1', 'card-1');
         // After removal, totalManaCost should be 0
       }).toThrow('DeckService not implemented yet');
@@ -401,13 +464,13 @@ describe('DeckService Contract Test', () => {
           totalDamage: expect.any(Number),
           averageAttackSpeed: expect.any(Number),
           rarityDistribution: expect.objectContaining({
-            [CardRarity.COMMON]: expect.any(Number),
-            [CardRarity.UNCOMMON]: expect.any(Number),
-            [CardRarity.RARE]: expect.any(Number),
-            [CardRarity.EPIC]: expect.any(Number),
-            [CardRarity.LEGENDARY]: expect.any(Number),
-            [CardRarity.MYTHIC]: expect.any(Number),
-            [CardRarity.COSMIC]: expect.any(Number)
+            'common': expect.any(Number),
+            'uncommon': expect.any(Number),
+            'rare': expect.any(Number),
+            'epic': expect.any(Number),
+            'legendary': expect.any(Number),
+            'mythic': expect.any(Number),
+            'cosmic': expect.any(Number)
           }),
           manaDistribution: expect.any(Object),
           synergyStrength: expect.any(Number),

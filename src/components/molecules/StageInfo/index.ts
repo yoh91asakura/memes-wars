@@ -1,1 +1,1 @@
-export { default } from './StageInfo';
+export { default, StageInfo } from './StageInfo';

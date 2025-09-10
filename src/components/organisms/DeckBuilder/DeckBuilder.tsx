@@ -112,7 +112,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
 
     // Apply rarity filter
     if (filters.rarity.length > 0) {
-      filtered = filtered.filter(card => filters.rarity.includes(card.rarity));
+      filtered = filtered.filter(card => filters.rarity.includes(String(card.rarity)));
     }
 
     // Apply type filter  
@@ -244,10 +244,9 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
         <div className="deck-info">
           <Input
             value={deckName}
-            onChange={(e) => setDeckName(e.target.value)}
+            onChange={(value) => setDeckName(value)}
             placeholder="Deck Name"
             className="deck-name-input"
-            maxLength={50}
           />
           <div className="deck-stats">
             {currentDeck && (
@@ -307,8 +306,8 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
               <div key={`${card.id}-${index}`} className="deck-card">
                 <CollectionCard
                   card={card}
-                  compact
-                  onClick={() => setSelectedCard(card)}
+                  size="sm"
+                  onSelect={() => setSelectedCard(card)}
                 />
                 <button
                   onClick={() => removeCardFromDeck(index)}
@@ -382,7 +381,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
             <div className="filter-row">
               <Input
                 value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                onChange={(value) => setFilters(prev => ({ ...prev, search: value }))}
                 placeholder="Search cards..."
                 className="search-input"
                 type="search"
@@ -422,15 +421,13 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
               <div className="cards-grid">
                 {filteredAndSortedCards.map(card => {
                   const countInDeck = getCardCountInDeck(card.id);
-                  const canAdd = currentDeck && deckService 
-                    ? deckService.canAddCardToDeck(currentDeck.id, card)
-                    : false;
+                  const canAdd = currentDeck && currentDeck.cards.length < (currentDeck.maxSize || 15);
 
                   return (
                     <div key={card.id} className="collection-card-container">
                       <CollectionCard
                         card={card}
-                        onClick={() => setSelectedCard(card)}
+                        onSelect={() => setSelectedCard(card)}
                         className={countInDeck > 0 ? 'in-deck' : ''}
                       />
                       
@@ -470,7 +467,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
             
             <CollectionCard
               card={selectedCard}
-              showDetails
+              size="lg"
               className="detail-card"
             />
             
@@ -481,7 +478,7 @@ export const DeckBuilder: React.FC<DeckBuilderProps> = ({
                   setSelectedCard(null);
                 }}
                 variant="primary"
-                disabled={!currentDeck || !deckService?.canAddCardToDeck(currentDeck.id, selectedCard)}
+                disabled={!currentDeck || !selectedCard || currentDeck.cards.length >= (currentDeck.maxSize || 15)}
               >
                 Add to Deck
               </Button>

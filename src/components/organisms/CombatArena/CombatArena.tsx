@@ -226,10 +226,10 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
       ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`;
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(projectile.trail[0].x, projectile.trail[0].y);
+      ctx.moveTo(projectile.trail[0]?.x || 0, projectile.trail[0]?.y || 0);
       
       for (let i = 1; i < projectile.trail.length; i++) {
-        ctx.lineTo(projectile.trail[i].x, projectile.trail[i].y);
+        ctx.lineTo(projectile.trail[i]?.x || 0, projectile.trail[i]?.y || 0);
       }
       ctx.stroke();
     }

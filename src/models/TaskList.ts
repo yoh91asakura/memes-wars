@@ -312,7 +312,7 @@ export const updateTaskStatus = (
     totalTasks,
     completedTasks: statusCounts.completed,
     inProgressTasks: statusCounts['in-progress'],
-    blockedTasks: statusCounts.blocked,
+    blockedTasksCount: statusCounts.blocked,
     pendingTasks: statusCounts.pending,
     completionPercentage,
     estimatedCompletion: new Date(), // Would calculate based on remaining work

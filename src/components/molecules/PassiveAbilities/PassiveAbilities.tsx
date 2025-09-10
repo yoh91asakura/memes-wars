@@ -44,7 +44,9 @@ const getEffectIcon = (effect: EffectType | undefined, name?: string): string =>
     [EffectType.DRAIN]: '🧛',
     [EffectType.BARRIER]: '🔮',
     [EffectType.CHAOS]: '🌀',
-    [EffectType.PRECISION]: '🎯'
+    [EffectType.PRECISION]: '🎯',
+    [EffectType.KNOCKBACK]: '👊',
+    [EffectType.buff_defense]: '🛡️'
   };
   return effectIcons[effect] || '⭐';
 };
@@ -69,7 +71,8 @@ const getTriggerName = (trigger: TriggerType): string => {
     [TriggerType.BATTLE_END]: 'Battle End',
     [TriggerType.LOW_HP]: 'Low HP',
     [TriggerType.HIGH_COMBO]: 'High Combo',
-    [TriggerType.FAMILY_SYNERGY]: 'Family Synergy'
+    [TriggerType.FAMILY_SYNERGY]: 'Family Synergy',
+    [TriggerType.onTurnStart]: 'Turn Start'
   };
   return triggerNames[trigger] || trigger;
 };

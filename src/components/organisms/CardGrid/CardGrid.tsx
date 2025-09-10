@@ -227,3 +227,5 @@ export const CardGrid: React.FC<CardGridProps> = ({
     </div>
   );
 };
+
+export default CardGrid;
