@@ -63,7 +63,7 @@ npm run validate:spec-kit     # Validate spec-kit compliance
 ### 📁 Documentation
 - **Current specs**: `/specs/004-refactor-all-the/` (AI optimization)
 - **Completed specs**: `/specs/001-extract-current-project/` (Core game)  
-- **AI context**: `CLAUDE.md` (Primary), `.github/copilot-instructions.md`
+- **AI context**: `CLAUDE.md` (Minimal guide), `docs/CLAUDE_ARCHIVE.md` (Full historical)
 - **Project status**: `STATUS.md` (This file)
 - **Game info**: `README.md`
 
