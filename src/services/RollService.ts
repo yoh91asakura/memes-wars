@@ -46,6 +46,9 @@ const DROP_RATES: Record<CardRarity, number> = {
   [CardRarity.LEGENDARY]: 0.004, // 0.4%
   [CardRarity.MYTHIC]: 0.0009,   // 0.09%
   [CardRarity.COSMIC]: 0.0001,   // 0.01%
+  [CardRarity.DIVINE]: 0.00001,  // 0.001%
+  [CardRarity.INFINITY]: 0.000001, // 0.0001%
+  [CardRarity.BEYOND]: 0.0000001,  // 0.00001%
 };
 
 // Pity system thresholds matching contract
@@ -66,6 +69,9 @@ export class RollService implements IRollService {
     [CardRarity.LEGENDARY]: 0,
     [CardRarity.MYTHIC]: 0,
     [CardRarity.COSMIC]: 0,
+    [CardRarity.DIVINE]: 0,
+    [CardRarity.INFINITY]: 0,
+    [CardRarity.BEYOND]: 0,
   };
   private statistics: RollStatistics = {
     totalRolls: 0,
@@ -77,6 +83,9 @@ export class RollService implements IRollService {
       [CardRarity.LEGENDARY]: 0,
       [CardRarity.MYTHIC]: 0,
       [CardRarity.COSMIC]: 0,
+      [CardRarity.DIVINE]: 0,
+      [CardRarity.INFINITY]: 0,
+      [CardRarity.BEYOND]: 0,
     },
     averageRollsPerRare: 0,
     pityTriggeredCount: 0,
@@ -88,6 +97,9 @@ export class RollService implements IRollService {
       [CardRarity.LEGENDARY]: 0,
       [CardRarity.MYTHIC]: 0,
       [CardRarity.COSMIC]: 0,
+      [CardRarity.DIVINE]: 0,
+      [CardRarity.INFINITY]: 0,
+      [CardRarity.BEYOND]: 0,
     }
   };
 
@@ -209,24 +221,33 @@ export class RollService implements IRollService {
   }
 
   private generateCard(rarity: CardRarity): Card {
+    // Convert CardRarity to probability number for CardUtils.generateCard
+    const rarityToProbability = {
+      [CardRarity.COMMON]: 2,
+      [CardRarity.UNCOMMON]: 4, 
+      [CardRarity.RARE]: 10,
+      [CardRarity.EPIC]: 50,
+      [CardRarity.LEGENDARY]: 200,
+      [CardRarity.MYTHIC]: 1000,
+      [CardRarity.COSMIC]: 5000,
+      [CardRarity.DIVINE]: 10000,
+      [CardRarity.INFINITY]: 50000,
+      [CardRarity.BEYOND]: 100000
+    };
+    
     // Generate sample cards based on rarity
     const cardTemplates = this.getCardTemplates(rarity);
     const template = cardTemplates[Math.floor(Math.random() * cardTemplates.length)];
     
-    return CardUtils.createCard({
-      name: template.name,
-      rarity,
-      memeFamily: template.memeFamily,
-      emojis: template.emojis,
-      health: template.health,
-      attackDamage: template.attackDamage,
-      attackSpeed: template.attackSpeed,
-      manaCost: template.manaCost,
-      passiveAbility: template.passiveAbility,
-      flavor: template.flavor,
-      imageUrl: template.imageUrl || 'placeholder.jpg',
-      unlockStage: template.unlockStage || 1
-    });
+    // Generate unique ID
+    const cardId = `${rarity}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    
+    // Use CardUtils.generateCard with correct signature
+    return CardUtils.generateCard(
+      rarityToProbability[rarity], 
+      cardId, 
+      template.name
+    );
   }
 
   private getCardTemplates(rarity: CardRarity) {
@@ -304,6 +325,42 @@ export class RollService implements IRollService {
             trigger: 'synergy'
           },
           flavor: 'The source code of all memes'
+        }
+      ],
+      [CardRarity.DIVINE]: [
+        { 
+          name: 'Divine Doge', 
+          memeFamily: MemeFamily.CLASSIC_INTERNET, 
+          emojis: ['🐶', '✨', '👑'], 
+          health: 1500, 
+          attackDamage: 150, 
+          attackSpeed: 4.0, 
+          manaCost: 15,
+          flavor: 'Much divine, very blessed'
+        }
+      ],
+      [CardRarity.INFINITY]: [
+        { 
+          name: 'Infinite Chad', 
+          memeFamily: MemeFamily.CLASSIC_INTERNET, 
+          emojis: ['💪', '∞', '🌟'], 
+          health: 2500, 
+          attackDamage: 250, 
+          attackSpeed: 5.0, 
+          manaCost: 25,
+          flavor: 'Limitless power, infinite chad'
+        }
+      ],
+      [CardRarity.BEYOND]: [
+        { 
+          name: 'Beyond Comprehension', 
+          memeFamily: MemeFamily.CLASSIC_INTERNET, 
+          emojis: ['🌀', '🔮', '💫'], 
+          health: 5000, 
+          attackDamage: 500, 
+          attackSpeed: 10.0, 
+          manaCost: 50,
+          flavor: 'Transcends all understanding'
         }
       ]
     };
