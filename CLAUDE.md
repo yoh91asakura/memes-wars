@@ -374,26 +374,26 @@ const completedSpecs = 'specs/001-extract-current-project/';
 Utiliser directement depuis CMD ou PowerShell dans le dossier `memes-wars/` :
 ```cmd
 # Create new feature branch and spec structure
-scripts\create-new-feature.bat "feature description"
+specify create "feature description"
 
 # Setup implementation plan for current branch
-scripts\setup-plan.bat
+specify start "feature description"
 ```
 
 **Option 2 : Git Bash (Direct)**
 Ouvrir **Git Bash** dans le dossier `memes-wars/` :
 ```bash
 # Create new feature branch and spec structure
-./scripts/create-new-feature.sh "feature description"
+specify create "feature description"
 
 # Setup implementation plan for current branch
-./scripts/setup-plan.sh
+specify start "feature description"
 
 # Check task prerequisites before implementation
-./scripts/check-task-prerequisites.sh
+specify validate
 
-# Update agent context (CLAUDE.md)
-./scripts/update-agent-context.sh claude
+# Generate documentation
+specify generate
 ```
 
 #### 💡 Alternative si Git Bash indisponible
@@ -416,7 +416,7 @@ cp templates/spec-template.md specs/002-feature-name/spec.md
 #### 1. **Create New Feature**
 ```bash
 # Generate numbered feature directory with templates
-./scripts/create-new-feature.sh "new card rarity system"
+specify create "new card rarity system"
 # Creates: specs/002-new-card-rarity-system/
 # Templates: spec.md, plan.md, tasks.md (when ready)
 ```
@@ -431,14 +431,14 @@ cp templates/spec-template.md specs/002-feature-name/spec.md
 #### 3. **Planning Phase**
 ```bash
 # Setup implementation planning structure
-./scripts/setup-plan.sh
+specify start "new card rarity system"  
 # Generates: plan.md, research.md, data-model.md, contracts/
 ```
 
 #### 4. **Task Generation & Execution**
 ```bash
 # Check prerequisites before starting implementation
-./scripts/check-task-prerequisites.sh
+specify validate
 # Follow TDD: Write failing tests → Implement → Refactor
 ```
 
@@ -447,14 +447,13 @@ cp templates/spec-template.md specs/002-feature-name/spec.md
 ### Feature Development Cycle
 ```bash
 # 1. Feature Creation
-git checkout -b feature/divine-rarity-cards
-./scripts/create-new-feature.sh "Divine rarity cards with special abilities"
+specify create "Divine rarity cards with special abilities"
 
-# 2. Specification
+# 2. Specification  
 # Edit specs/XXX-divine-rarity-cards/spec.md
 
 # 3. Planning & Design
-./scripts/setup-plan.sh
+specify start "Divine rarity cards with special abilities"
 # Creates contracts, data models, test scenarios
 
 # 4. TDD Implementation
@@ -568,17 +567,16 @@ CLAUDE.md Guidelines:
 #### Core Workflow Commands
 ```bash
 # Feature creation (AI agents can suggest and execute)
-bash scripts/create-new-feature.sh "feature description"
+specify create "feature description"
 
 # Planning setup (generates comprehensive design docs)
-bash scripts/setup-plan.sh
+specify start "feature description"
 
-# Context updates (synchronize agent instruction files)
-bash scripts/update-agent-context.sh claude
-bash scripts/update-agent-context.sh copilot
+# Documentation generation (synchronize agent instruction files)
+specify generate
 
 # Prerequisites checking
-bash scripts/check-task-prerequisites.sh
+specify validate
 ```
 
 #### Agent Coordination Commands

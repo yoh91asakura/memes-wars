@@ -1,0 +1,30 @@
+{
+  "project": "Memes Wars",
+  "description": "Auto-battler RNG Card Game avec système d'émojis",
+  "specifications": {
+    "path": "specs",
+    "pattern": "**/*.md"
+  },
+  "output": {
+    "path": "docs/specifications",
+    "format": "markdown"
+  },
+  "templates": {
+    "path": "templates",
+    "default": "spec-template.md"
+  },
+  "workflow": {
+    "branches": {
+      "create": true,
+      "prefix": "",
+      "cleanup": true
+    },
+    "validation": {
+      "required_sections": [
+        "Overview",
+        "Requirements",
+        "Implementation"
+      ]
+    }
+  }
+}
