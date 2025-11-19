@@ -21,30 +21,30 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
-  
+
   // Combat state
-  const { 
-    isActive, 
-    phase, 
-    players, 
-    timeRemaining, 
-    arena, 
+  const {
+    isActive,
+    phase,
+    players,
+    timeRemaining,
+    arena,
     winner,
-    showDebugInfo 
+    showDebugInfo
   } = useCombat();
-  
+
   // Combat engine
   const { startGameLoop, stopGameLoop, isRunning } = useCombatEngine();
-  
+
   // Projectiles
   const { getActiveProjectiles } = useProjectiles();
-  
+
   // Camera
   const { cameraPosition, panCamera, zoomCamera, centerOnAction } = useCombatCamera();
-  
+
   // Effects
   const { screenShake, flashEffect } = useCombatEffects();
-  
+
   // Particles
   const { setCanvas, startRenderLoop, stopRenderLoop } = useParticles();
 
@@ -156,7 +156,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
 
     ctx.strokeStyle = '#333';
     ctx.lineWidth = 4;
-    
+
     arena.boundaries.forEach(boundary => {
       ctx.strokeRect(boundary.x, boundary.y, boundary.width, boundary.height);
     });
@@ -166,10 +166,10 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     if (!arena) return;
 
     ctx.fillStyle = '#555';
-    
+
     arena.obstacles.forEach(obstacle => {
       ctx.fillRect(obstacle.position.x, obstacle.position.y, obstacle.size.width, obstacle.size.height);
-      
+
       if (obstacle.type === 'bouncy') {
         ctx.strokeStyle = '#00ff00';
         ctx.lineWidth = 2;
@@ -182,7 +182,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     if (!player.isAlive) return;
 
     const { x, y } = player.position;
-    
+
     // Player circle
     ctx.fillStyle = player.id === 'player' ? '#3b82f6' : '#ef4444';
     ctx.beginPath();
@@ -193,10 +193,10 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     const barWidth = 60;
     const barHeight = 8;
     const barY = y - 40;
-    
+
     ctx.fillStyle = '#333';
     ctx.fillRect(x - barWidth / 2, barY, barWidth, barHeight);
-    
+
     const healthPercent = player.health / player.maxHealth;
     ctx.fillStyle = healthPercent > 0.5 ? '#10b981' : healthPercent > 0.25 ? '#f59e0b' : '#ef4444';
     ctx.fillRect(x - barWidth / 2, barY, barWidth * healthPercent, barHeight);
@@ -227,7 +227,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(projectile.trail[0]?.x || 0, projectile.trail[0]?.y || 0);
-      
+
       for (let i = 1; i < projectile.trail.length; i++) {
         ctx.lineTo(projectile.trail[i]?.x || 0, projectile.trail[i]?.y || 0);
       }
@@ -238,12 +238,12 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate(projectile.rotation);
-    
+
     ctx.font = `${projectile.size}px Arial`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(projectile.emoji, 0, 0);
-    
+
     ctx.restore();
 
     // Debug info
@@ -267,7 +267,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 24px Arial';
       ctx.textAlign = 'center';
-      
+
       if (phase === 'countdown') {
         ctx.fillText('GET READY!', width / 2, height / 2);
       } else {
@@ -280,7 +280,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     if (winner) {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
       ctx.fillRect(0, 0, width, height);
-      
+
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 48px Arial';
       ctx.textAlign = 'center';
@@ -291,7 +291,7 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     if (showDebugInfo) {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
       ctx.fillRect(10, 10, 200, 120);
-      
+
       ctx.fillStyle = '#fff';
       ctx.font = '12px Arial';
       ctx.textAlign = 'left';
@@ -343,11 +343,23 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
     setIsDragging(false);
   };
 
-  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
-    const zoomDelta = e.deltaY > 0 ? -0.1 : 0.1;
-    zoomCamera(zoomDelta);
-  };
+  // Handle wheel events with non-passive listener
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleWheelEvent = (e: WheelEvent) => {
+      e.preventDefault();
+      const zoomDelta = e.deltaY > 0 ? -0.1 : 0.1;
+      zoomCamera(zoomDelta);
+    };
+
+    canvas.addEventListener('wheel', handleWheelEvent, { passive: false });
+
+    return () => {
+      canvas.removeEventListener('wheel', handleWheelEvent);
+    };
+  }, [zoomCamera]);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent context menu
@@ -370,14 +382,13 @@ export const CombatArena: React.FC<CombatArenaProps> = ({
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onWheel={handleWheel}
         onContextMenu={handleContextMenu}
-        style={{ 
+        style={{
           cursor: isDragging ? 'grabbing' : 'crosshair',
           border: '2px solid #333'
         }}
       />
-      
+
       {/* Combat controls overlay */}
       <div className="combat-controls">
         <button onClick={centerOnAction} className="control-btn">
