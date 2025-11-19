@@ -11,26 +11,26 @@ export interface CombatStore {
   isActive: boolean;
   isPaused: boolean;
   phase: 'waiting' | 'countdown' | 'active' | 'paused' | 'ended';
-  
+
   // Arena & Engine
   arena: CombatArena | null;
   combatEngine: CombatEngine | null;
-  
+
   // Players
   players: CombatPlayer[];
   currentPlayerId: string | null;
   winner: CombatPlayer | null;
-  
+
   // Combat Objects
   projectiles: EmojiProjectile[];
   activeEffects: ActiveEffect[];
-  
+
   // Time Management
   timeRemaining: number;
   totalDuration: number;
   startTime: number;
   endTime?: number;
-  
+
   // Events & Statistics
   events: CombatEvent[];
   statistics: {
@@ -41,12 +41,12 @@ export interface CombatStore {
     averageFPS: number;
     peakProjectileCount: number;
   };
-  
+
   // UI State
   showDebugInfo: boolean;
   cameraPosition: { x: number; y: number; zoom: number };
   selectedProjectile: string | null;
-  
+
   // Settings
   settings: {
     autoFire: boolean;
@@ -56,7 +56,7 @@ export interface CombatStore {
     particleEffects: boolean;
     soundEffects: boolean;
   };
-  
+
   // Actions
   initializeCombat: (arena: CombatArena, playerDeck: Deck, opponentDeck: Deck) => void;
   startCombat: () => void;
@@ -64,34 +64,34 @@ export interface CombatStore {
   resumeCombat: () => void;
   endCombat: (winner?: CombatPlayer) => void;
   resetCombat: () => void;
-  
+
   // Combat Updates
   updateFromEngine: (engineState: CombatState) => void;
   fireProjectile: (playerId: string, target: { x: number; y: number }) => void;
   applyDamage: (playerId: string, damage: number) => void;
   addEffect: (playerId: string, effect: ActiveEffect) => void;
   removeEffect: (effectId: string) => void;
-  
+
   // Player Management
   updatePlayerHealth: (playerId: string, health: number) => void;
   updatePlayerPosition: (playerId: string, position: { x: number; y: number }) => void;
   eliminatePlayer: (playerId: string) => void;
-  
+
   // UI Actions
   setSelectedProjectile: (projectileId: string | null) => void;
   updateCamera: (position: { x: number; y: number; zoom: number }) => void;
   toggleDebugInfo: () => void;
   updateSettings: (settings: Partial<CombatStore['settings']>) => void;
-  
+
   // Event Handling
   addEvent: (event: CombatEvent) => void;
   clearEvents: () => void;
   getEventsByType: (type: string) => CombatEvent[];
-  
+
   // Statistics
   updateStatistics: (stats: Partial<CombatStore['statistics']>) => void;
   resetStatistics: () => void;
-  
+
   // Utilities
   getPlayer: (playerId: string) => CombatPlayer | null;
   getCurrentPlayer: () => CombatPlayer | null;
@@ -167,9 +167,14 @@ export const useCombatStore = create<CombatStore>()(
     // Combat Management Actions
     initializeCombat: (arena: CombatArena, playerDeck: Deck, opponentDeck: Deck) => {
       const combatEngine = new CombatEngine(arena);
-      
+
       // Subscribe to combat engine events
       combatEngine.addEventListener('match_started', (event) => {
+        get().addEvent(event);
+      });
+
+      combatEngine.addEventListener('phase_changed', (event) => {
+        set({ phase: event.data.phase as any });
         get().addEvent(event);
       });
 
@@ -179,22 +184,22 @@ export const useCombatStore = create<CombatStore>()(
       });
 
       combatEngine.addEventListener('projectile_fired', (event) => {
-        get().updateStatistics({ 
-          totalProjectilesFired: get().statistics.totalProjectilesFired + 1 
+        get().updateStatistics({
+          totalProjectilesFired: get().statistics.totalProjectilesFired + 1
         });
         get().addEvent(event);
       });
 
       combatEngine.addEventListener('player_damaged', (event) => {
-        get().updateStatistics({ 
+        get().updateStatistics({
           totalDamageDealt: get().statistics.totalDamageDealt + (event.data.damage as number || 0)
         });
         get().addEvent(event);
       });
 
       combatEngine.addEventListener('projectile_hit', (event) => {
-        get().updateStatistics({ 
-          totalCollisions: get().statistics.totalCollisions + 1 
+        get().updateStatistics({
+          totalCollisions: get().statistics.totalCollisions + 1
         });
         get().addEvent(event);
       });
@@ -218,7 +223,7 @@ export const useCombatStore = create<CombatStore>()(
         set({
           isActive: true,
           isPaused: false,
-          phase: 'active',
+          phase: 'countdown', // Start in countdown phase
           startTime: Date.now()
         });
       }
@@ -287,7 +292,7 @@ export const useCombatStore = create<CombatStore>()(
     // Engine Updates
     updateFromEngine: (engineState: CombatState) => {
       const state = get();
-      
+
       set({
         phase: engineState.phase as any,
         players: engineState.players,
@@ -322,7 +327,7 @@ export const useCombatStore = create<CombatStore>()(
       if (player) {
         const newHealth = Math.max(0, player.health - damage);
         get().updatePlayerHealth(playerId, newHealth);
-        
+
         if (newHealth <= 0) {
           get().eliminatePlayer(playerId);
         }

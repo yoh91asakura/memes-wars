@@ -90,6 +90,7 @@ export class CombatEngine implements ICombatEngine {
     // Start countdown sequence
     this.startCountdown(() => {
       this.state.phase = 'active';
+      this.emitEvent('phase_changed', { phase: 'active' });
       this.startGameLoop();
     });
   }
