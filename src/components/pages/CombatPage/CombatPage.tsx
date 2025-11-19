@@ -25,10 +25,10 @@ export const CombatPage: React.FC = () => {
   const [selectedDeck, setSelectedDeck] = useState<any[] | null>(null);
   const [autoCreatedDeck, setAutoCreatedDeck] = useState(false);
   const [isAutoStarting, setIsAutoStarting] = useState(false);
-  
+
   // Prevent multiple initialization attempts
   const initializingRef = useRef(false);
-  
+
   // Combat state
   const {
     isActive,
@@ -48,18 +48,18 @@ export const CombatPage: React.FC = () => {
   // Game state  
   const { activeDeck, createNewDeck } = useGame();
   const { collection } = useCardsStore();
-  
+
   // Stage progression
   const { currentStage, currentDeckLimit } = useStageStore();
   const { stage: stageData, deckLimit, isUnlocked } = useCurrentStageData();
-  
+
   // Currency
   const gold = useGold();
   const tickets = useTickets();
-  
+
   // Combat stats
   const { getOverallStats, getLeaderboard } = useCombatStats();
-  
+
   // Audio
   const { playSFX, playMusic, stopMusic } = useAudio();
 
@@ -69,7 +69,7 @@ export const CombatPage: React.FC = () => {
       console.warn('No cards available to create deck');
       return null;
     }
-    
+
     // Use the first available cards (up to deck limit)
     const availableCards = collection.slice(0, Math.min(deckLimit, 5)); // Max 5 cards for combat
     const defaultDeck = {
@@ -80,7 +80,7 @@ export const CombatPage: React.FC = () => {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-    
+
     console.log(`Auto-created combat deck with ${availableCards.length} cards:`, availableCards.map(c => c.name));
     setAutoCreatedDeck(true);
     return defaultDeck;
@@ -161,7 +161,7 @@ export const CombatPage: React.FC = () => {
 
         // Use selected deck, active deck, or auto-create from cards
         let playerDeck = activeDeck;
-        
+
         // If selectedDeck is provided, create a temporary deck from it
         if (selectedDeck && selectedDeck.length > 0) {
           playerDeck = await createNewDeck('Combat Deck', selectedDeck);
@@ -183,10 +183,10 @@ export const CombatPage: React.FC = () => {
         if (!stageData) {
           throw new Error('No stage data available for combat');
         }
-        
+
         const aiMatchmaking = getAIMatchmakingService();
         const aiOpponent = aiMatchmaking.generateOpponent(stageData, 1); // TODO: Get actual player level
-        
+
         console.log(`Generated AI opponent: ${aiOpponent.name} with ${aiOpponent.deck.cards.length} cards`);
         console.log(`AI Health: ${aiOpponent.health}, Difficulty: ${aiOpponent.difficulty}`);
 
@@ -202,11 +202,11 @@ export const CombatPage: React.FC = () => {
     };
 
     // Initialize combat if conditions are met
-    const shouldInitialize = !isInitialized && 
-                           !isActive && 
-                           !showDeckSelector && 
-                           !initializingRef.current &&
-                           (selectedDeck || activeDeck || collection.length > 0);
+    const shouldInitialize = !isInitialized &&
+      !isActive &&
+      !showDeckSelector &&
+      !initializingRef.current &&
+      (selectedDeck || activeDeck || collection.length > 0);
 
     if (shouldInitialize) {
       initializeMatch();
@@ -221,14 +221,20 @@ export const CombatPage: React.FC = () => {
   }, []);
 
   // Auto-start combat after initialization
+  const autoStartTriggeredRef = useRef(false);
+
   useEffect(() => {
-    if (isInitialized && phase === 'waiting') {
+    if (isInitialized && phase === 'waiting' && !autoStartTriggeredRef.current) {
+      autoStartTriggeredRef.current = true;
       setIsAutoStarting(true);
-      
-      // Play combat start music and sound
-      playMusic('combat_theme', { loop: true, fadeIn: 2.0, volume: 0.5 });
-      playSFX('combat_start');
-      
+
+      // Play combat start music and sound (ignore errors if tracks don't exist)
+      try {
+        playMusic('menu_theme', { loop: true, fadeIn: 2.0, volume: 0.3 }); // Use menu_theme instead
+      } catch (error) {
+        console.warn('Audio playback failed:', error);
+      }
+
       // Small delay to ensure UI is ready and let user see the setup
       const autoStartTimeout = setTimeout(() => {
         console.log('Auto-starting combat after deck selection...');
@@ -241,7 +247,12 @@ export const CombatPage: React.FC = () => {
         setIsAutoStarting(false);
       };
     }
-  }, [isInitialized, phase, startCombat, playMusic, playSFX]);
+
+    // Reset flag when combat is reset
+    if (!isInitialized && phase === 'waiting') {
+      autoStartTriggeredRef.current = false;
+    }
+  }, [isInitialized, phase]);
 
   // Handle combat phase changes and stage completion
   useEffect(() => {
@@ -253,11 +264,11 @@ export const CombatPage: React.FC = () => {
           stopMusic(1.0);
           playSFX('combat_victory');
           playMusic('victory_fanfare', { loop: false, fadeIn: 0.5, volume: 0.7 });
-          
+
           // Complete the stage and calculate rewards
           if (stageData) {
             const rewardService = getRewardService();
-            
+
             // Create combat result
             const combatResult = {
               victory: true,
@@ -268,20 +279,20 @@ export const CombatPage: React.FC = () => {
               perfectVictory: winner.health === winner.maxHealth,
               speedBonus: (Date.now() - (useCombatStore.getState().startTime || Date.now())) < 60000 // Less than 1 minute
             };
-            
+
             // Calculate and distribute rewards
             const baseRewards = {
               gold: stageData.goldReward,
               tickets: stageData.ticketsReward,
               bonusRewards: stageData.bonusRewards || []
             };
-            
+
             const calculation = rewardService.calculateRewards(combatResult, baseRewards);
             const distribution = await rewardService.distributeRewards(calculation, 1); // TODO: Get actual player level
-            
+
             setRewards(distribution);
             setShowRewardsModal(true);
-            
+
             // Play reward sounds based on what was earned
             if (distribution.gold > 0) {
               playSFX('reward_coins', { delay: 0.5 });
@@ -292,10 +303,10 @@ export const CombatPage: React.FC = () => {
             if (distribution.bonusCards && distribution.bonusCards.length > 0) {
               playSFX('reward_level_up', { delay: 1.5 });
             }
-            
+
             // Complete stage in store
             stageActions.completeBattle(currentStage, true, calculation.finalRewards);
-            
+
             // Auto-advance to next stage after showing rewards
             setTimeout(() => {
               const nextStage = currentStage + 1;
@@ -312,10 +323,10 @@ export const CombatPage: React.FC = () => {
           stageActions.completeBattle(currentStage, false);
         }
       };
-      
+
       handleCombatEnd();
     }
-  }, [phase, winner, currentStage, stageData]);
+  }, [phase, winner, currentStage, stageData]); // Audio functions are stable, don't need to be in deps
 
   // Event handlers
   const handleStartCombat = () => {
@@ -365,7 +376,7 @@ export const CombatPage: React.FC = () => {
       <div className="combat-page no-cards" data-testid="combat-page">
         <div className="no-cards-container">
           <p>No cards available for combat. Please go to Roll page to get cards.</p>
-          <Button 
+          <Button
             onClick={() => window.location.hash = '#roll'}
             variant="primary"
           >
@@ -421,293 +432,293 @@ export const CombatPage: React.FC = () => {
               <div className="stage-info">
                 {stageData && (
                   <>
-                <span className={`difficulty-badge ${stageData.enemyDifficulty}`}>
-                  {stageData.enemyDifficulty.toUpperCase()}
-                </span>
-                {stageData.isBoss && <span className="boss-badge">👑 BOSS</span>}
-                <span className="deck-limit">Deck Limit: {deckLimit}</span>
-              </>
-            )}
-          </div>
-          <div className="combat-phase">
-            Phase: <span className={`phase-badge ${phase}`}>{phase.toUpperCase()}</span>
-          </div>
-        </div>
-
-        {/* Currency Display */}
-        <div className="currency-display">
-          <div className="currency-item">
-            <span className="currency-icon">🪙</span>
-            <span className="currency-value">{format.number.compact(gold)}</span>
-          </div>
-          <div className="currency-item">
-            <span className="currency-icon">🎫</span>
-            <span className="currency-value">{tickets}</span>
-          </div>
-        </div>
-
-        {/* Combat Timer */}
-        {(phase === 'active' || phase === 'paused') && (
-          <div className="combat-timer">
-            <div className="timer-label">Time Remaining</div>
-            <div className="timer-value">
-              {format.number.duration(Math.max(0, timeRemaining / 1000))}
-            </div>
-          </div>
-        )}
-
-        {/* Deck Management Button */}
-        <div className="deck-management">
-          <Button 
-            onClick={handleOpenDeckSelector}
-            variant="secondary"
-            size="sm"
-          >
-            🃏 Manage Deck
-          </Button>
-          {autoCreatedDeck && (
-            <div className="auto-deck-notice">
-              <span className="notice-icon">ℹ️</span>
-              <span className="notice-text">Using auto-created deck from your cards</span>
-            </div>
-          )}
-        </div>
-
-        {/* Combat Controls */}
-        <div className="combat-controls-header">
-          {phase === 'waiting' && !isAutoStarting && (
-            <Button onClick={handleStartCombat} variant="primary">
-              Start Combat
-            </Button>
-          )}
-          
-          {phase === 'waiting' && isAutoStarting && (
-            <div className="auto-start-indicator">
-              <div className="auto-start-spinner" />
-              <span>Combat starting automatically in 3 seconds...</span>
-              <Button onClick={() => {
-                setIsAutoStarting(false);
-                handleStartCombat();
-              }} variant="primary" size="sm">
-                Start Now
-              </Button>
-            </div>
-          )}
-          
-          {phase === 'active' && (
-            <Button onClick={handlePauseCombat} variant="secondary">
-              Pause
-            </Button>
-          )}
-          
-          {phase === 'paused' && (
-            <>
-              <Button onClick={handleResumeCombat} variant="primary">
-                Resume
-              </Button>
-              <Button onClick={handleEndCombat} variant="danger">
-                End Combat
-              </Button>
-            </>
-          )}
-          
-          {phase === 'ended' && (
-            <>
-              <Button onClick={handleResetCombat} variant="primary">
-                Play Again
-              </Button>
-              <Button onClick={handleExitCombat} variant="secondary">
-                Exit
-              </Button>
-            </>
-          )}
-        </div>
-      </header>
-
-      {/* Main Combat Area */}
-      <main className="combat-main">
-        {/* Player Health Bars */}
-        <div className="players-container">
-          {players.map(player => (
-            <PlayerHealth
-              key={player.id}
-              player={player}
-              showEffects={true}
-              className={player.id === 'player' ? 'player-health-left' : 'player-health-right'}
-            />
-          ))}
-        </div>
-
-        {/* Combat Arena */}
-        <div className="arena-container">
-          <CombatArena
-            width={1200}
-            height={800}
-            className="main-arena"
-          />
-        </div>
-
-        {/* Combat Statistics */}
-        <div className="combat-stats">
-          <div className="stats-section">
-            <h3>Statistics</h3>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <span className="stat-label">Projectiles Fired</span>
-                <span className="stat-value">{overallStats.totalProjectilesFired}</span>
+                    <span className={`difficulty-badge ${stageData.enemyDifficulty}`}>
+                      {stageData.enemyDifficulty.toUpperCase()}
+                    </span>
+                    {stageData.isBoss && <span className="boss-badge">👑 BOSS</span>}
+                    <span className="deck-limit">Deck Limit: {deckLimit}</span>
+                  </>
+                )}
               </div>
-              <div className="stat-item">
-                <span className="stat-label">Total Damage</span>
-                <span className="stat-value">{format.number.compact(overallStats.totalDamageDealt)}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">Collisions</span>
-                <span className="stat-value">{overallStats.totalCollisions}</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-label">FPS</span>
-                <span className="stat-value">{overallStats.currentFPS}</span>
+              <div className="combat-phase">
+                Phase: <span className={`phase-badge ${phase}`}>{phase.toUpperCase()}</span>
               </div>
             </div>
-          </div>
 
-          {/* Leaderboard */}
-          <div className="leaderboard-section">
-            <h3>Leaderboard</h3>
-            <div className="leaderboard">
-              {leaderboard.map((entry, index) => (
-                <div key={entry.id} className={`leaderboard-entry ${!entry.isAlive ? 'eliminated' : ''}`}>
-                  <span className="position">{index + 1}</span>
-                  <span className="username">{entry.username}</span>
-                  <span className="score">{entry.score}</span>
-                  <span className="status">{entry.isAlive ? '🟢' : '💀'}</span>
+            {/* Currency Display */}
+            <div className="currency-display">
+              <div className="currency-item">
+                <span className="currency-icon">🪙</span>
+                <span className="currency-value">{format.number.compact(gold)}</span>
+              </div>
+              <div className="currency-item">
+                <span className="currency-icon">🎫</span>
+                <span className="currency-value">{tickets}</span>
+              </div>
+            </div>
+
+            {/* Combat Timer */}
+            {(phase === 'active' || phase === 'paused') && (
+              <div className="combat-timer">
+                <div className="timer-label">Time Remaining</div>
+                <div className="timer-value">
+                  {format.number.duration(Math.max(0, timeRemaining / 1000))}
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </main>
-
-      {/* Winner Overlay */}
-      {winner && (
-        <div className="winner-overlay">
-          <div className="winner-content">
-            <div className="winner-crown">👑</div>
-            <h2 className="winner-title">{winner.username} Wins!</h2>
-            <div className="winner-stats">
-              <div className="winner-stat">
-                <span className="label">Kills</span>
-                <span className="value">{winner.kills}</span>
               </div>
-              <div className="winner-stat">
-                <span className="label">Damage</span>
-                <span className="value">{format.number.compact(winner.damage)}</span>
-              </div>
-              <div className="winner-stat">
-                <span className="label">Accuracy</span>
-                <span className="value">{format.number.percent(winner.accuracy)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+            )}
 
-      {/* Pause Overlay */}
-      {phase === 'paused' && (
-        <div className="pause-overlay">
-          <div className="pause-content">
-            <h2>Game Paused</h2>
-            <p>Combat is temporarily paused</p>
-          </div>
-        </div>
-      )}
-
-      {/* Rewards Modal */}
-      {showRewardsModal && rewards && (
-        <div className="rewards-overlay">
-          <div className="rewards-content">
-            <div className="rewards-header">
-              <h2>🎉 Victory Rewards!</h2>
-              <Button 
-                onClick={() => setShowRewardsModal(false)} 
+            {/* Deck Management Button */}
+            <div className="deck-management">
+              <Button
+                onClick={handleOpenDeckSelector}
                 variant="secondary"
                 size="sm"
               >
-                ✕
+                🃏 Manage Deck
               </Button>
-            </div>
-            
-            <div className="rewards-grid">
-              <div className="reward-item">
-                <span className="reward-icon">🪙</span>
-                <span className="reward-label">Gold</span>
-                <span className="reward-value">+{format.number.compact(rewards.gold)}</span>
-              </div>
-              
-              <div className="reward-item">
-                <span className="reward-icon">🎫</span>
-                <span className="reward-label">Tickets</span>
-                <span className="reward-value">+{rewards.tickets}</span>
-              </div>
-              
-              <div className="reward-item">
-                <span className="reward-icon">⭐</span>
-                <span className="reward-label">Experience</span>
-                <span className="reward-value">+{rewards.experience}</span>
-              </div>
+              {autoCreatedDeck && (
+                <div className="auto-deck-notice">
+                  <span className="notice-icon">ℹ️</span>
+                  <span className="notice-text">Using auto-created deck from your cards</span>
+                </div>
+              )}
             </div>
 
-            {rewards.bonusCards && rewards.bonusCards.length > 0 && (
-              <div className="bonus-cards">
-                <h3>Bonus Cards!</h3>
-                <div className="bonus-cards-grid">
-                  {rewards.bonusCards.map((card, index) => (
-                    <div key={index} className="bonus-card">
-                      <span className="card-rarity">{card.rarity}</span>
-                      <span className="card-name">{card.name}</span>
+            {/* Combat Controls */}
+            <div className="combat-controls-header">
+              {phase === 'waiting' && !isAutoStarting && (
+                <Button onClick={handleStartCombat} variant="primary">
+                  Start Combat
+                </Button>
+              )}
+
+              {phase === 'waiting' && isAutoStarting && (
+                <div className="auto-start-indicator">
+                  <div className="auto-start-spinner" />
+                  <span>Combat starting automatically in 3 seconds...</span>
+                  <Button onClick={() => {
+                    setIsAutoStarting(false);
+                    handleStartCombat();
+                  }} variant="primary" size="sm">
+                    Start Now
+                  </Button>
+                </div>
+              )}
+
+              {phase === 'active' && (
+                <Button onClick={handlePauseCombat} variant="secondary">
+                  Pause
+                </Button>
+              )}
+
+              {phase === 'paused' && (
+                <>
+                  <Button onClick={handleResumeCombat} variant="primary">
+                    Resume
+                  </Button>
+                  <Button onClick={handleEndCombat} variant="danger">
+                    End Combat
+                  </Button>
+                </>
+              )}
+
+              {phase === 'ended' && (
+                <>
+                  <Button onClick={handleResetCombat} variant="primary">
+                    Play Again
+                  </Button>
+                  <Button onClick={handleExitCombat} variant="secondary">
+                    Exit
+                  </Button>
+                </>
+              )}
+            </div>
+          </header>
+
+          {/* Main Combat Area */}
+          <main className="combat-main">
+            {/* Player Health Bars */}
+            <div className="players-container">
+              {players.map(player => (
+                <PlayerHealth
+                  key={player.id}
+                  player={player}
+                  showEffects={true}
+                  className={player.id === 'player' ? 'player-health-left' : 'player-health-right'}
+                />
+              ))}
+            </div>
+
+            {/* Combat Arena */}
+            <div className="arena-container">
+              <CombatArena
+                width={1200}
+                height={800}
+                className="main-arena"
+              />
+            </div>
+
+            {/* Combat Statistics */}
+            <div className="combat-stats">
+              <div className="stats-section">
+                <h3>Statistics</h3>
+                <div className="stats-grid">
+                  <div className="stat-item">
+                    <span className="stat-label">Projectiles Fired</span>
+                    <span className="stat-value">{overallStats.totalProjectilesFired}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Total Damage</span>
+                    <span className="stat-value">{format.number.compact(overallStats.totalDamageDealt)}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Collisions</span>
+                    <span className="stat-value">{overallStats.totalCollisions}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">FPS</span>
+                    <span className="stat-value">{overallStats.currentFPS}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Leaderboard */}
+              <div className="leaderboard-section">
+                <h3>Leaderboard</h3>
+                <div className="leaderboard">
+                  {leaderboard.map((entry, index) => (
+                    <div key={entry.id} className={`leaderboard-entry ${!entry.isAlive ? 'eliminated' : ''}`}>
+                      <span className="position">{index + 1}</span>
+                      <span className="username">{entry.username}</span>
+                      <span className="score">{entry.score}</span>
+                      <span className="status">{entry.isAlive ? '🟢' : '💀'}</span>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
-
-            {rewards.achievements && rewards.achievements.length > 0 && (
-              <div className="achievements">
-                <h3>🏆 Achievements Unlocked!</h3>
-                <div className="achievements-list">
-                  {rewards.achievements.map((achievement, index) => (
-                    <div key={index} className="achievement-item">
-                      {achievement}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {rewards.unlocks && rewards.unlocks.length > 0 && (
-              <div className="unlocks">
-                <h3>🔓 New Features Unlocked!</h3>
-                <div className="unlocks-list">
-                  {rewards.unlocks.map((unlock, index) => (
-                    <div key={index} className="unlock-item">
-                      {unlock}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="rewards-actions">
-              <Button 
-                onClick={() => setShowRewardsModal(false)} 
-                variant="primary"
-              >
-                Continue
-              </Button>
             </div>
-          </div>
-        </div>
-      )}
+          </main>
+
+          {/* Winner Overlay */}
+          {winner && (
+            <div className="winner-overlay">
+              <div className="winner-content">
+                <div className="winner-crown">👑</div>
+                <h2 className="winner-title">{winner.username} Wins!</h2>
+                <div className="winner-stats">
+                  <div className="winner-stat">
+                    <span className="label">Kills</span>
+                    <span className="value">{winner.kills}</span>
+                  </div>
+                  <div className="winner-stat">
+                    <span className="label">Damage</span>
+                    <span className="value">{format.number.compact(winner.damage)}</span>
+                  </div>
+                  <div className="winner-stat">
+                    <span className="label">Accuracy</span>
+                    <span className="value">{format.number.percent(winner.accuracy)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Pause Overlay */}
+          {phase === 'paused' && (
+            <div className="pause-overlay">
+              <div className="pause-content">
+                <h2>Game Paused</h2>
+                <p>Combat is temporarily paused</p>
+              </div>
+            </div>
+          )}
+
+          {/* Rewards Modal */}
+          {showRewardsModal && rewards && (
+            <div className="rewards-overlay">
+              <div className="rewards-content">
+                <div className="rewards-header">
+                  <h2>🎉 Victory Rewards!</h2>
+                  <Button
+                    onClick={() => setShowRewardsModal(false)}
+                    variant="secondary"
+                    size="sm"
+                  >
+                    ✕
+                  </Button>
+                </div>
+
+                <div className="rewards-grid">
+                  <div className="reward-item">
+                    <span className="reward-icon">🪙</span>
+                    <span className="reward-label">Gold</span>
+                    <span className="reward-value">+{format.number.compact(rewards.gold)}</span>
+                  </div>
+
+                  <div className="reward-item">
+                    <span className="reward-icon">🎫</span>
+                    <span className="reward-label">Tickets</span>
+                    <span className="reward-value">+{rewards.tickets}</span>
+                  </div>
+
+                  <div className="reward-item">
+                    <span className="reward-icon">⭐</span>
+                    <span className="reward-label">Experience</span>
+                    <span className="reward-value">+{rewards.experience}</span>
+                  </div>
+                </div>
+
+                {rewards.bonusCards && rewards.bonusCards.length > 0 && (
+                  <div className="bonus-cards">
+                    <h3>Bonus Cards!</h3>
+                    <div className="bonus-cards-grid">
+                      {rewards.bonusCards.map((card, index) => (
+                        <div key={index} className="bonus-card">
+                          <span className="card-rarity">{card.rarity}</span>
+                          <span className="card-name">{card.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {rewards.achievements && rewards.achievements.length > 0 && (
+                  <div className="achievements">
+                    <h3>🏆 Achievements Unlocked!</h3>
+                    <div className="achievements-list">
+                      {rewards.achievements.map((achievement, index) => (
+                        <div key={index} className="achievement-item">
+                          {achievement}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {rewards.unlocks && rewards.unlocks.length > 0 && (
+                  <div className="unlocks">
+                    <h3>🔓 New Features Unlocked!</h3>
+                    <div className="unlocks-list">
+                      {rewards.unlocks.map((unlock, index) => (
+                        <div key={index} className="unlock-item">
+                          {unlock}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="rewards-actions">
+                  <Button
+                    onClick={() => setShowRewardsModal(false)}
+                    variant="primary"
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
