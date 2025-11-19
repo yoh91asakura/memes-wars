@@ -113,9 +113,7 @@ export class CombatEngine implements ICombatEngine {
     // Process AI for bot players
     this.updateAI(deltaTime);
 
-    // Check collisions
-    const collisions = this.checkCollisions();
-    this.processCollisions(collisions);
+    // Collisions are now handled inside updateProjectiles via guaranteed homing hits
 
     // Update time
     this.state.timeRemaining -= deltaTime;
@@ -128,50 +126,9 @@ export class CombatEngine implements ICombatEngine {
   }
 
   public checkCollisions(): Collision[] {
-    const collisions: Collision[] = [];
-
-    for (const projectile of this.state.projectiles) {
-      if (!projectile.isActive) continue;
-
-      // Check player collisions
-      for (const player of this.state.players) {
-        if (player.id === projectile.ownerId || !player.isAlive) continue;
-
-        if (this.isColliding(projectile, player)) {
-          collisions.push({
-            projectileId: projectile.id,
-            targetId: player.id,
-            targetType: 'player',
-            contactPoint: { ...projectile.position },
-            damage: projectile.damage,
-            effects: projectile.effects,
-            timestamp: Date.now()
-          });
-        }
-      }
-
-      // Check boundary collisions
-      if (this.isOutOfBounds(projectile)) {
-        if (projectile.bounces < projectile.maxBounces) {
-          this.bounceProjectile(projectile);
-        } else {
-          projectile.isActive = false;
-        }
-      }
-
-      // Check obstacle collisions
-      for (const obstacle of this.state.arena.obstacles) {
-        if (this.isCollidingWithObstacle(projectile, obstacle)) {
-          if (obstacle.type === 'bouncy' && projectile.bounces < projectile.maxBounces) {
-            this.bounceProjectileOffObstacle(projectile, obstacle);
-          } else {
-            projectile.isActive = false;
-          }
-        }
-      }
-    }
-
-    return collisions;
+    // Collisions are now handled automatically by the homing projectile system
+    // All projectiles are guaranteed to hit their target
+    return [];
   }
 
   public applyEffects(effects: ActiveEffect[]): void {
@@ -536,19 +493,46 @@ export class CombatEngine implements ICombatEngine {
     for (const projectile of this.state.projectiles) {
       if (!projectile.isActive) continue;
 
+      // Find target player
+      const target = this.state.players.find(p => p.id !== projectile.ownerId && p.isAlive);
+
+      if (!target) {
+        projectile.isActive = false;
+        continue;
+      }
+
+      // HOMING BEHAVIOR - Projectiles automatically track their target
+      const dx = target.position.x - projectile.position.x;
+      const dy = target.position.y - projectile.position.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      // Calculate homing direction
+      const homingStrength = 0.8; // How strongly projectiles home (0-1)
+      const targetDirection = {
+        x: dx / distance,
+        y: dy / distance
+      };
+
+      // Blend current velocity with target direction for smooth homing
+      const speed = Math.sqrt(projectile.velocity.x ** 2 + projectile.velocity.y ** 2);
+      projectile.velocity.x = projectile.velocity.x * (1 - homingStrength) + targetDirection.x * speed * homingStrength;
+      projectile.velocity.y = projectile.velocity.y * (1 - homingStrength) + targetDirection.y * speed * homingStrength;
+
       // Update position
       projectile.position.x += projectile.velocity.x * deltaTime;
       projectile.position.y += projectile.velocity.y * deltaTime;
 
-      // Apply gravity
-      projectile.velocity.y += this.state.arena.settings.gravity * deltaTime;
-
-      // Update rotation
-      projectile.rotation += Math.atan2(projectile.velocity.y, projectile.velocity.x);
+      // Update rotation to face movement direction
+      projectile.rotation = Math.atan2(projectile.velocity.y, projectile.velocity.x);
 
       // Update lifespan
       projectile.lifespan += deltaTime;
-      if (projectile.lifespan >= projectile.maxLifespan) {
+
+      // GUARANTEED HIT - If close enough or lifespan exceeded, force hit
+      const hitDistance = 30; // Distance threshold for hit
+      if (distance < hitDistance || projectile.lifespan >= projectile.maxLifespan) {
+        // Apply damage immediately
+        this.applyProjectileHit(projectile, target);
         projectile.isActive = false;
       }
 
@@ -561,6 +545,100 @@ export class CombatEngine implements ICombatEngine {
 
     // Remove inactive projectiles
     this.state.projectiles = this.state.projectiles.filter(p => p.isActive);
+  }
+
+  // New method to apply guaranteed projectile hit
+  private applyProjectileHit(projectile: EmojiProjectile, target: CombatPlayer): void {
+    const shooter = this.state.players.find(p => p.id === projectile.ownerId);
+
+    // Apply damage
+    const actualDamage = Math.max(0, projectile.damage - target.shield);
+    target.health -= actualDamage;
+    this.state.stats.totalDamage += actualDamage;
+
+    // Update shield
+    target.shield = Math.max(0, target.shield - projectile.damage);
+
+    // Apply effects from projectile
+    for (const effect of projectile.effects) {
+      this.addActiveEffect(target.id, effect, projectile.ownerId);
+    }
+
+    if (shooter) {
+      shooter.shotsHit++;
+      shooter.damage += actualDamage;
+      shooter.accuracy = shooter.shotsHit / shooter.shotsFired;
+
+      // Trigger ON_HIT passives for shooter
+      this.triggerPassives('ON_HIT', shooter.id, {
+        targetId: target.id,
+        damage: actualDamage,
+        projectileEmoji: projectile.emoji
+      });
+    }
+
+    // Trigger ON_DAMAGE passives for target
+    this.triggerPassives('ON_DAMAGE', target.id, {
+      sourceId: shooter?.id,
+      damage: actualDamage,
+      remainingHealth: target.health
+    });
+
+    // Apply emoji-specific effects
+    const emojiEffect = EmojiEffectsManager.getEffect(projectile.emoji);
+    if (emojiEffect?.effects) {
+      for (const effect of emojiEffect.effects) {
+        this.applyEmojiEffect(target, shooter, effect, emojiEffect);
+      }
+    }
+
+    // Check if player died
+    if (target.health <= 0) {
+      target.isAlive = false;
+      this.state.stats.killCount++;
+      this.state.stats.survivorCount--;
+
+      if (shooter) {
+        shooter.kills++;
+      }
+
+      this.emitEvent('player_killed', {
+        playerId: target.id,
+        killerId: shooter?.id || 'unknown',
+        finalBlow: projectile.emoji
+      });
+
+      // Trigger ON_KILL passives
+      if (shooter) {
+        this.triggerPassives('ON_KILL', shooter.id, {
+          victimId: target.id,
+          finalDamage: actualDamage
+        });
+      }
+    }
+
+    // Emit hit event
+    this.emitEvent('projectile_hit', {
+      projectileId: projectile.id,
+      targetId: target.id,
+      damage: actualDamage,
+      position: { ...projectile.position }
+    });
+
+    // Emit damage event
+    this.emitEvent('player_damaged', {
+      playerId: target.id,
+      damage: actualDamage,
+      source: shooter?.id || 'unknown'
+    });
+
+    // Check synergy special effects on hit
+    if (shooter) {
+      this.checkSynergySpecialEffects(shooter.id, 'projectile_hit', {
+        targetId: target.id,
+        damage: actualDamage
+      });
+    }
   }
 
   private updateActiveEffects(deltaTime: number): void {
