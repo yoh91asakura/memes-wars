@@ -218,19 +218,34 @@
   gap: 20px;
 }
 
-/* Players Container */
-.players-container {
+/* Players Info Container */
+.players-info-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.player-info-section {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.player-health-left {
-  align-self: flex-start;
+.player-info-section.player-left {
+  align-items: flex-start;
 }
 
-.player-health-right {
-  align-self: flex-end;
+.player-info-section.player-right {
+  align-items: flex-end;
+}
+
+.player-health-left,
+.player-health-right,
+.player-deck-left,
+.player-deck-right {
+  width: 100%;
+  max-width: 350px;
 }
 
 /* Arena Container */
@@ -510,6 +525,17 @@
     height: 533px;
   }
 
+  .players-info-container {
+    gap: 20px;
+  }
+
+  .player-health-left,
+  .player-health-right,
+  .player-deck-left,
+  .player-deck-right {
+    max-width: 300px;
+  }
+
   .combat-stats {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -535,10 +561,21 @@
     text-align: center;
   }
 
-  .players-container {
-    flex-direction: column;
+  .players-info-container {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .player-info-section.player-left,
+  .player-info-section.player-right {
     align-items: center;
-    gap: 12px;
+  }
+
+  .player-health-left,
+  .player-health-right,
+  .player-deck-left,
+  .player-deck-right {
+    max-width: 100%;
   }
 
   .arena-container .main-arena {

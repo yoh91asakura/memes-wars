@@ -12,6 +12,7 @@ import { getAIMatchmakingService } from '../../../services/AIMatchmakingService'
 import { useAudio } from '../../../hooks/useAudio';
 import { CombatArena } from '../../organisms/CombatArena';
 import { PlayerHealth } from '../../molecules/PlayerHealth';
+import { PlayerDeckDisplay } from '../../molecules/PlayerDeckDisplay';
 import { DeckSelector } from '../../organisms/DeckSelector';
 import { Button } from '../../atoms/Button';
 import { format } from '../../../utils/format';
@@ -537,16 +538,45 @@ export const CombatPage: React.FC = () => {
 
           {/* Main Combat Area */}
           <main className="combat-main">
-            {/* Player Health Bars */}
-            <div className="players-container">
-              {players.map(player => (
-                <PlayerHealth
-                  key={player.id}
-                  player={player}
-                  showEffects={true}
-                  className={player.id === 'player' ? 'player-health-left' : 'player-health-right'}
-                />
-              ))}
+            {/* Player Health Bars and Decks Container */}
+            <div className="players-info-container">
+              {/* Player 1 (Left side) */}
+              <div className="player-info-section player-left">
+                {players[0] && (
+                  <>
+                    <PlayerHealth
+                      player={players[0]}
+                      showEffects={true}
+                      className="player-health-left"
+                    />
+                    <PlayerDeckDisplay
+                      playerName={players[0].username}
+                      cards={players[0].deck.cards}
+                      isPlayer={players[0].id === 'player1'}
+                      className="player-deck-left"
+                    />
+                  </>
+                )}
+              </div>
+
+              {/* Player 2 (Right side) */}
+              <div className="player-info-section player-right">
+                {players[1] && (
+                  <>
+                    <PlayerHealth
+                      player={players[1]}
+                      showEffects={true}
+                      className="player-health-right"
+                    />
+                    <PlayerDeckDisplay
+                      playerName={players[1].username}
+                      cards={players[1].deck.cards}
+                      isPlayer={players[1].id === 'player1'}
+                      className="player-deck-right"
+                    />
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Combat Arena */}

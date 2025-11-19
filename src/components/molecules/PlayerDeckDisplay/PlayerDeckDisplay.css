@@ -1,0 +1,227 @@
+/* Player Deck Display */
+.player-deck-display {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+.player-deck-display:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.player-deck.player-deck-display {
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.opponent-deck.player-deck-display {
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.deck-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.deck-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #f1f5f9;
+    text-transform: uppercase;
+}
+
+.card-count {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.deck-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Custom scrollbar */
+.deck-cards::-webkit-scrollbar {
+    width: 4px;
+}
+
+.deck-cards::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.deck-cards::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.deck-cards::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.deck-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.deck-card:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(4px);
+}
+
+/* Rarity colors */
+.deck-card.rarity-common {
+    border-left-color: #94a3b8;
+}
+
+.deck-card.rarity-uncommon {
+    border-left-color: #10b981;
+}
+
+.deck-card.rarity-rare {
+    border-left-color: #3b82f6;
+}
+
+.deck-card.rarity-epic {
+    border-left-color: #8b5cf6;
+}
+
+.deck-card.rarity-legendary {
+    border-left-color: #f59e0b;
+}
+
+.deck-card.rarity-mythic {
+    border-left-color: #ef4444;
+}
+
+.deck-card.rarity-cosmic {
+    border-left-color: #ec4899;
+}
+
+.deck-card.rarity-divine {
+    border-left-color: #fbbf24;
+}
+
+.deck-card.rarity-infinity {
+    border-left-color: #06b6d4;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+}
+
+.card-emoji {
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.card-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #f1f5f9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-stats {
+    display: flex;
+    gap: 8px;
+}
+
+.stat {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.stat.attack {
+    color: #ef4444;
+}
+
+.stat.health {
+    color: #10b981;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .player-deck-display {
+        padding: 10px;
+    }
+
+    .deck-cards {
+        max-height: 200px;
+    }
+
+    .card-emoji {
+        font-size: 20px;
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .player-deck-display {
+        padding: 8px;
+    }
+
+    .deck-header h4 {
+        font-size: 12px;
+    }
+
+    .card-count {
+        font-size: 11px;
+    }
+
+    .deck-cards {
+        max-height: 150px;
+    }
+
+    .deck-card {
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .card-emoji {
+        font-size: 18px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .card-name {
+        font-size: 11px;
+    }
+
+    .stat {
+        font-size: 10px;
+    }
+}
