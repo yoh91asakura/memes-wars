@@ -20,6 +20,8 @@ export interface RollResult {
   timestamp: Date;
 }
 
+export type MultiRollResult = RollResult[];
+
 export interface PityStatus {
   rollsWithoutRare: number;
   rollsWithoutEpic: number;
@@ -35,6 +37,12 @@ export interface RollStatistics {
   averageRollsPerRare: number;
   pityTriggeredCount: number;
   currentStreak: Record<CardRarity, number>;
+}
+
+export interface RollServiceState {
+  rollCount: number;
+  pityCounters: Record<CardRarity, number>;
+  statistics: RollStatistics;
 }
 
 // Drop rate configuration matching contract specification
@@ -109,7 +117,7 @@ export class RollService implements IRollService {
 
     // Check pity system first
     const pityResult = this.checkPitySystem();
-    
+
     let rarity: CardRarity;
     let pityTriggered = false;
 
@@ -124,10 +132,10 @@ export class RollService implements IRollService {
 
     // Generate card of determined rarity
     const card = this.generateCard(rarity);
-    
+
     // Update pity counters
     this.updatePityCounters(rarity);
-    
+
     // Update statistics
     this.statistics.cardsByRarity[rarity]++;
     this.updateCurrentStreak(rarity);
@@ -148,7 +156,7 @@ export class RollService implements IRollService {
     }
 
     const results: RollResult[] = [];
-    
+
     for (let i = 0; i < count; i++) {
       results.push(this.rollSingle());
     }
@@ -158,7 +166,7 @@ export class RollService implements IRollService {
 
   getPityStatus(): PityStatus {
     const nextGuaranteed = this.getNextGuaranteedRarity();
-    
+
     return {
       rollsWithoutRare: this.pityCounters[CardRarity.RARE],
       rollsWithoutEpic: this.pityCounters[CardRarity.EPIC],
@@ -182,7 +190,25 @@ export class RollService implements IRollService {
       [CardRarity.LEGENDARY]: 0,
       [CardRarity.MYTHIC]: 0,
       [CardRarity.COSMIC]: 0,
+      [CardRarity.DIVINE]: 0,
+      [CardRarity.INFINITY]: 0,
+      [CardRarity.BEYOND]: 0,
     };
+  }
+
+  getState(): RollServiceState {
+    return {
+      rollCount: this.rollCount,
+      pityCounters: { ...this.pityCounters },
+      statistics: JSON.parse(JSON.stringify(this.statistics)) // Deep copy
+    };
+  }
+
+  setState(state: RollServiceState): void {
+    if (!state) return;
+    this.rollCount = state.rollCount || 0;
+    this.pityCounters = { ...this.pityCounters, ...(state.pityCounters || {}) };
+    this.statistics = { ...this.statistics, ...(state.statistics || {}) };
   }
 
   // Private helper methods
@@ -200,7 +226,7 @@ export class RollService implements IRollService {
     if (this.pityCounters[CardRarity.RARE] >= PITY_THRESHOLDS[CardRarity.RARE]) {
       return { shouldTrigger: true, guaranteedRarity: CardRarity.RARE };
     }
-    
+
     return { shouldTrigger: false };
   }
 
@@ -224,7 +250,7 @@ export class RollService implements IRollService {
     // Convert CardRarity to probability number for CardUtils.generateCard
     const rarityToProbability = {
       [CardRarity.COMMON]: 2,
-      [CardRarity.UNCOMMON]: 4, 
+      [CardRarity.UNCOMMON]: 4,
       [CardRarity.RARE]: 10,
       [CardRarity.EPIC]: 50,
       [CardRarity.LEGENDARY]: 200,
@@ -234,18 +260,23 @@ export class RollService implements IRollService {
       [CardRarity.INFINITY]: 50000,
       [CardRarity.BEYOND]: 100000
     };
-    
+
     // Generate sample cards based on rarity
     const cardTemplates = this.getCardTemplates(rarity);
-    const template = cardTemplates[Math.floor(Math.random() * cardTemplates.length)];
-    
+    const template = cardTemplates[Math.floor(Math.random() * cardTemplates.length)] || cardTemplates[0];
+
+    if (!template) {
+      // Should never happen given getCardTemplates fallback
+      throw new Error(`No templates found for rarity ${rarity}`);
+    }
+
     // Generate unique ID
     const cardId = `${rarity}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    
+
     // Use CardUtils.generateCard with correct signature
     return CardUtils.generateCard(
-      rarityToProbability[rarity], 
-      cardId, 
+      rarityToProbability[rarity],
+      cardId,
       template.name
     );
   }
@@ -271,13 +302,13 @@ export class RollService implements IRollService {
         { name: 'Odin', memeFamily: MemeFamily.MYTHOLOGY, emojis: ['⚡', '🗡️'], health: 300, attackDamage: 35, attackSpeed: 1.0, manaCost: 4, flavor: 'Allfather' }
       ],
       [CardRarity.LEGENDARY]: [
-        { 
-          name: 'Eternal Doge', 
-          memeFamily: MemeFamily.CLASSIC_INTERNET, 
-          emojis: ['🐶', '⭐', '💎'], 
-          health: 400, 
-          attackDamage: 50, 
-          attackSpeed: 2.0, 
+        {
+          name: 'Eternal Doge',
+          memeFamily: MemeFamily.CLASSIC_INTERNET,
+          emojis: ['🐶', '⭐', '💎'],
+          health: 400,
+          attackDamage: 50,
+          attackSpeed: 2.0,
           manaCost: 5,
           passiveAbility: {
             id: 'eternal-wow',
@@ -290,13 +321,13 @@ export class RollService implements IRollService {
         }
       ],
       [CardRarity.MYTHIC]: [
-        { 
-          name: 'Cosmic Pepe', 
-          memeFamily: MemeFamily.CLASSIC_INTERNET, 
-          emojis: ['🐸', '🌟', '🌌'], 
-          health: 600, 
-          attackDamage: 75, 
-          attackSpeed: 2.5, 
+        {
+          name: 'Cosmic Pepe',
+          memeFamily: MemeFamily.CLASSIC_INTERNET,
+          emojis: ['🐸', '🌟', '🌌'],
+          health: 600,
+          attackDamage: 75,
+          attackSpeed: 2.5,
           manaCost: 7,
           passiveAbility: {
             id: 'reality-warp',
@@ -309,13 +340,13 @@ export class RollService implements IRollService {
         }
       ],
       [CardRarity.COSMIC]: [
-        { 
-          name: 'The One Meme', 
-          memeFamily: MemeFamily.CLASSIC_INTERNET, 
-          emojis: ['🌌', '⭐', '💎', '🔥'], 
-          health: 1000, 
-          attackDamage: 100, 
-          attackSpeed: 3.0, 
+        {
+          name: 'The One Meme',
+          memeFamily: MemeFamily.CLASSIC_INTERNET,
+          emojis: ['🌌', '⭐', '💎', '🔥'],
+          health: 1000,
+          attackDamage: 100,
+          attackSpeed: 3.0,
           manaCost: 10,
           passiveAbility: {
             id: 'meme-singularity',
@@ -328,37 +359,37 @@ export class RollService implements IRollService {
         }
       ],
       [CardRarity.DIVINE]: [
-        { 
-          name: 'Divine Doge', 
-          memeFamily: MemeFamily.CLASSIC_INTERNET, 
-          emojis: ['🐶', '✨', '👑'], 
-          health: 1500, 
-          attackDamage: 150, 
-          attackSpeed: 4.0, 
+        {
+          name: 'Divine Doge',
+          memeFamily: MemeFamily.CLASSIC_INTERNET,
+          emojis: ['🐶', '✨', '👑'],
+          health: 1500,
+          attackDamage: 150,
+          attackSpeed: 4.0,
           manaCost: 15,
           flavor: 'Much divine, very blessed'
         }
       ],
       [CardRarity.INFINITY]: [
-        { 
-          name: 'Infinite Chad', 
-          memeFamily: MemeFamily.CLASSIC_INTERNET, 
-          emojis: ['💪', '∞', '🌟'], 
-          health: 2500, 
-          attackDamage: 250, 
-          attackSpeed: 5.0, 
+        {
+          name: 'Infinite Chad',
+          memeFamily: MemeFamily.CLASSIC_INTERNET,
+          emojis: ['💪', '∞', '🌟'],
+          health: 2500,
+          attackDamage: 250,
+          attackSpeed: 5.0,
           manaCost: 25,
           flavor: 'Limitless power, infinite chad'
         }
       ],
       [CardRarity.BEYOND]: [
-        { 
-          name: 'Beyond Comprehension', 
-          memeFamily: MemeFamily.CLASSIC_INTERNET, 
-          emojis: ['🌀', '🔮', '💫'], 
-          health: 5000, 
-          attackDamage: 500, 
-          attackSpeed: 10.0, 
+        {
+          name: 'Beyond Comprehension',
+          memeFamily: MemeFamily.CLASSIC_INTERNET,
+          emojis: ['🌀', '🔮', '💫'],
+          health: 5000,
+          attackDamage: 500,
+          attackSpeed: 10.0,
           manaCost: 50,
           flavor: 'Transcends all understanding'
         }
@@ -377,11 +408,14 @@ export class RollService implements IRollService {
       CardRarity.EPIC,
       CardRarity.LEGENDARY,
       CardRarity.MYTHIC,
-      CardRarity.COSMIC
+      CardRarity.COSMIC,
+      CardRarity.DIVINE,
+      CardRarity.INFINITY,
+      CardRarity.BEYOND
     ];
 
     const rolledIndex = rarityOrder.indexOf(rolledRarity);
-    
+
     // Reset all counters up to and including the rolled rarity
     for (let i = 0; i <= rolledIndex; i++) {
       this.pityCounters[rarityOrder[i]] = 0;
@@ -395,22 +429,22 @@ export class RollService implements IRollService {
 
   private updateCurrentStreak(rarity: CardRarity): void {
     // Reset all streaks except the current one
-    Object.keys(this.statistics.currentStreak).forEach(r => {
+    (Object.keys(this.statistics.currentStreak) as CardRarity[]).forEach(r => {
       if (r === rarity) {
-        this.statistics.currentStreak[r as CardRarity]++;
+        this.statistics.currentStreak[r]++;
       } else {
-        this.statistics.currentStreak[r as CardRarity] = 0;
+        this.statistics.currentStreak[r] = 0;
       }
     });
   }
 
   private recalculateAverageRollsPerRare(): void {
     const rareCount = this.statistics.cardsByRarity[CardRarity.RARE] +
-                     this.statistics.cardsByRarity[CardRarity.EPIC] +
-                     this.statistics.cardsByRarity[CardRarity.LEGENDARY] +
-                     this.statistics.cardsByRarity[CardRarity.MYTHIC] +
-                     this.statistics.cardsByRarity[CardRarity.COSMIC];
-    
+      this.statistics.cardsByRarity[CardRarity.EPIC] +
+      this.statistics.cardsByRarity[CardRarity.LEGENDARY] +
+      this.statistics.cardsByRarity[CardRarity.MYTHIC] +
+      this.statistics.cardsByRarity[CardRarity.COSMIC];
+
     if (rareCount > 0) {
       this.statistics.averageRollsPerRare = this.statistics.totalRolls / rareCount;
     }
@@ -418,23 +452,23 @@ export class RollService implements IRollService {
 
   private getNextGuaranteedRarity(): CardRarity | undefined {
     // Return the next rarity that will be guaranteed based on current pity
-    if (this.pityCounters[CardRarity.RARE] >= PITY_THRESHOLDS[CardRarity.RARE] - 1) {
+    if (this.pityCounters[CardRarity.RARE] >= (PITY_THRESHOLDS[CardRarity.RARE] || Infinity) - 1) {
       return CardRarity.RARE;
     }
-    if (this.pityCounters[CardRarity.EPIC] >= PITY_THRESHOLDS[CardRarity.EPIC] - 1) {
+    if (this.pityCounters[CardRarity.EPIC] >= (PITY_THRESHOLDS[CardRarity.EPIC] || Infinity) - 1) {
       return CardRarity.EPIC;
     }
-    if (this.pityCounters[CardRarity.LEGENDARY] >= PITY_THRESHOLDS[CardRarity.LEGENDARY] - 1) {
+    if (this.pityCounters[CardRarity.LEGENDARY] >= (PITY_THRESHOLDS[CardRarity.LEGENDARY] || Infinity) - 1) {
       return CardRarity.LEGENDARY;
     }
-    if (this.pityCounters[CardRarity.MYTHIC] >= PITY_THRESHOLDS[CardRarity.MYTHIC] - 1) {
+    if (this.pityCounters[CardRarity.MYTHIC] >= (PITY_THRESHOLDS[CardRarity.MYTHIC] || Infinity) - 1) {
       return CardRarity.MYTHIC;
     }
     return undefined;
   }
 
   private getRollsUntilGuaranteed(rarity: CardRarity): number {
-    const threshold = PITY_THRESHOLDS[rarity];
+    const threshold = PITY_THRESHOLDS[rarity] || 0;
     const current = this.pityCounters[rarity];
     return Math.max(0, threshold - current);
   }

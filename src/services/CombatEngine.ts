@@ -1,15 +1,15 @@
 // Combat Engine - Core battle system logic
 
 // #region AI_NAV_IMPORTS
-import { 
-  CombatState, 
-  CombatArena, 
-  CombatPlayer, 
-  EmojiProjectile, 
-  Collision, 
-  ActiveEffect, 
-  Position, 
-  Vector2D, 
+import {
+  CombatState,
+  CombatArena,
+  CombatPlayer,
+  EmojiProjectile,
+  Collision,
+  ActiveEffect,
+  Position,
+  Vector2D,
   BoundingBox,
   CombatEvent,
   CombatEventType,
@@ -41,10 +41,10 @@ export class CombatEngine implements ICombatEngine {
   private lastFrameTime: number = 0;
   private animationFrameId: number | null = null;
   private eventCallbacks: Map<CombatEventType, ((event: CombatEvent) => void)[]> = new Map();
-  
+
   // Synergy tracking
   private playerSynergies: Map<string, ActiveSynergy[]> = new Map();
-  
+
   // Emoji sequences for each player
   private playerEmojiSequences: Map<string, EmojiCombatSequence> = new Map();
 
@@ -86,7 +86,7 @@ export class CombatEngine implements ICombatEngine {
   public startBattle(): void {
     this.state.phase = 'countdown';
     this.state.timeRemaining = this.state.arena.settings.roundDuration;
-    
+
     // Start countdown sequence
     this.startCountdown(() => {
       this.state.phase = 'active';
@@ -206,18 +206,18 @@ export class CombatEngine implements ICombatEngine {
 
   public determineWinner(): CombatPlayer | null {
     const alivePlayers = this.state.players.filter(p => p.isAlive);
-    
+
     if (alivePlayers.length === 1) {
       return alivePlayers[0];
     }
-    
+
     if (this.state.timeRemaining <= 0) {
       // Determine winner by health percentage
       const healthPercentages = this.state.players.map(p => ({
         player: p,
         healthPercent: p.health / p.maxHealth
       }));
-      
+
       healthPercentages.sort((a, b) => b.healthPercent - a.healthPercent);
       return healthPercentages[0].player;
     }
@@ -301,8 +301,25 @@ export class CombatEngine implements ICombatEngine {
   }
 
   private createPlayerFromDeck(deck: Deck, playerId: string, spawnPosition: Position): CombatPlayer {
-    const totalHP = deck.stats.totalHealth;
-    const fireRate = deck.stats.projectedFireRate;
+    // Calculate stats from cards if deck.stats is not available
+    let totalHP = 100; // Default fallback
+    let fireRate = 1.0; // Default fallback
+    let totalDamage = 0;
+
+    if (deck.stats) {
+      totalHP = deck.stats.totalHealth || 100;
+      fireRate = deck.stats.projectedFireRate || 1.0;
+      totalDamage = deck.stats.totalDamage || 0;
+    } else if (deck.cards && deck.cards.length > 0) {
+      // Calculate stats from cards
+      totalHP = deck.cards.reduce((sum, card) => sum + (card.health || 10), 0);
+      totalDamage = deck.cards.reduce((sum, card) => sum + (card.attack || 5), 0);
+      fireRate = Math.min(5, deck.cards.length * 0.5); // Scale fire rate with deck size
+
+      console.warn(`Deck ${deck.id} missing stats, calculated from cards: HP=${totalHP}, FireRate=${fireRate}`);
+    } else {
+      console.warn(`Deck ${deck.id} has no stats or cards, using defaults`);
+    }
 
     return {
       id: playerId,
@@ -323,7 +340,7 @@ export class CombatEngine implements ICombatEngine {
           fireRate: fireRate,
           cooldown: 1000 / fireRate
         },
-        totalDamage: deck.stats.totalDamage,
+        totalDamage: totalDamage,
         totalHealth: totalHP,
         specialAbilities: []
       },
@@ -344,7 +361,7 @@ export class CombatEngine implements ICombatEngine {
   private initializeSynergies(player: CombatPlayer, cards: any[]): void {
     const synergyResult = SynergySystem.detectSynergies(cards);
     this.playerSynergies.set(player.id, synergyResult.activeSynergies);
-    
+
     // Apply synergy bonuses to player stats
     this.applySynergyBonuses(player, synergyResult.activeSynergies);
 
@@ -368,26 +385,26 @@ export class CombatEngine implements ICombatEngine {
           case 'damage':
             // Damage bonus will be applied during projectile firing
             break;
-            
+
           case 'health':
-            const healthBonus = bonus.isPercentage 
+            const healthBonus = bonus.isPercentage
               ? player.maxHealth * (bonus.value / 100)
               : bonus.value;
             player.maxHealth += healthBonus;
             player.health += healthBonus;
             break;
-            
+
           case 'speed':
             const speedBonus = bonus.isPercentage
               ? player.fireRate * (bonus.value / 100)
               : bonus.value;
             player.fireRate += speedBonus;
             break;
-            
+
           case 'luck':
             // Luck bonus will be tracked and applied to rewards
             break;
-            
+
           case 'special':
             // Special effects handled per synergy type
             this.applySpecialSynergyEffect(player, synergy.synergyId, bonus);
@@ -406,15 +423,15 @@ export class CombatEngine implements ICombatEngine {
           player.shield = Math.min(player.maxShield, player.shield + bonus.value);
         }
         break;
-        
+
       case 'ANCIENT_POWER':
         // Revive once capability - would be handled in death logic
         break;
-        
+
       case 'FORCE_BUILD':
         // Critical hit chance - handled during damage application
         break;
-        
+
       case 'SPEED_BUILD':
         // Projectile speed bonus - handled during firing
         break;
@@ -427,12 +444,12 @@ export class CombatEngine implements ICombatEngine {
       // Load emojis synchronously for immediate combat initialization
       EmojiLoader.loadEmojisFromDeck(cards).then(loadedEmojis => {
         const combatSequence = EmojiLoader.generateProjectileSequence(loadedEmojis);
-        
+
         this.playerEmojiSequences.set(player.id, combatSequence);
-        
+
         // Get stats for logging
         const emojiStats = EmojiLoader.getEmojiStats(loadedEmojis);
-        
+
         console.log(`Emoji sequence initialized for ${player.id}:`, {
           totalEmojis: emojiStats.totalEmojis,
           averageDamage: emojiStats.averageDamage,
@@ -449,7 +466,7 @@ export class CombatEngine implements ICombatEngine {
         });
       }).catch(error => {
         console.error(`Failed to load emojis for ${player.id}:`, error);
-        
+
         // Set default emoji sequence as fallback
         const defaultEmoji = this.getDefaultLoadedEmoji();
         this.playerEmojiSequences.set(player.id, {
@@ -461,7 +478,7 @@ export class CombatEngine implements ICombatEngine {
       });
     } catch (error) {
       console.error(`Failed to initialize emoji sequence for ${player.id}:`, error);
-      
+
       // Create fallback sequence
       const defaultEmoji = EmojiLoader.getRandomEmojiFromSequence({
         sequence: [],
@@ -469,7 +486,7 @@ export class CombatEngine implements ICombatEngine {
         averageDamage: 0,
         specialEffectsCount: 0
       });
-      
+
       this.playerEmojiSequences.set(player.id, {
         sequence: [defaultEmoji],
         totalWeight: 1,
@@ -489,7 +506,7 @@ export class CombatEngine implements ICombatEngine {
     const countdownInterval = setInterval(() => {
       this.emitEvent('phase_changed', { phase: 'countdown', count });
       count--;
-      
+
       if (count < 0) {
         clearInterval(countdownInterval);
         onComplete();
@@ -499,7 +516,7 @@ export class CombatEngine implements ICombatEngine {
 
   private startGameLoop(): void {
     let lastTime = performance.now();
-    
+
     const gameLoop = (currentTime: number) => {
       const deltaTime = (currentTime - lastTime) / 1000;
       lastTime = currentTime;
@@ -581,20 +598,20 @@ export class CombatEngine implements ICombatEngine {
 
     // Get emoji from loaded sequence (real emojis from player's deck)
     const emojiSequence = this.playerEmojiSequences.get(player.id);
-    const loadedEmoji = emojiSequence 
+    const loadedEmoji = emojiSequence
       ? EmojiLoader.getRandomEmojiFromSequence(emojiSequence)
       : this.getDefaultLoadedEmoji();
-    
+
     const emojiChar = loadedEmoji.emoji;
     const emojiEffect = loadedEmoji.effect;
-    
+
     // Calculate direction to target
     const direction = {
       x: target.position.x - player.position.x,
       y: target.position.y - player.position.y
     };
     const length = Math.sqrt(direction.x ** 2 + direction.y ** 2);
-    
+
     if (length === 0) return;
 
     direction.x /= length;
@@ -609,10 +626,10 @@ export class CombatEngine implements ICombatEngine {
 
     // Apply trajectory-based velocity calculation
     let velocity = { x: direction.x * baseSpeed, y: direction.y * baseSpeed };
-    
+
     // Apply synergy speed bonuses
     velocity = this.applySynergySpeedBonus(player.id, velocity);
-    
+
     if (emojiEffect?.trajectory === 'wave') {
       velocity.y += Math.sin(Date.now() * 0.01) * baseSpeed * 0.3;
     } else if (emojiEffect?.trajectory === 'arc') {
@@ -671,14 +688,14 @@ export class CombatEngine implements ICombatEngine {
 
   private getRandomEmoji(cards: any[]): string {
     // Get emojis from cards first, fall back to system emojis
-    const cardEmojis = cards.flatMap(card => 
+    const cardEmojis = cards.flatMap(card =>
       card.emojis?.map((emoji: any) => emoji.character) || [card.emoji]
     ).filter(Boolean);
-    
+
     if (cardEmojis.length > 0) {
       return cardEmojis[Math.floor(Math.random() * cardEmojis.length)];
     }
-    
+
     // Fallback to system emoji pool
     const systemEmojis = EmojiEffectsManager.getAllEmojis();
     return systemEmojis[Math.floor(Math.random() * systemEmojis.length)];
@@ -709,17 +726,17 @@ export class CombatEngine implements ICombatEngine {
 
   private isOutOfBounds(projectile: EmojiProjectile): boolean {
     return projectile.position.x < 0 ||
-           projectile.position.x > this.state.arena.width ||
-           projectile.position.y < 0 ||
-           projectile.position.y > this.state.arena.height;
+      projectile.position.x > this.state.arena.width ||
+      projectile.position.y < 0 ||
+      projectile.position.y > this.state.arena.height;
   }
 
   private isCollidingWithObstacle(projectile: EmojiProjectile, obstacle: any): boolean {
     // Simple AABB collision
     return projectile.position.x < obstacle.position.x + obstacle.size.width &&
-           projectile.position.x + projectile.size > obstacle.position.x &&
-           projectile.position.y < obstacle.position.y + obstacle.size.height &&
-           projectile.position.y + projectile.size > obstacle.position.y;
+      projectile.position.x + projectile.size > obstacle.position.x &&
+      projectile.position.y < obstacle.position.y + obstacle.size.height &&
+      projectile.position.y + projectile.size > obstacle.position.y;
   }
 
   private bounceProjectile(projectile: EmojiProjectile): void {
@@ -744,7 +761,7 @@ export class CombatEngine implements ICombatEngine {
       if (collision.targetType === 'player') {
         const player = this.state.players.find(p => p.id === collision.targetId);
         const projectile = this.state.projectiles.find(p => p.id === collision.projectileId);
-        
+
         if (player && projectile && player.isAlive) {
           // Apply damage
           const actualDamage = Math.max(0, collision.damage - player.shield);
@@ -796,7 +813,7 @@ export class CombatEngine implements ICombatEngine {
             player.isAlive = false;
             this.state.stats.killCount++;
             this.state.stats.survivorCount--;
-            
+
             if (shooter) {
               shooter.kills++;
             }
@@ -809,7 +826,7 @@ export class CombatEngine implements ICombatEngine {
           } else {
             // Check for low HP triggers
             this.checkLowHpTriggers(player);
-            
+
             this.emitEvent('player_damaged', {
               playerId: player.id,
               damage: actualDamage,
@@ -829,9 +846,9 @@ export class CombatEngine implements ICombatEngine {
 
           // Check for synergy special effects on projectile hit
           if (shooter) {
-            this.checkSynergySpecialEffects(shooter.id, 'projectile_hit', { 
-              targetId: player.id, 
-              damage: actualDamage 
+            this.checkSynergySpecialEffects(shooter.id, 'projectile_hit', {
+              targetId: player.id,
+              damage: actualDamage
             });
           }
         }
@@ -966,7 +983,7 @@ export class CombatEngine implements ICombatEngine {
           const originalFireRate = target.fireRate;
           target.moveSpeed *= effect.value;
           target.fireRate *= effect.value;
-          
+
           // Reset after duration
           setTimeout(() => {
             target.moveSpeed = originalSpeed;
@@ -980,7 +997,7 @@ export class CombatEngine implements ICombatEngine {
           // Heal the shooter, not the target
           shooter.health = Math.min(shooter.maxHealth, shooter.health + effect.value);
           this.state.stats.totalHealing += effect.value;
-          
+
           this.emitEvent('player_healed', {
             playerId: shooter.id,
             healAmount: effect.value,
@@ -1004,7 +1021,7 @@ export class CombatEngine implements ICombatEngine {
         if (effect.value && shooter) {
           // Shield the shooter
           shooter.shield = Math.min(shooter.maxShield, shooter.shield + effect.value);
-          
+
           this.emitEvent('shield_applied', {
             playerId: shooter.id,
             shieldAmount: effect.value,
@@ -1018,7 +1035,7 @@ export class CombatEngine implements ICombatEngine {
           // Boost shooter's performance
           const originalFireRate = shooter.fireRate;
           shooter.fireRate *= effect.value;
-          
+
           setTimeout(() => {
             shooter.fireRate = originalFireRate;
           }, effect.duration * 1000);
@@ -1032,7 +1049,7 @@ export class CombatEngine implements ICombatEngine {
           const originalFireRate = target.fireRate;
           target.moveSpeed = 0;
           target.fireRate = 0;
-          
+
           setTimeout(() => {
             target.moveSpeed = originalSpeed;
             target.fireRate = originalFireRate;
@@ -1112,7 +1129,7 @@ export class CombatEngine implements ICombatEngine {
           const healAmount = activation.value;
           player.health = Math.min(player.maxHealth, player.health + healAmount);
           this.state.stats.totalHealing += healAmount;
-          
+
           this.emitEvent('passive_heal', {
             playerId: player.id,
             amount: healAmount,
@@ -1125,7 +1142,7 @@ export class CombatEngine implements ICombatEngine {
           const boostMultiplier = activation.value;
           const originalFireRate = player.fireRate;
           player.fireRate *= boostMultiplier;
-          
+
           // Reset after duration
           setTimeout(() => {
             player.fireRate = originalFireRate;
@@ -1231,7 +1248,7 @@ export class CombatEngine implements ICombatEngine {
   private applySynergyDamageBonus(playerId: string, baseDamage: number): number {
     const synergies = this.playerSynergies.get(playerId) || [];
     let damageMultiplier = 1;
-    
+
     for (const synergy of synergies) {
       for (const bonus of synergy.bonuses) {
         if (bonus.type === 'damage') {
@@ -1243,7 +1260,7 @@ export class CombatEngine implements ICombatEngine {
         }
       }
     }
-    
+
     // Check for critical hits from Force Build
     const forceBuilds = synergies.filter(s => s.synergyId === 'FORCE_BUILD');
     for (const forceBuild of forceBuilds) {
@@ -1253,14 +1270,14 @@ export class CombatEngine implements ICombatEngine {
         this.emitEvent('critical_hit', { playerId, damage: baseDamage });
       }
     }
-    
+
     return baseDamage * damageMultiplier;
   }
 
   private applySynergySpeedBonus(playerId: string, baseVelocity: { x: number; y: number }): { x: number; y: number } {
     const synergies = this.playerSynergies.get(playerId) || [];
     let speedMultiplier = 1;
-    
+
     for (const synergy of synergies) {
       // Speed Build projectile speed bonus
       if (synergy.synergyId === 'SPEED_BUILD') {
@@ -1269,7 +1286,7 @@ export class CombatEngine implements ICombatEngine {
           speedMultiplier *= speedBonus.value;
         }
       }
-      
+
       // General speed bonuses
       for (const bonus of synergy.bonuses) {
         if (bonus.type === 'special' && bonus.description.includes('faster')) {
@@ -1277,7 +1294,7 @@ export class CombatEngine implements ICombatEngine {
         }
       }
     }
-    
+
     return {
       x: baseVelocity.x * speedMultiplier,
       y: baseVelocity.y * speedMultiplier
@@ -1286,7 +1303,7 @@ export class CombatEngine implements ICombatEngine {
 
   private checkSynergySpecialEffects(playerId: string, context: string, data: any = {}): void {
     const synergies = this.playerSynergies.get(playerId) || [];
-    
+
     for (const synergy of synergies) {
       switch (synergy.synergyId) {
         case 'ELEMENTAL_MASTERY':
@@ -1297,7 +1314,7 @@ export class CombatEngine implements ICombatEngine {
             }
           }
           break;
-          
+
         case 'MEME_LORD':
           if (context === 'projectile_fire') {
             const chaosEffect = synergy.bonuses.find(b => b.description.includes('chaos'));
@@ -1306,7 +1323,7 @@ export class CombatEngine implements ICombatEngine {
             }
           }
           break;
-          
+
         case 'RAINBOW_CHAOS':
           if (context === 'any') {
             const randomPowerful = synergy.bonuses.find(b => b.description.includes('random powerful'));
@@ -1315,7 +1332,7 @@ export class CombatEngine implements ICombatEngine {
             }
           }
           break;
-          
+
         case 'LUCK_BUILD':
           if (context === 'reward_calculation') {
             const doubleRewards = synergy.bonuses.find(b => b.description.includes('double rewards'));
@@ -1331,7 +1348,7 @@ export class CombatEngine implements ICombatEngine {
   private applyRandomElementalEffect(targetId: string): void {
     const effects = ['burn', 'freeze', 'poison'];
     const randomEffect = effects[Math.floor(Math.random() * effects.length)];
-    
+
     this.addActiveEffect(targetId, {
       type: randomEffect,
       duration: 3000,
@@ -1353,9 +1370,9 @@ export class CombatEngine implements ICombatEngine {
       'shield_burst',
       'heal_random'
     ];
-    
+
     const effect = chaosEffects[Math.floor(Math.random() * chaosEffects.length)];
-    
+
     this.emitEvent('synergy_chaos_proc', {
       playerId,
       effectType: effect,
@@ -1366,17 +1383,17 @@ export class CombatEngine implements ICombatEngine {
   private applyRandomPowerfulEffect(playerId: string): void {
     const player = this.state.players.find(p => p.id === playerId);
     if (!player) return;
-    
+
     const powerfulEffects = [
       () => { player.health = Math.min(player.maxHealth, player.health + 50); }, // Big heal
       () => { player.shield = Math.min(player.maxShield, player.shield + 100); }, // Big shield
       () => { this.fireProjectile(player); this.fireProjectile(player); }, // Double shot
       () => { player.fireRate *= 3; setTimeout(() => player.fireRate /= 3, 5000); } // Temp speed
     ];
-    
+
     const randomEffect = powerfulEffects[Math.floor(Math.random() * powerfulEffects.length)];
     randomEffect();
-    
+
     this.emitEvent('synergy_rainbow_chaos_proc', {
       playerId,
       source: 'RAINBOW_CHAOS'
